@@ -32,3 +32,24 @@ def test_success_is_recorded_once(tmp_path):
     assert not failed
     rows = duckdb.connect(str(db)).execute("select status, message from ops.runs where run_id = ?", [run_id]).fetchall()
     assert rows == [("ok", "done")]
+
+
+def test_ledger_does_not_hold_the_write_lock(tmp_path):
+    """The first version kept one connection open for the whole run, which
+    locked dbt out of the same DuckDB file. This is that regression."""
+    import duckdb as ddb
+    db = tmp_path / "t.duckdb"
+
+    def writes_from_another_connection():
+        con = ddb.connect(str(db))          # a second writer, like dbt
+        con.execute("create table if not exists probe (x integer)")
+        con.execute("insert into probe values (1)")
+        con.close()
+        return "wrote"
+
+    run_id, failed = dag.run({"a": {"deps": [], "fn": writes_from_another_connection}},
+                             db=db, sleep=lambda s: None, log=lambda m: None)
+    assert not failed
+    con = ddb.connect(str(db))
+    assert con.execute("select count(*) from probe").fetchone()[0] == 1
+    assert con.execute("select status from ops.runs where run_id = ?", [run_id]).fetchone()[0] == "ok"

@@ -27,6 +27,10 @@ fx as (
 )
 select
     d.*,
+    -- the first and last day of any window are partial by construction, and
+    -- so is today; a daily bar built from four hours is not a daily bar, so
+    -- it is flagged rather than silently averaged
+    d.hours in (23, 24, 25)                                     as is_complete,
     s.dk1_minus_dk2_eur,
     f.eurdkk,
     d.avg_eur * f.eurdkk as avg_dkk

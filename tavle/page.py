@@ -36,7 +36,7 @@ def collect(db=DB):
     data["built_at"] = now.isoformat(timespec="minutes") + "Z"
     data["daily"] = q(con, """
         select area, day_dk, round(avg_eur,2) as avg_eur, round(low_eur,2) as low_eur, round(high_eur,2) as high_eur,
-               negative_hours, round(dk1_minus_dk2_eur,2) as spread, round(eurdkk,4) as eurdkk
+               negative_hours, is_complete, round(dk1_minus_dk2_eur,2) as spread, round(eurdkk,4) as eurdkk
         from desk_daily where day_dk >= current_date - interval 400 day order by day_dk, area""")
     data["recent"] = q(con, """
         select instrument, interval_start_utc, interval_minutes, round(value,2) as value
@@ -50,6 +50,11 @@ def collect(db=DB):
         select area, min(hour_utc) as first_hour, max(hour_utc) as last_hour, count(*) as n_hours,
                count(*) filter (where source = 'DayAheadPrices') as quarter_hour_hours
         from power_hourly group by 1 order by 1""")
+    data["wind"] = q(con, """
+        select round(wind_share, 3) as wind_share, round(price_eur, 1) as price_eur, area
+        from power_context
+        where hour_utc >= now()::timestamp - interval 365 day and wind_share is not null
+        order by hour_utc""")
     data["runs"] = q(con, """
         select run_id, task, attempt, status, started, finished
         from ops.runs where run_id = (select max(run_id) from ops.runs) order by started""") if \
@@ -120,6 +125,9 @@ a{color:inherit}
 
 <h2>DK1 minus DK2, daily average spread</h2>
 <div class="chart" id="spread"><div class="tip"></div></div>
+
+<h2>Wind share against price, last 365 days</h2>
+<div class="chart" id="wind"><div class="tip"></div></div>
 
 <h2>Last run</h2>
 <div class="wrap"><table id="runs"></table></div>
@@ -201,13 +209,32 @@ function line(el, series, opts){
   line($("#spread"), [{name:"DK1 minus DK2, EUR/MWh", color:"var(--s1)", pts:sp}], {label:"spread", xlabel:v=>new Date(v).toISOString().slice(0,10)});
 })();
 
+(function wind(){
+  const el=$("#wind"), pts=D.wind; if(!pts.length) return;
+  const W=1000,H=340,P={l:48,r:12,t:12,b:34};
+  const x1=Math.max(...pts.map(p=>p.wind_share)), y0=Math.min(0,...pts.map(p=>p.price_eur)), y1=Math.max(...pts.map(p=>p.price_eur));
+  const X=v=>P.l+v/(x1||1)*(W-P.l-P.r), Y=v=>P.t+(1-(v-y0)/(y1-y0||1))*(H-P.t-P.b);
+  let g="";
+  for(let i=0;i<=5;i++){const v=y0+(y1-y0)*i/5; g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)"/><text x="${P.l-6}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="var(--mute)">${fmt(v)}</text>`}
+  for(let i=0;i<=5;i++){const v=x1*i/5; g+=`<text x="${X(v)}" y="${H-14}" text-anchor="middle" font-size="11" fill="var(--mute)">${(v*100).toFixed(0)}%</text>`}
+  g += `<text x="${W/2}" y="${H-1}" text-anchor="middle" font-size="11" fill="var(--mute)">wind as a share of consumption</text>`;
+  if (y0<0) g += `<line x1="${P.l}" x2="${W-P.r}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--mute)"/>`;
+  const dots = pts.map(p=>`<circle cx="${X(p.wind_share).toFixed(1)}" cy="${Y(p.price_eur).toFixed(1)}" r="2" fill="${S[p.area]}" fill-opacity="0.28"/>`).join("");
+  // binned median, the line a desk would actually read
+  const bins={}; pts.forEach(p=>{const b=Math.min(19,Math.floor(p.wind_share/x1*20)); (bins[b]=bins[b]||[]).push(p.price_eur)});
+  const med = Object.keys(bins).map(Number).sort((a,b)=>a-b).map(b=>{const v=bins[b].sort((a,c)=>a-c); return {x:(b+0.5)/20*x1, y:v[Math.floor(v.length/2)]}});
+  const medPath = `<path d="${med.map((p,i)=>(i?"L":"M")+X(p.x).toFixed(1)+" "+Y(p.y).toFixed(1)).join(" ")}" fill="none" stroke="var(--ink)" stroke-width="2"/>`;
+  el.insertAdjacentHTML("beforeend", `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="wind share against price">${g}${dots}${medPath}</svg>
+    <div class="legend"><span><i style="background:var(--s1)"></i>DK1 hour</span><span><i style="background:var(--s2)"></i>DK2 hour</span><span><i style="background:var(--ink)"></i>median by wind share</span></div>`);
+})();
+
 (function tables(){
   $("#runs").innerHTML = D.runs.length ? `<tr><th>task</th><th>attempt</th><th>status</th><th>started</th><th>finished</th></tr>` +
     D.runs.map(r=>`<tr><td>${r.task}</td><td class="num">${r.attempt}</td><td class="${r.status==="ok"?"ok":"bad"}">${r.status}</td><td>${(r.started||"").slice(0,19)}</td><td>${(r.finished||"").slice(0,19)}</td></tr>`).join("")
     : `<tr><td>no run recorded yet</td></tr>`;
   const rows = D.daily.slice(-60);
   $("#table").innerHTML = `<tr><th>day</th><th>area</th><th class="num">avg</th><th class="num">low</th><th class="num">high</th><th class="num">neg. hours</th><th class="num">DK1 minus DK2</th><th class="num">EURDKK</th></tr>` +
-    rows.map(r=>`<tr><td>${r.day_dk}</td><td>${r.area}</td><td class="num">${fmt(r.avg_eur)}</td><td class="num">${fmt(r.low_eur)}</td><td class="num">${fmt(r.high_eur)}</td><td class="num">${r.negative_hours}</td><td class="num">${r.area==="DK1"?fmt(r.spread):""}</td><td class="num">${r.eurdkk??""}</td></tr>`).join("");
+    rows.map(r=>`<tr><td>${r.day_dk}${r.is_complete?"":" <span class=\"warn\">partial</span>"}</td><td>${r.area}</td><td class="num">${fmt(r.avg_eur)}</td><td class="num">${fmt(r.low_eur)}</td><td class="num">${fmt(r.high_eur)}</td><td class="num">${r.negative_hours}</td><td class="num">${r.area==="DK1"?fmt(r.spread):""}</td><td class="num">${r.eurdkk??""}</td></tr>`).join("");
 })();
 </script>
 </body>

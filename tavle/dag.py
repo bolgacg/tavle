@@ -75,13 +75,37 @@ def topological(tasks):
 
 
 def ledger(db=DB):
+    """Create the ledger and return nothing: the connection is deliberately
+    not held open. DuckDB allows a single writer per file, and dbt runs in
+    its own process against the same file, so a runner that kept its
+    connection open would lock out the very task it is running. That is
+    exactly what the first version did, and the run ledger recorded the
+    failure, which is the argument for having one."""
     pathlib.Path(db).parent.mkdir(parents=True, exist_ok=True)
     con = duckdb.connect(str(db))
-    con.execute("create schema if not exists ops")
-    con.execute("""create table if not exists ops.runs (
-        run_id varchar, task varchar, attempt integer, started timestamp,
-        finished timestamp, status varchar, message varchar)""")
-    return con
+    try:
+        con.execute("create schema if not exists ops")
+        con.execute("""create table if not exists ops.runs (
+            run_id varchar, task varchar, attempt integer, started timestamp,
+            finished timestamp, status varchar, message varchar)""")
+    finally:
+        con.close()
+
+
+def record(db, row, attempts=30, sleep=time.sleep):
+    """Append one row, opening and closing the connection each time. Retries
+    while another process holds the write lock rather than losing the record."""
+    for _ in range(attempts):
+        try:
+            con = duckdb.connect(str(db))
+            try:
+                con.execute("insert into ops.runs values (?,?,?,?,?,?,?)", row)
+            finally:
+                con.close()
+            return True
+        except duckdb.IOException:
+            sleep(1.0)
+    return False
 
 
 def run(tasks=TASKS, only=None, retries=2, backoff=10.0, db=DB, sleep=time.sleep, log=print):
@@ -90,11 +114,10 @@ def run(tasks=TASKS, only=None, retries=2, backoff=10.0, db=DB, sleep=time.sleep
     if only:
         order = [t for t in order if t in only]
     failed = set()
-    con = ledger(db)
+    ledger(db)
     for name in order:
         if any(d in failed for d in tasks[name]["deps"]):
-            con.execute("insert into ops.runs values (?,?,?,?,?,?,?)",
-                        [run_id, name, 0, None, None, "skipped", "upstream failed"])
+            record(db, [run_id, name, 0, None, None, "skipped", "upstream failed"], sleep=sleep)
             log(f"{name}: skipped (upstream failed)")
             failed.add(name)
             continue
@@ -102,20 +125,17 @@ def run(tasks=TASKS, only=None, retries=2, backoff=10.0, db=DB, sleep=time.sleep
             started = dt.datetime.now(dt.timezone.utc)
             try:
                 out = tasks[name]["fn"]() or ""
-                con.execute("insert into ops.runs values (?,?,?,?,?,?,?)",
-                            [run_id, name, attempt, started, dt.datetime.now(dt.timezone.utc), "ok", out[-500:]])
+                record(db, [run_id, name, attempt, started, dt.datetime.now(dt.timezone.utc), "ok", out[-500:]], sleep=sleep)
                 log(f"{name}: ok (attempt {attempt})")
                 break
             except Exception as e:  # noqa: BLE001, the ledger is the point
                 msg = "".join(traceback.format_exception_only(type(e), e))[-500:]
-                con.execute("insert into ops.runs values (?,?,?,?,?,?,?)",
-                            [run_id, name, attempt, started, dt.datetime.now(dt.timezone.utc), "failed", msg])
+                record(db, [run_id, name, attempt, started, dt.datetime.now(dt.timezone.utc), "failed", msg], sleep=sleep)
                 log(f"{name}: failed attempt {attempt}: {msg.strip()}")
                 if attempt <= retries:
                     sleep(backoff * attempt)
                 else:
                     failed.add(name)
-    con.close()
     return run_id, failed
 
 

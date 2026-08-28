@@ -1,0 +1,53 @@
+# Two lanes. Every push runs the unit tests and builds the marts from a
+# small committed sample, so the pipeline is proven without touching the
+# public APIs. The nightly lane pulls the real increments, builds, tests,
+# and publishes the desk page; it is the only lane that talks to Energinet
+# and the ECB, and it does so a few requests at a time.
+name: ci
+on:
+  push:
+    branches: [master]
+  pull_request:
+  schedule:
+    - cron: "40 5 * * *"   # after the day-ahead auction results are out
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r requirements.txt
+      - run: python -m pytest -q tests
+      - name: build marts from the committed sample
+        run: |
+          python -m tavle.sample restore
+          cd dbt && python -m dbt.cli.main build --profiles-dir .
+        env:
+          TAVLE_DB: ../data/tavle.duckdb
+
+  nightly:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r requirements.txt
+      - name: restore last raw snapshot
+        run: python -m tavle.sample restore
+      - name: run the DAG (extract increments, build, test, page)
+        run: python -m tavle.dag
+      - name: publish the desk page and the refreshed sample
+        run: |
+          python -m tavle.sample snapshot
+          git config user.name "Bolgaç Gülen"
+          git config user.email "bolgacg1@gmail.com"
+          git add docs/index.html data/sample
+          git diff --cached --quiet || git commit -m "nightly: desk page $(date -u +%F)"
+          git push

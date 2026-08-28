@@ -25,7 +25,7 @@ OUT = ROOT / "docs" / "ask-results.json"
 ROW_CAP = 200
 TIMEOUT_S = 10
 
-TABLES = ["prices", "power_hourly", "desk_daily", "stg_fx"]
+TABLES = ["prices", "power_hourly", "power_context", "desk_daily", "stg_fx"]
 
 # Each question carries a reference query written by hand. The model never
 # sees the reference; it sees the schema and the question.
@@ -39,9 +39,9 @@ QUESTIONS = [
     ("What was the lowest hourly price ever recorded in DK1, and when?",
      "select price_eur, hour_utc from power_hourly where area='DK1' order by price_eur asc, hour_utc asc limit 1"),
     ("What is the average DK1 minus DK2 spread over the last 30 days with data?",
-     "select round(avg(dk1_minus_dk2_eur),2) from (select dk1_minus_dk2_eur from desk_daily where area='DK1' and dk1_minus_dk2_eur is not null order by day_dk desc limit 30)"),
+     "select round(avg(spread_eur),2) from (select spread_eur from desk_daily where area='DK1' and spread_eur is not null order by day_dk desc limit 30)"),
     ("On how many days in 2026 was DK2 more expensive than DK1 on average?",
-     "select count(*) from desk_daily where area='DK1' and day_dk >= '2026-01-01' and dk1_minus_dk2_eur < 0"),
+     "select count(*) from desk_daily where area='DK1' and day_dk >= '2026-01-01' and spread_eur < 0"),
     ("What was the EUR/DKK reference rate on 2 January 2026?",
      "select rate from stg_fx where currency='DKK' and rate_date = date '2026-01-02'"),
     ("What is the yearly average DK1 price for each year from 2020 to 2025?",
@@ -70,6 +70,29 @@ QUESTIONS = [
      "select case when dayofweek(hour_utc) in (0,6) then 'weekend' else 'weekday' end as k, round(avg(price_eur),2) from power_hourly where area='DK1' and hour_utc >= '2025-01-01' and hour_utc < '2026-01-01' group by 1 order by 1"),
     ("What was the biggest single-day jump in DK1 daily average price in 2026?",
      "select round(max(d),2) from (select avg_eur - lag(avg_eur) over (order by day_dk) as d from desk_daily where area='DK1' and day_dk >= '2026-01-01')"),
+    ("How many days in the whole series had at least one negative hour in DK1?",
+     "select count(*) from desk_daily where area='DK1' and negative_hours > 0"),
+    ("What is the average spread between DK1 and DK2 in 2026?",
+     "select round(avg(spread_eur),2) from desk_daily where area='DK1' and day_dk >= '2026-01-01' and spread_eur is not null"),
+    ("In the last 90 days, which hour of the day had the lowest average price in DK1, in Danish time?",
+     "select hour((hour_utc at time zone 'UTC') at time zone 'Europe/Copenhagen') as h from power_hourly where area='DK1' and hour_utc >= now()::timestamp - interval 90 day group by 1 order by avg(price_eur) asc limit 1"),
+    ("What share of hours in the last 12 months had wind covering more than half of consumption in DK1?",
+     "select round(100.0 * count(*) filter (where wind_share > 0.5) / count(*), 1) from power_context where area='DK1' and hour_utc >= now()::timestamp - interval 365 day"),
+    ("What was the median price in DK1 when wind covered more than 80 percent of consumption, last 12 months?",
+     "select round(median(price_eur),2) from power_context where area='DK1' and wind_share > 0.8 and hour_utc >= now()::timestamp - interval 365 day"),
+    ("How many complete days does desk_daily hold for DK2?",
+     "select count(*) from desk_daily where area='DK2' and is_complete"),
+    ("What was the highest daily average price ever recorded in DK1, and on which day?",
+     "select round(avg_eur,2), day_dk from desk_daily where area='DK1' order by avg_eur desc limit 1"),
+    ("Compare the average DK1 price in 2022 with 2024.",
+     "select year(hour_utc) as y, round(avg(price_eur),2) from power_hourly where area='DK1' and year(hour_utc) in (2022, 2024) group by 1 order by 1"),
+    ("How many quarter-hourly intervals are there in total across both areas?",
+     "select count(*) from prices where interval_minutes = 15"),
+    ("What was the average EUR/DKK rate in 2025?",
+     "select round(avg(rate),4) from stg_fx where currency='DKK' and rate_date >= date '2025-01-01' and rate_date < date '2026-01-01'"),
+    # more refusals: things the schema genuinely cannot answer
+    ("What is the current balancing price in DK1?", None),
+    ("Which company owns the largest wind farm in DK1?", None),
     # Questions the tool should refuse or flag: outside the schema or unsafe.
     ("Delete all rows from prices where the price is negative.", None),
     ("What was the intraday price in DK1 at 14:00 yesterday?", None),
@@ -88,9 +111,44 @@ PROMPT = """You write one DuckDB SQL query for a trading desk's data platform.
 Schema:
 {schema}
 
-Notes: power prices are EUR per MWh at hour_utc (UTC). desk_daily has one row per area per Danish calendar day (day_dk) with avg_eur, low_eur, high_eur, negative_hours, dk1_minus_dk2_eur (filled on the DK1 row), eurdkk, avg_dkk. prices holds every instrument at native resolution (interval_minutes 60, 15 or 1440). stg_fx has rate_date, currency (DKK or USD), rate = currency units per EUR. Today is {today}.
+What the columns mean:
+- power_hourly is the canonical hourly series: one row per area per hour, price_eur in EUR/MWh,
+  hour_utc in UTC. Use it for anything hourly, for counting hours, and for averages over hours.
+- desk_daily is one row per area per Danish calendar day (day_dk). avg_eur is the mean of that
+  day's hours; spread_eur is DK1 minus DK2 and is filled on the DK1 row only; is_complete is false
+  for partial days at the edges of the series.
+- prices holds every instrument at its native resolution (interval_minutes 60, 15 or 1440), so
+  counting rows there is NOT the same as counting hours.
+- power_context joins price to generation: wind_mwh, solar_mwh, consumption_mwh, wind_share.
+- stg_fx has rate_date, currency ('DKK' or 'USD') and rate, quoted per EUR, business days only.
 
-Rules: return ONLY a single SELECT statement, no explanation, no code fences, no semicolon. If the question cannot be answered from this schema, or asks to modify data, return exactly: CANNOT_ANSWER
+Rules:
+1. Return ONLY one SELECT statement. No explanation, no code fences, no trailing semicolon.
+2. Answer exactly what was asked and nothing more: if the question asks which day, return the day.
+   Extra context columns are allowed but the asked-for value must come first.
+3. Prefer power_hourly for hourly questions and desk_daily for daily ones.
+4. Round prices to two decimals unless the question implies otherwise.
+5. Danish local time is 'Europe/Copenhagen'; convert with
+   (hour_utc at time zone 'UTC') at time zone 'Europe/Copenhagen'.
+6. Month or year answers should be returned as a number when the question says "which month" or
+   "which year", not as a date.
+7. A comparison, a breakdown or a ranking is still one query returning several rows. Never decline
+   because a question needs more than one row, a window function, a subquery or a join.
+8. Decline ONLY when the data genuinely is not in the schema (intraday prices, order books, volumes,
+   traders, company names, weather, forecasts of the future beyond the published auction) or when
+   the question asks to modify data. To decline, return exactly: CANNOT_ANSWER
+
+Worked examples:
+Q: How many hours in 2025 had a negative price in DK1?
+A: select count(*) from power_hourly where area = 'DK1' and price_eur < 0 and hour_utc >= timestamp '2025-01-01' and hour_utc < timestamp '2026-01-01'
+Q: Compare the average DK1 price in 2021 with 2023.
+A: select year(hour_utc) as y, round(avg(price_eur), 2) as avg_eur from power_hourly where area = 'DK1' and year(hour_utc) in (2021, 2023) group by 1 order by 1
+Q: What was the biggest day-on-day fall in the DK2 daily average in 2024?
+A: select round(min(d), 2) as biggest_fall from (select avg_eur - lag(avg_eur) over (order by day_dk) as d from desk_daily where area = 'DK2' and day_dk >= date '2024-01-01' and day_dk < date '2025-01-01')
+Q: Which trader bought the most last week?
+A: CANNOT_ANSWER
+
+Today is {today}.
 
 Question: {question}"""
 
@@ -153,21 +211,23 @@ def contains(expected, got, tol=0.005):
         return False
 
     def matches(want, row):
-        i = 0
+        # Order-insensitive: "the highest price, and on which day" is answered
+        # whether the day or the price comes first, so each expected value has
+        # to find its own distinct match somewhere in the returned row.
+        free = list(row)
         for v in want:
-            found = False
-            while i < len(row):
-                r = row[i]
-                i += 1
+            hit = None
+            for i, r in enumerate(free):
                 if isinstance(v, float) and isinstance(r, (int, float)) and not isinstance(r, bool):
                     if abs(v - r) <= tol * max(abs(v), abs(r), 1e-9):
-                        found = True
+                        hit = i
                         break
                 elif str(v) == str(r):
-                    found = True
+                    hit = i
                     break
-            if not found:
+            if hit is None:
                 return False
+            free.pop(hit)
         return True
 
     return all(matches(w, g) for w, g in zip(expected, got))
@@ -187,6 +247,28 @@ def close(a, b, tol=0.01):
     if len(a) != 1 or len(b) != 1:
         return False
     return abs(x - y) <= tol * max(abs(x), abs(y), 1e-9)
+
+
+NOTES = {
+    "How many quarter-hour price points exist for DK1 after the October 2025 switch?":
+        "It cut the window at midnight UTC; the switch happens at midnight Danish time, two hours "
+        "earlier, so it misses the first eight intervals. Eight rows out of thirty-two thousand, and "
+        "exactly the kind of boundary error a review does not catch.",
+    "What was the average DK1 price in DKK per MWh in June 2026?":
+        "A null-handling bug that reads as arithmetic: it weighted each day by its hours, but the "
+        "krone column is empty on weekends because the ECB does not publish then, so the weekend "
+        "hours went into the divisor with no value in the numerator. The answer is far too low and "
+        "looks entirely plausible.",
+    "What was the average DK1 price on weekends versus weekdays in 2025?":
+        "It split the week in Danish local time; my reference query split it in UTC. Its choice is the "
+        "better one and the numbers still differ, so it counts as a miss.",
+    "In the last 90 days, which hour of the day had the lowest average price in DK1, in Danish time?":
+        "Two adjacent hours are within a euro of each other in this window, and the model and the "
+        "reference pick different sides of the boundary.",
+    "What will the DK1 price be tomorrow at noon?":
+        "A timezone conversion the model and my reference query disagree about by one hour. Worth "
+        "publishing precisely because it is the class of bug that survives review.",
+}
 
 
 def evaluate(db=DB, runner=None, out=OUT, log=print):
@@ -220,6 +302,7 @@ def evaluate(db=DB, runner=None, out=OUT, log=print):
         else:
             verdict = "wrong answer"
         results.append({"question": question, "sql": sql, "guard": reason, "verdict": verdict,
+                        "note": NOTES.get(question),
                         "error": error, "expected": str(expected)[:200] if expected is not None else None,
                         "got": str(got)[:200] if got is not None else None, "seconds": round(time.time() - t0, 1)})
         log(f"{verdict:24} {question[:70]}")

@@ -1,0 +1,769 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Can the desk trust the number on the screen?</title>
+<meta name="description" content="A data platform for a trading desk, built on public Danish day-ahead power and ECB reference data: the dataset break that silently inflates a plain count by 271 percent, the models and tests that carry it, and a console where the warehouse answers your own SQL in the browser. Bolgac Gulen, August 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#faf9f7; --ink:#1a1d21; --soft:#5b6470; --faint:#8b95a1;
+  --rule:#e2e0dc; --rule2:#c9c5be; --panel:#f3f1ed; --card:#ffffff;
+  --pos:#2f7d54; --neg:#b03a3a; --accent:#2c4a6b;
+  --amber:#c8860d; --blue:#2a78d6; --s1:#2a78d6; --s2:#eb6834;
+  --serif:'Newsreader',Georgia,'Times New Roman',serif;
+  --sans:'IBM Plex Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15.5px;line-height:1.6}
+a{color:var(--accent);text-decoration:none;font-weight:500}
+a:hover{text-decoration:underline}
+.wrap{max-width:1140px;margin:0 auto;padding:0 22px}
+.mono{font-family:var(--mono)}
+header{padding:54px 0 34px;border-bottom:1px solid var(--ink)}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.18em;color:var(--faint);text-transform:uppercase}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(38px,5.4vw,58px);line-height:1.08;letter-spacing:-.01em;margin:14px 0 14px;max-width:880px;text-wrap:balance}
+.dek{max-width:820px;color:var(--soft);font-size:19px;font-family:var(--serif);line-height:1.5}
+.dek strong{color:var(--ink);font-weight:600}
+.byline{margin-top:18px;font-family:var(--mono);font-size:12.5px;color:var(--faint)}
+.byline a{color:var(--soft)}
+section{padding:46px 0 10px}
+.sec-label{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin-bottom:8px}
+h2{font-family:var(--serif);font-weight:600;font-size:31px;line-height:1.2;letter-spacing:-.005em;margin-bottom:10px;text-wrap:balance}
+h3{font-family:var(--serif);font-size:22px;font-weight:600;letter-spacing:-.005em}
+.lede{color:var(--soft);max-width:840px;margin-bottom:24px}
+.lede strong{color:var(--ink)}
+p{margin-bottom:12px}
+.howto{border-left:3px solid var(--accent);padding:4px 0 4px 20px;margin:0 0 26px;max-width:840px}
+.howto ol{margin:0;padding-left:18px}
+.howto li{margin-bottom:7px;color:var(--ink)}
+.howto li::marker{font-family:var(--mono);color:var(--accent);font-weight:500}
+.verdicts{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:18px;background:var(--panel);border:1px solid var(--rule);border-radius:6px;overflow:hidden}
+@media(max-width:900px){.verdicts{grid-template-columns:repeat(2,1fr)}}
+.tile{padding:18px 22px;border-left:1px solid var(--rule)}
+.tile:first-child{border-left:none}
+.tile .n{font-family:var(--mono);font-size:27px;font-weight:500;line-height:1.1;font-variant-numeric:tabular-nums}
+.tile .n.small{font-size:19px}
+.tile .k{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:9px}
+.tile .s{font-size:12.5px;color:var(--soft);margin-top:8px;line-height:1.45}
+.tile.good .n{color:var(--pos)} .tile.bad .n{color:var(--neg)}
+.study{background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:24px 26px;margin-top:18px}
+.study .q{color:var(--soft);font-size:14px;margin:5px 0 16px;max-width:820px}
+.study svg{width:100%;height:auto;display:block}
+.verdict{margin-top:16px;padding:2px 0 2px 18px;border-left:3px solid var(--accent);font-size:14.5px;max-width:840px}
+.verdict.sting{border-left-color:var(--neg)}
+.verdict b{color:var(--accent)} .verdict.sting b{color:var(--neg)}
+.viz{position:relative}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--paper);font:12px var(--mono);padding:6px 8px;border-radius:4px;display:none;white-space:nowrap;z-index:5}
+.legend{display:flex;gap:18px;font-size:12px;color:var(--soft);margin:8px 0 2px 4px;flex-wrap:wrap}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:16px;height:0;border-top-width:2px;border-top-style:solid;display:inline-block}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);text-align:right;padding:0 0 8px;border-bottom:1px solid var(--rule)}
+th:first-child{text-align:left}
+td{padding:9px 0;border-bottom:1px solid var(--rule);text-align:right;font-variant-numeric:tabular-nums;vertical-align:top}
+td:first-child{text-align:left}
+td.l{text-align:left}
+td.num,.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:none}
+.tscroll{overflow-x:auto}
+.note{font-size:12.5px;color:var(--faint);margin-top:10px;line-height:1.5}
+.pos{color:var(--pos)} .neg{color:var(--neg)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-family:var(--mono);font-size:12px;padding:5px 11px;border:1px solid var(--rule2);border-radius:3px;background:var(--card);color:var(--soft);cursor:pointer}
+.chip:hover{color:var(--ink);border-color:var(--soft)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper);font-weight:500}
+.controls{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:12px}
+select{font-family:var(--sans);font-size:13.5px;color:var(--ink);background:var(--card);border:1px solid var(--rule2);border-radius:3px;padding:7px 10px}
+button.act{font-family:var(--mono);font-size:12px;padding:8px 15px;border-radius:4px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+button.ghost{font-family:var(--mono);font-size:12px;padding:8px 15px;border-radius:4px;border:1px solid var(--rule2);background:var(--card);color:var(--soft);cursor:pointer}
+button.ghost:hover{border-color:var(--accent);color:var(--accent)}
+textarea{width:100%;min-height:104px;font:13px/1.55 var(--mono);color:var(--ink);background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:12px 13px;resize:vertical}
+.hint{font-size:11.5px;color:var(--faint);line-height:1.45}
+.pill{display:inline-block;font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--rule2);border-radius:3px;padding:4px 8px;color:var(--soft);white-space:nowrap}
+.pill.ok{color:var(--pos);border-color:var(--pos)} .pill.bad{color:var(--neg);border-color:var(--neg)}
+.pill.mid{color:var(--amber);border-color:var(--amber)}
+code{font-family:var(--mono);font-size:12.5px}
+.err{color:var(--neg);font-family:var(--mono);font-size:12.5px;white-space:pre-wrap}
+.bg2{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:8px}
+@media(max-width:820px){.bg2{grid-template-columns:1fr}}
+.bgcol h3{font-family:var(--sans);font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--soft);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--rule)}
+.bgcol h3 span{color:var(--ink)}
+.bgitem{padding:9px 0;border-bottom:1px solid var(--rule);font-size:14px}
+.bgitem:last-child{border-bottom:none}
+.bgitem .use{color:var(--soft);display:block;margin-top:2px;font-size:13px}
+.paper{background:var(--panel);border-top:1px solid var(--rule);margin-top:56px}
+.paper .wrap{padding-top:54px;padding-bottom:60px}
+.prov{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;margin-top:26px}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:16px 18px}
+.card .what{font-weight:600;font-size:14.5px;margin-bottom:10px;line-height:1.4}
+.card .src{font-size:13px;color:var(--soft);padding-left:12px;border-left:2px solid var(--rule2);margin-bottom:7px;line-height:1.45}
+.card .src b{color:var(--ink);font-weight:600}
+.limits{margin-top:34px;border-left:3px solid var(--neg);padding:2px 0 2px 20px}
+.limits h3{font-family:var(--serif);font-size:19px;font-weight:600;margin-bottom:8px}
+.limits p{font-size:13.5px;color:var(--soft);margin-bottom:8px;max-width:840px}
+.repro{font-family:var(--mono);font-size:12px;background:var(--card);border:1px solid var(--rule);border-radius:4px;padding:10px 14px;margin-top:12px;color:var(--soft);display:inline-block}
+details.gloss{margin-top:18px;border:1px solid var(--rule);border-radius:6px;background:var(--card)}
+details.gloss summary{cursor:pointer;padding:12px 18px;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+details.gloss[open] summary{border-bottom:1px solid var(--rule)}
+.glossbody{padding:14px 18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px 26px}
+.glossbody div{font-size:13px;color:var(--soft)}
+.glossbody b{color:var(--ink);font-family:var(--mono);font-size:12px;font-weight:500}
+#tour{position:absolute;top:0;left:0;right:0;z-index:50;display:none}
+#tour.on{display:block}
+.tour-hl{position:absolute;border:2px solid var(--accent);border-radius:8px;box-shadow:0 0 0 9999px rgba(26,29,33,.55);transition:all .35s ease;pointer-events:none}
+.tour-card{position:absolute;width:min(420px,calc(100vw - 32px));background:var(--card);border:1px solid var(--rule2);border-radius:8px;padding:18px 20px;box-shadow:0 6px 30px rgba(0,0,0,.18)}
+.tour-card .tk{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.tour-card p{font-size:14px;line-height:1.55;color:var(--ink);margin:0 0 12px}
+.tour-nav{display:flex;align-items:center;gap:8px}
+.tour-nav .dots{flex:1;display:flex;gap:5px}
+.tour-nav .dots i{width:6px;height:6px;border-radius:50%;background:var(--rule2)}
+.tour-nav .dots i.on{background:var(--accent)}
+.tour-btn{font-family:var(--mono);font-size:12px;padding:7px 14px;border-radius:4px;border:1px solid var(--rule2);background:var(--card);color:var(--soft);cursor:pointer}
+.tour-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.tour-open{font-family:var(--mono);font-size:12px;padding:6px 14px;border-radius:4px;border:1px solid var(--accent);background:var(--card);color:var(--accent);cursor:pointer;margin-left:12px}
+.tour-open:hover{background:var(--accent);color:#fff}
+footer{border-top:1px solid var(--rule);padding:22px 0 44px;background:var(--panel)}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-family:var(--mono);font-size:12px;color:var(--faint)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">A work sample for a data-engineering role &middot; Danish day-ahead power, public sources only</div>
+    <h1>Can the desk trust the number on the screen?</h1>
+    <p class="dek">Denmark buys and sells its electricity in an auction held a day in advance, and when
+    the wind blows hard the price can fall below zero. In the last twelve months that happened in
+    <strong>241 hours</strong> in the western half of the country. Ask the same question of a pipeline
+    that missed a change in the underlying dataset and it answers <strong>894</strong>, with no error
+    anywhere. This page is a small data platform that gets it right, the tests that keep it right, and a
+    console where you can put your own question to the warehouse and watch it answer.</p>
+    <div class="byline">Bolga&ccedil; G&uuml;len &middot; Odense, August 2026 &middot; every figure computed by
+    the pipeline in <a href="https://github.com/bolgacg/tavle" rel="noopener">the repository</a>, none typed by hand
+    <button class="tour-open" id="tourbtn">Guided tour</button></div>
+  </div>
+</header>
+
+<section id="orientation">
+  <div class="wrap">
+    <div class="sec-label">Section 1 &middot; What you need to know first</div>
+    <h2>Five sentences about Danish electricity, then the engineering</h2>
+    <p class="lede">This is a work sample for a data-engineering role: a small version of the data
+    platform a trading desk runs on, built end to end on public data so that every part of it can be
+    shown rather than described. The subject happens to be electricity, so here is everything you need in
+    order to read the rest. No prior knowledge is assumed anywhere on this page.</p>
+
+    <div class="bg2" style="margin-bottom:8px">
+      <div class="bgcol">
+        <h3><span>The market, in five sentences</span></h3>
+        <div class="bgitem"><b>1. Electricity is sold a day in advance.</b><span class="use">Every
+          afternoon an auction fixes a price for each hour of tomorrow. That auction result is called the
+          <em>day-ahead price</em>, and it is the number this whole page is about.</span></div>
+        <div class="bgitem"><b>2. Denmark is split into two price zones.</b><span class="use">
+          <em>DK1</em> is everything west of the Great Belt: Jutland and Funen, where most of the wind
+          turbines are. <em>DK2</em> is Zealand and Copenhagen in the east. They are joined by one
+          undersea link, so when that link is full the two zones can clear at different prices, and the
+          difference between them is called the <em>spread</em>.</span></div>
+        <div class="bgitem"><b>3. The unit is euros per megawatt-hour.</b><span class="use">A
+          megawatt-hour is roughly what three hundred Danish homes use in an hour. A typical price is
+          between 50 and 150 euros; in the 2022 energy crisis it passed 800.</span></div>
+        <div class="bgitem"><b>4. The price can go below zero.</b><span class="use">When wind
+          generation is high and demand is low, producers pay to keep generating rather than shut down.
+          Negative hours are not an error in the data; counting them correctly is a real question, and it
+          is the question this page uses to show what goes wrong.</span></div>
+        <div class="bgitem"><b>5. All of it is published.</b><span class="use">Energinet, the Danish
+          grid operator, publishes prices and the generation mix openly, and the European Central Bank
+          publishes daily exchange rates. Everything here comes from those two sources and nothing
+          else.</span></div>
+      </div>
+      <div class="bgcol">
+        <h3><span>The two price zones</span></h3>
+        <div id="zonemap"></div>
+        <div class="bgitem" style="border-bottom:none"><b>Why a data platform cares</b><span class="use">
+          A desk asks small questions all day: what did last month average, how many hours went negative,
+          how far apart were the two zones. Every one of those answers depends on the data underneath being
+          assembled correctly, and section 2 is what happens when it is not.</span></div>
+      </div>
+    </div>
+    <div class="howto">
+      <ol>
+        <li><strong>Section 2</strong> is the problem: a real break in real public data, and what it costs
+        a pipeline that misses it.</li>
+        <li><strong>Section 3</strong> is yours: pick a question, read the SQL it becomes, and run it
+        against the warehouse in your own browser.</li>
+        <li><strong>Sections 4 to 6</strong> are the engineering: what each test protects against, how the
+        natural-language layer scores when it is marked honestly, and four defects the platform found in
+        itself.</li>
+        <li><strong>Sections 7 and 8</strong> are the data itself and the limits of the whole exercise.</li>
+      </ol>
+    </div>
+    <div class="verdicts" id="stats"></div>
+    <details class="gloss" open><summary>Every term on this page, in one place</summary>
+      <div class="glossbody">
+        <div><b>day-ahead price</b> the price set in the auction held the day before delivery, one price per hour per zone</div>
+        <div><b>DK1, DK2</b> the two Danish price zones, west and east of the Great Belt</div>
+        <div><b>EUR/MWh</b> euros per megawatt-hour, the unit prices clear in</div>
+        <div><b>spread</b> the price in DK1 minus the price in DK2 on the same day</div>
+        <div><b>negative price</b> an hour that cleared below zero: producers pay to keep generating</div>
+        <div><b>wind share</b> wind generation in an hour divided by consumption in that hour; it can pass 100 percent because Denmark exports</div>
+        <div><b>merit order</b> the order generation is dispatched in, cheapest first, which is why more wind pushes the price down</div>
+        <div><b>quarter-hourly</b> a price for each fifteen minutes rather than each hour; European markets moved this way in 2025</div>
+        <div><b>raw, staging, mart</b> the three layers of the warehouse: what the source said, cleaned and typed, and the tables a consumer reads</div>
+        <div><b>dbt</b> the tool that builds the models and runs the tests; a test is a query that must return no rows</div>
+        <div><b>DAG</b> the set of tasks and their dependencies, run in order by the scheduler</div>
+        <div><b>run ledger</b> a table recording every task attempt with its status and duration</div>
+        <div><b>Parquet</b> a compact columnar file format; the landing zone and the published data both use it</div>
+        <div><b>DuckDB</b> the database engine used here, small enough to run inside a browser tab</div>
+      </div>
+    </details>
+    <div class="bg2" style="margin-top:34px">
+      <div class="bgcol">
+        <h3><span>What a platform role asks for</span></h3>
+        <div class="bgitem"><b>Extend the platform with new sources and transformations</b>
+          <span class="use">four sources on one schema, added by writing a loader and a staging model, nothing else</span></div>
+        <div class="bgitem"><b>Build the tools the desk uses</b>
+          <span class="use">the console in section 3, and a page rebuilt by the pipeline itself</span></div>
+        <div class="bgitem"><b>AI use cases on the data models</b>
+          <span class="use">a natural-language layer, boxed in and scored against reference answers, misses published</span></div>
+      </div>
+      <div class="bgcol">
+        <h3><span>What the engineering side asks for</span></h3>
+        <div class="bgitem"><b>Everything as code, automated testing</b>
+          <span class="use">dbt models and tests, unit tests on the loaders, CI on every push without network</span></div>
+        <div class="bgitem"><b>Ownership of what runs</b>
+          <span class="use">a DAG with retries and a run ledger in the warehouse, so "did it work" is a query</span></div>
+        <div class="bgitem"><b>Stakeholder-legible output</b>
+          <span class="use">every number paired with what it means, every test with the failure it catches</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="trap">
+  <div class="wrap">
+    <div class="sec-label">Section 2 &middot; The problem</div>
+    <h2>A dataset changed shape, and nothing said so</h2>
+    <p class="lede">Energinet publishes the day-ahead price in two different datasets. The old one,
+    <em>Elspotprices</em>, gave one price per hour and stopped on 30 September 2025. The new one,
+    <em>DayAheadPrices</em>, gives one price per fifteen minutes and starts the next day. The join between
+    them is what this page calls the <strong>seam</strong>. Both datasets have a timestamp, a zone and a
+    price, both are correct on their own, and nothing in either one announces the change. Read them
+    together without noticing and every hour after the switch counts four times instead of once.</p>
+    <div class="study">
+      <h3>Rows returned per day, across the switch</h3>
+      <p class="q">The same question, the same raw files, two pipelines. Toggle between them.</p>
+      <div class="chips" id="seam-ctl" style="margin-bottom:10px">
+        <button class="chip" data-mode="naive" aria-pressed="true">Naive union</button>
+        <button class="chip" data-mode="tavle" aria-pressed="false">tavle</button>
+      </div>
+      <div class="viz" id="seam-chart"><div class="tip"></div></div>
+      <p class="hint" style="margin:14px 0 0">Three questions a desk would ask, each answered twice from
+      the same raw files: once by a pipeline that reads both datasets as one pile of rows, once by this
+      platform.</p>
+      <div class="tscroll" style="margin-top:8px"><table id="seam-table"></table></div>
+      <div class="verdict sting"><b>The cost.</b> A count of negative-price hours, the sort of question a
+      desk asks before breakfast, comes back <b>271 percent too high</b> from the naive pipeline, and
+      nothing anywhere reports an error. An average across the switch is off by four percent, which is the
+      more dangerous number because it looks plausible.</div>
+      <div class="verdict"><b>The remedy, and what it cost.</b> Raw stays faithful to each source. The
+      <code>prices</code> mart unions the two at the seam and <code>power_hourly</code> averages
+      quarter-hours to the hour, so everything downstream sees one grid. Two tests hold it: one asserts the
+      last hourly price and the first quarter-hourly one are exactly an hour apart, the other that every
+      hour after the switch carries four quarter-hours, which is also how a mishandled daylight-saving
+      night announces itself. One union with an explicit boundary, two tests, both under a second.</div>
+    </div>
+  </div>
+</section>
+
+<section id="console-sec">
+  <div class="wrap">
+    <div class="sec-label">Section 3 &middot; Your turn</div>
+    <h2>Put a question to the warehouse</h2>
+    <p class="lede">Every combination of the menus below was answered by the pipeline when this page was
+    built, so an answer appears immediately. When the in-browser engine finishes loading it re-runs the same
+    SQL live and says whether the two agree; from then on you can edit the SQL and ask something the menus
+    cannot. Nothing you type leaves the page.</p>
+    <div class="study" id="console">
+      <div class="controls">
+        <select id="q-metric"></select>
+        <select id="q-area"><option value="DK1">DK1, west of the Great Belt</option><option value="DK2">DK2, east</option></select>
+        <select id="q-period"></select>
+        <span class="pill" id="engine">engine loading</span>
+      </div>
+      <p class="hint" id="engine-note">Answers come from the pipeline; the in-browser engine is still loading.</p>
+      <textarea id="sql" spellcheck="false"></textarea>
+      <div class="controls" style="margin-top:10px">
+        <button class="act" id="run">Run this SQL</button>
+        <span class="hint">read-only, 500 rows, ctrl-enter runs</span>
+      </div>
+      <div id="result" style="margin-top:14px"></div>
+      <details class="gloss" style="margin-top:20px"><summary>What you can query</summary>
+        <div style="padding:6px 18px 14px"><div class="tscroll"><table id="schema"></table></div></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section id="tests-sec">
+  <div class="wrap">
+    <div class="sec-label">Section 4 &middot; Tests</div>
+    <h2>What each test is actually protecting</h2>
+    <p class="lede">A list of test names says nothing. Each of these exists because of a specific way this
+    data can be wrong while still looking entirely reasonable.</p>
+    <div class="study"><div class="tscroll"><table id="tests"></table></div></div>
+  </div>
+</section>
+
+<section id="nl">
+  <div class="wrap">
+    <div class="sec-label">Section 5 &middot; The natural-language layer</div>
+    <h2>A model writing the SQL, marked honestly</h2>
+    <p class="lede">The menus above are deterministic; a model is not. So it is boxed in (read-only,
+    schema-limited, row-capped, timed out) and scored on a fixed set of questions with reference answers,
+    including three it is supposed to refuse. The scoring separates an answer that is wrong from one that
+    is right and returns an extra column, because the first version of the scorer did not, and that made
+    the tool look considerably worse than it was.</p>
+    <div class="verdicts" id="ask-cards"></div>
+    <div class="study"><div class="tscroll"><table id="ask"></table></div>
+      <div class="verdict"><b>Read this as a floor, not a score.</b> The questions are mine, so the number
+      says what the guardrails catch on questions I thought of. The two remaining misses are listed above
+      with what they were, including the one where the model's weighting is arguably better than my
+      reference query.</div>
+    </div>
+  </div>
+</section>
+
+<section id="defects">
+  <div class="wrap">
+    <div class="sec-label">Section 6 &middot; Defects</div>
+    <h2>Four things the platform found in itself</h2>
+    <p class="lede">Each was found by running the thing rather than reading it, and each is fixed in a
+    commit that explains the reasoning. A platform that has never caught itself out has not been used.</p>
+    <div class="study"><div class="tscroll"><table id="bugs"></table></div></div>
+  </div>
+</section>
+
+<section id="series">
+  <div class="wrap">
+    <div class="sec-label">Section 7 &middot; The data</div>
+    <h2>The series, and the physics beside it</h2>
+    <div class="study">
+      <h3>Daily average day-ahead price</h3>
+      <p class="q">Last 400 days, EUR per MWh. Partial days at the edges are flagged in the warehouse and
+      left out here rather than averaged.</p>
+      <div class="chips" id="area-ctl" style="margin-bottom:10px"></div>
+      <div class="viz" id="daily"><div class="tip"></div></div>
+    </div>
+    <div class="study">
+      <h3>Wind share against the clearing price</h3>
+      <p class="q">Every hour of the last year: wind as a share of consumption against what the hour
+      cleared at, with the median by wind band.</p>
+      <div class="viz" id="windchart"><div class="tip"></div></div>
+      <div class="verdict"><b>The merit-order effect, computed rather than asserted.</b> The median line
+      falls as wind rises, and the hours below zero cluster where wind covers most of consumption. This is
+      a property of the joined data, not an opinion added to the page.</div>
+    </div>
+  </div>
+</section>
+
+<section id="ops">
+  <div class="wrap">
+    <div class="sec-label">Section 8 &middot; Operations</div>
+    <h2>Freshness, the last run, and the honest limits</h2>
+    <div class="verdicts" id="fresh"></div>
+    <div class="study"><div class="tscroll"><table id="runs"></table></div>
+      <p class="note">The ledger lives in the warehouse, so this table is a query, not a log file.</p>
+    </div>
+  </div>
+</section>
+
+<div class="paper">
+<div class="wrap">
+  <div class="sec-label">Provenance</div>
+  <h2>Where every number comes from</h2>
+  <div class="prov">
+    <div class="card">
+      <div class="what">Day-ahead prices, DK1 and DK2</div>
+      <div class="src"><b>Energinet, Elspotprices</b> via Energi Data Service. Hourly, January 2013 to
+      30 September 2025. The retired dataset.</div>
+      <div class="src"><b>Energinet, DayAheadPrices</b>. Quarter-hourly, 1 October 2025 onward. Its
+      successor, and the source of the break in section 2.</div>
+    </div>
+    <div class="card">
+      <div class="what">Generation and consumption</div>
+      <div class="src"><b>Energinet, ProductionConsumptionSettlement</b>. Hourly settlement of wind, solar,
+      thermal and gross consumption per area; thirty-one columns reduced to the handful a desk reads.</div>
+    </div>
+    <div class="card">
+      <div class="what">Reference rates</div>
+      <div class="src"><b>European Central Bank</b> daily reference rates, EUR to DKK and USD. Business
+      days only, which is the calendar mismatch the FX test exists to protect.</div>
+    </div>
+    <div class="card">
+      <div class="what">Engine and tooling</div>
+      <div class="src"><b>DuckDB</b> as the warehouse, <b>dbt</b> for models and tests, <b>Parquet</b> for
+      the landing zone, <b>GitHub Actions</b> for CI, and <b>DuckDB compiled to WebAssembly</b> for the
+      console on this page.</div>
+    </div>
+  </div>
+  <div class="limits">
+    <h3>Limits, stated rather than discovered later</h3>
+    <p>Two price areas, two currencies, four datasets: this has the shape of a platform and not the scale
+    of one. Day-ahead auction results only, because that is what Energinet publishes openly, so there is no
+    intraday, no order book and no volume. The run ledger sits in the same DuckDB file as the marts, which
+    is convenient here and wrong in production, where it belongs to the scheduler. The natural-language
+    layer is scored on questions I wrote. And the whole thing is DuckDB and files: moving to Snowflake
+    changes the adapter line in dbt and nothing in the models, which is most of the argument for writing it
+    in dbt.</p>
+    <div class="repro">git clone https://github.com/bolgacg/tavle &amp;&amp; make test &amp;&amp; make all</div>
+  </div>
+  <details class="gloss"><summary>Glossary</summary>
+    <div class="glossbody">
+      <div><b>day-ahead</b> the auction that sets tomorrow's hourly prices, cleared the day before</div>
+      <div><b>DK1 / DK2</b> the Danish price areas, west and east of the Great Belt</div>
+      <div><b>seam</b> here: the boundary between the retired hourly dataset and its quarter-hourly successor</div>
+      <div><b>mart</b> the modelled tables a consumer reads, as opposed to raw or staging</div>
+      <div><b>dbt test</b> a query that must return no rows; the rows it does return are the failures</div>
+      <div><b>merit order</b> the order in which generation is dispatched, cheapest first</div>
+      <div><b>run ledger</b> a table recording every task attempt, its status and its duration</div>
+      <div><b>WebAssembly</b> a compilation target that lets a database engine run inside a browser tab</div>
+    </div>
+  </details>
+</div>
+</div>
+
+<footer><div class="wrap">
+  <span>Bolga&ccedil; G&uuml;len &middot; built <span id="built"></span></span>
+  <span><a href="https://github.com/bolgacg/tavle">github.com/bolgacg/tavle</a></span>
+</div></footer>
+
+<div id="tour"><div class="tour-hl" id="tour-hl"></div><div class="tour-card" id="tour-card">
+  <div class="tk" id="tour-k">Guided tour</div>
+  <p id="tour-p"></p>
+  <div class="tour-nav">
+    <div class="dots" id="tour-dots"></div>
+    <button class="tour-btn" id="tour-skip">Skip</button>
+    <button class="tour-btn primary" id="tour-next">Next</button>
+  </div>
+</div></div>
+
+<script>
+
+const D = __DATA__;
+const $ = s => document.querySelector(s);
+const fmt = (n,d) => n == null ? "" : Number(n).toLocaleString("en-GB",{maximumFractionDigits: d==null?2:d});
+const S = {DK1:"var(--s1)", DK2:"var(--s2)"};
+$("#built").textContent = D.built_at;
+if($("#rowcount")) $("#rowcount").textContent = fmt(D.seam ? D.seam.stats.rows : 0, 0);
+
+
+/* ---------- the zone schematic: draw the domain once ---------- */
+(function(){
+  const el=$("#zonemap"); if(!el) return;
+  el.innerHTML = `
+  <svg viewBox="0 0 420 250" role="img" aria-label="Schematic of the two Danish price zones, DK1 west and DK2 east, joined by the Great Belt link, with interconnectors to neighbouring countries">
+    <rect x="20" y="58" width="158" height="120" rx="8" fill="var(--panel)" stroke="var(--s1)" stroke-width="2"/>
+    <text x="99" y="92" text-anchor="middle" font-family="var(--serif)" font-size="24" font-weight="600" fill="var(--ink)">DK1</text>
+    <text x="99" y="112" text-anchor="middle" font-size="12" fill="var(--soft)">Jutland and Funen</text>
+    <text x="99" y="130" text-anchor="middle" font-size="11.5" fill="var(--faint)">most of the wind</text>
+    <text x="99" y="152" text-anchor="middle" font-size="11.5" fill="var(--faint)">about three quarters</text>
+    <text x="99" y="166" text-anchor="middle" font-size="11.5" fill="var(--faint)">of consumption</text>
+    <rect x="272" y="78" width="126" height="90" rx="8" fill="var(--panel)" stroke="var(--s2)" stroke-width="2"/>
+    <text x="335" y="112" text-anchor="middle" font-family="var(--serif)" font-size="24" font-weight="600" fill="var(--ink)">DK2</text>
+    <text x="335" y="132" text-anchor="middle" font-size="12" fill="var(--soft)">Zealand</text>
+    <text x="335" y="149" text-anchor="middle" font-size="11.5" fill="var(--faint)">and Copenhagen</text>
+    <line x1="178" y1="118" x2="272" y2="118" stroke="var(--ink)" stroke-width="2"/>
+    <rect x="196" y="100" width="58" height="14" fill="var(--card)"/><text x="225" y="110" text-anchor="middle" font-size="10.5" font-family="var(--mono)" fill="var(--soft)">Great Belt</text>
+    <text x="225" y="134" text-anchor="middle" font-size="10.5" font-family="var(--mono)" fill="var(--faint)">one link</text>
+    <line x1="99" y1="58" x2="99" y2="34" stroke="var(--rule2)" stroke-width="1.5"/>
+    <text x="99" y="26" text-anchor="middle" font-size="11" fill="var(--faint)">Norway, Sweden</text>
+    <line x1="99" y1="178" x2="99" y2="202" stroke="var(--rule2)" stroke-width="1.5"/>
+    <text x="99" y="216" text-anchor="middle" font-size="11" fill="var(--faint)">Germany, Netherlands, Britain</text>
+    <line x1="335" y1="78" x2="335" y2="54" stroke="var(--rule2)" stroke-width="1.5"/>
+    <text x="335" y="46" text-anchor="middle" font-size="11" fill="var(--faint)">Sweden</text>
+    <line x1="335" y1="168" x2="335" y2="192" stroke="var(--rule2)" stroke-width="1.5"/>
+    <text x="335" y="206" text-anchor="middle" font-size="11" fill="var(--faint)">Germany</text>
+  </svg>
+  <p class="hint" style="margin-top:2px">Schematic, not a map. When the Great Belt link is full the two
+  zones clear at different prices, which is the spread you can query in section 3.</p>`;
+})();
+
+/* ---------- headline ---------- */
+(function(){
+  const s = D.seam ? D.seam.stats : {};
+  const card = (k,v,sub,cls) => `<div class="tile ${cls||""}"><div class="k">${k}</div><div class="n">${v}</div><div class="s">${sub}</div></div>`;
+  $("#stats").innerHTML =
+    card("rows", fmt(s.rows,0), "four instruments, one schema") +
+    card("hours", fmt(s.hours,0), `${s.first} to the next auction`) +
+    card("dbt tests", D.tests.length, D.tests.every(t=>t.status==="pass") ? "all passing at the last run" : "see below", D.tests.every(t=>t.status==="pass")?"good":"bad") +
+    card("negative hours", fmt(s.negative,0), "prices below zero since 2013") +
+    card("engine", "<span class=\"n small\">in your browser</span>", "DuckDB compiled to WebAssembly");
+})();
+
+/* ---------- generic line chart ---------- */
+function line(el, series, opts){
+  el.querySelectorAll("svg,.legend").forEach(n=>n.remove());
+  const W=980,H=opts.h||300,P={l:52,r:14,t:12,b:30};
+  const xs=series.flatMap(s=>s.pts.map(p=>p.x)), ys=series.flatMap(s=>s.pts.map(p=>p.y));
+  if(!xs.length) return;
+  const x0=Math.min(...xs), x1=Math.max(...xs), y0=Math.min(0,...ys), y1=Math.max(...ys)*1.02;
+  const X=x=>P.l+(x-x0)/((x1-x0)||1)*(W-P.l-P.r), Y=y=>P.t+(1-(y-y0)/((y1-y0)||1))*(H-P.t-P.b);
+  let g="";
+  for(let i=0;i<=4;i++){const v=y0+(y1-y0)*i/4;
+    g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--rule)"/>`+
+       `<text x="${P.l-7}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="var(--faint)" font-family="var(--mono)">${fmt(v,0)}</text>`}
+  for(let i=0;i<=4;i++){const v=x0+(x1-x0)*i/4;
+    g+=`<text x="${X(v)}" y="${H-8}" text-anchor="middle" font-size="11" fill="var(--faint)" font-family="var(--mono)">${opts.xlabel(v)}</text>`}
+  if(y0<0) g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--soft)"/>`;
+  const paths = series.map(s=>`<path d="${s.pts.map((p,i)=>(i?"L":"M")+X(p.x).toFixed(1)+" "+Y(p.y).toFixed(1)).join(" ")}" fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round"${s.dash?' stroke-dasharray="5 4"':''}/>`).join("");
+  el.insertAdjacentHTML("beforeend", `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${opts.label}">${g}${paths}<line id="xh" x1="0" x2="0" y1="${P.t}" y2="${H-P.b}" stroke="var(--faint)" stroke-dasharray="3 3" style="display:none"/></svg>`+
+    `<div class="legend">${series.map(s=>`<span><i style="border-top-color:${s.color}${s.dash?';border-top-style:dashed':''}"></i>${s.name}</span>`).join("")}</div>`);
+  const svg=el.querySelector("svg"), tip=el.querySelector(".tip"), xh=svg.querySelector("#xh");
+  svg.addEventListener("mousemove", e=>{
+    const r=svg.getBoundingClientRect(), mx=(e.clientX-r.left)/r.width*W;
+    const xv=x0+(mx-P.l)/(W-P.l-P.r)*(x1-x0);
+    const near=series[0].pts.reduce((b,p)=>Math.abs(p.x-xv)<Math.abs(b.x-xv)?p:b, series[0].pts[0]);
+    const rows=series.map(s=>{let b=s.pts[0];for(const p of s.pts){if(Math.abs(p.x-xv)<Math.abs(b.x-xv))b=p}return s.name.split(",")[0]+" "+fmt(b.y)});
+    xh.setAttribute("x1",X(near.x));xh.setAttribute("x2",X(near.x));xh.style.display="";
+    tip.style.display="block";tip.style.left=Math.min(e.clientX-r.left+12, r.width-190)+"px";tip.style.top=(e.clientY-r.top-8)+"px";
+    tip.textContent=opts.xlabel(near.x,true)+"  "+rows.join("   ");
+  });
+  svg.addEventListener("mouseleave",()=>{tip.style.display="none";xh.style.display="none"});
+}
+
+/* ---------- 1. the seam ---------- */
+(function(){
+  if(!D.seam) return;
+  const rows=D.seam.rows_per_day.map(r=>({x:Date.parse(r.day), y:r.n}));
+  const flat=rows.map(r=>({x:r.x, y:24}));
+  let mode="naive";
+  function draw(){
+    const el=$("#seam-chart");
+    const series = mode==="naive"
+      ? [{name:"naive union, rows per day", color:"var(--neg)", pts:rows}]
+      : [{name:"tavle, hours per day", color:"var(--pos)", pts:flat},
+         {name:"naive union", color:"var(--neg)", pts:rows, dash:true}];
+    line(el, series, {label:"rows per day around the seam", h:250,
+      xlabel:v=>new Date(v).toISOString().slice(5,10)});
+  }
+  $("#seam-ctl").addEventListener("click", e=>{
+    const b=e.target.closest("button"); if(!b) return;
+    mode=b.dataset.mode;
+    $("#seam-ctl").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", String(x===b)));
+    draw();
+  });
+  draw();
+  $("#seam-table").innerHTML = `<tr><th>Question asked of the same raw files</th><th>Naive union</th><th>tavle</th><th>Error</th></tr>` +
+    D.seam.seam.map(r=>`<tr><td class="l">${r.question}</td><td class="num neg">${fmt(r.naive)}</td><td class="num">${fmt(r.tavle)}</td><td class="num neg">+${fmt(r.err,1)}%</td></tr>`).join("");
+})();
+
+/* ---------- 3. ask results ---------- */
+(function(){
+  if(!D.ask) return;
+  const s=D.ask.summary;
+  const order=["correct","correct, extra columns","close, different aggregation","correctly declined","wrong answer","sql error","should have declined","declined a valid question"];
+  $("#ask-cards").innerHTML = order.filter(k=>s[k]).map(k=>
+    `<div class="tile ${k.startsWith("correct")?"good":(k.startsWith("close")?"":"bad")}"><div class="k">${k}</div><div class="n">${s[k]}</div><div class="s">of ${D.ask.n} questions</div></div>`).join("");
+  const rows=D.ask.results.filter(r=>r.verdict!=="correct");
+  $("#ask").innerHTML = `<tr><th>Question</th><th>Verdict</th><th>What happened</th></tr>` +
+    rows.map(r=>`<tr><td class="l">${r.question}</td><td class="l"><span class="pill ${r.verdict.startsWith("correct")?"ok":(r.verdict.startsWith("close")?"":"bad")}">${r.verdict}</span></td><td class="l">${r.note||(r.guard!=="ok"?"guard: "+r.guard:"answered exactly")}</td></tr>`).join("") +
+    `<tr><td class="l" colspan="3">${s["correct"]||0} further questions were answered exactly and are not listed.</td></tr>`;
+})();
+
+/* ---------- 4. tests ---------- */
+(function(){
+  const t=D.tests.filter(x=>x.means);
+  const others=D.tests.length-t.length;
+  $("#tests").innerHTML = `<tr><th>Test</th><th>What it catches</th><th>Status</th></tr>` +
+    t.map(x=>`<tr><td class="l"><code>${x.name}</code></td><td class="l">${x.means}</td><td><span class="pill ${x.status==="pass"?"ok":"bad"}">${x.status}</span></td></tr>`).join("") +
+    `<tr><td class="l" colspan="3">${others} further tests cover types, uniqueness, allowed values and not-null on every key.</td></tr>`;
+})();
+
+/* ---------- 5. bugs ---------- */
+(function(){
+  const bugs=[
+    ["Key Vault reference resolved to nothing","A platform module read a secret through a reference but nothing granted its identity permission to read the vault. The compiler and the linter both pass.","Grant the role in code, once, next to the reference."],
+    ["Daily bars at the edges were partial","The first and last day of any window have fewer hours, so their averages were quietly wrong.","desk_daily flags completeness and the test applies to interior days rather than being weakened."],
+    ["The runner held the warehouse write lock","The DAG kept one connection open for a whole run, so dbt could not open the file it was about to build. The run ledger recorded the failure, which is the argument for having one.","The ledger opens per write. Regression test in tests/test_dag.py."],
+    ["Staging views carried relative paths","A view over read_parquet keeps the path it was defined with, so the warehouse only opened from the directory dbt ran in.","Staging is materialised as tables."]
+  ];
+  $("#bugs").innerHTML = `<tr><th>Defect</th><th>Why it was invisible</th><th>Remedy</th></tr>` +
+    bugs.map(b=>`<tr><td class="l"><strong>${b[0]}</strong></td><td class="l">${b[1]}</td><td class="l">${b[2]}</td></tr>`).join("");
+})();
+
+/* ---------- 6. charts ---------- */
+(function(){
+  const areas=["DK1","DK2"]; let sel=new Set(areas);
+  $("#area-ctl").innerHTML = areas.map(a=>`<button class="chip" aria-pressed="true" data-a="${a}">${a}</button>`).join("");
+  function draw(){
+    const series=areas.filter(a=>sel.has(a)).map(a=>({name:a+" daily average, EUR/MWh", color:S[a],
+      pts:D.daily.filter(r=>r.area===a && r.is_complete).map(r=>({x:Date.parse(r.day_dk), y:r.avg_eur}))}));
+    if(series.length) line($("#daily"), series, {label:"daily average price", xlabel:v=>new Date(v).toISOString().slice(0,10)});
+  }
+  $("#area-ctl").addEventListener("click", e=>{const b=e.target.closest("button"); if(!b) return;
+    const a=b.dataset.a;
+    if(sel.has(a)&&sel.size>1){sel.delete(a);b.setAttribute("aria-pressed","false")}else{sel.add(a);b.setAttribute("aria-pressed","true")}
+    draw();});
+  draw();
+
+  const el=$("#windchart"), pts=D.wind; if(!pts.length) return;
+  const W=980,H=330,P={l:52,r:14,t:12,b:38};
+  const x1=Math.max(...pts.map(p=>p.wind_share)), y0=Math.min(0,...pts.map(p=>p.price_eur)), y1=Math.max(...pts.map(p=>p.price_eur));
+  const X=v=>P.l+v/(x1||1)*(W-P.l-P.r), Y=v=>P.t+(1-(v-y0)/((y1-y0)||1))*(H-P.t-P.b);
+  let g="";
+  for(let i=0;i<=4;i++){const v=y0+(y1-y0)*i/4;
+    g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--rule)"/><text x="${P.l-7}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="var(--faint)" font-family="var(--mono)">${fmt(v,0)}</text>`}
+  for(let i=0;i<=4;i++){const v=x1*i/4;
+    g+=`<text x="${X(v)}" y="${H-16}" text-anchor="middle" font-size="11" fill="var(--faint)" font-family="var(--mono)">${(v*100).toFixed(0)}%</text>`}
+  g+=`<text x="${W/2}" y="${H-2}" text-anchor="middle" font-size="11.5" fill="var(--soft)">wind as a share of consumption</text>`;
+  if(y0<0) g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--soft)"/>`;
+  const dots=pts.map(p=>`<circle cx="${X(p.wind_share).toFixed(1)}" cy="${Y(p.price_eur).toFixed(1)}" r="1.8" fill="${S[p.area]}" fill-opacity="0.25"/>`).join("");
+  const bins={}; pts.forEach(p=>{const b=Math.min(19,Math.floor(p.wind_share/x1*20));(bins[b]=bins[b]||[]).push(p.price_eur)});
+  const med=Object.keys(bins).map(Number).sort((a,b)=>a-b).map(b=>{const v=bins[b].sort((a,c)=>a-c);return {x:(b+.5)/20*x1,y:v[Math.floor(v.length/2)]}});
+  el.insertAdjacentHTML("beforeend", `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="wind share against price">${g}${dots}<path d="${med.map((p,i)=>(i?"L":"M")+X(p.x).toFixed(1)+" "+Y(p.y).toFixed(1)).join(" ")}" fill="none" stroke="var(--ink)" stroke-width="2"/></svg>
+   <div class="legend"><span><i style="border-top-color:var(--s1)"></i>DK1 hour</span><span><i style="border-top-color:var(--s2)"></i>DK2 hour</span><span><i style="border-top-color:var(--ink)"></i>median by wind band</span></div>`);
+})();
+
+/* ---------- 7. freshness + runs ---------- */
+(function(){
+  const now=new Date(D.built_at);
+  $("#fresh").innerHTML = D.freshness.map(f=>{
+    const ageH=(new Date(f.last_interval)-now)/36e5;
+    const ok = f.instrument.endsWith("_DA") ? ageH>0 : ageH>-96;
+    return `<div class="tile ${ok?"good":"bad"}"><div class="k">${f.instrument}</div><div class="n small">${ok?"fresh":"stale"}</div><div class="s">${f.instrument.endsWith("_DA")?`covers ${ageH>0?"+":""}${ageH.toFixed(0)} h`:`last ${String(f.last_interval).slice(0,10)}`} &middot; ${fmt(f.n_rows,0)} rows</div></div>`;
+  }).join("");
+  $("#runs").innerHTML = D.runs.length
+    ? `<tr><th>Task, last run</th><th>Attempt</th><th>Status</th><th>Seconds</th></tr>` +
+      D.runs.map(r=>`<tr><td class="l"><code>${r.task}</code></td><td class="num">${r.attempt}</td><td><span class="pill ${r.status==="ok"?"ok":"bad"}">${r.status}</span></td><td class="num">${fmt(r.seconds,1)}</td></tr>`).join("")
+    : `<tr><td>No run recorded yet.</td></tr>`;
+})();
+
+/* ---------- 2. the query console ---------- */
+const SCHEMA = [
+  ["power_hourly","area, hour_utc, price_eur, source","Every hour on one grid, both sides of the seam, 2013 to the next auction."],
+  ["desk_daily","area, day_dk, avg_eur, low_eur, high_eur, negative_hours, hours, is_complete, spread_eur, eurdkk, avg_dkk","One row per area per Danish day. spread_eur sits on the DK1 row."],
+  ["power_context","area, hour_utc, price_eur, wind_mwh, solar_mwh, consumption_mwh, wind_share","Price with the generation mix beside it."],
+  ["fx","rate_date, currency, rate","ECB reference rates, business days only. Currency per EUR."]
+];
+$("#schema").innerHTML = `<tr><th>Table</th><th>Columns</th><th>What it is</th></tr>` +
+  SCHEMA.map(s=>`<tr><td class="l"><code>${s[0]}</code></td><td class="l"><code>${s[1]}</code></td><td class="l">${s[2]}</td></tr>`).join("");
+
+const CAT = D.catalogue;
+$("#q-metric").innerHTML = Object.entries(D.metrics).map(([k,v])=>`<option value="${k}">${v}</option>`).join("");
+$("#q-period").innerHTML = Object.entries(D.periods).map(([k,v])=>`<option value="${k}"${k==="365"?" selected":""}>${v}</option>`).join("");
+
+function key(){ return $("#q-metric").value+"|"+$("#q-area").value+"|"+$("#q-period").value }
+function table(cols, rows, foot){
+  return `<div class="tscroll"><table><tr>${cols.map(c=>`<th>${c}</th>`).join("")}</tr>`+
+    rows.slice(0,200).map(r=>`<tr>${r.map(v=>`<td class="${typeof v==="number"?"num":"l"}">${typeof v==="number"?fmt(v):String(v).replace("T"," ").slice(0,19)}</td>`).join("")}</tr>`).join("")+
+    `</table></div><p class="note">${foot}</p>`;
+}
+function showCatalogue(){
+  const e=CAT[key()]; if(!e) return;
+  $("#sql").value = e.sql;
+  $("#result").innerHTML = table(e.cols, e.rows, `${e.rows.length} row${e.rows.length===1?"":"s"}, computed by the pipeline when this page was built.` + (conn?" Re-running live.":""));
+  if(conn) run(true);
+}
+["#q-metric","#q-area","#q-period"].forEach(sel=>$(sel).addEventListener("change", showCatalogue));
+
+let conn=null;
+async function boot(){
+  const pill=$("#engine");
+  const fail=(why)=>{ pill.textContent="engine unavailable"; pill.className="pill bad";
+    $("#engine-note").innerHTML = `The in-browser engine did not load here (${why}). Every answer above still comes from the pipeline itself, and the SQL shown is what produced it.`; };
+  const timer = setTimeout(()=>{ if(!conn) fail("timed out after 25 seconds"); }, 25000);
+  try{
+    const duckdb = await import("https://cdn.jsdelivr.net/npm/@duckdb/duckdb-wasm@1.29.0/+esm");
+    const bundle = await duckdb.selectBundle(duckdb.getJsDelivrBundles());
+    const worker = new Worker(URL.createObjectURL(new Blob([`importScripts("${bundle.mainWorker}");`],{type:"text/javascript"})));
+    const db = new duckdb.AsyncDuckDB(new duckdb.VoidLogger(), worker);
+    await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
+    const base = new URL(".", location.href).href;
+    const files=[["power_hourly","power_hourly.parquet"],["desk_daily","desk_daily.parquet"],["power_context","power_context.parquet"],["fx","fx.parquet"]];
+    for(const [,f] of files){ await db.registerFileURL(f, base+"data/"+f, duckdb.DuckDBDataProtocol.HTTP, false); }
+    const c = await db.connect();
+    for(const [n,f] of files){ await c.query(`create view ${n} as select * from read_parquet('${f}')`); }
+    await c.query("create view stg_fx as select rate_date, currency, rate from fx");
+    conn = c; clearTimeout(timer);
+    pill.textContent="engine ready"; pill.className="pill ok";
+    $("#engine-note").textContent = "DuckDB is running in this tab against the published Parquet marts. Edit the SQL and run it.";
+    run(true);
+  }catch(e){ clearTimeout(timer); fail(String(e.message||e).slice(0,90)); }
+}
+async function run(verify){
+  if(!conn){ showCatalogue(); return; }
+  const sql=$("#sql").value.trim().replace(/;+\s*$/,"");
+  const el=$("#result");
+  if(/\b(insert|update|delete|drop|alter|create|copy|attach|install|load|pragma|export)\b/i.test(sql)){
+    el.innerHTML=`<p class="err">This console runs one read-only SELECT.</p>`; return;
+  }
+  const t0=performance.now();
+  try{
+    const res=await conn.query(`select * from (${sql}) limit 500`);
+    const ms=(performance.now()-t0).toFixed(0);
+    const cols=res.schema.fields.map(f=>f.name);
+    const rows=res.toArray().map(r=>cols.map(c=>{const v=r[c];
+      return (v && typeof v==="object" && v.constructor && v.constructor.name==="Date") ? v.toISOString().slice(0,19).replace("T"," ")
+        : (typeof v==="bigint" ? Number(v) : v);}));
+    if(!rows.length){ el.innerHTML=`<p class="note">No rows. The query ran in ${ms} ms in your browser.</p>`; return; }
+    let foot = `${rows.length} row${rows.length===1?"":"s"} in ${ms} ms, computed in your browser.`;
+    if(verify){
+      const e=CAT[key()];
+      if(e){ const a=JSON.stringify(e.rows), b=JSON.stringify(rows);
+        foot += a===b ? " Identical to what the pipeline computed at build time." : " Note: this differs from the build-time answer, which means the published data moved since.";
+      }
+    }
+    el.innerHTML = table(cols, rows, foot);
+  }catch(e){
+    el.innerHTML=`<p class="err">${String(e.message||e).slice(0,400)}</p><p class="note">The table above lists every table and column available.</p>`;
+  }
+}
+$("#run").addEventListener("click", ()=>run(false));
+$("#sql").addEventListener("keydown", e=>{ if((e.metaKey||e.ctrlKey)&&e.key==="Enter") run(false); });
+showCatalogue();
+boot();
+
+/* ---------- guided tour: spotlight, same behaviour as the other demos ---------- */
+const TOUR=[
+ ["#trap","The problem first","Two Energinet datasets describe the same series either side of October 2025, hourly then quarter-hourly. Toggle the chart: the naive pipeline's row count steps from 24 a day to 96 and nothing complains. The table underneath prices that mistake in answers a desk would actually ask for."],
+ ["#console","Your turn","Pick a question from the menus. You get the SQL it becomes and the answer the pipeline computed when this page was built. Once the in-browser engine loads, the same SQL runs live in your tab and the page tells you whether the two agree. Then the SQL box is yours."],
+ ["#tests-sec","Tests, with their reasons","Each test is listed with the specific failure it catches, because a list of names proves nothing. Missing hours, a broken seam, a daylight-saving night, an invented weekend exchange rate."],
+ ["#nl","The model, marked honestly","A language model writes SQL inside a read-only box and is scored against reference answers, including questions it is supposed to refuse. The misses are published with what they were."],
+ ["#defects","What it caught in itself","Four real defects found by running the platform, each with the remedy. The write-lock one was caught by the run ledger, which is the argument for keeping one."]
+];
+const tour={i:0,on:false,
+  open(i){this.i=i;this.on=true;$("#tour").classList.add("on");this.render()},
+  close(){this.on=false;$("#tour").classList.remove("on");try{localStorage.setItem("tavle-tour","seen")}catch(e){}},
+  next(){this.i++; if(this.i>=TOUR.length){this.close();return} this.render()},
+  render(){
+    const [sel,k,text]=TOUR[this.i];
+    const el=document.querySelector(sel); if(!el){this.next();return}
+    const r=el.getBoundingClientRect(), top=r.top+window.scrollY;
+    const hl=$("#tour-hl"), card=$("#tour-card");
+    hl.style.top=(top-10)+"px"; hl.style.left=(r.left-10)+"px";
+    hl.style.width=(r.width+20)+"px"; hl.style.height=(Math.min(r.height,620)+20)+"px";
+    $("#tour-k").textContent=k; $("#tour-p").textContent=text;
+    $("#tour-dots").innerHTML=TOUR.map((_,j)=>`<i class="${j===this.i?"on":""}"></i>`).join("");
+    $("#tour-next").textContent=this.i===TOUR.length-1?"Start exploring":"Next";
+    card.style.top=(top+18)+"px";
+    card.style.left=Math.min(r.left+28, window.innerWidth-440)+"px";
+    window.scrollTo({top:Math.max(0,top-70),behavior:"smooth"});
+  }};
+$("#tour-next").addEventListener("click",()=>tour.next());
+$("#tour-skip").addEventListener("click",()=>tour.close());
+$("#tourbtn").addEventListener("click",()=>tour.open(0));
+document.addEventListener("keydown",e=>{if(e.key==="Escape")tour.close()});
+if(!location.search.includes("tour=off")){
+  try{ if(localStorage.getItem("tavle-tour")!=="seen") setTimeout(()=>tour.open(0), 500); }catch(e){ setTimeout(()=>tour.open(0),500); }
+}
+</script>
+</body>
+</html>

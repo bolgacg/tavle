@@ -18,7 +18,7 @@ daily as (
     group by 1, 2
 ),
 spread as (
-    select a.day_dk, a.avg_eur - b.avg_eur as dk1_minus_dk2_eur
+    select a.day_dk, a.avg_eur - b.avg_eur as spread_eur
     from daily a join daily b on a.day_dk = b.day_dk and a.area = 'DK1' and b.area = 'DK2'
 ),
 fx as (
@@ -31,7 +31,7 @@ select
     -- so is today; a daily bar built from four hours is not a daily bar, so
     -- it is flagged rather than silently averaged
     d.hours in (23, 24, 25)                                     as is_complete,
-    s.dk1_minus_dk2_eur,
+    s.spread_eur,
     f.eurdkk,
     d.avg_eur * f.eurdkk as avg_dkk
 from daily d

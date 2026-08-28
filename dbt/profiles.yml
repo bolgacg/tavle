@@ -1,0 +1,7 @@
+tavle:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('TAVLE_DB', '../data/tavle.duckdb') }}"
+      threads: 4

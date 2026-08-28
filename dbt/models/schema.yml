@@ -1,0 +1,58 @@
+version: 2
+models:
+  - name: stg_elspot
+    columns:
+      - name: area
+        tests: [not_null, {accepted_values: {values: ['DK1', 'DK2']}}]
+      - name: interval_start_utc
+        tests: [not_null]
+      - name: price_eur
+        tests: [not_null]
+    tests:
+      - unique:
+          column_name: "area || '|' || interval_start_utc"
+  - name: stg_dayahead
+    columns:
+      - name: area
+        tests: [not_null, {accepted_values: {values: ['DK1', 'DK2']}}]
+      - name: interval_start_utc
+        tests: [not_null]
+      - name: price_eur
+        tests: [not_null]
+    tests:
+      - unique:
+          column_name: "area || '|' || interval_start_utc"
+  - name: stg_fx
+    columns:
+      - name: rate_date
+        tests: [not_null]
+      - name: currency
+        tests: [not_null, {accepted_values: {values: ['DKK', 'USD']}}]
+      - name: rate
+        tests: [not_null]
+    tests:
+      - unique:
+          column_name: "currency || '|' || rate_date"
+  - name: prices
+    columns:
+      - name: instrument
+        tests: [not_null, {accepted_values: {values: ['DK1_DA', 'DK2_DA', 'EURDKK', 'EURUSD']}}]
+      - name: value
+        tests: [not_null]
+    tests:
+      - unique:
+          column_name: "instrument || '|' || interval_start_utc"
+  - name: power_hourly
+    tests:
+      - unique:
+          column_name: "area || '|' || hour_utc"
+  - name: desk_daily
+    columns:
+      - name: hours
+        tests:
+          - accepted_values:
+              values: [23, 24, 25]
+              quote: false
+    tests:
+      - unique:
+          column_name: "area || '|' || day_dk"

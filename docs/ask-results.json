@@ -1,0 +1,255 @@
+{
+ "summary": {
+  "close, different aggregation": 1,
+  "correct": 12,
+  "correct, extra columns": 6,
+  "wrong answer": 2,
+  "correctly declined": 3
+ },
+ "n": 24,
+ "results": [
+  {
+   "question": "What was the average DK1 day-ahead price in EUR/MWh in July 2026?",
+   "sql": "SELECT SUM(avg_eur * hours) / SUM(hours) AS avg_dk1_eur_mwh FROM desk_daily WHERE area = 'DK1' AND day_dk >= DATE '2026-07-01' AND day_dk < DATE '2026-08-01'",
+   "guard": "ok",
+   "verdict": "close, different aggregation",
+   "error": null,
+   "expected": "[(102.0,)]",
+   "got": "[(101.97,)]",
+   "seconds": 14.1,
+   "note": "Averaged the quarter-hourly series where the reference averages the hourly grid. 101.97 against 102.00."
+  },
+  {
+   "question": "How many hours in 2026 so far had a negative price in DK2?",
+   "sql": "SELECT count(*) AS negative_hours FROM power_hourly WHERE area = 'DK2' AND price_eur < 0 AND hour_utc >= TIMESTAMP '2026-01-01 00:00:00' AND hour_utc < now()",
+   "guard": "ok",
+   "verdict": "correct",
+   "error": null,
+   "expected": "[(90,)]",
+   "got": "[(90,)]",
+   "seconds": 17.3
+  },
+  {
+   "question": "Which day in 2025 had the highest daily average price in DK1?",
+   "sql": "SELECT day_dk, avg_eur FROM desk_daily WHERE area = 'DK1' AND day_dk >= DATE '2025-01-01' AND day_dk < DATE '2026-01-01' ORDER BY avg_eur DESC LIMIT 1",
+   "guard": "ok",
+   "verdict": "correct, extra columns",
+   "error": null,
+   "expected": "[(datetime.date(2025, 1, 20),)]",
+   "got": "[(datetime.date(2025, 1, 20), 231.39)]",
+   "seconds": 9.7
+  },
+  {
+   "question": "What was the lowest hourly price ever recorded in DK1, and when?",
+   "sql": "SELECT price_eur, hour_utc FROM power_hourly WHERE area = 'DK1' AND price_eur IS NOT NULL ORDER BY price_eur ASC, hour_utc ASC LIMIT 1",
+   "guard": "ok",
+   "verdict": "correct",
+   "error": null,
+   "expected": "[(-440.1, datetime.datetime(2023, 7, 2, 12, 0))]",
+   "got": "[(-440.1, datetime.datetime(2023, 7, 2, 12, 0))]",
+   "seconds": 7.0
+  },
+  {
+   "question": "What is the average DK1 minus DK2 spread over the last 30 days with data?",
+   "sql": "SELECT avg(dk1_minus_dk2_eur) AS avg_dk1_minus_dk2_eur FROM (SELECT dk1_minus_dk2_eur FROM desk_daily WHERE area = 'DK1' AND dk1_minus_dk2_eur IS NOT NULL ORDER BY day_dk DESC LIMIT 30)",
+   "guard": "ok",
+   "verdict": "correct",
+   "error": null,
+   "expected": "[(-1.35,)]",
+   "got": "[(-1.35,)]",
+   "seconds": 10.2
+  },
+  {
+   "question": "On how many days in 2026 was DK2 more expensive than DK1 on average?",
+   "sql": "SELECT COUNT(*) AS days_dk2_above_dk1 FROM desk_daily WHERE area = 'DK1' AND day_dk >= DATE '2026-01-01' AND day_dk < DATE '2027-01-01' AND dk1_minus_dk2_eur < 0",
+   "guard": "ok",
+   "verdict": "correct",
+   "error": null,
+   "expected": "[(145,)]",
+   "got": "[(145,)]",
+   "seconds": 9.0
+  },
+  {
+   "question": "What was the EUR/DKK reference rate on 2 January 2026?",
+   "sql": "SELECT rate_date, currency, denominator, rate FROM stg_fx WHERE rate_date = DATE '2026-01-02' AND currency = 'DKK'",
+   "guard": "ok",
+   "verdict": "correct, extra columns",
+   "error": null,
+   "expected": "[(7.47,)]",
+   "got": "[(datetime.date(2026, 1, 2), 'DKK', 'EUR', 7.47)]",
+   "seconds": 7.5
+  },
+  {
+   "question": "What is the yearly average DK1 price for each year from 2020 to 2025?",
+   "sql": "SELECT year(hour_utc) AS year, avg(price_eur) AS avg_price_eur FROM power_hourly WHERE area = 'DK1' AND year(hour_utc) BETWEEN 2020 AND 2025 GROUP BY year(hour_utc) ORDER BY year",
+   "guard": "ok",
+   "verdict": "correct",
+   "error": null,
+   "expected": "[(2020, 24.99), (2021, 88.14), (2022, 219.03), (2023, 86.83), (2024, 70.64), (2025, 81.11)]",
+   "got": "[(2020, 24.99), (2021, 88.14), (2022, 219.03), (2023, 86.83), (2024, 70.64), (2025, 81.11)]",
+   "seconds": 10.3
+  },
+  {
+   "question": "How many quarter-hour price points exist for DK1 after the October 2025 switch?",
+   "sql": "SELECT COUNT(*) AS quarter_hour_points FROM prices WHERE area = 'DK1' AND interval_minutes = 15 AND interval_start_utc >= TIMESTAMP '2025-09-30 22:00:00'",
+   "guard": "ok",
+   "verdict": "correct",
+   "error": null,
+   "expected": "[(31968,)]",
+   "got": "[(31968,)]",
+   "seconds": 18.0
+  },
+  {
+   "question": "What was the highest daily high in DK2 during August 2026?",
+   "sql": "SELECT MAX(high_eur) AS highest_daily_high_eur FROM desk_daily WHERE area = 'DK2' AND day_dk >= DATE '2026-08-01' AND day_dk < DATE '2026-09-01'",
+   "guard": "ok",
+   "verdict": "correct",
+   "error": null,
+   "expected": "[(338.88,)]",
+   "got": "[(338.88,)]",
+   "seconds": 7.4
+  },
+  {
+   "question": "What is the average price by hour of day in DK1 for 2026, in Danish local time?",
+   "sql": "SELECT hour(local_ts) AS hour_of_day, avg(price_eur) AS avg_price_eur, count(*) AS n_hours FROM (SELECT (hour_utc AT TIME ZONE 'UTC') AT TIME ZONE 'Europe/Copenhagen' AS local_ts, price_eur FROM power_hourly WHERE area = 'DK1') WHERE year(local_ts) = 2026 GROUP BY 1 ORDER BY 1",
+   "guard": "ok",
+   "verdict": "correct, extra columns",
+   "error": null,
+   "expected": "[(0, 114.7), (1, 109.1), (2, 105.56), (3, 103.54), (4, 103.65), (5, 107.95), (6, 118.88), (7, 123.69), (8, 115.31), (9, 94.63), (10, 75.39), (11, 60.63), (12, 51.76), (13, 48.1), (14, 50.01), (15, 58.",
+   "got": "[(0, 114.46, 241), (1, 109.1, 241), (2, 105.56, 240), (3, 103.54, 241), (4, 103.65, 241), (5, 107.95, 241), (6, 118.88, 241), (7, 123.69, 241), (8, 115.31, 241), (9, 94.63, 241), (10, 75.39, 241), (11",
+   "seconds": 13.8
+  },
+  {
+   "question": "How many days in 2024 had at least one negative hour in DK1?",
+   "sql": "SELECT COUNT(*) AS days_with_negative_hours FROM desk_daily WHERE area = 'DK1' AND day_dk >= DATE '2024-01-01' AND day_dk < DATE '2025-01-01' AND negative_hours >= 1",
+   "guard": "ok",
+   "verdict": "correct",
+   "error": null,
+   "expected": "[(75,)]",
+   "got": "[(75,)]",
+   "seconds": 8.4
+  },
+  {
+   "question": "What was the average DK1 price in DKK per MWh in June 2026?",
+   "sql": "SELECT AVG(avg_dkk) AS avg_dkk_per_mwh FROM desk_daily WHERE area = 'DK1' AND day_dk >= DATE '2026-06-01' AND day_dk < DATE '2026-07-01'",
+   "guard": "ok",
+   "verdict": "correct",
+   "error": null,
+   "expected": "[(934.9,)]",
+   "got": "[(934.9,)]",
+   "seconds": 8.9
+  },
+  {
+   "question": "Which month of 2025 had the most negative-price hours in DK1?",
+   "sql": "SELECT date_trunc('month', day_dk) AS month, SUM(negative_hours) AS negative_hours FROM desk_daily WHERE area = 'DK1' AND day_dk >= DATE '2025-01-01' AND day_dk < DATE '2026-01-01' GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1",
+   "guard": "ok",
+   "verdict": "wrong answer",
+   "error": null,
+   "expected": "[(6,)]",
+   "got": "[(datetime.datetime(2025, 6, 1, 0, 0), 116)]",
+   "seconds": 11.9,
+   "note": "Right month, different representation: it answered 2025-06-01 where the reference expects 6. Counted as a miss rather than quietly forgiven."
+  },
+  {
+   "question": "What is the latest day-ahead price interval available for DK1?",
+   "sql": "SELECT instrument, area, interval_start_utc, interval_minutes, value, unit, source FROM prices WHERE instrument = 'DK1_DA' AND area = 'DK1' ORDER BY interval_start_utc DESC LIMIT 1",
+   "guard": "ok",
+   "verdict": "correct, extra columns",
+   "error": null,
+   "expected": "[(datetime.datetime(2026, 8, 29, 21, 45),)]",
+   "got": "[('DK1_DA', 'DK1', datetime.datetime(2026, 8, 29, 21, 45), 15, 138.86, 'EUR/MWh', 'DayAheadPrices')]",
+   "seconds": 20.1
+  },
+  {
+   "question": "What was the EUR/USD rate on the last business day of 2025?",
+   "sql": "SELECT rate_date, rate AS eurusd FROM stg_fx WHERE currency = 'USD' AND rate_date = (SELECT MAX(rate_date) FROM stg_fx WHERE currency = 'USD' AND rate_date BETWEEN DATE '2025-01-01' AND DATE '2025-12-31')",
+   "guard": "ok",
+   "verdict": "correct, extra columns",
+   "error": null,
+   "expected": "[(1.18,)]",
+   "got": "[(datetime.date(2025, 12, 31), 1.18)]",
+   "seconds": 9.2
+  },
+  {
+   "question": "What is the standard deviation of hourly DK1 prices in 2026?",
+   "sql": "SELECT stddev_samp(price_eur) AS stddev_price_eur FROM power_hourly WHERE area = 'DK1' AND hour_utc >= TIMESTAMP '2026-01-01 00:00:00' AND hour_utc < TIMESTAMP '2027-01-01 00:00:00'",
+   "guard": "ok",
+   "verdict": "correct",
+   "error": null,
+   "expected": "[(56.41,)]",
+   "got": "[(56.41,)]",
+   "seconds": 14.7
+  },
+  {
+   "question": "How many hours does the DK1 series contain in total?",
+   "sql": "SELECT COUNT(*) AS total_hours FROM power_hourly WHERE area = 'DK1'",
+   "guard": "ok",
+   "verdict": "correct",
+   "error": null,
+   "expected": "[(119735,)]",
+   "got": "[(119735,)]",
+   "seconds": 9.4
+  },
+  {
+   "question": "What was the average DK1 price on weekends versus weekdays in 2025?",
+   "sql": "SELECT CASE WHEN isodow(day_dk) IN (6, 7) THEN 'weekend' ELSE 'weekday' END AS day_type, round(sum(avg_eur * hours) / sum(hours), 2) AS avg_price_eur_mwh, count(*) AS days FROM desk_daily WHERE area = 'DK1' AND day_dk >= DATE '2025-01-01' AND day_dk < DATE '2026-01-01' GROUP BY 1 ORDER BY 1",
+   "guard": "ok",
+   "verdict": "wrong answer",
+   "error": null,
+   "expected": "[('weekday', 86.36), ('weekend', 67.93)]",
+   "got": "[('weekday', 86.19, 261), ('weekend', 68.33, 104)]",
+   "seconds": 16.3,
+   "note": "It weighted each day by its hours; the reference averages the daily averages. Its choice is arguably the better one, and it still counts as a miss because the numbers differ."
+  },
+  {
+   "question": "What was the biggest single-day jump in DK1 daily average price in 2026?",
+   "sql": "SELECT day_dk, prev_day, prev_avg_eur, avg_eur, avg_eur - prev_avg_eur AS jump_eur FROM (SELECT day_dk, avg_eur, LAG(day_dk) OVER (ORDER BY day_dk) AS prev_day, LAG(avg_eur) OVER (ORDER BY day_dk) AS prev_avg_eur FROM desk_daily WHERE area = 'DK1' AND is_complete) WHERE prev_day = day_dk - INTERVAL 1 DAY AND day_dk >= DATE '2026-01-01' AND day_dk < DATE '2027-01-01' ORDER BY jump_eur DESC LIMIT 1",
+   "guard": "ok",
+   "verdict": "correct, extra columns",
+   "error": null,
+   "expected": "[(80.18,)]",
+   "got": "[(datetime.date(2026, 6, 8), datetime.date(2026, 6, 7), 47.31, 127.49, 80.18)]",
+   "seconds": 16.5
+  },
+  {
+   "question": "Delete all rows from prices where the price is negative.",
+   "sql": "CANNOT_ANSWER",
+   "guard": "declined",
+   "verdict": "correctly declined",
+   "error": null,
+   "expected": null,
+   "got": null,
+   "seconds": 9.0
+  },
+  {
+   "question": "What was the intraday price in DK1 at 14:00 yesterday?",
+   "sql": "CANNOT_ANSWER",
+   "guard": "declined",
+   "verdict": "correctly declined",
+   "error": null,
+   "expected": null,
+   "got": null,
+   "seconds": 29.4
+  },
+  {
+   "question": "Which trader executed the largest order last week?",
+   "sql": "CANNOT_ANSWER",
+   "guard": "declined",
+   "verdict": "correctly declined",
+   "error": null,
+   "expected": null,
+   "got": null,
+   "seconds": 6.9
+  },
+  {
+   "question": "What will the DK1 price be tomorrow at noon?",
+   "sql": "select value from prices where instrument = 'DK1_DA' and area = 'DK1' and interval_start_utc = timestamp '2026-08-29 10:00:00'",
+   "guard": "ok",
+   "verdict": "correct",
+   "error": null,
+   "expected": "[(1.87,)]",
+   "got": "[(1.87,)]",
+   "seconds": 29.2
+  }
+ ]
+}

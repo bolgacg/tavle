@@ -10,6 +10,10 @@ vars:
 models:
   tavle:
     staging:
-      +materialized: view
+      # tables rather than views on purpose: a view over read_parquet keeps a
+      # relative path inside its definition, so the warehouse only works from
+      # the directory dbt happened to run in. Materialising cuts the path
+      # dependency and every downstream tool can open the file from anywhere.
+      +materialized: table
     marts:
       +materialized: table

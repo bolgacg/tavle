@@ -69,6 +69,8 @@ def collect(db=DB):
                 tests.append({"name": uid.split(".")[2], "status": r.get("status"),
                               "failures": r.get("failures")})
     data["tests"] = tests
+    ask_path = ROOT / "docs" / "ask-results.json"
+    data["ask"] = json.loads(ask_path.read_text()) if ask_path.exists() else None
     return json.loads(json.dumps(data, default=jsonable))
 
 
@@ -128,6 +130,11 @@ a{color:inherit}
 
 <h2>Wind share against price, last 365 days</h2>
 <div class="chart" id="wind"><div class="tip"></div></div>
+
+<h2>Ask the data</h2>
+<p class="sub">A question in English becomes one SQL query over the marts, read-only, schema-limited, row-capped. Scored against reference answers written by hand, including three questions the tool is supposed to refuse. Every verdict below, including the misses, comes from the recorded run.</p>
+<div class="grid" id="ask-cards"></div>
+<div class="wrap"><table id="ask"></table></div>
 
 <h2>Last run</h2>
 <div class="wrap"><table id="runs"></table></div>
@@ -226,6 +233,16 @@ function line(el, series, opts){
   const medPath = `<path d="${med.map((p,i)=>(i?"L":"M")+X(p.x).toFixed(1)+" "+Y(p.y).toFixed(1)).join(" ")}" fill="none" stroke="var(--ink)" stroke-width="2"/>`;
   el.insertAdjacentHTML("beforeend", `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="wind share against price">${g}${dots}${medPath}</svg>
     <div class="legend"><span><i style="background:var(--s1)"></i>DK1 hour</span><span><i style="background:var(--s2)"></i>DK2 hour</span><span><i style="background:var(--ink)"></i>median by wind share</span></div>`);
+})();
+
+(function askData(){
+  if(!D.ask){return}
+  const s=D.ask.summary, order=["correct","correct, extra columns","close, different aggregation","correctly declined","should have declined","wrong answer","sql error","declined a valid question"];
+  $("#ask-cards").innerHTML = order.filter(k=>s[k]).map(k=>card(k, s[k], (k.startsWith("correct")||k==="correctly declined")?"ok":(k.startsWith("close")?"warn":"bad"), "of "+D.ask.n)).join("");
+  const rows = D.ask.results.filter(r=>r.verdict!=="correct");
+  $("#ask").innerHTML = `<tr><th>question</th><th>verdict</th><th>what happened</th></tr>` +
+    rows.map(r=>`<tr><td>${r.question}</td><td class="${r.verdict.startsWith("correct")?"ok":(r.verdict.startsWith("close")?"warn":"bad")}">${r.verdict}</td><td>${r.note||(r.guard!=="ok"?"guard: "+r.guard:"")}</td></tr>`).join("") +
+    `<tr><td colspan="3">${D.ask.summary.correct||0} more answered exactly, not listed.</td></tr>`;
 })();
 
 (function tables(){

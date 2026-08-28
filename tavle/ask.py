@@ -142,6 +142,53 @@ def same(a, b):
     return norm(a) == norm(b)
 
 
+def contains(expected, got, tol=0.005):
+    """Every value the reference asked for is present in the matching returned
+    row, in order, with the same number of rows. A tool that answers the
+    question and adds a helpful column ("which day, and what was the price")
+    has not got it wrong, and the first version of this scorer said it had:
+    eight of the twenty-one answerable questions were marked wrong purely for
+    returning context. That was the scorer failing, not the tool."""
+    if expected is None or got is None or len(expected) != len(got):
+        return False
+
+    def matches(want, row):
+        i = 0
+        for v in want:
+            found = False
+            while i < len(row):
+                r = row[i]
+                i += 1
+                if isinstance(v, float) and isinstance(r, (int, float)) and not isinstance(r, bool):
+                    if abs(v - r) <= tol * max(abs(v), abs(r), 1e-9):
+                        found = True
+                        break
+                elif str(v) == str(r):
+                    found = True
+                    break
+            if not found:
+                return False
+        return True
+
+    return all(matches(w, g) for w, g in zip(expected, got))
+
+
+def close(a, b, tol=0.01):
+    """Both sides one number, within a percent of each other. Several
+    questions have more than one defensible reading (average of hours or
+    average of daily averages), and scoring those as flatly wrong would
+    overstate the failure rate as much as scoring them right would
+    understate it. They get their own category."""
+    try:
+        (x,), (y,) = a[0], b[0]
+        x, y = float(x), float(y)
+    except Exception:  # noqa: BLE001
+        return False
+    if len(a) != 1 or len(b) != 1:
+        return False
+    return abs(x - y) <= tol * max(abs(x), abs(y), 1e-9)
+
+
 def evaluate(db=DB, runner=None, out=OUT, log=print):
     con = duckdb.connect(str(db), read_only=True)
     schema = schema_text(con)
@@ -166,6 +213,10 @@ def evaluate(db=DB, runner=None, out=OUT, log=print):
             verdict = "sql error"
         elif same(got, expected):
             verdict = "correct"
+        elif contains(expected, got):
+            verdict = "correct, extra columns"
+        elif close(got, expected):
+            verdict = "close, different aggregation"
         else:
             verdict = "wrong answer"
         results.append({"question": question, "sql": sql, "guard": reason, "verdict": verdict,

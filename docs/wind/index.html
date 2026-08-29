@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Does the wind forecast already know tomorrow's price?</title>
+<meta name="description" content="A pre-registered study on Energinet's public wind forecasts and Danish day-ahead power prices: how much of the price is wind, why the obvious strategy is look-ahead, and what being wrong costs. Bolgac Gulen, 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#faf9f7;--ink:#1a1d21;--soft:#5b6470;--faint:#8b95a1;--rule:#e2e0dc;--rule2:#c9c5be;--panel:#f3f1ed;--card:#fff;
+  --pos:#2f7d54;--neg:#b03a3a;--accent:#2c4a6b;--amber:#c8860d;--s1:#2a78d6;--s2:#eb6834;
+  --serif:'Newsreader',Georgia,serif;--sans:'IBM Plex Sans',system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;padding-bottom:110px}
+a{color:var(--accent);text-decoration:none;font-weight:500}a:hover{text-decoration:underline}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px}
+header{padding:48px 0 30px;border-bottom:1px solid var(--ink)}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(34px,5vw,54px);line-height:1.08;letter-spacing:-.01em;margin:12px 0 14px;max-width:800px;text-wrap:balance}
+.dek{max-width:760px;color:var(--soft);font-size:18.5px;font-family:var(--serif);line-height:1.5}
+.dek strong{color:var(--ink);font-weight:600}
+.byline{margin-top:16px;font-family:var(--mono);font-size:12px;color:var(--faint);display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+section{padding:44px 0 6px}
+.sec-label{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+h2{font-family:var(--serif);font-weight:600;font-size:29px;line-height:1.2;margin-bottom:10px;text-wrap:balance}
+h3{font-family:var(--serif);font-size:20px;font-weight:600}
+p{margin-bottom:12px}
+.lede{color:var(--soft);max-width:760px;margin-bottom:20px}
+.lede strong,.lede em{color:var(--ink)}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:22px 24px;margin-top:16px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-family:var(--mono);font-size:12px;padding:6px 12px;border:1px solid var(--rule2);border-radius:3px;background:var(--card);color:var(--soft);cursor:pointer}
+.chip:hover{color:var(--ink);border-color:var(--soft)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper);font-weight:500}
+.viz{position:relative}.viz svg{width:100%;height:auto;display:block}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--paper);font:12px var(--mono);padding:6px 8px;border-radius:4px;display:none;white-space:nowrap;z-index:5}
+.legend{display:flex;gap:16px;font-size:12px;color:var(--soft);margin:6px 0 0 4px;flex-wrap:wrap}
+.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:16px;height:0;border-top:2px solid;display:inline-block}
+.legend i.bar{height:10px;border:0;width:12px}
+.verdict{margin-top:16px;padding:2px 0 2px 16px;border-left:3px solid var(--accent);font-size:15px;max-width:760px}
+.verdict.sting{border-left-color:var(--neg)}.verdict b{color:var(--accent)}.verdict.sting b{color:var(--neg)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);text-align:right;padding:0 0 8px;border-bottom:1px solid var(--rule)}
+th:first-child{text-align:left}
+td{padding:8px 0;border-bottom:1px solid var(--rule);text-align:right;font-variant-numeric:tabular-nums;vertical-align:top}
+td:first-child{text-align:left}td.l{text-align:left}th+th,td+td{padding-left:14px}td.num{white-space:nowrap}
+tr:last-child td{border-bottom:none}
+.tscroll{overflow-x:auto}
+.note{font-size:12.5px;color:var(--faint);margin-top:10px;line-height:1.5}
+.pos{color:var(--pos)}.neg{color:var(--neg)}
+.hint{font-size:12px;color:var(--faint);line-height:1.45}
+code{font-family:var(--mono);font-size:12.5px}
+.quote{font-family:var(--serif);font-size:17px;color:var(--ink);border-left:3px solid var(--amber);padding:2px 0 2px 16px;margin:14px 0;max-width:760px}
+.quote small{display:block;font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:6px}
+.timeline{position:relative;margin:10px 0 6px}
+.timeline svg{width:100%;height:auto;display:block}
+.tl-ev{cursor:pointer}
+.tl-note{min-height:3.2em;font-size:14.5px;color:var(--ink);margin-top:8px;padding:10px 14px;background:var(--panel);border-radius:4px}
+.limits{margin-top:22px;border-left:3px solid var(--neg);padding:2px 0 2px 16px;max-width:760px}
+.limits p{font-size:14px;color:var(--soft)}
+.small{font-size:13.5px;color:var(--soft)}
+.gloss{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px 24px;font-size:13px;color:var(--soft);margin-top:10px}
+.gloss b{color:var(--ink);font-family:var(--mono);font-size:12px;font-weight:500}
+footer{border-top:1px solid var(--rule);margin-top:44px;padding:20px 0 30px;font-family:var(--mono);font-size:12px;color:var(--faint)}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+#tour{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--card);border-top:1px solid var(--rule2);box-shadow:0 -8px 30px rgba(0,0,0,.10);transform:translateY(110%);transition:transform .3s}
+#tour.on{transform:none}
+#tour .wrap{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:12px 20px}
+@media(max-width:620px){#tour .wrap{grid-template-columns:1fr auto}#tour .tk{display:none}}
+#tour .tk{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);white-space:nowrap}
+#tour .tx{font-size:14px;line-height:1.45}#tour .tx b{font-weight:600}
+#tour .nav{display:flex;gap:6px;align-items:center}
+.tbtn{font-family:var(--mono);font-size:12px;padding:8px 13px;border-radius:4px;border:1px solid var(--rule2);background:var(--card);color:var(--soft);cursor:pointer}
+.tbtn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.tour-open{font-family:var(--mono);font-size:12px;padding:6px 12px;border-radius:4px;border:1px solid var(--accent);background:var(--card);color:var(--accent);cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header><div class="wrap">
+  <div class="eyebrow">A pre-registered study &middot; Danish day-ahead power and Energinet's public wind forecasts</div>
+  <h1>Does the wind forecast already know tomorrow's price?</h1>
+  <p class="dek">Denmark prices its electricity in an auction held the day before delivery, and the biggest thing
+  that moves that price is how hard the wind will blow. Energinet, the grid operator, publishes its own wind
+  forecasts. So the obvious project is to predict tomorrow's price from the forecast. This page is what happens
+  when you try that honestly: <strong>expected wind explains up to a third of the hour-to-hour price</strong>, the
+  forecast most people would use to prove it is <strong>published six hours after the auction</strong>, and
+  the money, if there is any, lives in what the forecast gets wrong.</p>
+  <div class="byline"><span>Bolga&ccedil; G&uuml;len &middot; Odense, 2026</span><span>&middot;</span>
+    <a href="https://github.com/bolgacg/tavle/blob/master/research/PREREGISTRATION.md">the pre-registration</a><span>&middot;</span>
+    <a href="https://github.com/bolgacg/tavle">source and data pipeline</a>
+    <button class="tour-open" id="tourbtn">Walk me through it</button></div>
+</div></header>
+
+<section id="act1"><div class="wrap">
+  <div class="sec-label">Act one &middot; The clock</div>
+  <h2>Who knows what, and when</h2>
+  <p class="lede">The whole study turns on a timeline. Denmark has two price zones, <strong>DK1</strong> in the
+  west with most of the wind and <strong>DK2</strong> in the east with Copenhagen. For each zone, an auction
+  closes at noon the day before delivery and sets one price per hour of the next day. Energinet publishes a
+  wind forecast for every one of those hours, at several horizons. Click each event to see what was known at
+  that moment.</p>
+  <div class="card">
+    <div class="timeline" id="timeline"></div>
+    <div class="tl-note" id="tl-note">Click an event on the timeline.</div>
+    <div class="quote">"Forecast for the next day is published at 18:00 Danish time zone. The forecast is generated at 17:50 Danish time zone."
+      <small>Energinet, Energi Data Service, column documentation for ForecastDayAhead in the dataset Forecasts_Hour. Read on 29 August 2026.</small></div>
+    <div class="verdict sting"><b>What this kills.</b> The pre-registered strategy was to trade the day-ahead
+    spread on the day-ahead wind forecast. That forecast comes out six hours after the auction that sets the
+    price it would trade. Any model that "predicts the day-ahead price from the day-ahead wind forecast" on this
+    dataset is looking at the answer, and it will backtest beautifully. The strategy is reported as untestable,
+    not quietly replaced, because that finding is worth more to a desk than a green curve.</div>
+    <div class="verdict"><b>What survives.</b> Every horizon is published before delivery, and the cost of
+    being wrong is settled after it. So three honest questions remain: how much of the price is wind, how good
+    the forecasts are, and what a forecast error costs. Those are the next two acts.</div>
+  </div>
+</div></section>
+
+<section id="act2"><div class="wrap">
+  <div class="sec-label">Act two &middot; How much of the price is wind</div>
+  <h2>Expected wind explains up to a third of the hour-to-hour price, most years a quarter</h2>
+  <p class="lede">A plain model of the price with hour-of-day and month effects, fitted on odd weeks and scored
+  on even weeks of the same year, with and without expected wind as a share of consumption. The difference is
+  what wind adds. Pick a zone; the training years and the holdout years are shown together, and the holdout was
+  read once, after the code was frozen.</p>
+  <div class="card">
+    <div class="chips" id="r2-ctl" style="margin-bottom:10px"></div>
+    <div class="viz" id="r2-chart"><div class="tip"></div></div>
+    <div class="tscroll" style="margin-top:14px"><table id="r2-table"></table></div>
+    <div class="verdict"><b>Read this as an explanation, not a prediction.</b> The forecast is Energinet's best
+    public estimate of the wind the auction was pricing, published after the fact, so the gain in R squared says
+    how much of the price <em>is</em> wind, not whether a desk could have known it in time. In every year and both
+    zones the answer is a large slice, and the slice is larger in years when prices were otherwise calm.</div>
+    <div class="verdict sting"><b>The spread is not the wind difference.</b> The DK1 minus DK2 price gap
+    correlates with the difference in expected wind share at <span class="num" id="spread-train"></span> in
+    training and <span class="num" id="spread-hold"></span> on the holdout: nothing, with the sign flipping.
+    The spread is about whether the link between the zones is full, and that is a different study.</div>
+  </div>
+</div></section>
+
+<section id="act3"><div class="wrap">
+  <div class="sec-label">Act three &middot; The price of being wrong</div>
+  <h2>The forecast is wrong by a few hundred megawatt-hours, and it drifts</h2>
+  <p class="lede">Being wrong in this market has a price: a producer that delivers less than it sold pays the
+  hourly <strong>imbalance price</strong> for the gap, and one that delivers more receives it. So the forecast
+  error is not an academic number. First how large it is, then which way it costs.</p>
+  <div class="card">
+    <h3>Error by horizon, mean absolute, megawatt-hours per hour</h3>
+    <div class="tscroll" style="margin-top:8px"><table id="horizon-table"></table></div>
+    <p class="note">Hours where all four horizons exist. Same-morning is the 06:00 forecast on the delivery day.</p>
+  </div>
+  <div class="card">
+    <h3>The drift: monthly bias of the day-ahead forecast, actual minus forecast</h3>
+    <div class="chips" id="bias-ctl" style="margin:6px 0 10px"></div>
+    <div class="viz" id="bias-chart"><div class="tip"></div></div>
+    <div class="verdict sting"><b>A forecast that does not know about new turbines.</b> From the winter of
+    2023 the day-ahead forecast under-forecasts DK1 wind by several hundred megawatt-hours in the windy
+    months, and the gap has grown since. A bias that persists for months with the season, rather than
+    averaging out, looks like capacity the model does not yet see. That is a finding for whoever maintains the
+    forecast, not a weather fact, and it is why "the forecast is good" needs a date attached.</div>
+  </div>
+  <div class="card">
+    <h3>Which way being wrong costs: the imbalance gap by forecast-error decile</h3>
+    <div class="chips" id="gap-ctl" style="margin:6px 0 10px"></div>
+    <div class="viz" id="gap-chart"><div class="tip"></div></div>
+    <p class="note" id="gap-note"></p>
+    <div class="verdict"><b>Right on average, wrong more often than not.</b> When more wind arrives than the
+    evening forecast said, the imbalance price sits below the day-ahead price on average, and above it when
+    less arrives, in both zones and in both periods. But the sign of the gap agrees with the sign of the error
+    in <span class="num" id="agree-train"></span> of training hours and <span class="num" id="agree-hold"></span>
+    of holdout hours, because the gap is exactly zero in <span class="num" id="zero-share"></span> of hours and
+    small in most of the rest. The average is carried by the tails.</div>
+  </div>
+  <div class="card">
+    <h3>The added rule, scored on the holdout once</h3>
+    <p class="small">Added after the look-ahead finding and labelled as added: take the 06:00 revision of the
+    forecast (same-morning minus day-ahead) as a signal for the sign of the imbalance gap, when the revision is
+    large, with the pre-registered costs. A proxy for an intraday position, because intraday prices are not in
+    the public data.</p>
+    <div class="tscroll" style="margin-top:8px"><table id="rule-table"></table></div>
+    <div class="verdict sting"><b>Not a strategy. A map of where one would have to live.</b> By the
+    pre-registered metric the rule is positive on the holdout in both zones. It is also wrong in most hours,
+    its median hour loses exactly its costs, and its best decile of hours earns more than the whole result,
+    meaning the other ninety percent lose money together. A desk would read that as: the information is in the
+    large revisions on the few days the system is badly out of balance, and whether that is capturable
+    depends on intraday prices this page does not have. I would rather show that than a curve.</div>
+  </div>
+</div></section>
+
+<section id="coda"><div class="wrap">
+  <div class="sec-label">What it took</div>
+  <h2>How this was done, and its limits</h2>
+  <p class="small">Two more Energinet datasets added to the <a href="../">tavle</a> platform: the forecasts at
+  every horizon since November 2019, and the hourly imbalance settlement to March 2025. Fifty-seven tests pass on
+  the models. The questions, metrics, holdout and cost model were written down before any result was computed;
+  the changes made after reading Energinet's documentation are listed in the same file with the reason. Training
+  is November 2019 to December 2023; the holdout from January 2024 was read exactly once. <span id="spanline"></span></p>
+  <div class="limits">
+    <h3 style="font-size:17px;margin-bottom:6px">Limits</h3>
+    <p>Day-ahead auction results and hourly imbalance prices only: no intraday prices, so the added rule is a
+    proxy and says so. Wind is offshore plus onshore as Energinet reports them, and the settlement includes small
+    plants the forecast may not; that is one candidate for the drift, and the page does not pretend to know
+    which. The R squared model is deliberately plain. Two zones, one country, and a study written by one person
+    who chose the questions.</p>
+  </div>
+  <h3 style="margin-top:24px;font-size:17px">Five terms</h3>
+  <div class="gloss">
+    <div><b>day-ahead price</b> the price fixed in the auction held the day before, one per hour per zone</div>
+    <div><b>forecast horizon</b> how far before the hour a forecast was made: the evening before, the same morning, five hours, one hour</div>
+    <div><b>imbalance price</b> what a producer pays or receives per megawatt-hour for delivering less or more than it sold</div>
+    <div><b>look-ahead</b> using information in a backtest that was not available at the time of the decision</div>
+    <div><b>holdout</b> the part of the data kept unread until the method was frozen, so a result cannot be tuned to it</div>
+  </div>
+</div></section>
+
+<footer><div class="wrap"><span>Bolga&ccedil; G&uuml;len &middot; built by the pipeline</span><a href="https://github.com/bolgacg/tavle">github.com/bolgacg/tavle</a></div></footer>
+
+<div id="tour"><div class="wrap">
+  <div class="tk" id="tour-k"></div><div class="tx" id="tour-tx"></div>
+  <div class="nav"><button class="tbtn" id="tour-skip">Close</button><button class="tbtn primary" id="tour-next">Next</button></div>
+</div></div>
+
+<script>
+const D = {"training": {"period": ["2019-11-01", "2024-01-01"], "hours": 69842, "q1": {"DK1|2020": {"r2_without": 0.171, "r2_with": 0.529, "forecast_adds": 0.357, "hours": 4345}, "DK1|2021": {"r2_without": 0.121, "r2_with": 0.354, "forecast_adds": 0.233, "hours": 4295}, "DK1|2022": {"r2_without": 0.48, "r2_with": 0.627, "forecast_adds": 0.147, "hours": 4368}, "DK1|2023": {"r2_without": 0.18, "r2_with": 0.478, "forecast_adds": 0.299, "hours": 4392}, "DK2|2020": {"r2_without": 0.264, "r2_with": 0.471, "forecast_adds": 0.207, "hours": 4345}, "DK2|2021": {"r2_without": -0.065, "r2_with": 0.198, "forecast_adds": 0.263, "hours": 4295}, "DK2|2022": {"r2_without": 0.428, "r2_with": 0.641, "forecast_adds": 0.213, "hours": 4368}, "DK2|2023": {"r2_without": 0.107, "r2_with": 0.466, "forecast_adds": 0.359, "hours": 4392}, "spread": {"corr_all_hours": 0.057, "hours": 34921, "corr_when_spread_exceeds_2eur": 0.055, "hours_when_spread_exceeds_2eur": 7688}}, "q2": {"DK1": {"mae_day_ahead_mwh": 258.1, "bias_day_ahead_mwh": -2.3, "mae_one_hour_mwh": 171.4, "hours": 34921, "mae_by_forecast_decile": [66.3, 114.1, 155.0, 193.5, 230.0, 264.1, 286.4, 338.9, 399.4, 533.3], "bias_by_hour": [-59.2, -57.4, -64.2, -69.1, -69.4, -54.2, -28.0, 10.6, 18.4, 1.5, 3.2, 6.8, 9.2, 11.8, 11.9, 19.3, 24.1, 30.8, 51.3, 62.0, 44.7, 20.3, 12.8, 7.1]}, "DK2": {"mae_day_ahead_mwh": 173.2, "bias_day_ahead_mwh": 120.0, "mae_one_hour_mwh": 152.7, "hours": 34921, "mae_by_forecast_decile": [26.0, 54.6, 79.4, 122.6, 160.7, 216.1, 281.8, 299.0, 298.4, 193.8], "bias_by_hour": [122.0, 120.3, 116.4, 111.2, 109.6, 112.8, 112.2, 122.6, 119.7, 112.3, 112.7, 111.7, 113.2, 112.4, 113.4, 118.9, 124.1, 126.2, 131.1, 133.8, 133.8, 129.9, 129.0, 129.8]}}, "q3": {"DK1": {"sign_agreement": 0.442, "hours": 34918, "mean_gap_by_error_decile_eur": [3.17, 7.1, 3.36, 3.06, -3.05, -4.83, -6.22, -7.86, -7.56, -11.13], "mean_gap_more_wind_than_forecast": -7.66, "mean_gap_less_wind_than_forecast": 2.32}, "DK2": {"sign_agreement": 0.465, "hours": 34918, "mean_gap_by_error_decile_eur": [9.6, 3.46, 2.13, 0.44, -1.84, -0.43, 0.04, -1.8, -8.38, -8.1], "mean_gap_more_wind_than_forecast": -3.26, "mean_gap_less_wind_than_forecast": 4.6}}, "q4": {"verdict": "cannot be tested as pre-registered", "reason": "the day-ahead forecast is published at 18:00 the day before delivery, about six hours after the auction that sets the price the rule would trade; using it is look-ahead"}, "q4_prime": {"DK1": {"threshold_revision_mwh": 208.4, "hours_traded": 5809, "hours_total": 23234, "sign_agreement": 0.524, "median_pnl_eur": -0.599, "share_of_total_from_best_decile": 1.364, "mean_pnl_eur_per_mwh_hour": 9.618, "standard_error": 1.287, "verdict": "positive"}, "DK2": {"threshold_revision_mwh": 59.4, "hours_traded": 5809, "hours_total": 23234, "sign_agreement": 0.469, "median_pnl_eur": -0.6, "share_of_total_from_best_decile": 1.604, "mean_pnl_eur_per_mwh_hour": 7.657, "standard_error": 0.753, "verdict": "positive"}}}, "holdout": {"period": ["2024-01-01", "2099-01-01"], "hours": 45548, "q1": {"DK1|2024": {"r2_without": 0.023, "r2_with": 0.293, "forecast_adds": 0.269, "hours": 4322}, "DK1|2025": {"r2_without": 0.187, "r2_with": 0.424, "forecast_adds": 0.237, "hours": 4345}, "DK1|2026": {"r2_without": 0.288, "r2_with": 0.357, "forecast_adds": 0.069, "hours": 2734}, "DK2|2024": {"r2_without": 0.025, "r2_with": 0.305, "forecast_adds": 0.28, "hours": 4322}, "DK2|2025": {"r2_without": 0.199, "r2_with": 0.438, "forecast_adds": 0.239, "hours": 4345}, "DK2|2026": {"r2_without": 0.236, "r2_with": 0.35, "forecast_adds": 0.113, "hours": 2734}, "spread": {"corr_all_hours": -0.103, "hours": 22774, "corr_when_spread_exceeds_2eur": -0.161, "hours_when_spread_exceeds_2eur": 6984}}, "q2": {"DK1": {"mae_day_ahead_mwh": 416.3, "bias_day_ahead_mwh": 286.6, "mae_one_hour_mwh": 238.7, "hours": 22774, "mae_by_forecast_decile": [92.3, 150.5, 189.1, 229.4, 304.9, 388.1, 519.0, 632.8, 762.2, 894.4], "bias_by_hour": [261.1, 261.8, 248.9, 228.3, 221.8, 247.2, 315.9, 357.2, 322.6, 249.5, 218.0, 179.2, 162.6, 174.2, 194.6, 231.9, 278.6, 351.2, 426.4, 448.8, 408.7, 362.8, 359.4, 366.8]}, "DK2": {"mae_day_ahead_mwh": 135.7, "bias_day_ahead_mwh": -25.1, "mae_one_hour_mwh": 72.9, "hours": 22774, "mae_by_forecast_decile": [40.6, 76.8, 106.5, 127.9, 147.1, 156.4, 155.0, 173.4, 190.9, 181.9], "bias_by_hour": [-1.8, -12.1, -20.2, -27.7, -31.4, -29.4, -22.5, -14.5, -28.8, -48.8, -59.8, -70.5, -81.1, -83.4, -76.2, -60.9, -39.0, -10.5, 15.5, 26.9, 26.5, 19.8, 17.5, 10.0]}}, "q3": {"DK1": {"sign_agreement": 0.322, "hours": 10188, "mean_gap_by_error_decile_eur": [14.42, 0.54, -1.2, 4.25, 0.92, 2.35, -1.35, -3.66, -4.74, -5.41], "mean_gap_more_wind_than_forecast": -1.67, "mean_gap_less_wind_than_forecast": 4.67}, "DK2": {"sign_agreement": 0.296, "hours": 10188, "mean_gap_by_error_decile_eur": [10.55, 12.64, 6.24, 1.55, 3.23, 0.96, -4.82, -1.49, -0.87, -8.54], "mean_gap_more_wind_than_forecast": -4.04, "mean_gap_less_wind_than_forecast": 6.14}}, "q4": {"verdict": "cannot be tested as pre-registered", "reason": "the day-ahead forecast is published at 18:00 the day before delivery, about six hours after the auction that sets the price the rule would trade; using it is look-ahead"}, "q4_prime": {"DK1": {"threshold_revision_mwh": 208.4, "hours_traded": 3310, "hours_total": 10101, "sign_agreement": 0.381, "median_pnl_eur": -0.6, "share_of_total_from_best_decile": 2.718, "mean_pnl_eur_per_mwh_hour": 3.225, "standard_error": 0.959, "verdict": "positive"}, "DK2": {"threshold_revision_mwh": 59.4, "hours_traded": 4660, "hours_total": 10101, "sign_agreement": 0.331, "median_pnl_eur": -0.6, "share_of_total_from_best_decile": 2.23, "mean_pnl_eur_per_mwh_hour": 5.638, "standard_error": 0.997, "verdict": "positive"}}}, "monthly_bias": [{"area": "DK1", "month": "2020-01", "bias_mwh": 78.0, "forecast_mwh": 2310.0, "actual_mwh": 2388.0}, {"area": "DK1", "month": "2020-02", "bias_mwh": -360.0, "forecast_mwh": 2661.0, "actual_mwh": 2300.0}, {"area": "DK1", "month": "2020-03", "bias_mwh": -64.0, "forecast_mwh": 1717.0, "actual_mwh": 1640.0}, {"area": "DK1", "month": "2020-04", "bias_mwh": -60.0, "forecast_mwh": 1403.0, "actual_mwh": 1343.0}, {"area": "DK1", "month": "2020-05", "bias_mwh": -80.0, "forecast_mwh": 1435.0, "actual_mwh": 1355.0}, {"area": "DK1", "month": "2020-06", "bias_mwh": -101.0, "forecast_mwh": 930.0, "actual_mwh": 829.0}, {"area": "DK1", "month": "2020-07", "bias_mwh": -41.0, "forecast_mwh": 1472.0, "actual_mwh": 1431.0}, {"area": "DK1", "month": "2020-08", "bias_mwh": -97.0, "forecast_mwh": 852.0, "actual_mwh": 756.0}, {"area": "DK1", "month": "2020-09", "bias_mwh": 52.0, "forecast_mwh": 1222.0, "actual_mwh": 1275.0}, {"area": "DK1", "month": "2020-10", "bias_mwh": -70.0, "forecast_mwh": 1607.0, "actual_mwh": 1537.0}, {"area": "DK1", "month": "2020-11", "bias_mwh": -256.0, "forecast_mwh": 1816.0, "actual_mwh": 1560.0}, {"area": "DK1", "month": "2020-12", "bias_mwh": -111.0, "forecast_mwh": 1517.0, "actual_mwh": 1406.0}, {"area": "DK1", "month": "2021-01", "bias_mwh": 12.0, "forecast_mwh": 1231.0, "actual_mwh": 1243.0}, {"area": "DK1", "month": "2021-02", "bias_mwh": 161.0, "forecast_mwh": 1702.0, "actual_mwh": 1863.0}, {"area": "DK1", "month": "2021-03", "bias_mwh": -70.0, "forecast_mwh": 1683.0, "actual_mwh": 1613.0}, {"area": "DK1", "month": "2021-04", "bias_mwh": -213.0, "forecast_mwh": 1673.0, "actual_mwh": 1460.0}, {"area": "DK1", "month": "2021-05", "bias_mwh": -107.0, "forecast_mwh": 1099.0, "actual_mwh": 992.0}, {"area": "DK1", "month": "2021-06", "bias_mwh": 4.0, "forecast_mwh": 849.0, "actual_mwh": 853.0}, {"area": "DK1", "month": "2021-07", "bias_mwh": -11.0, "forecast_mwh": 979.0, "actual_mwh": 967.0}, {"area": "DK1", "month": "2021-08", "bias_mwh": 3.0, "forecast_mwh": 1311.0, "actual_mwh": 1314.0}, {"area": "DK1", "month": "2021-09", "bias_mwh": -36.0, "forecast_mwh": 1010.0, "actual_mwh": 974.0}, {"area": "DK1", "month": "2021-10", "bias_mwh": -176.0, "forecast_mwh": 1841.0, "actual_mwh": 1645.0}, {"area": "DK1", "month": "2021-11", "bias_mwh": -97.0, "forecast_mwh": 1685.0, "actual_mwh": 1552.0}, {"area": "DK1", "month": "2021-12", "bias_mwh": 160.0, "forecast_mwh": 1496.0, "actual_mwh": 1656.0}, {"area": "DK1", "month": "2022-01", "bias_mwh": 19.0, "forecast_mwh": 2239.0, "actual_mwh": 2258.0}, {"area": "DK1", "month": "2022-02", "bias_mwh": 13.0, "forecast_mwh": 2669.0, "actual_mwh": 2681.0}, {"area": "DK1", "month": "2022-03", "bias_mwh": -28.0, "forecast_mwh": 1214.0, "actual_mwh": 1186.0}, {"area": "DK1", "month": "2022-04", "bias_mwh": -26.0, "forecast_mwh": 1452.0, "actual_mwh": 1425.0}, {"area": "DK1", "month": "2022-05", "bias_mwh": -104.0, "forecast_mwh": 1425.0, "actual_mwh": 1321.0}, {"area": "DK1", "month": "2022-06", "bias_mwh": -9.0, "forecast_mwh": 1002.0, "actual_mwh": 993.0}, {"area": "DK1", "month": "2022-07", "bias_mwh": -46.0, "forecast_mwh": 1536.0, "actual_mwh": 1490.0}, {"area": "DK1", "month": "2022-08", "bias_mwh": -15.0, "forecast_mwh": 807.0, "actual_mwh": 792.0}, {"area": "DK1", "month": "2022-09", "bias_mwh": 90.0, "forecast_mwh": 1325.0, "actual_mwh": 1415.0}, {"area": "DK1", "month": "2022-10", "bias_mwh": 51.0, "forecast_mwh": 1651.0, "actual_mwh": 1702.0}, {"area": "DK1", "month": "2022-11", "bias_mwh": 89.0, "forecast_mwh": 2156.0, "actual_mwh": 2199.0}, {"area": "DK1", "month": "2022-12", "bias_mwh": 119.0, "forecast_mwh": 1598.0, "actual_mwh": 1717.0}, {"area": "DK1", "month": "2023-01", "bias_mwh": 180.0, "forecast_mwh": 1927.0, "actual_mwh": 2106.0}, {"area": "DK1", "month": "2023-02", "bias_mwh": 182.0, "forecast_mwh": 1770.0, "actual_mwh": 1952.0}, {"area": "DK1", "month": "2023-03", "bias_mwh": 133.0, "forecast_mwh": 1574.0, "actual_mwh": 1707.0}, {"area": "DK1", "month": "2023-04", "bias_mwh": 74.0, "forecast_mwh": 1325.0, "actual_mwh": 1399.0}, {"area": "DK1", "month": "2023-05", "bias_mwh": 42.0, "forecast_mwh": 1415.0, "actual_mwh": 1457.0}, {"area": "DK1", "month": "2023-06", "bias_mwh": 38.0, "forecast_mwh": 777.0, "actual_mwh": 815.0}, {"area": "DK1", "month": "2023-07", "bias_mwh": 18.0, "forecast_mwh": 1419.0, "actual_mwh": 1437.0}, {"area": "DK1", "month": "2023-08", "bias_mwh": -64.0, "forecast_mwh": 1113.0, "actual_mwh": 1049.0}, {"area": "DK1", "month": "2023-09", "bias_mwh": -38.0, "forecast_mwh": 1238.0, "actual_mwh": 1200.0}, {"area": "DK1", "month": "2023-10", "bias_mwh": 165.0, "forecast_mwh": 2000.0, "actual_mwh": 2166.0}, {"area": "DK1", "month": "2023-11", "bias_mwh": 193.0, "forecast_mwh": 1474.0, "actual_mwh": 1667.0}, {"area": "DK1", "month": "2023-12", "bias_mwh": 279.0, "forecast_mwh": 1987.0, "actual_mwh": 2266.0}, {"area": "DK1", "month": "2024-01", "bias_mwh": 460.0, "forecast_mwh": 2074.0, "actual_mwh": 2534.0}, {"area": "DK1", "month": "2024-02", "bias_mwh": 407.0, "forecast_mwh": 1940.0, "actual_mwh": 2348.0}, {"area": "DK1", "month": "2024-03", "bias_mwh": 395.0, "forecast_mwh": 1568.0, "actual_mwh": 1963.0}, {"area": "DK1", "month": "2024-04", "bias_mwh": 419.0, "forecast_mwh": 1334.0, "actual_mwh": 1757.0}, {"area": "DK1", "month": "2024-05", "bias_mwh": 108.0, "forecast_mwh": 1146.0, "actual_mwh": 1254.0}, {"area": "DK1", "month": "2024-06", "bias_mwh": 155.0, "forecast_mwh": 1270.0, "actual_mwh": 1425.0}, {"area": "DK1", "month": "2024-07", "bias_mwh": 73.0, "forecast_mwh": 1221.0, "actual_mwh": 1294.0}, {"area": "DK1", "month": "2024-08", "bias_mwh": 82.0, "forecast_mwh": 1202.0, "actual_mwh": 1284.0}, {"area": "DK1", "month": "2024-09", "bias_mwh": 52.0, "forecast_mwh": 1125.0, "actual_mwh": 1177.0}, {"area": "DK1", "month": "2024-10", "bias_mwh": 320.0, "forecast_mwh": 1475.0, "actual_mwh": 1795.0}, {"area": "DK1", "month": "2024-11", "bias_mwh": 248.0, "forecast_mwh": 1408.0, "actual_mwh": 1721.0}, {"area": "DK1", "month": "2024-12", "bias_mwh": 421.0, "forecast_mwh": 1847.0, "actual_mwh": 2268.0}, {"area": "DK1", "month": "2025-01", "bias_mwh": 342.0, "forecast_mwh": 1748.0, "actual_mwh": 2090.0}, {"area": "DK1", "month": "2025-02", "bias_mwh": 296.0, "forecast_mwh": 1354.0, "actual_mwh": 1650.0}, {"area": "DK1", "month": "2025-03", "bias_mwh": 371.0, "forecast_mwh": 1387.0, "actual_mwh": 1758.0}, {"area": "DK1", "month": "2025-04", "bias_mwh": 95.0, "forecast_mwh": 804.0, "actual_mwh": 946.0}, {"area": "DK1", "month": "2025-05", "bias_mwh": 187.0, "forecast_mwh": 1232.0, "actual_mwh": 1419.0}, {"area": "DK1", "month": "2025-06", "bias_mwh": 194.0, "forecast_mwh": 1495.0, "actual_mwh": 1689.0}, {"area": "DK1", "month": "2025-07", "bias_mwh": 31.0, "forecast_mwh": 1032.0, "actual_mwh": 1063.0}, {"area": "DK1", "month": "2025-08", "bias_mwh": 81.0, "forecast_mwh": 1194.0, "actual_mwh": 1263.0}, {"area": "DK1", "month": "2025-09", "bias_mwh": 178.0, "forecast_mwh": 1514.0, "actual_mwh": 1615.0}, {"area": "DK1", "month": "2025-10", "bias_mwh": 336.0, "forecast_mwh": 1638.0, "actual_mwh": 1974.0}, {"area": "DK1", "month": "2025-11", "bias_mwh": 377.0, "forecast_mwh": 1535.0, "actual_mwh": 1851.0}, {"area": "DK1", "month": "2025-12", "bias_mwh": 461.0, "forecast_mwh": 1708.0, "actual_mwh": 2169.0}, {"area": "DK1", "month": "2026-01", "bias_mwh": 599.0, "forecast_mwh": 2005.0, "actual_mwh": 2604.0}, {"area": "DK1", "month": "2026-02", "bias_mwh": 523.0, "forecast_mwh": 1955.0, "actual_mwh": 2478.0}, {"area": "DK1", "month": "2026-03", "bias_mwh": 397.0, "forecast_mwh": 1429.0, "actual_mwh": 1827.0}, {"area": "DK1", "month": "2026-04", "bias_mwh": 226.0, "forecast_mwh": 1248.0, "actual_mwh": 1474.0}, {"area": "DK1", "month": "2026-05", "bias_mwh": 198.0, "forecast_mwh": 965.0, "actual_mwh": 1163.0}, {"area": "DK1", "month": "2026-06", "bias_mwh": 301.0, "forecast_mwh": 968.0, "actual_mwh": 1269.0}, {"area": "DK1", "month": "2026-07", "bias_mwh": 429.0, "forecast_mwh": 1342.0, "actual_mwh": 1771.0}, {"area": "DK1", "month": "2026-08", "bias_mwh": 523.0, "forecast_mwh": 1351.0, "actual_mwh": 1874.0}, {"area": "DK2", "month": "2020-01", "bias_mwh": 12.0, "forecast_mwh": 518.0, "actual_mwh": 530.0}, {"area": "DK2", "month": "2020-02", "bias_mwh": -10.0, "forecast_mwh": 687.0, "actual_mwh": 677.0}, {"area": "DK2", "month": "2020-03", "bias_mwh": -10.0, "forecast_mwh": 409.0, "actual_mwh": 389.0}, {"area": "DK2", "month": "2020-04", "bias_mwh": 10.0, "forecast_mwh": 319.0, "actual_mwh": 329.0}, {"area": "DK2", "month": "2020-05", "bias_mwh": -11.0, "forecast_mwh": 334.0, "actual_mwh": 323.0}, {"area": "DK2", "month": "2020-06", "bias_mwh": -15.0, "forecast_mwh": 269.0, "actual_mwh": 253.0}, {"area": "DK2", "month": "2020-07", "bias_mwh": -8.0, "forecast_mwh": 324.0, "actual_mwh": 316.0}, {"area": "DK2", "month": "2020-08", "bias_mwh": -3.0, "forecast_mwh": 181.0, "actual_mwh": 179.0}, {"area": "DK2", "month": "2020-09", "bias_mwh": 3.0, "forecast_mwh": 231.0, "actual_mwh": 234.0}, {"area": "DK2", "month": "2020-10", "bias_mwh": 10.0, "forecast_mwh": 386.0, "actual_mwh": 395.0}, {"area": "DK2", "month": "2020-11", "bias_mwh": 37.0, "forecast_mwh": 417.0, "actual_mwh": 454.0}, {"area": "DK2", "month": "2020-12", "bias_mwh": -25.0, "forecast_mwh": 394.0, "actual_mwh": 369.0}, {"area": "DK2", "month": "2021-01", "bias_mwh": 18.0, "forecast_mwh": 341.0, "actual_mwh": 358.0}, {"area": "DK2", "month": "2021-02", "bias_mwh": 62.0, "forecast_mwh": 387.0, "actual_mwh": 449.0}, {"area": "DK2", "month": "2021-03", "bias_mwh": 62.0, "forecast_mwh": 377.0, "actual_mwh": 439.0}, {"area": "DK2", "month": "2021-04", "bias_mwh": 127.0, "forecast_mwh": 377.0, "actual_mwh": 504.0}, {"area": "DK2", "month": "2021-05", "bias_mwh": 148.0, "forecast_mwh": 310.0, "actual_mwh": 458.0}, {"area": "DK2", "month": "2021-06", "bias_mwh": 143.0, "forecast_mwh": 169.0, "actual_mwh": 312.0}, {"area": "DK2", "month": "2021-07", "bias_mwh": 184.0, "forecast_mwh": 223.0, "actual_mwh": 408.0}, {"area": "DK2", "month": "2021-08", "bias_mwh": 237.0, "forecast_mwh": 296.0, "actual_mwh": 533.0}, {"area": "DK2", "month": "2021-09", "bias_mwh": 207.0, "forecast_mwh": 240.0, "actual_mwh": 447.0}, {"area": "DK2", "month": "2021-10", "bias_mwh": 283.0, "forecast_mwh": 410.0, "actual_mwh": 678.0}, {"area": "DK2", "month": "2021-11", "bias_mwh": 307.0, "forecast_mwh": 356.0, "actual_mwh": 650.0}, {"area": "DK2", "month": "2021-12", "bias_mwh": 345.0, "forecast_mwh": 355.0, "actual_mwh": 701.0}, {"area": "DK2", "month": "2022-01", "bias_mwh": 375.0, "forecast_mwh": 525.0, "actual_mwh": 899.0}, {"area": "DK2", "month": "2022-02", "bias_mwh": 414.0, "forecast_mwh": 620.0, "actual_mwh": 1034.0}, {"area": "DK2", "month": "2022-03", "bias_mwh": 187.0, "forecast_mwh": 263.0, "actual_mwh": 449.0}, {"area": "DK2", "month": "2022-04", "bias_mwh": 240.0, "forecast_mwh": 343.0, "actual_mwh": 583.0}, {"area": "DK2", "month": "2022-05", "bias_mwh": 197.0, "forecast_mwh": 280.0, "actual_mwh": 477.0}, {"area": "DK2", "month": "2022-06", "bias_mwh": 127.0, "forecast_mwh": 185.0, "actual_mwh": 312.0}, {"area": "DK2", "month": "2022-07", "bias_mwh": 274.0, "forecast_mwh": 312.0, "actual_mwh": 586.0}, {"area": "DK2", "month": "2022-08", "bias_mwh": 75.0, "forecast_mwh": 124.0, "actual_mwh": 199.0}, {"area": "DK2", "month": "2022-09", "bias_mwh": 263.0, "forecast_mwh": 271.0, "actual_mwh": 535.0}, {"area": "DK2", "month": "2022-10", "bias_mwh": 255.0, "forecast_mwh": 317.0, "actual_mwh": 572.0}, {"area": "DK2", "month": "2022-11", "bias_mwh": 347.0, "forecast_mwh": 432.0, "actual_mwh": 761.0}, {"area": "DK2", "month": "2022-12", "bias_mwh": 316.0, "forecast_mwh": 321.0, "actual_mwh": 638.0}, {"area": "DK2", "month": "2023-01", "bias_mwh": 451.0, "forecast_mwh": 469.0, "actual_mwh": 920.0}, {"area": "DK2", "month": "2023-02", "bias_mwh": 342.0, "forecast_mwh": 394.0, "actual_mwh": 735.0}, {"area": "DK2", "month": "2023-03", "bias_mwh": 35.0, "forecast_mwh": 668.0, "actual_mwh": 703.0}, {"area": "DK2", "month": "2023-04", "bias_mwh": 2.0, "forecast_mwh": 602.0, "actual_mwh": 603.0}, {"area": "DK2", "month": "2023-05", "bias_mwh": -47.0, "forecast_mwh": 562.0, "actual_mwh": 514.0}, {"area": "DK2", "month": "2023-06", "bias_mwh": -2.0, "forecast_mwh": 322.0, "actual_mwh": 320.0}, {"area": "DK2", "month": "2023-07", "bias_mwh": 15.0, "forecast_mwh": 552.0, "actual_mwh": 567.0}, {"area": "DK2", "month": "2023-08", "bias_mwh": -83.0, "forecast_mwh": 449.0, "actual_mwh": 366.0}, {"area": "DK2", "month": "2023-09", "bias_mwh": -40.0, "forecast_mwh": 437.0, "actual_mwh": 398.0}, {"area": "DK2", "month": "2023-10", "bias_mwh": -76.0, "forecast_mwh": 800.0, "actual_mwh": 725.0}, {"area": "DK2", "month": "2023-11", "bias_mwh": -21.0, "forecast_mwh": 701.0, "actual_mwh": 680.0}, {"area": "DK2", "month": "2023-12", "bias_mwh": 44.0, "forecast_mwh": 816.0, "actual_mwh": 860.0}, {"area": "DK2", "month": "2024-01", "bias_mwh": 27.0, "forecast_mwh": 887.0, "actual_mwh": 914.0}, {"area": "DK2", "month": "2024-02", "bias_mwh": 78.0, "forecast_mwh": 833.0, "actual_mwh": 912.0}, {"area": "DK2", "month": "2024-03", "bias_mwh": 44.0, "forecast_mwh": 639.0, "actual_mwh": 683.0}, {"area": "DK2", "month": "2024-04", "bias_mwh": 31.0, "forecast_mwh": 523.0, "actual_mwh": 549.0}, {"area": "DK2", "month": "2024-05", "bias_mwh": -40.0, "forecast_mwh": 567.0, "actual_mwh": 527.0}, {"area": "DK2", "month": "2024-06", "bias_mwh": -41.0, "forecast_mwh": 498.0, "actual_mwh": 457.0}, {"area": "DK2", "month": "2024-07", "bias_mwh": -106.0, "forecast_mwh": 476.0, "actual_mwh": 370.0}, {"area": "DK2", "month": "2024-08", "bias_mwh": -131.0, "forecast_mwh": 467.0, "actual_mwh": 336.0}, {"area": "DK2", "month": "2024-09", "bias_mwh": -87.0, "forecast_mwh": 622.0, "actual_mwh": 535.0}, {"area": "DK2", "month": "2024-10", "bias_mwh": -20.0, "forecast_mwh": 626.0, "actual_mwh": 606.0}, {"area": "DK2", "month": "2024-11", "bias_mwh": -47.0, "forecast_mwh": 605.0, "actual_mwh": 579.0}, {"area": "DK2", "month": "2024-12", "bias_mwh": -15.0, "forecast_mwh": 765.0, "actual_mwh": 749.0}, {"area": "DK2", "month": "2025-01", "bias_mwh": 19.0, "forecast_mwh": 768.0, "actual_mwh": 786.0}, {"area": "DK2", "month": "2025-02", "bias_mwh": -8.0, "forecast_mwh": 553.0, "actual_mwh": 545.0}, {"area": "DK2", "month": "2025-03", "bias_mwh": -25.0, "forecast_mwh": 547.0, "actual_mwh": 522.0}, {"area": "DK2", "month": "2025-04", "bias_mwh": -47.0, "forecast_mwh": 325.0, "actual_mwh": 291.0}, {"area": "DK2", "month": "2025-05", "bias_mwh": -40.0, "forecast_mwh": 507.0, "actual_mwh": 466.0}, {"area": "DK2", "month": "2025-06", "bias_mwh": -63.0, "forecast_mwh": 636.0, "actual_mwh": 573.0}, {"area": "DK2", "month": "2025-07", "bias_mwh": -75.0, "forecast_mwh": 459.0, "actual_mwh": 385.0}, {"area": "DK2", "month": "2025-08", "bias_mwh": -92.0, "forecast_mwh": 466.0, "actual_mwh": 366.0}, {"area": "DK2", "month": "2025-09", "bias_mwh": -48.0, "forecast_mwh": 627.0, "actual_mwh": 556.0}, {"area": "DK2", "month": "2025-10", "bias_mwh": -25.0, "forecast_mwh": 731.0, "actual_mwh": 706.0}, {"area": "DK2", "month": "2025-11", "bias_mwh": 18.0, "forecast_mwh": 604.0, "actual_mwh": 597.0}, {"area": "DK2", "month": "2025-12", "bias_mwh": 46.0, "forecast_mwh": 663.0, "actual_mwh": 709.0}, {"area": "DK2", "month": "2026-01", "bias_mwh": 41.0, "forecast_mwh": 875.0, "actual_mwh": 916.0}, {"area": "DK2", "month": "2026-02", "bias_mwh": 25.0, "forecast_mwh": 785.0, "actual_mwh": 809.0}, {"area": "DK2", "month": "2026-03", "bias_mwh": -10.0, "forecast_mwh": 480.0, "actual_mwh": 469.0}, {"area": "DK2", "month": "2026-04", "bias_mwh": -47.0, "forecast_mwh": 508.0, "actual_mwh": 461.0}, {"area": "DK2", "month": "2026-05", "bias_mwh": -34.0, "forecast_mwh": 354.0, "actual_mwh": 319.0}, {"area": "DK2", "month": "2026-06", "bias_mwh": -39.0, "forecast_mwh": 373.0, "actual_mwh": 334.0}, {"area": "DK2", "month": "2026-07", "bias_mwh": -17.0, "forecast_mwh": 528.0, "actual_mwh": 510.0}, {"area": "DK2", "month": "2026-08", "bias_mwh": -80.0, "forecast_mwh": 466.0, "actual_mwh": 387.0}], "horizon_mae": [{"area": "DK1", "day_ahead": 345.0, "same_morning": 255.0, "five_hours": 277.0, "one_hour": 205.0, "mean_actual": 1625.0}, {"area": "DK2", "day_ahead": 156.0, "same_morning": 128.0, "five_hours": 142.0, "one_hour": 114.0, "mean_actual": 542.0}], "gap_deciles": [{"area": "DK1", "decile": 1, "mean_gap_eur": 4.08, "median_gap_eur": -0.0, "err_from": -2044.0, "err_to": -348.0, "hours": 4511}, {"area": "DK1", "decile": 2, "mean_gap_eur": 8.15, "median_gap_eur": 0.0, "err_from": -348.0, "err_to": -191.0, "hours": 4511}, {"area": "DK1", "decile": 3, "mean_gap_eur": 2.65, "median_gap_eur": 0.0, "err_from": -191.0, "err_to": -111.0, "hours": 4511}, {"area": "DK1", "decile": 4, "mean_gap_eur": 1.47, "median_gap_eur": 0.0, "err_from": -111.0, "err_to": -51.0, "hours": 4511}, {"area": "DK1", "decile": 5, "mean_gap_eur": -3.55, "median_gap_eur": 0.0, "err_from": -51.0, "err_to": 7.0, "hours": 4511}, {"area": "DK1", "decile": 6, "mean_gap_eur": -3.54, "median_gap_eur": -0.0, "err_from": 7.0, "err_to": 84.0, "hours": 4511}, {"area": "DK1", "decile": 7, "mean_gap_eur": -6.12, "median_gap_eur": 0.0, "err_from": 84.0, "err_to": 188.0, "hours": 4510}, {"area": "DK1", "decile": 8, "mean_gap_eur": -5.17, "median_gap_eur": 0.0, "err_from": 188.0, "err_to": 332.0, "hours": 4510}, {"area": "DK1", "decile": 9, "mean_gap_eur": -7.36, "median_gap_eur": 0.0, "err_from": 332.0, "err_to": 585.0, "hours": 4510}, {"area": "DK1", "decile": 10, "mean_gap_eur": -7.79, "median_gap_eur": -0.0, "err_from": 585.0, "err_to": 1981.0, "hours": 4510}, {"area": "DK2", "decile": 1, "mean_gap_eur": 10.92, "median_gap_eur": 0.0, "err_from": -923.0, "err_to": -129.0, "hours": 4511}, {"area": "DK2", "decile": 2, "mean_gap_eur": 4.41, "median_gap_eur": 0.0, "err_from": -129.0, "err_to": -60.0, "hours": 4511}, {"area": "DK2", "decile": 3, "mean_gap_eur": 2.63, "median_gap_eur": 0.0, "err_from": -60.0, "err_to": -24.0, "hours": 4511}, {"area": "DK2", "decile": 4, "mean_gap_eur": 2.69, "median_gap_eur": 0.0, "err_from": -24.0, "err_to": -1.0, "hours": 4511}, {"area": "DK2", "decile": 5, "mean_gap_eur": -2.07, "median_gap_eur": -0.0, "err_from": -1.0, "err_to": 32.0, "hours": 4511}, {"area": "DK2", "decile": 6, "mean_gap_eur": -2.06, "median_gap_eur": -0.0, "err_from": 32.0, "err_to": 79.0, "hours": 4511}, {"area": "DK2", "decile": 7, "mean_gap_eur": 0.57, "median_gap_eur": 0.0, "err_from": 79.0, "err_to": 138.0, "hours": 4510}, {"area": "DK2", "decile": 8, "mean_gap_eur": -2.24, "median_gap_eur": 0.0, "err_from": 138.0, "err_to": 237.0, "hours": 4510}, {"area": "DK2", "decile": 9, "mean_gap_eur": -6.0, "median_gap_eur": -0.0, "err_from": 237.0, "err_to": 434.0, "hours": 4510}, {"area": "DK2", "decile": 10, "mean_gap_eur": -8.26, "median_gap_eur": -0.0, "err_from": 434.0, "err_to": 983.0, "hours": 4510}], "gap_zero_share": 20.9, "span": {"forecast_first": "2019-12-31", "forecast_last": "2026-08-18", "imbalance_last": "2025-03-04", "hours": 115962}};
+const $ = s => document.querySelector(s);
+const fmt = (n,d) => n == null ? "" : Number(n).toLocaleString("en-GB",{maximumFractionDigits: d==null?2:d});
+const S = {DK1:"var(--s1)", DK2:"var(--s2)"};
+
+/* ---------- act one: the timeline ---------- */
+(function(){
+  const EV = [
+    {x:120,  t:"D-1, 12:00", k:"Auction closes", note:"Bids for every hour of tomorrow are in. Whatever anyone knew about tomorrow's wind, they knew it before now or not at all."},
+    {x:180,  t:"D-1, 12:45", k:"Prices published", note:"One price per hour per zone. From here the day-ahead price is a fact."},
+    {x:330,  t:"D-1, 18:00", k:"Energinet's day-ahead forecast", note:"Generated 17:50, published 18:00, per Energinet's documentation. Six hours after the price it would supposedly predict. The pre-registered strategy died here.", hot:true},
+    {x:520,  t:"D, 06:00", k:"Same-morning forecast", note:"The intraday revision. Before delivery, after the auction: usable for intraday positions, not for the day-ahead price."},
+    {x:700,  t:"D, hour minus 5 and minus 1", k:"Five-hour and one-hour forecasts", note:"Rolling updates as the hour approaches. Errors shrink; see act three."},
+    {x:800,  t:"D, the hour", k:"Delivery", note:"Wind blows however much it blows. The forecast error becomes a number."},
+    {x:900,  t:"after", k:"Imbalance settled", note:"Whoever delivered less than sold pays the imbalance price for the gap. Being wrong now has a price attached."},
+  ];
+  const W=960,H=150;
+  let g=`<line x1="40" x2="930" y1="70" y2="70" stroke="var(--rule2)" stroke-width="2"/>`;
+  g+=`<rect x="40" y="62" width="140" height="16" fill="var(--panel)"/><text x="110" y="120" text-anchor="middle" font-size="11" fill="var(--faint)" font-family="var(--mono)">the day before</text><text x="700" y="120" text-anchor="middle" font-size="11" fill="var(--faint)" font-family="var(--mono)">the delivery day</text>`;
+  g+=`<line x1="440" x2="440" y1="40" y2="100" stroke="var(--rule)" stroke-dasharray="3 3"/><text x="440" y="34" text-anchor="middle" font-size="10" fill="var(--faint)" font-family="var(--mono)">midnight</text>`;
+  EV.forEach((e,i)=>{g+=`<g class="tl-ev" data-i="${i}"><circle cx="${e.x}" cy="70" r="${e.hot?9:7}" fill="${e.hot?'var(--neg)':'var(--card)'}" stroke="${e.hot?'var(--neg)':'var(--accent)'}" stroke-width="2"/><text x="${e.x}" y="${i%2?100:52}" text-anchor="middle" font-size="10.5" fill="var(--soft)" font-family="var(--mono)">${e.t}</text></g>`});
+  $("#timeline").innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="timeline of the auction, the forecasts and the settlement">${g}</svg>`;
+  function show(i){const e=EV[i]; $("#tl-note").innerHTML=`<b>${e.t}, ${e.k}.</b> ${e.note}`; document.querySelectorAll(".tl-ev circle").forEach((c,j)=>c.setAttribute("stroke-width", j===i?4:2));}
+  document.querySelectorAll(".tl-ev").forEach(el=>el.addEventListener("click",()=>show(+el.dataset.i)));
+  show(2);
+})();
+
+/* ---------- generic bars ---------- */
+function bars(el, groups, opts){
+  el.querySelectorAll("svg,.legend").forEach(n=>n.remove());
+  const W=960,H=opts.h||280,P={l:52,r:12,t:16,b:40};
+  const vals=groups.flatMap(g=>g.series.map(s=>s.v)).filter(v=>v!=null);
+  const y0=Math.min(0,...vals), y1=Math.max(0,...vals)*1.1||1;
+  const Y=v=>P.t+(1-(v-y0)/((y1-y0)||1))*(H-P.t-P.b);
+  const n=groups.length, bw=(W-P.l-P.r)/n, k=groups[0].series.length, w=Math.min(28,(bw-8)/k);
+  let g="";
+  for(let i=0;i<=4;i++){const v=y0+(y1-y0)*i/4; g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--rule)"/><text x="${P.l-7}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="var(--faint)" font-family="var(--mono)">${fmt(v,opts.dec??0)}</text>`}
+  g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--soft)"/>`;
+  groups.forEach((gr,gi)=>{const x0=P.l+gi*bw+(bw-k*w-(k-1)*3)/2;
+    gr.series.forEach((s,si)=>{if(s.v==null)return; const x=x0+si*(w+3), y=Y(Math.max(0,s.v)), h=Math.abs(Y(s.v)-Y(0));
+      g+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${s.color}" rx="2"><title>${gr.label}, ${s.name}: ${fmt(s.v,opts.dec??2)}</title></rect>`});
+    g+=`<text x="${P.l+gi*bw+bw/2}" y="${H-14}" text-anchor="middle" font-size="11" fill="var(--faint)" font-family="var(--mono)">${gr.label}</text>`});
+  if(opts.xlabel) g+=`<text x="${W/2}" y="${H-1}" text-anchor="middle" font-size="11.5" fill="var(--soft)">${opts.xlabel}</text>`;
+  el.insertAdjacentHTML("beforeend", `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${opts.label}">${g}</svg><div class="legend">${groups[0].series.map(s=>`<span><i class="bar" style="background:${s.color}"></i>${s.name}</span>`).join("")}</div>`);
+}
+function line(el, series, opts){
+  el.querySelectorAll("svg,.legend").forEach(n=>n.remove());
+  const W=960,H=opts.h||260,P={l:52,r:12,t:12,b:30};
+  const xs=series.flatMap(s=>s.pts.map(p=>p.x)), ys=series.flatMap(s=>s.pts.map(p=>p.y));
+  const x0=Math.min(...xs), x1=Math.max(...xs), y0=Math.min(0,...ys)*1.05, y1=Math.max(0,...ys)*1.05||1;
+  const X=x=>P.l+(x-x0)/((x1-x0)||1)*(W-P.l-P.r), Y=y=>P.t+(1-(y-y0)/((y1-y0)||1))*(H-P.t-P.b);
+  let g="";
+  for(let i=0;i<=4;i++){const v=y0+(y1-y0)*i/4; g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--rule)"/><text x="${P.l-7}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="var(--faint)" font-family="var(--mono)">${fmt(v,0)}</text>`}
+  g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--soft)"/>`;
+  for(let i=0;i<=4;i++){const v=x0+(x1-x0)*i/4; g+=`<text x="${X(v)}" y="${H-8}" text-anchor="middle" font-size="11" fill="var(--faint)" font-family="var(--mono)">${opts.xlabel(v)}</text>`}
+  if(opts.mark){g+=`<line x1="${X(opts.mark)}" x2="${X(opts.mark)}" y1="${P.t}" y2="${H-P.b}" stroke="var(--amber)" stroke-dasharray="4 3"/><text x="${X(opts.mark)+5}" y="${P.t+12}" font-size="10.5" fill="var(--amber)" font-family="var(--mono)">${opts.markLabel||""}</text>`}
+  g+=series.map(s=>`<path d="${s.pts.map((p,i)=>(i?"L":"M")+X(p.x).toFixed(1)+" "+Y(p.y).toFixed(1)).join(" ")}" fill="none" stroke="${s.color}" stroke-width="2.2" stroke-linejoin="round"/>`).join("");
+  el.insertAdjacentHTML("beforeend", `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${opts.label}">${g}</svg><div class="legend">${series.map(s=>`<span><i style="border-top-color:${s.color}"></i>${s.name}</span>`).join("")}</div>`);
+}
+
+/* ---------- act two: R2 ---------- */
+(function(){
+  const T=D.training.q1, H=D.holdout.q1; let area="DK1";
+  $("#r2-ctl").innerHTML=["DK1","DK2"].map(a=>`<button class="chip" data-a="${a}" aria-pressed="${a===area}">${a}</button>`).join("");
+  function draw(){
+    const rows=[]; for(const [k,v] of Object.entries(T)) if(k.startsWith(area+"|")) rows.push({year:k.split("|")[1], ...v, period:"training"});
+    for(const [k,v] of Object.entries(H)) if(k.startsWith(area+"|")) rows.push({year:k.split("|")[1], ...v, period:"holdout"});
+    bars($("#r2-chart"), rows.map(r=>({label:r.year+(r.period==="holdout"?" *":""), series:[{name:"without wind", v:Math.max(0,r.r2_without), color:"var(--rule2)"},{name:"with expected wind", v:r.r2_with, color:S[area]}]})), {label:"R squared by year", dec:2, xlabel:"* holdout years, read once"});
+    $("#r2-table").innerHTML=`<tr><th>Year</th><th>Period</th><th>R² without</th><th>R² with wind</th><th>Wind adds</th><th>Hours scored</th></tr>`+rows.map(r=>`<tr><td class="l">${r.year}</td><td class="l">${r.period}</td><td class="num">${fmt(r.r2_without,2)}</td><td class="num">${fmt(r.r2_with,2)}</td><td class="num pos">+${fmt(r.forecast_adds,2)}</td><td class="num">${fmt(r.hours,0)}</td></tr>`).join("");
+  }
+  $("#r2-ctl").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b)return; area=b.dataset.a; $("#r2-ctl").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); draw();});
+  draw();
+  $("#spread-train").textContent=fmt(T.spread.corr_all_hours,2); $("#spread-hold").textContent=fmt(H.spread.corr_all_hours,2);
+})();
+
+/* ---------- act three ---------- */
+(function(){
+  const hm=D.horizon_mae;
+  $("#horizon-table").innerHTML=`<tr><th>Zone</th><th>Evening before</th><th>Same morning</th><th>Five hours</th><th>One hour</th><th>Mean actual wind</th></tr>`+
+    hm.map(r=>`<tr><td class="l">${r.area}</td><td class="num">${fmt(r.day_ahead,0)}</td><td class="num">${fmt(r.same_morning,0)}</td><td class="num">${fmt(r.five_hours,0)}</td><td class="num">${fmt(r.one_hour,0)}</td><td class="num">${fmt(r.mean_actual,0)}</td></tr>`).join("");
+  let area="DK1";
+  $("#bias-ctl").innerHTML=["DK1","DK2"].map(a=>`<button class="chip" data-a="${a}" aria-pressed="${a===area}">${a}</button>`).join("");
+  function drawBias(){
+    const pts=D.monthly_bias.filter(r=>r.area===area).map(r=>({x:Date.parse(r.month+"-01"), y:r.bias_mwh}));
+    line($("#bias-chart"), [{name:area+" monthly bias, actual minus forecast, MWh per hour", color:S[area], pts}], {label:"monthly forecast bias", xlabel:v=>new Date(v).toISOString().slice(0,7), mark:Date.parse("2024-01-01"), markLabel:"holdout begins"});
+  }
+  $("#bias-ctl").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b)return; area=b.dataset.a; $("#bias-ctl").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); drawBias();});
+  drawBias();
+  let ga="DK1";
+  $("#gap-ctl").innerHTML=["DK1","DK2"].map(a=>`<button class="chip" data-a="${a}" aria-pressed="${a===ga}">${a}</button>`).join("");
+  function drawGap(){
+    const rows=D.gap_deciles.filter(r=>r.area===ga);
+    bars($("#gap-chart"), rows.map(r=>({label:`${r.decile}`, series:[{name:"mean imbalance gap, EUR/MWh", v:r.mean_gap_eur, color:S[ga]},{name:"median", v:r.median_gap_eur, color:"var(--rule2)"}]})), {label:"imbalance gap by error decile", dec:1, xlabel:"forecast-error decile: 1 = much less wind than forecast, 10 = much more"});
+    $("#gap-note").textContent=`Decile 1 covers errors from ${fmt(rows[0].err_from,0)} to ${fmt(rows[0].err_to,0)} MWh; decile 10 from ${fmt(rows[9].err_from,0)} to ${fmt(rows[9].err_to,0)}. All hours to March 2025. The grey median bars sit at or near zero in every decile: in the typical hour the imbalance price equals the day-ahead price and being wrong costs nothing; the means are made by the other hours.`;
+  }
+  $("#gap-ctl").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b)return; ga=b.dataset.a; $("#gap-ctl").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); drawGap();});
+  drawGap();
+  const t3=D.training.q3, h3=D.holdout.q3;
+  $("#agree-train").textContent=Math.round(100*(t3.DK1.sign_agreement+t3.DK2.sign_agreement)/2)+"%";
+  $("#agree-hold").textContent=Math.round(100*(h3.DK1.sign_agreement+h3.DK2.sign_agreement)/2)+"%";
+  $("#zero-share").textContent=fmt(D.gap_zero_share,1)+"%";
+  const tq=D.training.q4_prime, hq=D.holdout.q4_prime;
+  $("#rule-table").innerHTML=`<tr><th>Zone, period</th><th>Hours traded</th><th>Right sign</th><th>Median hour</th><th>Mean, EUR/MWh</th><th>Std. error</th><th>Best decile as share of total</th><th>Pre-registered verdict</th></tr>`+
+    [["DK1","training",tq.DK1],["DK1","holdout",hq.DK1],["DK2","training",tq.DK2],["DK2","holdout",hq.DK2]].map(([a,p,r])=>`<tr><td class="l">${a}, ${p}</td><td class="num">${fmt(r.hours_traded,0)} of ${fmt(r.hours_total,0)}</td><td class="num">${Math.round(100*r.sign_agreement)}%</td><td class="num neg">${fmt(r.median_pnl_eur,2)}</td><td class="num ${r.mean_pnl_eur_per_mwh_hour>0?"pos":"neg"}">${fmt(r.mean_pnl_eur_per_mwh_hour,2)}</td><td class="num">${fmt(r.standard_error,2)}</td><td class="num">${Math.round(100*r.share_of_total_from_best_decile)}%</td><td class="l">${r.verdict}</td></tr>`).join("");
+  $("#spanline").textContent=`Forecast rows from ${D.span.forecast_first} to ${D.span.forecast_last}, ${fmt(D.span.hours,0)} zone-hours; imbalance prices to ${D.span.imbalance_last}.`;
+})();
+
+/* ---------- the walkthrough ---------- */
+const TOUR=[
+ ["Start here","A pre-registered study on public data. <b>Read the first paragraph:</b> wind explains a large part of the price, the obvious way to prove it is look-ahead, and the money is in the errors."],
+ ["Act one","<b>Click the timeline events.</b> The red one is the finding: Energinet's day-ahead forecast is published six hours after the auction. That killed the pre-registered strategy before a number was computed."],
+ ["Act two","<b>Pick a zone.</b> The bars show how much expected wind adds to a plain price model, year by year, with the holdout years marked."],
+ ["Act three","Three cards: how wrong the forecast is at each horizon, how its bias has drifted since 2023, and which way being wrong costs. <b>Pick a zone in each.</b>"],
+ ["Then","The added rule, scored once on the holdout, and why it is a map rather than a strategy. Method, limits and the pre-registration are at the end."]
+];
+const ANCH=["header","#act1","#act2","#act3","#coda"];
+const tour={i:0,open(i){this.i=i;$("#tour").classList.add("on");this.render(true)},close(){$("#tour").classList.remove("on");try{localStorage.setItem("wind-tour","seen")}catch(e){}},
+  render(sc){const [k,t]=TOUR[this.i];$("#tour-k").textContent=`${this.i+1} of ${TOUR.length} · ${k}`;$("#tour-tx").innerHTML=t;$("#tour-next").textContent=this.i===TOUR.length-1?"Done":"Next";
+    if(sc){const el=document.querySelector(ANCH[this.i]); if(el) window.scrollTo({top:Math.max(0,el.getBoundingClientRect().top+window.scrollY-16),behavior:"smooth"});}},
+  next(){if(this.i>=TOUR.length-1){this.close();return} this.i++;this.render(true)}};
+$("#tour-next").addEventListener("click",()=>tour.next());$("#tour-skip").addEventListener("click",()=>tour.close());$("#tourbtn").addEventListener("click",()=>tour.open(0));
+if(!location.search.includes("tour=off")){try{if(localStorage.getItem("wind-tour")!=="seen")setTimeout(()=>tour.open(0),600)}catch(e){setTimeout(()=>tour.open(0),600)}}
+</script>
+</body>
+</html>

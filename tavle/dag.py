@@ -51,7 +51,10 @@ TASKS = {
     "extract_dayahead":   {"deps": [], "fn": extract_eds("DayAheadPrices")},
     "extract_production": {"deps": [], "fn": extract_eds("ProductionConsumptionSettlement")},
     "extract_fx":         {"deps": [], "fn": extract_ecb},
-    "dbt_build":          {"deps": ["extract_elspot", "extract_dayahead", "extract_production", "extract_fx"], "fn": dbt_build},
+    "extract_forecasts":  {"deps": [], "fn": extract_eds("Forecasts_Hour")},
+    "extract_imbalance":  {"deps": [], "fn": extract_eds("RegulatingBalancePowerdata")},
+    "dbt_build":          {"deps": ["extract_elspot", "extract_dayahead", "extract_production", "extract_fx",
+                                    "extract_forecasts", "extract_imbalance"], "fn": dbt_build},
     "page":               {"deps": ["dbt_build"], "fn": build_page},
 }
 

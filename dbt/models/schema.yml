@@ -73,3 +73,35 @@ models:
       - unique:
           arguments:
             column_name: "area || '|' || hour_utc"
+  - name: stg_forecasts
+    columns:
+      - name: area
+        data_tests: [not_null, {accepted_values: {arguments: {values: ['DK1', 'DK2']}}}]
+      - name: hour_utc
+        data_tests: [not_null]
+      - name: forecast_type
+        data_tests: [not_null]
+    data_tests:
+      - unique:
+          arguments:
+            column_name: "area || '|' || hour_utc || '|' || forecast_type"
+  - name: stg_imbalance
+    columns:
+      - name: area
+        data_tests: [not_null, {accepted_values: {arguments: {values: ['DK1', 'DK2']}}}]
+      - name: hour_utc
+        data_tests: [not_null]
+    data_tests:
+      - unique:
+          arguments:
+            column_name: "area || '|' || hour_utc"
+  - name: forecast_hourly
+    data_tests:
+      - unique:
+          arguments:
+            column_name: "area || '|' || hour_utc"
+  - name: forecast_vs_imbalance
+    data_tests:
+      - unique:
+          arguments:
+            column_name: "area || '|' || hour_utc"

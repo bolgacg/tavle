@@ -16,15 +16,18 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 RAW = ROOT / "data" / "raw"
 SAMPLE = ROOT / "data" / "sample"
 WINDOW = ("2025-09-15", "2025-11-01")
+# the hourly imbalance dataset ends in March 2025, so its slice is its own last weeks
+WINDOWS = {"RegulatingBalancePowerdata": ("2025-01-15", "2025-03-05")}
 TS = {"Elspotprices": "HourUTC", "DayAheadPrices": "TimeUTC",
-      "ProductionConsumptionSettlement": "HourUTC", "ecb_fx": "date"}
+      "ProductionConsumptionSettlement": "HourUTC", "ecb_fx": "date",
+      "Forecasts_Hour": "HourUTC", "RegulatingBalancePowerdata": "HourUTC"}
 
 
 def snapshot(window=WINDOW):
     SAMPLE.mkdir(parents=True, exist_ok=True)
     con = duckdb.connect()
-    lo, hi = window
     for ds, col in TS.items():
+        lo, hi = WINDOWS.get(ds, window)
         src = RAW / ds
         if not src.exists() or not any(src.glob("*.parquet")):
             print(f"skip {ds}: nothing landed")

@@ -21,6 +21,11 @@ DATASETS = {
     "Elspotprices": ("HourUTC", "2013-01-01", 60),
     "DayAheadPrices": ("TimeUTC", "2025-10-01", 15),
     "ProductionConsumptionSettlement": ("HourUTC", "2020-01-01", 60),
+    # Energinet's own wind and solar forecasts, several horizons per hour:
+    # the day-ahead one is what a desk had before the auction closed
+    "Forecasts_Hour": ("HourUTC", "2019-11-01", 60),
+    # the price of being wrong: hourly imbalance settlement, to March 2025
+    "RegulatingBalancePowerdata": ("HourUTC", "2020-01-01", 60),
 }
 AREAS = ["DK1", "DK2"]
 

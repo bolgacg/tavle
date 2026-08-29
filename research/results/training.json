@@ -1,0 +1,219 @@
+{
+ "period": [
+  "2019-11-01",
+  "2024-01-01"
+ ],
+ "hours": 69842,
+ "q1": {
+  "DK1|2020": {
+   "r2_without": 0.171,
+   "r2_with": 0.529,
+   "forecast_adds": 0.357,
+   "hours": 4345
+  },
+  "DK1|2021": {
+   "r2_without": 0.121,
+   "r2_with": 0.354,
+   "forecast_adds": 0.233,
+   "hours": 4295
+  },
+  "DK1|2022": {
+   "r2_without": 0.48,
+   "r2_with": 0.627,
+   "forecast_adds": 0.147,
+   "hours": 4368
+  },
+  "DK1|2023": {
+   "r2_without": 0.18,
+   "r2_with": 0.478,
+   "forecast_adds": 0.299,
+   "hours": 4392
+  },
+  "DK2|2020": {
+   "r2_without": 0.264,
+   "r2_with": 0.471,
+   "forecast_adds": 0.207,
+   "hours": 4345
+  },
+  "DK2|2021": {
+   "r2_without": -0.065,
+   "r2_with": 0.198,
+   "forecast_adds": 0.263,
+   "hours": 4295
+  },
+  "DK2|2022": {
+   "r2_without": 0.428,
+   "r2_with": 0.641,
+   "forecast_adds": 0.213,
+   "hours": 4368
+  },
+  "DK2|2023": {
+   "r2_without": 0.107,
+   "r2_with": 0.466,
+   "forecast_adds": 0.359,
+   "hours": 4392
+  },
+  "spread": {
+   "corr_all_hours": 0.057,
+   "hours": 34921,
+   "corr_when_spread_exceeds_2eur": 0.055,
+   "hours_when_spread_exceeds_2eur": 7688
+  }
+ },
+ "q2": {
+  "DK1": {
+   "mae_day_ahead_mwh": 258.1,
+   "bias_day_ahead_mwh": -2.3,
+   "mae_one_hour_mwh": 171.4,
+   "hours": 34921,
+   "mae_by_forecast_decile": [
+    66.3,
+    114.1,
+    155.0,
+    193.5,
+    230.0,
+    264.1,
+    286.4,
+    338.9,
+    399.4,
+    533.3
+   ],
+   "bias_by_hour": [
+    -59.2,
+    -57.4,
+    -64.2,
+    -69.1,
+    -69.4,
+    -54.2,
+    -28.0,
+    10.6,
+    18.4,
+    1.5,
+    3.2,
+    6.8,
+    9.2,
+    11.8,
+    11.9,
+    19.3,
+    24.1,
+    30.8,
+    51.3,
+    62.0,
+    44.7,
+    20.3,
+    12.8,
+    7.1
+   ]
+  },
+  "DK2": {
+   "mae_day_ahead_mwh": 173.2,
+   "bias_day_ahead_mwh": 120.0,
+   "mae_one_hour_mwh": 152.7,
+   "hours": 34921,
+   "mae_by_forecast_decile": [
+    26.0,
+    54.6,
+    79.4,
+    122.6,
+    160.7,
+    216.1,
+    281.8,
+    299.0,
+    298.4,
+    193.8
+   ],
+   "bias_by_hour": [
+    122.0,
+    120.3,
+    116.4,
+    111.2,
+    109.6,
+    112.8,
+    112.2,
+    122.6,
+    119.7,
+    112.3,
+    112.7,
+    111.7,
+    113.2,
+    112.4,
+    113.4,
+    118.9,
+    124.1,
+    126.2,
+    131.1,
+    133.8,
+    133.8,
+    129.9,
+    129.0,
+    129.8
+   ]
+  }
+ },
+ "q3": {
+  "DK1": {
+   "sign_agreement": 0.442,
+   "hours": 34918,
+   "mean_gap_by_error_decile_eur": [
+    3.17,
+    7.1,
+    3.36,
+    3.06,
+    -3.05,
+    -4.83,
+    -6.22,
+    -7.86,
+    -7.56,
+    -11.13
+   ],
+   "mean_gap_more_wind_than_forecast": -7.66,
+   "mean_gap_less_wind_than_forecast": 2.32
+  },
+  "DK2": {
+   "sign_agreement": 0.465,
+   "hours": 34918,
+   "mean_gap_by_error_decile_eur": [
+    9.6,
+    3.46,
+    2.13,
+    0.44,
+    -1.84,
+    -0.43,
+    0.04,
+    -1.8,
+    -8.38,
+    -8.1
+   ],
+   "mean_gap_more_wind_than_forecast": -3.26,
+   "mean_gap_less_wind_than_forecast": 4.6
+  }
+ },
+ "q4": {
+  "verdict": "cannot be tested as pre-registered",
+  "reason": "the day-ahead forecast is published at 18:00 the day before delivery, about six hours after the auction that sets the price the rule would trade; using it is look-ahead"
+ },
+ "q4_prime": {
+  "DK1": {
+   "threshold_revision_mwh": 208.4,
+   "hours_traded": 5809,
+   "hours_total": 23234,
+   "sign_agreement": 0.524,
+   "median_pnl_eur": -0.599,
+   "share_of_total_from_best_decile": 1.364,
+   "mean_pnl_eur_per_mwh_hour": 9.618,
+   "standard_error": 1.287,
+   "verdict": "positive"
+  },
+  "DK2": {
+   "threshold_revision_mwh": 59.4,
+   "hours_traded": 5809,
+   "hours_total": 23234,
+   "sign_agreement": 0.469,
+   "median_pnl_eur": -0.6,
+   "share_of_total_from_best_decile": 1.604,
+   "mean_pnl_eur_per_mwh_hour": 7.657,
+   "standard_error": 0.753,
+   "verdict": "positive"
+  }
+ }
+}

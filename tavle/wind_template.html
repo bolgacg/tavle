@@ -104,13 +104,14 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 <body>
 
 <header><div class="wrap">
-  <div class="eyebrow">A work sample &middot; testing a trading idea on public data, with the questions written down before the answers</div>
+  <div class="eyebrow">A work sample &middot; one trading idea tested on public data, and the public forecast it would rely on audited &middot; this page builds no forecast</div>
   <h1>Does the wind forecast already know tomorrow's price?</h1>
-  <p class="dek">Denmark sets its electricity price in an auction held the day before delivery, and the single
-  biggest thing that moves that price is how much wind will blow. Energinet, the grid operator, publishes wind
-  forecasts. So the obvious trading idea is to predict tomorrow's auction price from the forecast. This page is
-  that idea tested the way a desk would have to test it before risking money: on public data, with the questions,
-  the split and the costs fixed before any result was seen. Three results. <strong>The idea cannot be tested as
+  <p class="dek">This page does two things and builds no forecast. It takes one trading idea and tests whether
+  it survives the data, the way a desk would have to test it before risking money: on public data, with the
+  questions, the split and the costs fixed before any result was seen. And it audits the forecast that idea would
+  rely on. The idea: Denmark sets its electricity price in an auction held the day before delivery; the single
+  biggest thing that moves that price is how much wind will blow; Energinet, the grid operator, publishes wind
+  forecasts; so predict tomorrow's auction price from the forecast and trade on it. Three results. <strong>The idea cannot be tested as
   stated</strong>, because the forecast is published six hours after the auction (act one). <strong>Wind explains
   <span id="dek-r2"></span> of the hour-to-hour price</strong>, and a plain model that uses it is about as
   accurate as simply quoting yesterday's price (act two). <strong>The forecast has under-predicted DK1 wind by a
@@ -203,12 +204,14 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
   <div class="sec-label">Act three &middot; How wrong the forecast is, and what that costs</div>
   <h2>The forecast misses by a few hundred megawatt-hours, it has under-predicted DK1 wind since 2023, and its errors cost money on average but not in the typical hour</h2>
   <p class="lede">A producer that delivers less than it sold pays the imbalance price for the shortfall; one that
-  delivers more receives it. So a forecast error is a cash flow. This act measures the error at each horizon, shows how
-  the day-ahead error has drifted, and asks whether the direction of the error tells you the direction of the cost.</p>
+  delivers more receives it. So a forecast error is a cash flow. This act audits Energinet's forecast; it does not
+  replace it. It measures the error at each horizon against the two guesses anyone could make without a forecast,
+  shows how the day-ahead error has drifted, and asks whether the direction of the error tells you the direction of
+  the cost.</p>
   <div class="card">
     <div class="card-title">How wrong, by horizon</div>
     <div class="tscroll" style="margin-top:8px"><table id="horizon-table"></table></div>
-    <p class="howto"><b>how to read</b>Mean absolute error in megawatt-hours per hour, for hours where all four forecasts exist. The last column is the average actual wind, so the errors can be read as a share of it. <b>take from it</b>The evening-before forecast misses by roughly a fifth of average output; the one-hour forecast halves that.</p>
+    <p class="howto"><b>how to read</b>Mean absolute error in megawatt-hours per hour: the four Energinet horizons for hours where all four exist, then two baselines a reader could compute without any forecast (yesterday's actual wind at the same hour; the long-run average), then the average actual wind so the errors can be read as a share of it. <b>take from it</b><span id="horizon-take"></span></p>
   </div>
   <div class="card">
     <div class="card-title">The drift: is the day-ahead forecast biased, and which way</div>
@@ -375,8 +378,10 @@ function line(el, series, opts){
 /* ---------- act three ---------- */
 (function(){
   const hm=D.horizon_mae;
-  $("#horizon-table").innerHTML=`<tr><th>Zone</th><th>Evening before</th><th>Same morning</th><th>Five hours</th><th>One hour</th><th>Mean actual wind</th></tr>`+
-    hm.map(r=>`<tr><td class="l">${r.area}</td><td class="num">${fmt(r.day_ahead,0)}</td><td class="num">${fmt(r.same_morning,0)}</td><td class="num">${fmt(r.five_hours,0)}</td><td class="num">${fmt(r.one_hour,0)}</td><td class="num">${fmt(r.mean_actual,0)}</td></tr>`).join("");
+  const BL=Object.fromEntries((D.baselines||[]).map(b=>[b.area,b]));
+  $("#horizon-table").innerHTML=`<tr><th>Zone</th><th>Evening before</th><th>Same morning</th><th>Five hours</th><th>One hour</th><th>Yesterday's wind, same hour</th><th>Long-run average</th><th>Mean actual wind</th></tr>`+
+    hm.map(r=>`<tr><td class="l">${r.area}</td><td class="num">${fmt(r.day_ahead,0)}</td><td class="num">${fmt(r.same_morning,0)}</td><td class="num">${fmt(r.five_hours,0)}</td><td class="num"><b>${fmt(r.one_hour,0)}</b></td><td class="num">${BL[r.area]?fmt(BL[r.area].yesterday_same_hour,0):""}</td><td class="num">${BL[r.area]?fmt(BL[r.area].long_run_mean,0):""}</td><td class="num">${fmt(r.mean_actual,0)}</td></tr>`).join("");
+  if(BL.DK1&&hm.length){const r=hm.find(x=>x.area==="DK1"); $("#horizon-take").textContent=`Energinet's evening-before forecast misses DK1 wind by ${fmt(r.day_ahead,0)} MWh per hour, against ${fmt(BL.DK1.yesterday_same_hour,0)} for simply assuming yesterday's wind and ${fmt(BL.DK1.long_run_mean,0)} for assuming the long-run average: about three times better than either guess, and the one-hour forecast is better again. That is the standard the drift in the next card is measured against.`;}
   let area="DK1", unit="mwh";
   $("#bias-ctl").innerHTML=["DK1","DK2"].map(a=>`<button class="chip" data-a="${a}" aria-pressed="${a===area}">${a}</button>`).join("")+`<span style="width:12px"></span>`+[["mwh","megawatt-hours"],["pct","percent of actual wind"]].map(([u,l])=>`<button class="chip" data-u="${u}" aria-pressed="${u===unit}">${l}</button>`).join("");
   const DR=D.model_card&&D.model_card.drift?D.model_card.drift:null;

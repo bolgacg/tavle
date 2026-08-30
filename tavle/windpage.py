@@ -35,6 +35,15 @@ def collect():
                round(avg(wind_fc_da_mwh)) as forecast_mwh, round(avg(wind_actual_mwh)) as actual_mwh
         from forecast_hourly where hour_utc >= timestamp '2020-01-01'
         group by 1, 2 order by 1, 2""")
+    d["baselines"] = q(con, """
+        with x as (
+            select area, hour_utc, wind_actual_mwh,
+                   lag(wind_actual_mwh, 24) over (partition by area order by hour_utc) as yesterday_same_hour,
+                   avg(wind_actual_mwh) over (partition by area) as long_run_mean
+            from forecast_hourly where wind_fc_da_mwh is not null and wind_actual_mwh is not null)
+        select area, round(avg(abs(wind_actual_mwh - yesterday_same_hour))) as yesterday_same_hour,
+               round(avg(abs(wind_actual_mwh - long_run_mean))) as long_run_mean
+        from x where yesterday_same_hour is not null group by 1 order by 1""")
     d["horizon_mae"] = q(con, """
         select area,
                round(avg(abs(wind_actual_mwh - wind_fc_da_mwh)))  as day_ahead,

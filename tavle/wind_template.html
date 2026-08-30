@@ -67,16 +67,36 @@ code{font-family:var(--mono);font-size:12.5px}
 .gloss b{color:var(--ink);font-family:var(--mono);font-size:12px;font-weight:500}
 footer{border-top:1px solid var(--rule);margin-top:44px;padding:20px 0 30px;font-family:var(--mono);font-size:12px;color:var(--faint)}
 footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
-#tour{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--card);border-top:1px solid var(--rule2);box-shadow:0 -8px 30px rgba(0,0,0,.10);transform:translateY(110%);transition:transform .3s}
-#tour.on{transform:none}
-#tour .wrap{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:12px 20px}
-@media(max-width:620px){#tour .wrap{grid-template-columns:1fr auto}#tour .tk{display:none}}
-#tour .tk{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);white-space:nowrap}
-#tour .tx{font-size:14px;line-height:1.45}#tour .tx b{font-weight:600}
-#tour .nav{display:flex;gap:6px;align-items:center}
-.tbtn{font-family:var(--mono);font-size:12px;padding:8px 13px;border-radius:4px;border:1px solid var(--rule2);background:var(--card);color:var(--soft);cursor:pointer}
-.tbtn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+/* guided tour: spotlight, card beside the element */
+#tour{position:absolute;top:0;left:0;right:0;z-index:50;display:none}
+#tour.on{display:block}
+.tour-hl{position:absolute;border:2px solid var(--accent);border-radius:8px;box-shadow:0 0 0 9999px rgba(26,29,33,.55);transition:all .35s ease;pointer-events:none}
+.tour-card{position:absolute;width:min(400px,calc(100vw - 32px));background:var(--card);border:1px solid var(--rule2);border-radius:8px;padding:18px 20px;box-shadow:0 6px 30px rgba(0,0,0,.18)}
+.tour-card .tk{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.tour-card p{font-size:14px;line-height:1.55;color:var(--ink);margin:0 0 12px}
+.tour-nav{display:flex;align-items:center;gap:8px}
+.tour-nav .dots{flex:1;display:flex;gap:5px}
+.tour-nav .dots i{width:6px;height:6px;border-radius:50%;background:var(--rule2)}
+.tour-nav .dots i.on{background:var(--accent)}
+.tour-btn{font-family:var(--mono);font-size:12px;padding:7px 14px;border-radius:4px;border:1px solid var(--rule2);background:var(--card);color:var(--soft);cursor:pointer}
+.tour-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
 .tour-open{font-family:var(--mono);font-size:12px;padding:6px 12px;border-radius:4px;border:1px solid var(--accent);background:var(--card);color:var(--accent);cursor:pointer}
+.tour-open:hover{background:var(--accent);color:#fff}
+/* controls that look like controls */
+.tl-ev circle{transition:stroke-width .15s, r .15s}
+.tl-ev:hover circle{stroke-width:4}
+.tl-ev text.n{font-weight:600;fill:var(--ink)}
+@keyframes ring{0%{r:9;opacity:.9}100%{r:22;opacity:0}}
+.tl-ev .ring{fill:none;stroke:var(--neg);stroke-width:2;animation:ring 1.6s ease-out infinite}
+.stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:0;background:var(--panel);border:1px solid var(--rule);border-radius:6px;overflow:hidden;margin-top:14px}
+.stat>div{padding:12px 14px;border-left:1px solid var(--rule)}.stat>div:first-child{border-left:none}
+.stat .k{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+.stat .n{font-family:var(--mono);font-size:20px;font-weight:500}.stat .s{font-size:11.5px;color:var(--soft);margin-top:3px}
+.howto{font-size:13px;color:var(--soft);margin:8px 0 0;line-height:1.5}
+.howto b{color:var(--ink);font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin-right:6px}
+.card-title{font-family:var(--serif);font-size:20px;font-weight:600;margin-bottom:4px}
+.why{font-size:14.5px;color:var(--ink);background:var(--panel);border-radius:4px;padding:10px 14px;margin:0 0 12px}
+.why b{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-right:6px}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -84,129 +104,169 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 <body>
 
 <header><div class="wrap">
-  <div class="eyebrow">A pre-registered study &middot; Danish day-ahead power and Energinet's public wind forecasts</div>
+  <div class="eyebrow">A work sample &middot; testing a trading idea on public data, with the questions written down before the answers</div>
   <h1>Does the wind forecast already know tomorrow's price?</h1>
-  <p class="dek">Denmark prices its electricity in an auction held the day before delivery, and the biggest thing
-  that moves that price is how hard the wind will blow. Energinet, the grid operator, publishes its own wind
-  forecasts. So the obvious project is to predict tomorrow's price from the forecast. This page is what happens
-  when you try that honestly: <strong>expected wind explains up to a third of the hour-to-hour price</strong>, the
-  forecast most people would use to prove it is <strong>published six hours after the auction</strong>, and
-  the money, if there is any, lives in what the forecast gets wrong.</p>
+  <p class="dek">Denmark sets its electricity price in an auction held the day before delivery, and the single
+  biggest thing that moves that price is how much wind will blow. Energinet, the grid operator, publishes wind
+  forecasts. So the obvious trading idea is to predict tomorrow's auction price from the forecast. This page is
+  that idea tested the way a desk would have to test it before risking money: on public data, with the questions,
+  the split and the costs fixed before any result was seen. Three results. <strong>The idea cannot be tested as
+  stated</strong>, because the forecast is published six hours after the auction (act one). <strong>Wind explains
+  <span id="dek-r2"></span> of the hour-to-hour price</strong>, and a plain model that uses it is about as
+  accurate as simply quoting yesterday's price (act two). <strong>The forecast has under-predicted DK1 wind by a
+  growing margin since 2023</strong>, <span id="dek-bias"></span>, and the cost of its errors has a direction on
+  average but not in the typical hour (act three).</p>
   <div class="byline"><span>Bolga&ccedil; G&uuml;len &middot; Odense, 2026</span><span>&middot;</span>
     <a href="https://github.com/bolgacg/tavle/blob/master/research/PREREGISTRATION.md">the pre-registration</a><span>&middot;</span>
     <a href="https://github.com/bolgacg/tavle">source and data pipeline</a>
     <button class="tour-open" id="tourbtn">Walk me through it</button></div>
 </div></header>
 
+<section id="primer"><div class="wrap">
+  <div class="sec-label">Before the study &middot; four things to know</div>
+  <div class="gloss" style="font-size:14px">
+    <div><b>DK1, DK2</b> Denmark's two price zones: DK1 is Jutland and Funen in the west, where most of the wind turbines stand; DK2 is Zealand and Copenhagen in the east. Each zone gets its own hourly price.</div>
+    <div><b>day-ahead auction</b> the market where tomorrow's electricity is sold. It closes at noon and sets one price for every hour of the next day, in euros per megawatt-hour; a megawatt-hour is roughly what three hundred homes use in an hour.</div>
+    <div><b>wind forecast</b> Energinet's estimate of how many megawatt-hours of wind power each zone will produce in a given hour. It is issued several times: the evening before, the same morning, five hours ahead, one hour ahead.</div>
+    <div><b>imbalance price</b> the price a producer pays or receives afterwards for every megawatt-hour it delivered short or over what it sold in the auction. It is how a wrong forecast turns into money.</div>
+  </div>
+</div></section>
+
 <section id="act1"><div class="wrap">
-  <div class="sec-label">Act one &middot; The clock</div>
-  <h2>Who knows what, and when</h2>
-  <p class="lede">The whole study turns on a timeline. Denmark has two price zones, <strong>DK1</strong> in the
-  west with most of the wind and <strong>DK2</strong> in the east with Copenhagen. For each zone, an auction
-  closes at noon the day before delivery and sets one price per hour of the next day. Energinet publishes a
-  wind forecast for every one of those hours, at several horizons. Click each event to see what was known at
-  that moment.</p>
+  <div class="sec-label">Act one &middot; The order of events</div>
+  <h2>Can the forecast predict the auction at all? Only if it exists before the auction closes</h2>
+  <p class="lede">Whether a forecast can predict a price depends on one thing before any statistics: whether the
+  forecast is published before or after the price is set. If it comes after, a model that uses it to "predict" the
+  price is reading the answer off the back of the page, and it will look excellent in a backtest. This timeline is
+  the order of events for one delivery hour. <strong>Click any circle on the timeline</strong>; the box below it
+  says what was known at that moment. The red circle is the one that decided this study.</p>
   <div class="card">
+    <div class="why"><b>why this matters</b>The pre-registered idea was to trade the auction price using Energinet's day-ahead wind forecast. Everything else on this page follows from where that forecast sits on this line.</div>
     <div class="timeline" id="timeline"></div>
-    <div class="tl-note" id="tl-note">Click an event on the timeline.</div>
+    <p class="howto"><b>how to read</b>Each numbered circle is a moment in the day before and the day of delivery, left to right. Click one; the grey box below shows what was known then.</p>
+    <div class="tl-note" id="tl-note">Click a circle on the timeline.</div>
     <div class="quote">"Forecast for the next day is published at 18:00 Danish time zone. The forecast is generated at 17:50 Danish time zone."
       <small>Energinet, Energi Data Service, column documentation for ForecastDayAhead in the dataset Forecasts_Hour. Read on 29 August 2026.</small></div>
-    <div class="verdict sting"><b>What this kills.</b> The pre-registered strategy was to trade the day-ahead
-    spread on the day-ahead wind forecast. That forecast comes out six hours after the auction that sets the
-    price it would trade. Any model that "predicts the day-ahead price from the day-ahead wind forecast" on this
-    dataset is looking at the answer, and it will backtest beautifully. The strategy is reported as untestable,
-    not quietly replaced, because that finding is worth more to a desk than a green curve.</div>
-    <div class="verdict"><b>What survives.</b> Every horizon is published before delivery, and the cost of
-    being wrong is settled after it. So three honest questions remain: how much of the price is wind, how good
-    the forecasts are, and what a forecast error costs. Those are the next two acts.</div>
+    <div class="verdict sting"><b>The idea cannot be tested as stated.</b> The auction closes at 12:00 the day before
+    delivery. Energinet's day-ahead wind forecast is published at 18:00 the same day, six hours later, according to
+    its own documentation quoted above. Any model that predicts the day-ahead price from that forecast on this
+    dataset is using information that did not exist when the price was set. The study records the pre-registered
+    strategy as untestable rather than swapping in a different forecast and reporting a result, because a backtest
+    built on the later forecast would look good and mean nothing.</div>
+    <div class="verdict"><b>What can still be tested.</b> Every forecast horizon is published before the delivery hour,
+    and the imbalance price, the cost of being wrong, is settled after it. So three questions remain that the data
+    can answer: how much of the price is wind at all (act two), how large and how biased the forecast errors are, and
+    whether those errors push the imbalance price in a predictable direction (act three).</div>
   </div>
 </div></section>
 
 <section id="act2"><div class="wrap">
-  <div class="sec-label">Act two &middot; How much of the price is wind</div>
-  <h2>Expected wind explains up to a third of the hour-to-hour price, most years a quarter</h2>
-  <p class="lede">A plain model of the price with hour-of-day and month effects, fitted on odd weeks and scored
-  on even weeks of the same year, with and without expected wind as a share of consumption. The difference is
-  what wind adds. Pick a zone; the training years and the holdout years are shown together, and the holdout was
-  read once, after the code was frozen.</p>
+  <div class="sec-label">Act two &middot; How much of the price is wind, and how good is the model</div>
+  <h2>Wind explains a quarter to a third of the hour-to-hour price; a plain model using it is about as good as yesterday's price</h2>
+  <p class="lede">Act one settled that the forecast cannot be used to trade the auction. It can still answer a
+  different question: how much of the price movement <em>is</em> wind. That matters for act three, because if wind
+  drives the price, then a wind forecast error is a price error, and price errors cost money. This act fits a plain
+  model of the price and measures how much expected wind adds to it, and then asks the question any reader should
+  ask of a model: how wrong is it, in euros, compared with doing nothing clever.</p>
   <div class="card">
+    <div class="why"><b>what was trained</b>A least-squares model of the hourly day-ahead price with hour-of-day and month effects, fitted twice: without wind, and with Energinet's expected wind as a share of consumption. Fitted on the odd weeks of each year and scored on the even weeks of the same year, so the level of prices, which changed tenfold between 2020 and 2022, cannot flatter the result. Years from 2024 are the holdout: data kept unread until the code was frozen, then scored once.</div>
     <div class="chips" id="r2-ctl" style="margin-bottom:10px"></div>
     <div class="viz" id="r2-chart"><div class="tip"></div></div>
+    <p class="howto"><b>how to read</b>One pair of bars per year. The grey bar is how much of the hour-to-hour price variation the plain model explains (R squared, 0 to 1); the coloured bar is the same model once expected wind is added. The difference is wind's share. Years marked * are the holdout.</p>
     <div class="tscroll" style="margin-top:14px"><table id="r2-table"></table></div>
-    <div class="verdict"><b>Read this as an explanation, not a prediction.</b> The forecast is Energinet's best
-    public estimate of the wind the auction was pricing, published after the fact, so the gain in R squared says
-    how much of the price <em>is</em> wind, not whether a desk could have known it in time. In every year and both
-    zones the answer is a large slice, and the slice is larger in years when prices were otherwise calm.</div>
-    <div class="verdict sting"><b>The spread is not the wind difference.</b> The DK1 minus DK2 price gap
-    correlates with the difference in expected wind share at <span class="num" id="spread-train"></span> in
-    training and <span class="num" id="spread-hold"></span> on the holdout: nothing, with the sign flipping.
-    The spread is about whether the link between the zones is full, and that is a different study.</div>
+    <div class="verdict"><b>Wind is a large driver of the price in every year and both zones.</b> Adding expected wind to
+    the plain model raises R squared by <span class="num" id="r2-add-range"></span> across the years scored, with the
+    largest gains in calm years and the smallest in 2026, when prices moved for other reasons. Because the forecast
+    is published after the auction, this measures how much of the price is wind, not whether a desk could have
+    known it in time.</div>
+  </div>
+  <div class="card" id="model-card">
+    <div class="card-title">The model card: is this model any good?</div>
+    <p class="small">Error in euros per megawatt-hour on the scored weeks, against two things anyone could do without a
+    model: quote yesterday's price for the same hour, or quote the average price of the fitted weeks.</p>
+    <div class="tscroll" style="margin-top:8px"><table id="mc-table"></table></div>
+    <p class="howto"><b>how to read</b>Lower is better. "With wind" and "without wind" are the two fitted models; "yesterday" is the same hour one day earlier; "mean" is the average of the training weeks. The typical price and its spread give the scale.</p>
+    <div class="verdict sting"><b>The model is an explanation, not a forecasting tool, and the numbers say so.</b> With wind
+    it is more accurate than the plain model in every year, and it beats yesterday's price in <span class="num" id="mc-beats"></span>
+    of the <span class="num" id="mc-years"></span> zone-years, by a few euros. It loses to yesterday's price in the volatile years
+    and in 2026. A trading desk's model would use the forecast issued before the auction, gas prices, interconnector
+    flows and yesterday's price together; this one is deliberately the simplest thing that answers act two's question.</div>
+    <div class="verdict"><b>The DK1 to DK2 price gap is not explained by the difference in expected wind.</b> The gap
+    correlates with the wind-share difference at <span class="num" id="spread-train"></span> in training and
+    <span class="num" id="spread-hold"></span> on the holdout, which is no relationship with a sign that flips. The gap is
+    about whether the cable between the zones is full, and that is a different study. What act two hands to act three:
+    wind moves the price, so the forecast's errors are worth pricing.</div>
   </div>
 </div></section>
 
 <section id="act3"><div class="wrap">
-  <div class="sec-label">Act three &middot; The price of being wrong</div>
-  <h2>The forecast is wrong by a few hundred megawatt-hours, and it drifts</h2>
-  <p class="lede">Being wrong in this market has a price: a producer that delivers less than it sold pays the
-  hourly <strong>imbalance price</strong> for the gap, and one that delivers more receives it. So the forecast
-  error is not an academic number. First how large it is, then which way it costs.</p>
+  <div class="sec-label">Act three &middot; How wrong the forecast is, and what that costs</div>
+  <h2>The forecast misses by a few hundred megawatt-hours, it has under-predicted DK1 wind since 2023, and its errors cost money on average but not in the typical hour</h2>
+  <p class="lede">A producer that delivers less than it sold pays the imbalance price for the shortfall; one that
+  delivers more receives it. So a forecast error is a cash flow. This act measures the error at each horizon, shows how
+  the day-ahead error has drifted, and asks whether the direction of the error tells you the direction of the cost.</p>
   <div class="card">
-    <h3>Error by horizon, mean absolute, megawatt-hours per hour</h3>
+    <div class="card-title">How wrong, by horizon</div>
     <div class="tscroll" style="margin-top:8px"><table id="horizon-table"></table></div>
-    <p class="note">Hours where all four horizons exist. Same-morning is the 06:00 forecast on the delivery day.</p>
+    <p class="howto"><b>how to read</b>Mean absolute error in megawatt-hours per hour, for hours where all four forecasts exist. The last column is the average actual wind, so the errors can be read as a share of it. <b>take from it</b>The evening-before forecast misses by roughly a fifth of average output; the one-hour forecast halves that.</p>
   </div>
   <div class="card">
-    <h3>The drift: monthly bias of the day-ahead forecast, actual minus forecast</h3>
+    <div class="card-title">The drift: is the day-ahead forecast biased, and which way</div>
+    <p class="small">Bias is the average of actual wind minus forecast wind, by month. Zero means the forecast is right on
+    average; positive means more wind arrived than was forecast.</p>
     <div class="chips" id="bias-ctl" style="margin:6px 0 10px"></div>
     <div class="viz" id="bias-chart"><div class="tip"></div></div>
-    <div class="verdict sting"><b>A forecast that does not know about new turbines.</b> From the winter of
-    2023 the day-ahead forecast under-forecasts DK1 wind by several hundred megawatt-hours in the windy
-    months, and the gap has grown since. A bias that persists for months with the season, rather than
-    averaging out, looks like capacity the model does not yet see. That is a finding for whoever maintains the
-    forecast, not a weather fact, and it is why "the forecast is good" needs a date attached.</div>
+    <p class="howto"><b>how to read</b>One point per month. The dashed vertical line marks January 2024, where the holdout begins: the study's code was frozen before any data right of the line was looked at, so what happens there could not have been tuned for. <b>what moves it</b><span id="drift-anatomy"></span></p>
+    <div class="stat" id="bias-stat"></div>
+    <div class="verdict sting"><b id="drift-opener"></b> <span id="drift-verdict"></span></div>
   </div>
   <div class="card">
-    <h3>Which way being wrong costs: the imbalance gap by forecast-error decile</h3>
+    <div class="card-title">Does the direction of the error predict the direction of the cost?</div>
+    <p class="small">Every hour is put into one of ten bins by how wrong the evening-before forecast was, from "far less
+    wind than forecast" (bin 1) to "far more" (bin 10). For each bin, the average gap between the imbalance price and
+    the auction price. If being wrong had a predictable cost, the bars would run from one sign to the other.</p>
     <div class="chips" id="gap-ctl" style="margin:6px 0 10px"></div>
     <div class="viz" id="gap-chart"><div class="tip"></div></div>
+    <p class="howto"><b>how to read</b>Coloured bars are the mean gap in euros per megawatt-hour in that bin; grey bars are the median. A positive gap means the imbalance price was above the auction price, which costs a producer that delivered short. <b>take from it</b><span id="gap-take"></span></p>
     <p class="note" id="gap-note"></p>
-    <div class="verdict"><b>Right on average, wrong more often than not.</b> When more wind arrives than the
-    evening forecast said, the imbalance price sits below the day-ahead price on average, and above it when
-    less arrives, in both zones and in both periods. But the sign of the gap agrees with the sign of the error
-    in <span class="num" id="agree-train"></span> of training hours and <span class="num" id="agree-hold"></span>
-    of holdout hours, because the gap is exactly zero in <span class="num" id="zero-share"></span> of hours and
-    small in most of the rest. The average is carried by the tails.</div>
+    <div class="verdict"><b>On average the sign is right; hour by hour it is not.</b> When more wind arrives than the
+    evening forecast said, the imbalance price sits below the auction price on average, and above it when less
+    arrives, in both zones and in both periods. But the sign of the gap agrees with the sign of the error in only
+    <span class="num" id="agree-train"></span> of training hours and <span class="num" id="agree-hold"></span> of holdout
+    hours, because the gap is exactly zero in <span class="num" id="zero-share"></span> of hours and small in most of the
+    rest. The averages are made by a minority of hours when the system is badly out of balance.</div>
   </div>
   <div class="card">
-    <h3>The added rule, scored on the holdout once</h3>
-    <p class="small">Added after the look-ahead finding and labelled as added: take the 06:00 revision of the
-    forecast (same-morning minus day-ahead) as a signal for the sign of the imbalance gap, when the revision is
-    large, with the pre-registered costs. A proxy for an intraday position, because intraday prices are not in
-    the public data.</p>
+    <div class="card-title">A rule added after the finding, scored once on the holdout</div>
+    <p class="small">Because the pre-registered strategy could not be tested, one rule was added afterwards and labelled
+    as added: when the same-morning forecast revises the evening forecast by a large amount, take a position on the
+    sign of the imbalance gap, with the costs fixed in the pre-registration. It stands in for an intraday position;
+    intraday prices are not in the public data.</p>
     <div class="tscroll" style="margin-top:8px"><table id="rule-table"></table></div>
-    <div class="verdict sting"><b>Not a strategy. A map of where one would have to live.</b> By the
-    pre-registered metric the rule is positive on the holdout in both zones. It is also wrong in most hours,
-    its median hour loses exactly its costs, and its best decile of hours earns more than the whole result,
-    meaning the other ninety percent lose money together. A desk would read that as: the information is in the
-    large revisions on the few days the system is badly out of balance, and whether that is capturable
-    depends on intraday prices this page does not have. I would rather show that than a curve.</div>
+    <p class="howto"><b>how to read</b>"Right sign" is how often the position had the right direction; "median hour" is what the middle hour earned after costs; "best decile as share of total" above 1 means the best tenth of hours earned more than everything combined, so the rest lost money together.</p>
+    <div class="verdict sting"><b>This rule is not a strategy, and the numbers are why.</b> By the pre-registered metric it is
+    positive on the holdout in both zones. It is also wrong in most hours, its median hour loses exactly its costs, and
+    its best tenth of hours earns more than the whole result. What that says is that the information sits in the large
+    revisions on the few days the system is badly out of balance; whether that can be captured depends on intraday
+    prices this page does not have. Reporting that is more useful to a desk than a smooth equity curve would have been.</div>
   </div>
 </div></section>
 
 <section id="coda"><div class="wrap">
-  <div class="sec-label">What it took</div>
+  <div class="sec-label">Method, limits, terms</div>
   <h2>How this was done, and its limits</h2>
   <p class="small">Two more Energinet datasets added to the <a href="../">tavle</a> platform: the forecasts at
   every horizon since November 2019, and the hourly imbalance settlement to March 2025. Fifty-seven tests pass on
   the models. The questions, metrics, holdout and cost model were written down before any result was computed;
   the changes made after reading Energinet's documentation are listed in the same file with the reason. Training
-  is November 2019 to December 2023; the holdout from January 2024 was read exactly once. <span id="spanline"></span></p>
+  is November 2019 to December 2023; the holdout from January 2024 was read exactly once. The model card's baselines
+  were added on 30 August 2026, after the study, and are labelled as such in the repository. <span id="spanline"></span></p>
   <div class="limits">
     <h3 style="font-size:17px;margin-bottom:6px">Limits</h3>
     <p>Day-ahead auction results and hourly imbalance prices only: no intraday prices, so the added rule is a
     proxy and says so. Wind is offshore plus onshore as Energinet reports them, and the settlement includes small
-    plants the forecast may not; that is one candidate for the drift, and the page does not pretend to know
-    which. The R squared model is deliberately plain. Two zones, one country, and a study written by one person
+    plants the forecast may not; that is one candidate for the drift, alongside new capacity, and the page tests the
+    capacity candidate only as far as Energinet's installed-capacity table allows. The R squared model is deliberately plain. Two zones, one country, and a study written by one person
     who chose the questions.</p>
   </div>
   <h3 style="margin-top:24px;font-size:17px">Five terms</h3>
@@ -219,12 +279,9 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
   </div>
 </div></section>
 
-<footer><div class="wrap"><span>Bolga&ccedil; G&uuml;len &middot; built by the pipeline</span><a href="https://github.com/bolgacg/tavle">github.com/bolgacg/tavle</a></div></footer>
+<footer><div class="wrap"><span>Bolga&ccedil; G&uuml;len &middot; every number on this page is generated by the build script from the sources named above, not typed</span><a href="https://github.com/bolgacg/tavle">github.com/bolgacg/tavle</a></div></footer>
 
-<div id="tour"><div class="wrap">
-  <div class="tk" id="tour-k"></div><div class="tx" id="tour-tx"></div>
-  <div class="nav"><button class="tbtn" id="tour-skip">Close</button><button class="tbtn primary" id="tour-next">Next</button></div>
-</div></div>
+<div id="tour"><div class="tour-hl" id="tour-hl"></div><div class="tour-card" id="tour-card"></div></div>
 
 <script>
 const D = __DATA__;
@@ -236,21 +293,22 @@ const S = {DK1:"var(--s1)", DK2:"var(--s2)"};
 (function(){
   const EV = [
     {x:120,  t:"D-1, 12:00", k:"Auction closes", note:"Bids for every hour of tomorrow are in. Whatever anyone knew about tomorrow's wind, they knew it before now or not at all."},
-    {x:180,  t:"D-1, 12:45", k:"Prices published", note:"One price per hour per zone. From here the day-ahead price is a fact."},
-    {x:330,  t:"D-1, 18:00", k:"Energinet's day-ahead forecast", note:"Generated 17:50, published 18:00, per Energinet's documentation. Six hours after the price it would supposedly predict. The pre-registered strategy died here.", hot:true},
-    {x:520,  t:"D, 06:00", k:"Same-morning forecast", note:"The intraday revision. Before delivery, after the auction: usable for intraday positions, not for the day-ahead price."},
-    {x:700,  t:"D, hour minus 5 and minus 1", k:"Five-hour and one-hour forecasts", note:"Rolling updates as the hour approaches. Errors shrink; see act three."},
-    {x:800,  t:"D, the hour", k:"Delivery", note:"Wind blows however much it blows. The forecast error becomes a number."},
-    {x:900,  t:"after", k:"Imbalance settled", note:"Whoever delivered less than sold pays the imbalance price for the gap. Being wrong now has a price attached."},
+    {x:220,  t:"D-1, 12:45", k:"Prices published", note:"One price per hour per zone for tomorrow. This is the number the pre-registered idea wanted to predict."},
+    {x:330,  t:"D-1, 18:00", k:"Energinet's day-ahead wind forecast", note:"Generated 17:50, published 18:00, per Energinet's documentation. That is six hours after the auction closed. A model that uses this forecast to predict the auction price is using information that did not exist when the price was set; this is the finding that made the pre-registered strategy untestable.", hot:true},
+    {x:520,  t:"D, 06:00", k:"Same-morning forecast", note:"A revision issued on the delivery day. It comes after the auction but before delivery, so it can inform an intraday position, which this data does not price."},
+    {x:700,  t:"D, hour minus 5 and minus 1", k:"Five-hour and one-hour forecasts", note:"Rolling updates as the hour approaches. Their errors are smaller; act three measures by how much."},
+    {x:800,  t:"D, the hour", k:"Delivery", note:"The wind blows however much it blows, and the forecast error for this hour becomes a known number."},
+    {x:900,  t:"after", k:"Imbalance settled", note:"A producer that delivered less than it sold pays the imbalance price for the shortfall, and one that delivered more receives it. This is how a forecast error becomes money."},
   ];
   const W=960,H=150;
   let g=`<line x1="40" x2="930" y1="70" y2="70" stroke="var(--rule2)" stroke-width="2"/>`;
   g+=`<rect x="40" y="62" width="140" height="16" fill="var(--panel)"/><text x="110" y="120" text-anchor="middle" font-size="11" fill="var(--faint)" font-family="var(--mono)">the day before</text><text x="700" y="120" text-anchor="middle" font-size="11" fill="var(--faint)" font-family="var(--mono)">the delivery day</text>`;
   g+=`<line x1="440" x2="440" y1="40" y2="100" stroke="var(--rule)" stroke-dasharray="3 3"/><text x="440" y="34" text-anchor="middle" font-size="10" fill="var(--faint)" font-family="var(--mono)">midnight</text>`;
-  EV.forEach((e,i)=>{g+=`<g class="tl-ev" data-i="${i}"><circle cx="${e.x}" cy="70" r="${e.hot?9:7}" fill="${e.hot?'var(--neg)':'var(--card)'}" stroke="${e.hot?'var(--neg)':'var(--accent)'}" stroke-width="2"/><text x="${e.x}" y="${i%2?100:52}" text-anchor="middle" font-size="10.5" fill="var(--soft)" font-family="var(--mono)">${e.t}</text></g>`});
+  EV.forEach((e,i)=>{g+=`<g class="tl-ev" data-i="${i}" role="button" tabindex="0" aria-label="${e.t}, ${e.k}">${e.hot?`<circle class="ring" cx="${e.x}" cy="70" r="9"/>`:""}<circle cx="${e.x}" cy="70" r="${e.hot?11:10}" fill="${e.hot?'var(--neg)':'var(--card)'}" stroke="${e.hot?'var(--neg)':'var(--accent)'}" stroke-width="2"/><text class="n" x="${e.x}" y="74" text-anchor="middle" font-size="11" fill="${e.hot?'#fff':'var(--ink)'}" font-family="var(--mono)">${i+1}</text><text x="${e.x}" y="${i%2?100:52}" text-anchor="middle" font-size="10.5" fill="var(--soft)" font-family="var(--mono)">${e.t}</text></g>`});
+  g+=`<text x="930" y="140" text-anchor="end" font-size="10.5" fill="var(--accent)" font-family="var(--mono)">click a circle</text>`;
   $("#timeline").innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="timeline of the auction, the forecasts and the settlement">${g}</svg>`;
-  function show(i){const e=EV[i]; $("#tl-note").innerHTML=`<b>${e.t}, ${e.k}.</b> ${e.note}`; document.querySelectorAll(".tl-ev circle").forEach((c,j)=>c.setAttribute("stroke-width", j===i?4:2));}
-  document.querySelectorAll(".tl-ev").forEach(el=>el.addEventListener("click",()=>show(+el.dataset.i)));
+  function show(i){const e=EV[i]; $("#tl-note").innerHTML=`<b>${i+1}. ${e.t}, ${e.k}.</b> ${e.note}`; document.querySelectorAll(".tl-ev").forEach((g,j)=>{g.querySelectorAll("circle:not(.ring)").forEach(c=>c.setAttribute("stroke-width", j===i?4:2));});}
+  document.querySelectorAll(".tl-ev").forEach(el=>{el.addEventListener("click",()=>show(+el.dataset.i)); el.addEventListener("keydown",ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();show(+el.dataset.i)}});});
   show(2);
 })();
 
@@ -283,6 +341,7 @@ function line(el, series, opts){
   g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--soft)"/>`;
   for(let i=0;i<=4;i++){const v=x0+(x1-x0)*i/4; g+=`<text x="${X(v)}" y="${H-8}" text-anchor="middle" font-size="11" fill="var(--faint)" font-family="var(--mono)">${opts.xlabel(v)}</text>`}
   if(opts.mark){g+=`<line x1="${X(opts.mark)}" x2="${X(opts.mark)}" y1="${P.t}" y2="${H-P.b}" stroke="var(--amber)" stroke-dasharray="4 3"/><text x="${X(opts.mark)+5}" y="${P.t+12}" font-size="10.5" fill="var(--amber)" font-family="var(--mono)">${opts.markLabel||""}</text>`}
+  if(opts.marks){opts.marks.forEach((m,i)=>{g+=`<line x1="${X(m.x)}" x2="${X(m.x)}" y1="${P.t}" y2="${H-P.b}" stroke="var(--pos)" stroke-dasharray="2 3"/><text x="${X(m.x)+4}" y="${H-P.b-6-i*12}" font-size="10" fill="var(--pos)" font-family="var(--mono)">${m.label}</text>`})}
   g+=series.map(s=>`<path d="${s.pts.map((p,i)=>(i?"L":"M")+X(p.x).toFixed(1)+" "+Y(p.y).toFixed(1)).join(" ")}" fill="none" stroke="${s.color}" stroke-width="2.2" stroke-linejoin="round"/>`).join("");
   el.insertAdjacentHTML("beforeend", `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${opts.label}">${g}</svg><div class="legend">${series.map(s=>`<span><i style="border-top-color:${s.color}"></i>${s.name}</span>`).join("")}</div>`);
 }
@@ -300,6 +359,17 @@ function line(el, series, opts){
   $("#r2-ctl").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b)return; area=b.dataset.a; $("#r2-ctl").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); draw();});
   draw();
   $("#spread-train").textContent=fmt(T.spread.corr_all_hours,2); $("#spread-hold").textContent=fmt(H.spread.corr_all_hours,2);
+  const adds=[...Object.entries(T),...Object.entries(H)].filter(([k])=>k.includes("|")).map(([,v])=>v.forecast_adds);
+  $("#r2-add-range").textContent=`${fmt(Math.min(...adds),2)} to ${fmt(Math.max(...adds),2)}`;
+  const withs=[...Object.entries(T),...Object.entries(H)].filter(([k])=>k.includes("|")).map(([,v])=>v.r2_with);
+  $("#dek-r2").textContent=`${Math.round(100*Math.min(...withs))} to ${Math.round(100*Math.max(...withs))} percent`;
+  // model card
+  const MC=D.model_card; if(MC){
+    const rows=MC.rows; let beats=0;
+    $("#mc-table").innerHTML=`<tr><th class="l">Zone, year</th><th>Period</th><th>Typical price, EUR/MWh</th><th>With wind</th><th>Without wind</th><th>Yesterday's price</th><th>Training mean</th><th>R² with wind</th></tr>`+
+      rows.map(r=>{const win=r.mae_with_wind<r.mae_naive_yesterday; if(win)beats++; return `<tr><td class="l">${r.area} ${r.year}</td><td class="l">${r.period}</td><td class="num">${fmt(r.price_mean,0)} &plusmn; ${fmt(r.price_sd,0)}</td><td class="num ${win?"pos":""}"><b>${fmt(r.mae_with_wind,1)}</b></td><td class="num">${fmt(r.mae_without_wind,1)}</td><td class="num ${win?"":"pos"}">${fmt(r.mae_naive_yesterday,1)}</td><td class="num">${fmt(r.mae_train_mean,1)}</td><td class="num">${fmt(r.r2_with,2)}</td></tr>`}).join("");
+    $("#mc-beats").textContent=beats; $("#mc-years").textContent=rows.length;
+  }
 })();
 
 /* ---------- act three ---------- */
@@ -307,19 +377,39 @@ function line(el, series, opts){
   const hm=D.horizon_mae;
   $("#horizon-table").innerHTML=`<tr><th>Zone</th><th>Evening before</th><th>Same morning</th><th>Five hours</th><th>One hour</th><th>Mean actual wind</th></tr>`+
     hm.map(r=>`<tr><td class="l">${r.area}</td><td class="num">${fmt(r.day_ahead,0)}</td><td class="num">${fmt(r.same_morning,0)}</td><td class="num">${fmt(r.five_hours,0)}</td><td class="num">${fmt(r.one_hour,0)}</td><td class="num">${fmt(r.mean_actual,0)}</td></tr>`).join("");
-  let area="DK1";
-  $("#bias-ctl").innerHTML=["DK1","DK2"].map(a=>`<button class="chip" data-a="${a}" aria-pressed="${a===area}">${a}</button>`).join("");
+  let area="DK1", unit="mwh";
+  $("#bias-ctl").innerHTML=["DK1","DK2"].map(a=>`<button class="chip" data-a="${a}" aria-pressed="${a===area}">${a}</button>`).join("")+`<span style="width:12px"></span>`+[["mwh","megawatt-hours"],["pct","percent of actual wind"]].map(([u,l])=>`<button class="chip" data-u="${u}" aria-pressed="${u===unit}">${l}</button>`).join("");
+  const DR=D.model_card&&D.model_card.drift?D.model_card.drift:null;
   function drawBias(){
-    const pts=D.monthly_bias.filter(r=>r.area===area).map(r=>({x:Date.parse(r.month+"-01"), y:r.bias_mwh}));
-    line($("#bias-chart"), [{name:area+" monthly bias, actual minus forecast, MWh per hour", color:S[area], pts}], {label:"monthly forecast bias", xlabel:v=>new Date(v).toISOString().slice(0,7), mark:Date.parse("2024-01-01"), markLabel:"holdout begins"});
+    const rows=DR?DR[area].monthly:D.monthly_bias.filter(r=>r.area===area).map(r=>({month:r.month,bias:r.bias_mwh,pct:null}));
+    const pts=rows.map(r=>({x:Date.parse(r.month+"-01"), y:unit==="pct"?r.pct:r.bias})).filter(p=>p.y!=null);
+    const series=[{name:area+(unit==="pct"?" monthly bias as percent of actual wind":" monthly bias, actual minus forecast, MWh per hour"), color:S[area], pts}];
+    const CZ=D.capacity&&D.capacity.zones&&D.capacity.zones[area]; let marks=[];
+    if(CZ){
+      const cap=CZ.rows.map(r=>({x:Date.parse(r.month+"-01"), y:r.mw})).filter(p=>p.x>=pts[0].x);
+      const c0=cap.length?cap[0].y:0;
+      marks=CZ.jumps.filter(j=>Date.parse(j.month+"-01")>=pts[0].x).map(j=>({x:Date.parse(j.month+"-01"), label:`+${fmt(j.mw,0)} MW`}));
+    }
+    line($("#bias-chart"), series, {label:"monthly forecast bias", xlabel:v=>new Date(v).toISOString().slice(0,7), mark:Date.parse("2024-01-01"), markLabel:"holdout begins, Jan 2024", marks});
+    if(DR){const by=DR[area].by_year; $("#bias-stat").innerHTML=by.map(r=>`<div><div class="k">${r.year}</div><div class="n">${r.bias>0?"+":""}${fmt(r.bias,0)}</div><div class="s">MWh per hour, ${r.pct>0?"+":""}${fmt(r.pct,0)}% of actual wind</div></div>`).join("");}
+    const cap=CZ; let capText="";
+    if(cap){const rows=cap.rows.filter(r=>Date.parse(r.month+"-01")>=pts[0].x); const first=rows[0], last=rows[rows.length-1]; const jumps=cap.jumps.filter(j=>Date.parse(j.month+"-01")>=pts[0].x);
+      capText=` Energinet's own installed-capacity table for the zone rises from ${fmt(first.mw,0)} MW in ${first.month} to ${fmt(last.mw,0)} MW in ${last.month}, with every step of 100 MW or more marked on the chart in green: ${jumps.map(j=>`${j.month} (+${fmt(j.mw,0)} MW${j.offshore>=50?", offshore":""})`).join(", ")}.`;}
+    if(DR){const d=DR[area]; const by=d.by_year; const last=by[by.length-1]; const first=by.find(r=>r.year===2023)||by[0];
+      $("#drift-anatomy").textContent=`The peaks and troughs within a year are the wind itself: months with more wind have larger errors, and the monthly bias correlates with the monthly actual wind at ${fmt(d.corr_bias_vs_actual_wind,2)}. The trend across years is the part that is not weather: ${area==="DK1"?`the bias was ${fmt(first.pct,0)} percent of actual wind in ${first.year}, ${fmt(by.find(r=>r.year===2024).pct,0)} percent in 2024 and ${fmt(last.pct,0)} percent in ${last.year}`:`the bias ran to ${fmt(Math.max(...by.map(r=>r.pct)),0)} percent of actual wind in ${by.reduce((a,b)=>b.pct>a.pct?b:a).year} and has been within a few percent of zero since 2023`}. A forecast that misses low by a steady share of output, for months at a time, is behaving like a forecast built for a smaller fleet than the one actually producing.${capText}`;
+      if(area==="DK1"){$("#drift-opener").textContent="The DK1 forecast has under-predicted wind by a growing share since 2023, and new capacity is the likeliest reason."; $("#drift-verdict").textContent=`From 2023 the day-ahead forecast has missed DK1 wind low in the windy months, and the miss has grown from ${fmt(first.pct,0)} percent of output to ${fmt(last.pct,0)} percent. A bias that scales with output and persists across seasons points at turbines the forecast's model does not fully count; ${cap?`Energinet's capacity table shows the zone's wind fleet growing in steps that line up with the bias: the west-coast offshore farms Vesterhav Nord and Syd in late 2023 and early 2024, and the 1,000 MW Thor farm in the spring of 2026, the year the miss reached ${fmt(last.pct,0)} percent. The steps are marked on the chart above. This is consistent with the candidate cause, not a proof of it; the forecast's own capacity assumptions are not public`:`the west-coast offshore farms Vesterhav Syd and Nord came on line in 2023 and 2024, in this zone; that is a candidate cause, stated as one, not tested here`}. For anyone using the forecast it means the same thing either way: "the forecast is good" is a claim with a date on it.`;}
+      else {$("#drift-opener").textContent="The DK2 forecast missed low by a third in 2021 and 2022, then recovered."; $("#drift-verdict").textContent=`In 2021 and 2022 the day-ahead forecast under-predicted DK2 wind by a third or more of actual output, and from 2023 the bias is within a few percent of zero. A large new source in the zone that the forecast did not yet count fits that shape; ${cap?`Energinet's capacity table shows the 605 MW Kriegers Flak offshore farm entering the zone's fleet in October 2020, marked on the chart above; the under-forecast runs through the following two years and closes in 2023. Consistent with the candidate cause, not a proof of it`:`Kriegers Flak, the 600 MW offshore farm east of Zealand, was completed in 2021; that is a candidate cause, stated as one, not tested here`}. The recovery from 2023 shows the forecast being brought back into line, which is what act one's date on the forecast is about.`;}
+      const dk=DR.DK1.by_year, l=dk[dk.length-1]; $("#dek-bias").textContent=`from ${fmt((dk.find(r=>r.year===2023)||dk[0]).pct,0)} percent of output in 2023 to ${fmt(l.pct,0)} percent in ${l.year}`;
+    }
   }
-  $("#bias-ctl").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b)return; area=b.dataset.a; $("#bias-ctl").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); drawBias();});
+  $("#bias-ctl").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b)return; if(b.dataset.a){area=b.dataset.a; $("#bias-ctl").querySelectorAll("button[data-a]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));} else {unit=b.dataset.u; $("#bias-ctl").querySelectorAll("button[data-u]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));} drawBias();});
   drawBias();
   let ga="DK1";
   $("#gap-ctl").innerHTML=["DK1","DK2"].map(a=>`<button class="chip" data-a="${a}" aria-pressed="${a===ga}">${a}</button>`).join("");
   function drawGap(){
     const rows=D.gap_deciles.filter(r=>r.area===ga);
     bars($("#gap-chart"), rows.map(r=>({label:`${r.decile}`, series:[{name:"mean imbalance gap, EUR/MWh", v:r.mean_gap_eur, color:S[ga]},{name:"median", v:r.median_gap_eur, color:"var(--rule2)"}]})), {label:"imbalance gap by error decile", dec:1, xlabel:"forecast-error decile: 1 = much less wind than forecast, 10 = much more"});
+    $("#gap-take").textContent=`In ${ga} the bars run from positive in bin 1 to negative in bin 10: when less wind arrives than forecast the imbalance price is above the auction price on average, and below it when more arrives. The grey medians sit near zero, so in the typical hour being wrong costs nothing; the averages come from a minority of hours.`;
     $("#gap-note").textContent=`Decile 1 covers errors from ${fmt(rows[0].err_from,0)} to ${fmt(rows[0].err_to,0)} MWh; decile 10 from ${fmt(rows[9].err_from,0)} to ${fmt(rows[9].err_to,0)}. All hours to March 2025. The grey median bars sit at or near zero in every decile: in the typical hour the imbalance price equals the day-ahead price and being wrong costs nothing; the means are made by the other hours.`;
   }
   $("#gap-ctl").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b)return; ga=b.dataset.a; $("#gap-ctl").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); drawGap();});
@@ -335,20 +425,44 @@ function line(el, series, opts){
 })();
 
 /* ---------- the walkthrough ---------- */
-const TOUR=[
- ["Start here","A pre-registered study on public data. <b>Read the first paragraph:</b> wind explains a large part of the price, the obvious way to prove it is look-ahead, and the money is in the errors."],
- ["Act one","<b>Click the timeline events.</b> The red one is the finding: Energinet's day-ahead forecast is published six hours after the auction. That killed the pre-registered strategy before a number was computed."],
- ["Act two","<b>Pick a zone.</b> The bars show how much expected wind adds to a plain price model, year by year, with the holdout years marked."],
- ["Act three","Three cards: how wrong the forecast is at each horizon, how its bias has drifted since 2023, and which way being wrong costs. <b>Pick a zone in each.</b>"],
- ["Then","The added rule, scored once on the holdout, and why it is a map rather than a strategy. Method, limits and the pre-registration are at the end."]
+const STEPS=[
+ {sel:"header", k:"Start here · 1 of 8", html:"A trading idea tested on public data with the questions written down first. <b>Read the first paragraph:</b> it gives the three results in one breath; the rest of the page is the evidence for each."},
+ {sel:"#primer", k:"Four terms · 2 of 8", html:"Everything below uses these four: the two price zones, the auction, the forecast and the imbalance price. Thirty seconds here saves the rest."},
+ {sel:"#timeline", k:"Act one · 3 of 8", html:"<b>Click the numbered circles.</b> Each is a moment in the day before delivery. Circle 3, in red, is the finding: the forecast is published six hours after the auction it was supposed to predict."},
+ {sel:"#r2-chart", k:"Act two · 4 of 8", html:"<b>Pick a zone.</b> Grey is a plain price model, colour is the same model with expected wind. The difference is how much of the price is wind, year by year. Years marked * were kept unread until the code was frozen."},
+ {sel:"#model-card", k:"The model card · 5 of 8", html:"What was trained and how wrong it is, in euros, next to two things anyone could do without a model. Read the bold column against the 'yesterday' column: about as good, not better."},
+ {sel:"#bias-chart", k:"Act three · 6 of 8", html:"<b>Switch zones and units.</b> Monthly forecast bias since 2020. Within a year the peaks follow the wind; across years the DK1 miss has grown as a share of output, which is the finding about new capacity."},
+ {sel:"#gap-chart", k:"The cost · 7 of 8", html:"Hours binned by how wrong the forecast was, and the average gap between the imbalance price and the auction price in each bin. Right on average, near zero in the typical hour."},
+ {sel:"#coda", k:"Method and limits · 8 of 8", html:"How it was built, the split, what was added after the study, and the limits. The Walk-me-through button at the top restarts this at any time."}
 ];
-const ANCH=["header","#act1","#act2","#act3","#coda"];
-const tour={i:0,open(i){this.i=i;$("#tour").classList.add("on");this.render(true)},close(){$("#tour").classList.remove("on");try{localStorage.setItem("wind-tour","seen")}catch(e){}},
-  render(sc){const [k,t]=TOUR[this.i];$("#tour-k").textContent=`${this.i+1} of ${TOUR.length} · ${k}`;$("#tour-tx").innerHTML=t;$("#tour-next").textContent=this.i===TOUR.length-1?"Done":"Next";
-    if(sc){const el=document.querySelector(ANCH[this.i]); if(el) window.scrollTo({top:Math.max(0,el.getBoundingClientRect().top+window.scrollY-16),behavior:"smooth"});}},
-  next(){if(this.i>=TOUR.length-1){this.close();return} this.i++;this.render(true)}};
-$("#tour-next").addEventListener("click",()=>tour.next());$("#tour-skip").addEventListener("click",()=>tour.close());$("#tourbtn").addEventListener("click",()=>tour.open(0));
-if(!location.search.includes("tour=off")){try{if(localStorage.getItem("wind-tour")!=="seen")setTimeout(()=>tour.open(0),600)}catch(e){setTimeout(()=>tour.open(0),600)}}
+(function(){
+  const root=$('#tour'), hl=$('#tour-hl'), card=$('#tour-card'); let idx=0;
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function place(){
+    const st=STEPS[idx]; const elm=document.querySelector(st.sel); if(!elm){next();return;}
+    elm.scrollIntoView({behavior:reduced?'auto':'smooth',block:'center'});
+    setTimeout(()=>{
+      const r=elm.getBoundingClientRect(), sx=window.scrollX, sy=window.scrollY;
+      root.style.height=document.documentElement.scrollHeight+'px';
+      hl.style.left=(r.left+sx-8)+'px'; hl.style.top=(r.top+sy-8)+'px'; hl.style.width=(r.width+16)+'px'; hl.style.height=(r.height+16)+'px';
+      const dots=STEPS.map((_,i)=>`<i class="${i===idx?'on':''}"></i>`).join('');
+      card.innerHTML=`<div class="tk">${st.k}</div><p>${st.html}</p><div class="tour-nav"><div class="dots">${dots}</div>${idx>0?'<button class="tour-btn" id="tprev">Back</button>':''}<button class="tour-btn" id="tskip">Close</button><button class="tour-btn primary" id="tnext">${idx<STEPS.length-1?'Next':'Done'}</button></div>`;
+      const cw=Math.min(400, innerWidth-32); const hh2=(typeof hh!=="undefined")?hh:r.height; let cx=r.left+sx+r.width+18, cy=r.top+sy;
+      if(cx+cw>sx+innerWidth-16){
+        if(r.top+hh2+16+250<innerHeight){ cx=Math.max(16+sx, r.left+sx); cy=r.top+sy+hh2+16; }
+        else { cx=sx+innerWidth-16-cw; cy=sy+innerHeight-270; }
+      }
+      card.style.left=cx+'px'; card.style.top=Math.max(sy+16,cy)+'px';
+      $('#tnext').onclick=next; $('#tskip').onclick=stop; const pv=$('#tprev'); if(pv) pv.onclick=()=>{idx=Math.max(0,idx-1);place();};
+    }, reduced?50:450);
+  }
+  function next(){ if(idx>=STEPS.length-1){stop();return;} idx++; place(); }
+  function stop(){ root.classList.remove('on'); try{localStorage.setItem('wind-tour','seen')}catch(e){} }
+  function start(){ idx=0; root.classList.add('on'); place(); }
+  $('#tourbtn').addEventListener('click', start);
+  window.addEventListener('resize', ()=>{ if(root.classList.contains('on')) place(); });
+  if(!location.search.includes("tour=off")){try{if(localStorage.getItem("wind-tour")!=="seen")setTimeout(start,700)}catch(e){setTimeout(start,700)}}
+})();
 </script>
 </body>
 </html>

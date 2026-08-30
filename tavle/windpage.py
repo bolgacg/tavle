@@ -26,6 +26,10 @@ def collect():
     d = {}
     d["training"] = json.loads((RES / "training.json").read_text())
     d["holdout"] = json.loads((RES / "holdout.json").read_text())
+    mc = RES / "model_card.json"
+    d["model_card"] = json.loads(mc.read_text()) if mc.exists() else None
+    cap = RES / "capacity_by_zone.json"
+    d["capacity"] = json.loads(cap.read_text()) if cap.exists() else None
     d["monthly_bias"] = q(con, """
         select area, strftime(hour_utc, '%Y-%m') as month, round(avg(wind_err_da_mwh)) as bias_mwh,
                round(avg(wind_fc_da_mwh)) as forecast_mwh, round(avg(wind_actual_mwh)) as actual_mwh

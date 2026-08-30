@@ -84,3 +84,81 @@ would supposedly predict. Consequences, fixed now:
   for the sign of (imbalance price minus day-ahead price) in the delivery hours. Scored as sign
   agreement and mean gap on the holdout only, with the same costs. It is a proxy for an intraday
   position because intraday prices are not in the public data; the page says so.
+
+---
+
+# Pre-registration v2, 30 August 2026: who pays when the wind forecast is wrong
+
+## Why a second registration
+
+The v1 headline question (trade the day-ahead spread on the day-ahead wind forecast) turned out to be
+untestable on this data: the forecast is published six hours after the auction. v1 stands as written;
+this section registers four hypotheses that the data can test without look-ahead, each with a mechanism,
+a prediction, a baseline and a metric, written before the final computation.
+
+**Disclosure.** On 30 August 2026, before this section was written, a one-off exploratory pass was run on
+the whole data (training and holdout together) to check that H1 to H4 were alive. The numbers seen were:
+H1 DK1 cost 1.64 / 0.87 / 0.71 / -0.05 EUR per MWh by horizon; H2 zero-gap share 0 to 33 percent; H3
+sign persistence 0.86 at one hour; H4 R squared change at most 0.007. The holdout is therefore not
+unread for v2. It is kept as a separate period so the reader can see whether the effects hold out of the
+training years, and this page never calls it unread.
+
+## Data and periods
+
+forecast_vs_imbalance joined with forecast_hourly (all four forecast horizons, actual wind, day-ahead
+price, imbalance price) and power_context (solar, consumption). Training: December 2019 to December
+2023. Holdout: January 2024 to 4 March 2025, the end of the imbalance data. Single-pricing regime from
+1 November 2021 (Nordic balancing model, one price for all imbalances).
+
+## H1. Lead time has a price
+
+Mechanism: a producer nominates its forecast in the auction and settles the difference at the imbalance
+price; a later forecast has a smaller error and therefore less imbalance volume.
+Definition: producer output A = s times the zone's actual wind, nomination N_h = s times the forecast at
+horizon h (evening before, same morning, five hours, one hour), s = 0.05 by default. Imbalance cost for
+the hour = -(A - N_h)(I - P), I the imbalance price, P the day-ahead price. Metric: summed cost divided by
+summed output, EUR per MWh produced, per zone, horizon and period; also imbalance volume as a share of
+output. Baseline: the evening-before nomination. Prediction: cost falls monotonically with horizon in both
+zones. Caveat registered: re-nominating requires trading the difference intraday at prices this data does
+not have; the avoided imbalance cost is an upper bound on the value of the later forecast.
+
+## H2. Single pricing changed what an error costs
+
+Mechanism: from 1 November 2021 every imbalance settles at one price; an error in the helping direction is
+paid rather than charged, and an hour with no regulation costs nothing.
+Metric: per zone and regime, the mean gap (imbalance price minus day-ahead price) when more wind arrived
+than forecast and when less, the share of hours with a gap of exactly zero, and the mean absolute gap.
+Prediction: the zero share rises from about zero to a substantial fraction of hours; the conditional means
+keep their signs (negative when more wind, positive when less) in both regimes. Caveat registered: the
+published imbalance price series is used in both eras; in the dual era production imbalances in the wrong
+direction were settled at the regulating price, so the dual-era figures describe the published series, not
+a producer's bill.
+
+## H3. The balancing direction persists, and the wind error is not the signal
+
+Mechanism: the causes of a system imbalance last for hours.
+Metric: among hours where the gap is nonzero at t and t-k, the share where sign(gap_t) = sign(gap_t-k),
+k = 1, 2, 3, 6. Baselines: always guessing the majority sign of the period; the v1 rule
+sign(gap_t) = -sign(wind error_t-k). Costed rule, k = 1: take one unit long if the previous hour's gap was
+positive, short if negative; P&L per hour = predicted sign times gap minus 0.6 EUR/MWh (the v1 cost).
+Report mean, standard error, median, hit rate, share of the total from the best decile, per zone and
+period. Prediction: persistence above 0.8 at k = 1, falling with k, and well above both baselines.
+Caveats registered: the settled gap for t-1 is not known at t; the live signal is the activation
+direction Energinet publishes; and deliberate imbalances are prohibited, so the legitimate use is an
+intraday position with the H1 caveat on prices.
+
+## H4. The market prices Energinet's wind, not the wind
+
+Mechanism: if the auction had better information than Energinet's later forecast, the price would track
+actual wind beyond the forecast.
+Metric: per zone and year, the price model of v1 (hour and month effects plus forecast share and its
+square) with and without an added term (actual minus forecast share); the coefficient on the added term
+and the change in R squared. Prediction: the change in R squared is below 0.01 in every year. Companion
+descriptives: the day-ahead forecast bias by year as a share of actual wind, with Energinet's
+installed-capacity steps; negative-price hours per year with their midday share and the mean solar and
+wind in those hours. Prediction: bias rises in DK1 from 2023 with the capacity steps; negative-price hours
+move from night to midday as solar grows.
+
+**Added after v2 was registered (30 August 2026, same day):** the H3 costed rule is also reported at k = 2,
+because the intraday gate closes an hour before delivery, so a position for hour t can only be placed when
+hour t-2 is the last settled hour. Labelled as added on the page.

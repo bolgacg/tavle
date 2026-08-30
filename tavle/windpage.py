@@ -26,6 +26,7 @@ def collect():
     d = {}
     d["training"] = json.loads((RES / "training.json").read_text())
     d["holdout"] = json.loads((RES / "holdout.json").read_text())
+    d["study2"] = json.loads((RES / "study2.json").read_text())
     mc = RES / "model_card.json"
     d["model_card"] = json.loads(mc.read_text()) if mc.exists() else None
     cap = RES / "capacity_by_zone.json"

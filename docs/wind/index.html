@@ -58,6 +58,7 @@ code{font-family:var(--mono);font-size:12.5px}
 .quote small{display:block;font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:6px}
 .timeline{position:relative;margin:10px 0 6px}
 .timeline svg{width:100%;height:auto;display:block}
+@media (max-width:640px){.timeline{overflow-x:auto;-webkit-overflow-scrolling:touch}.timeline svg{min-width:640px}}
 .tl-ev{cursor:pointer}
 .tl-note{min-height:3.2em;font-size:14.5px;color:var(--ink);margin-top:8px;padding:10px 14px;background:var(--panel);border-radius:4px}
 .limits{margin-top:22px;border-left:3px solid var(--neg);padding:2px 0 2px 16px;max-width:760px}
@@ -147,7 +148,7 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
     <p>Every question below was written down before it was computed, with what should happen, the baseline, the split and the
     costs. One exploratory pass was run first to check the questions were alive; the method section says what it saw.</p>
   </div>
-  <div class="card" style="margin-top:20px">
+  <div class="card" style="margin-top:20px" id="t-tl">
     <div class="sec-label" style="margin-bottom:2px">The domain, drawn once</div>
     <div class="timeline" id="timeline"></div>
     <p class="howto"><b>how to read</b>The day before delivery on the left, the delivery day on the right. Click a numbered circle. Every forecast used on this page sits before the delivery hour; the settlement that prices its error sits after.</p>
@@ -174,9 +175,11 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
   Deliver what the zone actually produced. Settle the difference at the imbalance price. Divide the bill by the megawatt-hours
   produced. <strong>Pick a zone and a period, and move the share slider.</strong></p>
   <div class="card">
+    <div id="t-h1">
     <div class="chips" id="h1-ctl" style="margin-bottom:8px"></div>
     <div class="ctl"><label><div class="hint">The producer's share of the zone's wind fleet. The cost per megawatt-hour does not depend on it; the total does.</div><input type="range" id="h1-share" min="1" max="20" step="1" value="5"><span class="val" id="h1-share-val"></span></label></div>
     <div class="viz" id="h1-chart"><div class="tip"></div></div>
+    </div>
     <p class="howto"><b>how to read</b>One bar per forecast: the imbalance cost in euros per megawatt-hour produced, single-pricing era. A negative bar means the producer's remaining errors happened to help the system, and it was paid for them. <b>take from it</b><span id="h1-take"></span></p>
     <div class="stat" id="h1-stat"></div>
     <div class="tscroll" style="margin-top:14px"><table id="h1-table"></table></div>
@@ -197,8 +200,10 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
   </div>
   <p class="lede">A natural experiment: the same forecast errors, a rule that changed on a known date. <strong>Pick a zone.</strong></p>
   <div class="card">
+    <div id="t-h2">
     <div class="chips" id="h2-ctl" style="margin-bottom:8px"></div>
     <div class="viz" id="h2-chart"><div class="tip"></div></div>
+    </div>
     <p class="howto"><b>how to read</b>Three groups: before the switch, after it, and the separate 2024 to 2025 period. In each, the average gap when more wind arrived than forecast and when less. <b>take from it</b><span id="h2-take"></span></p>
     <div class="stat" id="h2-stat"></div>
     <div class="verdict"><b id="h2-open"></b> <span id="h2-verdict"></span></div>
@@ -215,8 +220,10 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
   </div>
   <p class="lede"><strong>Pick a zone and a period.</strong> The chart is how often the sign of the gap repeats after one, two, three and six hours, against both baselines. The table costs the rule.</p>
   <div class="card">
+    <div id="t-h3">
     <div class="chips" id="h3-ctl" style="margin-bottom:8px"></div>
     <div class="viz" id="h3-chart"><div class="tip"></div></div>
+    </div>
     <p class="howto"><b>how to read</b>Three bars per lag: persistence, the majority sign, the wind-error rule. Only hours where both gaps are nonzero count. <b>take from it</b><span id="h3-take"></span></p>
     <div class="tscroll" style="margin-top:14px"><table id="h3-table"></table></div>
     <p class="note">The costed rule: one unit long when the previous settled hour's gap was positive, short when negative; P&amp;L per hour is the predicted sign times the gap, minus 0.6 EUR/MWh. The one-hour lag is the registered rule. The two-hour lag was added the same day, labelled, for the intraday gate. Both settle at the imbalance price, which an intraday trade only approaches; read the means as upper bounds.</p>
@@ -242,8 +249,10 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
   </div>
   <div class="card">
     <div class="card-title">The bias: the forecast misses low, by a growing share of output</div>
+    <div id="t-bias">
     <div class="chips" id="bias-ctl" style="margin:6px 0 10px"></div>
     <div class="viz" id="bias-chart"><div class="tip"></div></div>
+    </div>
     <p class="howto"><b>how to read</b>One point per month: actual wind minus forecast wind. Green marks: the months Energinet's installed-capacity table adds 100 MW or more to the zone. The dashed line: where the separate period begins. <b>what moves it</b><span id="drift-anatomy"></span></p>
     <div class="stat" id="bias-stat"></div>
     <div class="verdict sting"><b id="drift-opener"></b> <span id="drift-verdict"></span></div>
@@ -260,15 +269,17 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 <section id="coda"><div class="wrap">
   <div class="sec-label">Method, model card, limits, terms</div>
   <h2>How this was done, and what it cannot say</h2>
-  <div class="hyp">
+  <div class="hyp" id="t-method">
     <b>data</b><span>Energinet's Forecasts_Hour at four horizons since November 2019; its hourly imbalance settlement to 4 March 2025; settled production and consumption; installed capacity per municipality; the day-ahead prices carried by the <a href="../">tavle</a> platform across the October 2025 dataset switch. 57 dbt tests pass on the models. <span id="spanline"></span></span>
     <b>split</b><span>Training: December 2019 to December 2023. Separate period: January 2024 to March 2025.</span>
     <b>what was seen first</b><span>Version 1 (29 August) registered a spread strategy on the day-ahead forecast and found it untestable: that forecast is published six hours after the auction. It is kept as written. On 30 August, before version 2 was registered, one exploratory pass over all the data checked that the four hypotheses were alive; the numbers it saw are listed in the pre-registration. That is why the 2024 to 2025 period is called separate, not unread.</span>
     <b>then</b><span>The hypotheses, baselines, costs and definitions were fixed, and the results above were computed once.</span>
   </div>
   <div class="card" id="model-card">
+    <div id="t-mc">
     <div class="card-title">Model card: the price model used in act four</div>
     <p class="small">Least squares on the hourly day-ahead price with hour-of-day and month effects, with and without expected wind as a share of consumption. Fitted on odd weeks, scored on even weeks of each year. Error in euros per megawatt-hour, next to two things anyone could do without a model.</p>
+    </div>
     <div class="tscroll" style="margin-top:8px"><table id="mc-table"></table></div>
     <p class="howto"><b>how to read</b>Lower is better. With wind, the model beats yesterday's price in <span class="num" id="mc-beats"></span> of <span class="num" id="mc-years"></span> zone-years, by a few euros, and loses in the volatile years. It is an explanation of the price, not a forecasting tool, which is all act four asks of it.</p>
   </div>
@@ -332,35 +343,37 @@ function twoChips(id, cur, on){ // zone + period in one row
 })();
 
 /* ---------- generic bars ---------- */
+function vizW(el){ return Math.max(280, Math.round(el.getBoundingClientRect().width||960)); }
 function bars(el, groups, opts){
-  el.querySelectorAll("svg,.legend").forEach(n=>n.remove());
-  const W=960,H=opts.h||280,P={l:52,r:12,t:16,b:40};
+  el.querySelectorAll("svg,.legend").forEach(n=>n.remove()); el._redraw=()=>bars(el,groups,opts);
+  const W=vizW(el),H=opts.h||280,P={l:52,r:12,t:16,b:40}, narrow=W<520, fs=narrow?9.5:11;
   const vals=groups.flatMap(g=>g.series.map(s=>s.v)).filter(v=>v!=null);
   const y0=Math.min(0,...vals), y1=Math.max(0,...vals)*1.1||1;
   const Y=v=>P.t+(1-(v-y0)/((y1-y0)||1))*(H-P.t-P.b);
   const n=groups.length, bw=(W-P.l-P.r)/n, k=groups[0].series.length, w=Math.min(28,(bw-8)/k);
   let g="";
-  for(let i=0;i<=4;i++){const v=y0+(y1-y0)*i/4; g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--rule)"/><text x="${P.l-7}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="var(--faint)" font-family="var(--mono)">${fmt(v,opts.dec??0)}</text>`}
+  for(let i=0;i<=4;i++){const v=y0+(y1-y0)*i/4; g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--rule)"/><text x="${P.l-7}" y="${Y(v)+4}" text-anchor="end" font-size="${fs}" fill="var(--faint)" font-family="var(--mono)">${fmt(v,opts.dec??0)}</text>`}
   g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--soft)"/>`;
   groups.forEach((gr,gi)=>{const x0=P.l+gi*bw+(bw-k*w-(k-1)*3)/2;
     gr.series.forEach((s,si)=>{if(s.v==null)return; const x=x0+si*(w+3), y=Y(Math.max(0,s.v)), h=Math.abs(Y(s.v)-Y(0));
       g+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${s.color}" rx="2"><title>${gr.label}, ${s.name}: ${fmt(s.v,opts.dec??2)}</title></rect>`});
-    g+=`<text x="${P.l+gi*bw+bw/2}" y="${H-14}" text-anchor="middle" font-size="11" fill="var(--faint)" font-family="var(--mono)">${gr.label}</text>`});
-  if(opts.xlabel) g+=`<text x="${W/2}" y="${H-1}" text-anchor="middle" font-size="11.5" fill="var(--soft)">${opts.xlabel}</text>`;
+    const stagger=narrow&&n>3, ly=stagger?(H-24+(gi%2)*12):(H-14);
+    g+=`<text x="${P.l+gi*bw+bw/2}" y="${ly}" text-anchor="middle" font-size="${fs}" fill="var(--faint)" font-family="var(--mono)">${gr.label}</text>`});
+  if(opts.xlabel&&!narrow) g+=`<text x="${W/2}" y="${H-1}" text-anchor="middle" font-size="11.5" fill="var(--soft)">${opts.xlabel}</text>`;
   el.insertAdjacentHTML("beforeend", `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${opts.label}">${g}</svg><div class="legend">${groups[0].series.map(s=>`<span><i class="bar" style="background:${s.color}"></i>${s.name}</span>`).join("")}</div>`);
 }
 function line(el, series, opts){
-  el.querySelectorAll("svg,.legend").forEach(n=>n.remove());
-  const W=960,H=opts.h||260,P={l:52,r:12,t:12,b:30};
+  el.querySelectorAll("svg,.legend").forEach(n=>n.remove()); el._redraw=()=>line(el,series,opts);
+  const W=vizW(el),H=opts.h||260,P={l:52,r:12,t:12,b:30}, narrow=W<520, fs=narrow?9.5:11, nx=narrow?2:4;
   const xs=series.flatMap(s=>s.pts.map(p=>p.x)), ys=series.flatMap(s=>s.pts.map(p=>p.y));
   const x0=Math.min(...xs), x1=Math.max(...xs), y0=Math.min(0,...ys)*1.05, y1=Math.max(0,...ys)*1.05||1;
   const X=x=>P.l+(x-x0)/((x1-x0)||1)*(W-P.l-P.r), Y=y=>P.t+(1-(y-y0)/((y1-y0)||1))*(H-P.t-P.b);
   let g="";
-  for(let i=0;i<=4;i++){const v=y0+(y1-y0)*i/4; g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--rule)"/><text x="${P.l-7}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="var(--faint)" font-family="var(--mono)">${fmt(v,0)}</text>`}
+  for(let i=0;i<=4;i++){const v=y0+(y1-y0)*i/4; g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--rule)"/><text x="${P.l-7}" y="${Y(v)+4}" text-anchor="end" font-size="${fs}" fill="var(--faint)" font-family="var(--mono)">${fmt(v,0)}</text>`}
   g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--soft)"/>`;
-  for(let i=0;i<=4;i++){const v=x0+(x1-x0)*i/4; g+=`<text x="${X(v)}" y="${H-8}" text-anchor="middle" font-size="11" fill="var(--faint)" font-family="var(--mono)">${opts.xlabel(v)}</text>`}
-  if(opts.mark){g+=`<line x1="${X(opts.mark)}" x2="${X(opts.mark)}" y1="${P.t}" y2="${H-P.b}" stroke="var(--amber)" stroke-dasharray="4 3"/><text x="${X(opts.mark)+5}" y="${P.t+12}" font-size="10.5" fill="var(--amber)" font-family="var(--mono)">${opts.markLabel||""}</text>`}
-  if(opts.marks){opts.marks.forEach((m,i)=>{g+=`<line x1="${X(m.x)}" x2="${X(m.x)}" y1="${P.t}" y2="${H-P.b}" stroke="var(--pos)" stroke-dasharray="2 3"/><text x="${X(m.x)+4}" y="${H-P.b-6-i*12}" font-size="10" fill="var(--pos)" font-family="var(--mono)">${m.label}</text>`})}
+  for(let i=0;i<=nx;i++){const v=x0+(x1-x0)*i/nx; g+=`<text x="${X(v)}" y="${H-8}" text-anchor="${i===0?"start":i===nx?"end":"middle"}" font-size="${fs}" fill="var(--faint)" font-family="var(--mono)">${opts.xlabel(v)}</text>`}
+  if(opts.mark){g+=`<line x1="${X(opts.mark)}" x2="${X(opts.mark)}" y1="${P.t}" y2="${H-P.b}" stroke="var(--amber)" stroke-dasharray="4 3"/><text x="${X(opts.mark)+(X(opts.mark)>W*0.6?-5:5)}" y="${P.t+12}" text-anchor="${X(opts.mark)>W*0.6?"end":"start"}" font-size="10.5" fill="var(--amber)" font-family="var(--mono)">${narrow?String(opts.markLabel||"").split(",")[0]:(opts.markLabel||"")}</text>`}
+  if(opts.marks){opts.marks.forEach((m,i)=>{g+=`<line x1="${X(m.x)}" x2="${X(m.x)}" y1="${P.t}" y2="${H-P.b}" stroke="var(--pos)" stroke-dasharray="2 3"/><text x="${X(m.x)+(X(m.x)>W*0.85?-4:4)}" y="${H-P.b-6-i*12}" text-anchor="${X(m.x)>W*0.85?"end":"start"}" font-size="10" fill="var(--pos)" font-family="var(--mono)">${m.label}</text>`})}
   g+=series.map(s=>`<path d="${s.pts.map((p,i)=>(i?"L":"M")+X(p.x).toFixed(1)+" "+Y(p.y).toFixed(1)).join(" ")}" fill="none" stroke="${s.color}" stroke-width="2.2" stroke-linejoin="round"/>`).join("");
   el.insertAdjacentHTML("beforeend", `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${opts.label}">${g}</svg><div class="legend">${series.map(s=>`<span><i style="border-top-color:${s.color}"></i>${s.name}</span>`).join("")}</div>`);
 }
@@ -501,40 +514,45 @@ function line(el, series, opts){
   $("#spanline").textContent=`Forecast rows from ${D.span.forecast_first} to ${D.span.forecast_last}, ${fmt(D.span.hours,0)} zone-hours; imbalance prices to ${D.span.imbalance_last}.`;
 })();
 
+/* ---------- redraw charts when the width changes ---------- */
+(function(){ let last=innerWidth, t; window.addEventListener("resize", ()=>{ clearTimeout(t); t=setTimeout(()=>{ if(Math.abs(innerWidth-last)<40) return; last=innerWidth; document.querySelectorAll(".viz").forEach(el=>{ if(el._redraw) el._redraw(); }); }, 200); }); })();
+
 /* ---------- the walkthrough ---------- */
 const STEPS=[
- {sel:"header", k:"Start here · 1 of 8", html:"Four questions about the invoice a wind forecast error produces, each answered with a number computed below. <b>Read the four questions.</b>"},
- {sel:"#primer", k:"Five things to know · 2 of 8", html:"The two zones, the auction, the forecast horizons, the imbalance price and the 2021 rule change. Then the timeline: <b>click a numbered circle</b>; every forecast used here exists before delivery."},
- {sel:"#act1", k:"Act one · 3 of 8", html:"<b>Pick a zone and a period, move the share slider.</b> A producer nominates each forecast in turn; the bars are its imbalance bill per megawatt-hour produced. Lead time has a price, and it is on the chart."},
- {sel:"#act2", k:"Act two · 4 of 8", html:"A rule change with a date. <b>Pick a zone.</b> Before November 2021 no hour had a zero gap; after it a third do, and the cost of a wrong-direction error rose."},
- {sel:"#act3", k:"Act three · 5 of 8", html:"<b>Pick a zone and a period.</b> The system's direction repeats 86 percent of the time after an hour; the wind-error rule the first version used manages 55. The table costs the rule, with its caveats printed."},
- {sel:"#act4", k:"Act four · 6 of 8", html:"Does the price know what the forecast did not? The R squared gain says no. Then the bias with Energinet's capacity steps marked, and negative prices moving from night to noon."},
- {sel:"#model-card", k:"Model card · 7 of 8", html:"The price model act four uses, scored in euros against yesterday's price and the training mean: an explanation, not a forecasting tool."},
- {sel:"#coda", k:"Method and limits · 8 of 8", html:"What was seen before v2 was registered, the split, and the limits: every euro figure that involves acting on information is an upper bound. The button at the top restarts this."}
+ {sel:".qa", k:"Start here · 1 of 8", html:"The four questions this page answers, each with one number computed below. <b>Read them first</b>; every act below is one of them, tested."},
+ {sel:"#t-tl", k:"The timeline · 2 of 8", html:"When each forecast and each price exists. <b>Click a numbered circle.</b> Every forecast used here sits before the delivery hour; the settlement that prices its error sits after."},
+ {sel:"#t-h1", k:"Act one · 3 of 8", html:"A producer nominates each of the four forecasts in turn; the bars are its imbalance bill per megawatt-hour. <b>Pick a zone and a period, move the share slider.</b> Later forecast, smaller bill."},
+ {sel:"#t-h2", k:"Act two · 4 of 8", html:"The same errors before and after the 2021 rule change. <b>Pick a zone.</b> Before it no hour had a zero gap; after it a third do, and the rest cost more."},
+ {sel:"#t-h3", k:"Act three · 5 of 8", html:"How often the system's direction repeats after one, two, three and six hours, against two baselines. <b>Pick a zone and a period.</b> The table under the chart costs the rule."},
+ {sel:"#t-bias", k:"Act four · 6 of 8", html:"The forecast's monthly bias with Energinet's capacity steps marked in green. <b>Pick a zone, then the percent view.</b> DK1's miss has grown since 2023 with the new farms."},
+ {sel:"#t-mc", k:"Model card · 7 of 8", html:"The price model act four uses, scored in euros against yesterday's price and the training mean, in the table below. An explanation of the price, not a forecasting tool."},
+ {sel:"#t-method", k:"Method · 8 of 8", html:"The data, the split, and what was seen before v2 was registered. Limits and terms follow. The button at the top restarts this walkthrough."}
 ];
 (function(){
   const root=$('#tour'), hl=$('#tour-hl'), card=$('#tour-card'); let idx=0;
   const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
   function place(){
     const st=STEPS[idx]; const elm=document.querySelector(st.sel); if(!elm){next();return;}
-    elm.scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'});
-    setTimeout(()=>{
-      const r=elm.getBoundingClientRect(), sx=window.scrollX, sy=window.scrollY;
-      root.style.height=document.documentElement.scrollHeight+'px';
-      const cw=Math.min(400, innerWidth-32), ch=250;
-      const fitsRight = r.left+r.width+18+cw <= innerWidth-16;
-      // the highlight never has the card on top of it: the card goes to the right when there is room,
-      // otherwise the highlight is shortened to leave room for the card below it, inside the viewport
-      const hh = fitsRight ? r.height : Math.max(120, Math.min(r.height, innerHeight - r.top - ch - 40));
-      hl.style.left=(r.left+sx-8)+'px'; hl.style.top=(r.top+sy-8)+'px'; hl.style.width=(r.width+16)+'px'; hl.style.height=(hh+16)+'px';
-      const dots=STEPS.map((_,i)=>`<i class="${i===idx?'on':''}"></i>`).join('');
-      card.innerHTML=`<div class="tk">${st.k}</div><p>${st.html}</p><div class="tour-nav"><div class="dots">${dots}</div>${idx>0?'<button class="tour-btn" id="tprev">Back</button>':''}<button class="tour-btn" id="tskip">Close</button><button class="tour-btn primary" id="tnext">${idx<STEPS.length-1?'Next':'Done'}</button></div>`;
-      let cx, cy;
-      if(fitsRight){ cx=r.left+sx+r.width+18; cy=r.top+sy; }
-      else { cx=Math.min(r.left+sx, sx+innerWidth-16-cw); cy=r.top+sy+hh+22; }
-      card.style.left=Math.max(sx+16,cx)+'px'; card.style.top=Math.max(sy+16,cy)+'px';
-      $('#tnext').onclick=next; $('#tskip').onclick=stop; const pv=$('#tprev'); if(pv) pv.onclick=()=>{idx=Math.max(0,idx-1);place();};
-    }, reduced?50:450);
+    // geometry in document coordinates, so it does not depend on how far a smooth scroll has got
+    const r=elm.getBoundingClientRect(), sx=window.scrollX, sy=window.scrollY;
+    const docTop=r.top+sy, docLeft=r.left+sx;
+    root.style.height=document.documentElement.scrollHeight+'px';
+    const maxScroll=Math.max(0,document.documentElement.scrollHeight-innerHeight);
+    const target=Math.max(0,Math.min(docTop-14, maxScroll)), vTop=docTop-target;
+    const cw=Math.min(400, innerWidth-32), ch=250;
+    const fitsRight = r.left+r.width+18+cw <= innerWidth-16;
+    // the card never covers the highlight: it goes to the right when there is room, otherwise the
+    // highlight is shortened to leave room for the card below it, inside the viewport
+    const hh = fitsRight ? r.height : Math.max(120, Math.min(r.height, innerHeight - vTop - ch - 40));
+    hl.style.left=(docLeft-8)+'px'; hl.style.top=(docTop-8)+'px'; hl.style.width=(r.width+16)+'px'; hl.style.height=(hh+16)+'px';
+    const dots=STEPS.map((_,i)=>`<i class="${i===idx?'on':''}"></i>`).join('');
+    card.innerHTML=`<div class="tk">${st.k}</div><p>${st.html}</p><div class="tour-nav"><div class="dots">${dots}</div>${idx>0?'<button class="tour-btn" id="tprev">Back</button>':''}<button class="tour-btn" id="tskip">Close</button><button class="tour-btn primary" id="tnext">${idx<STEPS.length-1?'Next':'Done'}</button></div>`;
+    let cx, cy;
+    if(fitsRight){ cx=docLeft+r.width+18; cy=docTop; }
+    else { cx=Math.min(docLeft, sx+innerWidth-16-cw); cy=docTop+hh+22; }
+    card.style.left=Math.max(sx+16,cx)+'px'; card.style.top=Math.max(target+16,cy)+'px';
+    $('#tnext').onclick=next; $('#tskip').onclick=stop; const pv=$('#tprev'); if(pv) pv.onclick=()=>{idx=Math.max(0,idx-1);place();};
+    window.scrollTo({top:target, behavior:reduced?'auto':'smooth'});
   }
   function next(){ if(idx>=STEPS.length-1){stop();return;} idx++; place(); }
   function stop(){ root.classList.remove('on'); try{localStorage.setItem('wind-tour','seen')}catch(e){} }

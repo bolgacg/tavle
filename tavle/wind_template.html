@@ -99,6 +99,13 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 .pill.mid{color:var(--amber);border-color:var(--amber)}
 .why{font-size:14.5px;color:var(--ink);background:var(--panel);border-radius:4px;padding:10px 14px;margin:0 0 12px}
 .why b{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-right:6px}
+.qa{display:grid;grid-template-columns:1fr 1fr;gap:10px 22px;margin:18px 0 6px;max-width:860px}
+.qa div{border-top:1px solid var(--rule);padding-top:8px;font-size:14.5px;line-height:1.5;color:var(--muted)}
+.qa b{display:block;font-family:var(--serif);font-size:17px;color:var(--ink);font-weight:600;margin-bottom:2px}
+@media (max-width:640px){.qa{grid-template-columns:1fr}}
+.hyp{background:var(--panel);border-radius:4px;padding:12px 14px;margin:0 0 14px;font-size:14.5px;display:grid;grid-template-columns:auto 1fr;gap:6px 12px}
+.hyp b{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);padding-top:3px}
+.hyp span{color:var(--ink)}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -106,19 +113,17 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 <body>
 
 <header><div class="wrap">
-  <div class="eyebrow">A work sample &middot; four hypotheses about wind forecast errors, registered before they were tested, on Energinet's public data &middot; this page builds no forecast</div>
+  <div class="eyebrow">A work sample &middot; four hypotheses about wind forecast errors, tested on Energinet's public data &middot; no forecast is built here</div>
   <h1>Who pays when the wind forecast is wrong?</h1>
-  <p class="dek">Denmark sells tomorrow's electricity in an auction at noon today. A wind producer sells what it expects to
-  make; whatever it actually makes is settled afterwards at a second price, the imbalance price. So a wind forecast error
-  is not a statistic, it is an invoice. This page asks four questions about that invoice, states what should happen and
-  why before looking, and then looks: <strong>what an hour of lead time is worth</strong> to a producer (act one),
-  <strong>what the 2021 change in settlement rules did to the bill</strong> (act two), <strong>whether the system's
-  direction is predictable</strong> and by what (act three), and <strong>whether the market knows more than the
-  forecast</strong> (act four). Headline numbers, computed here: in DK1 a producer nominating the evening before pays
-  <span class="num" id="dek-h1"></span> in imbalance cost, and nominating an hour ahead <span class="num" id="dek-h1b"></span>;
-  the balancing direction persists from one hour to the next <span class="num" id="dek-h3"></span> of the time; and adding
-  what the wind actually did to a model of the auction price improves it by at most <span class="num" id="dek-h4"></span>
-  of R squared.</p>
+  <p class="dek">Denmark sells tomorrow's electricity in an auction at noon today. A wind producer sells what it expects
+  to make; what it actually makes is settled afterwards at a second price. So a forecast error is an invoice. This page asks
+  four questions about that invoice, writes down what should happen before looking, and then looks.</p>
+  <div class="qa">
+    <div><b>What is an hour of lead time worth?</b>In DK1, nominating the evening forecast costs a producer <span class="num" id="dek-h1"></span>. Nominating an hour ahead <span class="num" id="dek-h1b"></span>.</div>
+    <div><b>What did the 2021 rule change do?</b>A third of hours now cost a producer nothing. The rest cost more.</div>
+    <div><b>Is the system's direction predictable?</b>Yes. It repeats <span class="num" id="dek-h3"></span> of the time from one hour to the next.</div>
+    <div><b>Does the market know more than the forecast?</b>No. Given the forecast, the actual wind adds at most <span class="num" id="dek-h4"></span> of R squared to a price model.</div>
+  </div>
   <div class="byline"><span>Bolga&ccedil; G&uuml;len &middot; Odense, 2026</span><span>&middot;</span>
     <a href="https://github.com/bolgacg/tavle/blob/master/research/PREREGISTRATION.md">the pre-registration</a><span>&middot;</span>
     <a href="https://github.com/bolgacg/tavle">source and data pipeline</a>
@@ -128,71 +133,73 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 <section id="primer"><div class="wrap">
   <div class="sec-label">Before the study &middot; five things to know</div>
   <div class="primer">
-    <p>Denmark has two price zones, <strong>DK1</strong> (Jutland and Funen, most of the turbines) and <strong>DK2</strong>
-    (Zealand and Copenhagen). Each gets its own price for every hour, set in the <strong>day-ahead auction</strong>, which
-    closes at noon the day before delivery. Prices are in euros per megawatt-hour; a megawatt-hour runs about three hundred
-    homes for an hour.</p>
-    <p>A wind producer sells its <strong>forecast</strong> into that auction. Energinet, the grid operator, publishes its own
-    wind forecast for every hour at four horizons: the evening before, the same morning, five hours ahead, one hour ahead.
-    The later the forecast, the smaller its error.</p>
-    <p>What the producer actually delivers differs from what it sold. The difference is its <strong>imbalance</strong>, and it is
-    settled at the <strong>imbalance price</strong>: if the whole system was short of power, that price is above the auction
-    price; if the system had too much, below. The <strong>gap</strong> on this page is the imbalance price minus the auction
-    price. When nothing had to be regulated, the gap is zero and an imbalance costs nothing.</p>
-    <p>Since 1 November 2021 the Nordic countries use <strong>single pricing</strong>: every imbalance, helpful or harmful, settles at
-    the same imbalance price. Before that, a producer whose error made the system's problem worse paid the regulating price
-    and one whose error helped got only the auction price.</p>
-    <p>Everything here was written down before it was computed: the questions, what should happen and why, the baselines,
-    the split (training to December 2023, a separate 2024 to March 2025 period), and the costs. One exploratory pass over all
-    the data was run first to check the questions were alive; the method section says exactly what was seen.</p>
+    <p>Denmark has two price zones. <strong>DK1</strong> is Jutland and Funen, with most of the turbines. <strong>DK2</strong> is
+    Zealand and Copenhagen. Each gets one price per hour from the <strong>day-ahead auction</strong>, which closes at noon the
+    day before. Prices are in euros per megawatt-hour; a megawatt-hour runs about three hundred homes for an hour.</p>
+    <p>A wind producer sells its <strong>forecast</strong> into that auction. Energinet, the grid operator, publishes a wind
+    forecast for every hour at four horizons: the evening before, the same morning, five hours ahead, one hour ahead.</p>
+    <p>What the producer delivers differs from what it sold. That difference is its <strong>imbalance</strong>. It is settled at
+    the <strong>imbalance price</strong>: above the auction price when the whole system was short of power, below it when
+    the system had too much. This page calls the difference between the two prices the <strong>gap</strong>. When nothing
+    had to be regulated the gap is zero and an imbalance costs nothing.</p>
+    <p>Since 1 November 2021 the Nordic countries use <strong>single pricing</strong>: every imbalance settles at the same
+    imbalance price, whether it helped the system or hurt it.</p>
+    <p>Every question below was written down before it was computed, with what should happen, the baseline, the split and the
+    costs. One exploratory pass was run first to check the questions were alive; the method section says what it saw.</p>
   </div>
   <div class="card" style="margin-top:20px">
     <div class="sec-label" style="margin-bottom:2px">The domain, drawn once</div>
     <div class="timeline" id="timeline"></div>
-    <p class="howto"><b>how to read</b>The day before delivery on the left, the delivery day on the right. Click a numbered circle; the box below says what exists at that moment. Every forecast this page uses sits before the delivery hour; the settlement that prices its error sits after.</p>
+    <p class="howto"><b>how to read</b>The day before delivery on the left, the delivery day on the right. Click a numbered circle. Every forecast used on this page sits before the delivery hour; the settlement that prices its error sits after.</p>
     <div class="tl-note" id="tl-note">Click a circle on the timeline.</div>
   </div>
 </div></section>
 
 <section id="words"><div class="wrap">
-  <div class="sec-label">In the words of the people who own this problem</div>
+  <div class="sec-label">In Energinet's own words</div>
   <div class="quote">"Forecast for the next day is published at 18:00 Danish time zone. The forecast is generated at 17:50 Danish time zone."
-    <span class="who">Energinet, Energi Data Service, column documentation for ForecastDayAhead in the dataset Forecasts_Hour. Read on 29 August 2026. Six hours after the auction closes, which is why no question on this page uses a forecast to predict the auction price.</span></div>
-  <div class="quote">One price for all imbalances, in both directions, from 1 November 2021.
-    <span class="who">The Nordic balancing model's single-price imbalance settlement, introduced across the Nordic synchronous area; the change act two uses as a natural experiment.</span></div>
+    <span class="who">Energinet, Energi Data Service, column documentation for ForecastDayAhead in the dataset Forecasts_Hour. Read on 29 August 2026.</span></div>
+  <p class="small">The auction closes at 12:00. This forecast comes six hours later. That is why no question on this page uses a forecast to predict the auction price; every question uses the forecasts for what they are, the numbers a producer nominates and settles against.</p>
 </div></section>
 
 <section id="act1"><div class="wrap">
   <div class="sec-label">Act one &middot; What lead time is worth</div>
-  <h2>Every hour of lead time lowers a producer's imbalance bill, and by how much is a number</h2>
-  <div class="why"><b>hypothesis</b>A producer that nominates a later forecast has a smaller error and so a smaller imbalance volume; its cost per megawatt-hour produced should fall with every horizon, in both zones. Baseline: the evening-before nomination, which is what a producer with no intraday desk does. Caveat registered in advance: re-nominating means trading the difference intraday at prices this data does not have, so the avoided imbalance cost is the upper bound of what the later forecast is worth.</div>
-  <p class="lede">Take a producer that owns a fixed share of its zone's wind. Nominate with each of Energinet's four forecasts in
-  turn, deliver what the zone actually produced, settle the difference at the imbalance price, and divide the bill by the
-  megawatt-hours produced. <strong>Pick a zone and a period; move the share slider</strong> to scale the total.</p>
+  <h2>A later forecast is a smaller invoice</h2>
+  <div class="hyp">
+    <b>prediction</b><span>A producer that nominates a later forecast has a smaller error, so a smaller imbalance volume, so a lower cost per megawatt-hour. The cost falls with every horizon, in both zones.</span>
+    <b>baseline</b><span>Nominating the evening-before forecast, which is what a producer without an intraday desk does.</span>
+    <b>caveat</b><span>Re-nominating means trading the difference intraday, at prices this data does not have. The avoided imbalance cost is the upper bound of what the later forecast is worth.</span>
+  </div>
+  <p class="lede">Take a producer that owns a fixed share of its zone's wind. Nominate each of Energinet's four forecasts in turn.
+  Deliver what the zone actually produced. Settle the difference at the imbalance price. Divide the bill by the megawatt-hours
+  produced. <strong>Pick a zone and a period, and move the share slider.</strong></p>
   <div class="card">
     <div class="chips" id="h1-ctl" style="margin-bottom:8px"></div>
-    <div class="ctl"><label><div class="hint">The producer's share of the zone's wind fleet (the cost per megawatt-hour does not change with it; the total does)</div><input type="range" id="h1-share" min="1" max="20" step="1" value="5"><span class="val" id="h1-share-val"></span></label></div>
+    <div class="ctl"><label><div class="hint">The producer's share of the zone's wind fleet. The cost per megawatt-hour does not depend on it; the total does.</div><input type="range" id="h1-share" min="1" max="20" step="1" value="5"><span class="val" id="h1-share-val"></span></label></div>
     <div class="viz" id="h1-chart"><div class="tip"></div></div>
-    <p class="howto"><b>how to read</b>One bar per forecast horizon: the imbalance cost in euros per megawatt-hour produced, single-pricing era only. A negative bar means the producer's errors happened to help the system and it was paid for them. <b>take from it</b><span id="h1-take"></span></p>
+    <p class="howto"><b>how to read</b>One bar per forecast: the imbalance cost in euros per megawatt-hour produced, single-pricing era. A negative bar means the producer's remaining errors happened to help the system, and it was paid for them. <b>take from it</b><span id="h1-take"></span></p>
     <div class="stat" id="h1-stat"></div>
     <div class="tscroll" style="margin-top:14px"><table id="h1-table"></table></div>
-    <div class="card-title" style="margin-top:22px;font-size:17px">How wrong each forecast is, against two guesses that need no forecast</div>
-    <div class="tscroll" style="margin-top:8px"><table id="horizon-table"></table></div>
-    <p class="howto"><b>how to read</b>Mean absolute error in megawatt-hours per hour over the whole record: Energinet's four horizons, then yesterday's actual wind at the same hour and the long-run average as baselines, then the average actual wind so the errors can be read as a share of it. <b>take from it</b><span id="horizon-take"></span></p>
     <div class="verdict"><b id="h1-open"></b> <span id="h1-verdict"></span></div>
+    <div class="card-title" style="margin-top:22px;font-size:17px">How wrong each forecast is, next to two guesses that need no forecast</div>
+    <div class="tscroll" style="margin-top:8px"><table id="horizon-table"></table></div>
+    <p class="howto"><b>how to read</b>Mean absolute error in megawatt-hours per hour, whole record. The four Energinet horizons, then yesterday's actual wind at the same hour and the long-run average as baselines, then the average actual wind for scale. <b>take from it</b><span id="horizon-take"></span></p>
   </div>
 </div></section>
 
 <section id="act2"><div class="wrap">
   <div class="sec-label">Act two &middot; The rule change</div>
-  <h2>Since November 2021 a third of hours cost nothing and the rest cost more</h2>
-  <div class="why"><b>hypothesis</b>Under single pricing an hour with no regulation settles at the auction price, so a large share of hours should show a gap of exactly zero, where before the switch there were none; and the cost of an error that makes the system's problem worse should rise. The conditional signs should not change: more wind than forecast pushes the gap negative, less pushes it positive, in both regimes. Caveat registered in advance: the published imbalance price series is used in both eras; in the dual era a producer's wrong-direction imbalance was settled at the regulating price instead, so the dual-era bars describe the published series, not a producer's bill.</div>
-  <p class="lede">A natural experiment: the same data, the same forecast errors, a rule that changed on a known date. <strong>Pick a
-  zone.</strong></p>
+  <h2>Since November 2021, a third of hours cost nothing and the rest cost more</h2>
+  <div class="hyp">
+    <b>prediction</b><span>After 1 November 2021 an hour with no regulation settles at the auction price, so a large share of hours should show a gap of exactly zero, where before there were none, and the remaining hours should cost more. The signs should not change: more wind than forecast pushes the gap negative, less pushes it positive.</span>
+    <b>baseline</b><span>The same data before the switch.</span>
+    <b>caveat</b><span>The published imbalance price series is used in both eras. Before the switch a producer's wrong-direction error was settled at the regulating price instead, so the dual-era bars describe the published series, not a producer's bill.</span>
+  </div>
+  <p class="lede">A natural experiment: the same forecast errors, a rule that changed on a known date. <strong>Pick a zone.</strong></p>
   <div class="card">
     <div class="chips" id="h2-ctl" style="margin-bottom:8px"></div>
     <div class="viz" id="h2-chart"><div class="tip"></div></div>
-    <p class="howto"><b>how to read</b>Two groups of bars, before and after 1 November 2021: the average gap in hours when more wind arrived than forecast, and in hours when less. The stat row gives the share of hours with a gap of exactly zero and the average size of the gap. <b>take from it</b><span id="h2-take"></span></p>
+    <p class="howto"><b>how to read</b>Three groups: before the switch, after it, and the separate 2024 to 2025 period. In each, the average gap when more wind arrived than forecast and when less. <b>take from it</b><span id="h2-take"></span></p>
     <div class="stat" id="h2-stat"></div>
     <div class="verdict"><b id="h2-open"></b> <span id="h2-verdict"></span></div>
   </div>
@@ -200,37 +207,44 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 
 <section id="act3"><div class="wrap">
   <div class="sec-label">Act three &middot; Is the direction predictable</div>
-  <h2>The system stays short or long for hours, and last hour's direction beats the wind error as a signal</h2>
-  <div class="why"><b>hypothesis</b>The causes of a system imbalance, weather and plant outages, last for hours, so the sign of this hour's gap should predict next hour's far better than chance and far better than the sign of the wind forecast error. Baselines: always guessing the period's majority sign; the wind-error rule. Predicted: persistence above 0.8 at one hour, falling with the lag. Caveats registered in advance: the settled gap for the previous hour is not known when the hour begins (the live signal is the activation direction Energinet publishes); deliberately creating imbalances is prohibited, so the legitimate use is an intraday position, priced with act one's caveat; and the intraday gate closes an hour before delivery, so the two-hour lag is the one a position could act on.</div>
-  <p class="lede"><strong>Pick a zone and a period.</strong> The chart is how often the sign of the gap repeats after one, two, three and six hours, against the two baselines. The table underneath costs the rule.</p>
+  <h2>The system stays short or long for hours</h2>
+  <div class="hyp">
+    <b>prediction</b><span>The causes of a system imbalance, weather and outages, last for hours. So the sign of this hour's gap predicts next hour's sign well above chance: above 0.8 at one hour, falling with the lag.</span>
+    <b>baselines</b><span>Always guessing the period's majority sign. And the rule the first version of this study used: the sign of the wind forecast error.</span>
+    <b>caveats</b><span>The previous hour's settled gap is not known when the hour begins; the live signal is the activation direction Energinet publishes. Deliberate imbalances are prohibited, so the use is an intraday position, and the intraday gate closes an hour before delivery: the two-hour lag is the one a position could act on.</span>
+  </div>
+  <p class="lede"><strong>Pick a zone and a period.</strong> The chart is how often the sign of the gap repeats after one, two, three and six hours, against both baselines. The table costs the rule.</p>
   <div class="card">
     <div class="chips" id="h3-ctl" style="margin-bottom:8px"></div>
     <div class="viz" id="h3-chart"><div class="tip"></div></div>
-    <p class="howto"><b>how to read</b>Three bars per lag: how often the gap has the same sign k hours later (persistence), how often the majority sign would have been right, and how often the wind-error rule would have been right. Only hours where both gaps are nonzero count. <b>take from it</b><span id="h3-take"></span></p>
+    <p class="howto"><b>how to read</b>Three bars per lag: persistence, the majority sign, the wind-error rule. Only hours where both gaps are nonzero count. <b>take from it</b><span id="h3-take"></span></p>
     <div class="tscroll" style="margin-top:14px"><table id="h3-table"></table></div>
-    <p class="note">The costed rule: one unit long when the previous settled hour's gap was positive, short when negative, P&amp;L per hour = predicted sign times the gap, minus 0.6 EUR/MWh. The one-hour lag is the registered rule; the two-hour lag was added the same day, labelled, because the intraday gate closes an hour before delivery. Both assume settlement at the imbalance price, which an intraday trade only approaches; read the means as upper bounds.</p>
+    <p class="note">The costed rule: one unit long when the previous settled hour's gap was positive, short when negative; P&amp;L per hour is the predicted sign times the gap, minus 0.6 EUR/MWh. The one-hour lag is the registered rule. The two-hour lag was added the same day, labelled, for the intraday gate. Both settle at the imbalance price, which an intraday trade only approaches; read the means as upper bounds.</p>
     <div class="verdict sting"><b id="h3-open"></b> <span id="h3-verdict"></span></div>
   </div>
 </div></section>
 
 <section id="act4"><div class="wrap">
   <div class="sec-label">Act four &middot; What the market knows</div>
-  <h2>The auction prices Energinet's wind, not the wind, and the forecast has been missing low since 2023</h2>
-  <div class="why"><b>hypothesis</b>If the auction had better information than Energinet's later forecast, the price would track the actual wind beyond the forecast. Add the actual-minus-forecast share to a price model that already has the forecast; the predicted change in R squared is below 0.01 in every year. Companion predictions: the forecast's bias rises in DK1 from 2023 with the steps in Energinet's installed-capacity table, and negative-price hours move from windy nights to sunny middays as solar grows.</div>
-  <p class="lede">The price model is the one from the first version of this study: hour-of-day and month effects plus expected
-  wind as a share of consumption; its model card is in the method section. <strong>Pick a zone</strong> in each card.</p>
+  <h2>The auction prices Energinet's wind, not the wind</h2>
+  <div class="hyp">
+    <b>prediction</b><span>If the auction knew more than Energinet's later forecast, the price would track the actual wind beyond the forecast. It does not: adding the actual-minus-forecast share to a price model that already has the forecast gains under 0.01 of R squared in every year.</span>
+    <b>companions</b><span>The forecast's bias in DK1 rises from 2023 with the steps in Energinet's installed-capacity table. Negative-price hours move from windy nights to sunny middays as solar grows.</span>
+  </div>
+  <p class="lede">The price model is the one from the first version of this study; its model card is in the method section.
+  <strong>Pick a zone</strong> in each card.</p>
   <div class="card">
     <div class="card-title">Does the price know what the forecast did not?</div>
     <div class="chips" id="h4-ctl" style="margin-bottom:8px"></div>
     <div class="tscroll"><table id="h4-table"></table></div>
-    <p class="howto"><b>how to read</b>Per year: the price per unit of forecast wind share (negative: more expected wind, lower price), then the coefficient and the R squared gain from adding what the wind actually did beyond the forecast. <b>take from it</b><span id="h4-take"></span></p>
+    <p class="howto"><b>how to read</b>Per year: the price per unit of forecast wind share (negative: more expected wind, lower price), then the coefficient and the R squared gain from adding what the wind actually did. <b>take from it</b><span id="h4-take"></span></p>
     <div class="verdict"><b id="h4-open"></b> <span id="h4-verdict"></span></div>
   </div>
   <div class="card">
-    <div class="card-title">The bias: the forecast misses low, and by a growing share of output</div>
+    <div class="card-title">The bias: the forecast misses low, by a growing share of output</div>
     <div class="chips" id="bias-ctl" style="margin:6px 0 10px"></div>
     <div class="viz" id="bias-chart"><div class="tip"></div></div>
-    <p class="howto"><b>how to read</b>One point per month, actual wind minus forecast wind. Green marks are the months Energinet's installed-capacity table adds 100 MW or more to the zone. The dashed line is where the separate 2024 to 2025 period begins. <b>what moves it</b><span id="drift-anatomy"></span></p>
+    <p class="howto"><b>how to read</b>One point per month: actual wind minus forecast wind. Green marks: the months Energinet's installed-capacity table adds 100 MW or more to the zone. The dashed line: where the separate period begins. <b>what moves it</b><span id="drift-anatomy"></span></p>
     <div class="stat" id="bias-stat"></div>
     <div class="verdict sting"><b id="drift-opener"></b> <span id="drift-verdict"></span></div>
   </div>
@@ -245,33 +259,27 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 
 <section id="coda"><div class="wrap">
   <div class="sec-label">Method, model card, limits, terms</div>
-  <h2>How this was done, what was seen first, and what it cannot say</h2>
-  <p class="small">Data: Energinet's Forecasts_Hour at four horizons since November 2019, its hourly imbalance settlement to
-  4 March 2025, its settled production and consumption, its installed capacity per municipality, and the day-ahead prices
-  carried by the <a href="../">tavle</a> platform across the October 2025 dataset switch; 57 dbt tests pass on the models.
-  Split: training December 2019 to December 2023, a separate period January 2024 to March 2025. <strong>What was seen
-  first:</strong> the first version of this study (29 August) registered a spread strategy on the day-ahead forecast and found it
-  untestable, because that forecast is published six hours after the auction; it is kept as written. On 30 August, before
-  v2 was registered, one exploratory pass over all the data checked that the four hypotheses were alive; the numbers seen
-  are listed in the pre-registration, and the 2024 to 2025 period is therefore called separate, never unread. The
-  hypotheses, baselines, costs and definitions were then fixed and the results above computed once.
-  <span id="spanline"></span></p>
+  <h2>How this was done, and what it cannot say</h2>
+  <div class="hyp">
+    <b>data</b><span>Energinet's Forecasts_Hour at four horizons since November 2019; its hourly imbalance settlement to 4 March 2025; settled production and consumption; installed capacity per municipality; the day-ahead prices carried by the <a href="../">tavle</a> platform across the October 2025 dataset switch. 57 dbt tests pass on the models. <span id="spanline"></span></span>
+    <b>split</b><span>Training: December 2019 to December 2023. Separate period: January 2024 to March 2025.</span>
+    <b>what was seen first</b><span>Version 1 (29 August) registered a spread strategy on the day-ahead forecast and found it untestable: that forecast is published six hours after the auction. It is kept as written. On 30 August, before version 2 was registered, one exploratory pass over all the data checked that the four hypotheses were alive; the numbers it saw are listed in the pre-registration. That is why the 2024 to 2025 period is called separate, not unread.</span>
+    <b>then</b><span>The hypotheses, baselines, costs and definitions were fixed, and the results above were computed once.</span>
+  </div>
   <div class="card" id="model-card">
-    <div class="card-title">The model card for the price model used in act four</div>
-    <p class="small">Least squares on the hourly day-ahead price with hour-of-day and month effects, with and without expected wind
-    as a share of consumption; fitted on odd weeks and scored on even weeks of each year; error in euros per megawatt-hour
-    against two things anyone could do without a model.</p>
+    <div class="card-title">Model card: the price model used in act four</div>
+    <p class="small">Least squares on the hourly day-ahead price with hour-of-day and month effects, with and without expected wind as a share of consumption. Fitted on odd weeks, scored on even weeks of each year. Error in euros per megawatt-hour, next to two things anyone could do without a model.</p>
     <div class="tscroll" style="margin-top:8px"><table id="mc-table"></table></div>
-    <p class="howto"><b>how to read</b>Lower is better. With wind the model beats yesterday's price in <span class="num" id="mc-beats"></span> of <span class="num" id="mc-years"></span> zone-years, by a few euros, and loses in the volatile years: an explanation of the price, not a forecasting tool, which is all act four needs from it.</p>
+    <p class="howto"><b>how to read</b>Lower is better. With wind, the model beats yesterday's price in <span class="num" id="mc-beats"></span> of <span class="num" id="mc-years"></span> zone-years, by a few euros, and loses in the volatile years. It is an explanation of the price, not a forecasting tool, which is all act four asks of it.</p>
   </div>
   <div class="limits">
     <h3 style="font-size:17px;margin-bottom:6px">Limits</h3>
-    <p>No intraday prices in the public data, so every euro figure that involves acting on information is an upper bound
-    settled at the imbalance price. The producer in act one is a fixed share of the zone, so its errors are the zone's
-    errors; a real portfolio's errors are larger and less correlated with the system. The dual-era bars in act two describe
-    the published price series, not a producer's bill under the old rules. Act three's live signal is Energinet's activation
-    data, which this page does not load. The capacity story in act four is consistent with the bias, not a proof of it. Two
-    zones, one country, one author who chose the questions.</p>
+    <p>No intraday prices are public, so every euro figure that involves acting on information is an upper bound settled
+    at the imbalance price. The producer in act one is a fixed share of the zone, so its errors are the zone's; a real
+    portfolio's errors are larger. The dual-era bars in act two describe the published price series, not a producer's bill
+    under the old rules. Act three's live signal is Energinet's activation data, which this page does not load. The
+    capacity story in act four is consistent with the bias, not a proof of it. Two zones, one country, one author who
+    chose the questions.</p>
   </div>
   <h3 style="margin-top:24px;font-size:17px">Six terms</h3>
   <div class="gloss">
@@ -371,10 +379,10 @@ function line(el, series, opts){
     $("#h1-stat").innerHTML=[["evening before",fmt(base.eur_per_mwh,2)+" EUR/MWh",`${fmt(base.total_keur*scale/1e3,2)} m EUR in total at ${share}%`],["one hour ahead",fmt(last.eur_per_mwh,2)+" EUR/MWh",`${fmt(last.total_keur*scale/1e3,2)} m EUR`],["saved by lead time",fmt(base.eur_per_mwh-last.eur_per_mwh,2)+" EUR/MWh",`${fmt((base.total_keur-last.total_keur)*scale/1e3,2)} m EUR over ${fmt(base.hours,0)} hours`],["produced",fmt(R.mwh_produced*scale/1e6,2)+" TWh","at this share, single-pricing era"]].map(([k,n,s])=>`<div><div class="k">${k}</div><div class="n">${n}</div><div class="s">${s}</div></div>`).join("");
     $("#h1-table").innerHTML=`<tr><th class="l">Nominate on</th><th>Cost, EUR per MWh produced</th><th>Total at ${share}%, kEUR</th><th>Imbalance volume, share of output</th></tr>`+rows.map(r=>`<tr><td class="l">${r.horizon}</td><td class="num ${r.eur_per_mwh<0?"pos":""}">${fmt(r.eur_per_mwh,2)}</td><td class="num">${fmt(r.total_keur*scale,0)}</td><td class="num">${fmt(100*r.imbalance_share,1)}%</td></tr>`).join("")+
       `<tr><td class="l" colspan="4"><span class="hint">By year (EUR/MWh, evening before to one hour ahead): ${R.by_year.map(y=>`${y.year}: ${fmt(y["evening before"],2)} to ${fmt(y["one hour ahead"],2)}`).join("; ")}.</span></td></tr>`;
-    $("#h1-take").textContent=`${cur.area}, ${PER[cur.period]}: nominating the evening-before forecast costs ${fmt(base.eur_per_mwh,2)} EUR per megawatt-hour produced; the one-hour forecast ${fmt(last.eur_per_mwh,2)}.`;
+    $("#h1-take").textContent=`${cur.area}, ${PER[cur.period]}: the evening forecast costs ${fmt(base.eur_per_mwh,2)} EUR per megawatt-hour produced, the one-hour forecast ${fmt(last.eur_per_mwh,2)}.`;
     $("#h1-open").textContent = mono ? "The prediction held: cost falls with every horizon." : "The prediction held in direction, not at every step.";
     const viol=rows.filter((r,i)=>i>0&&r.eur_per_mwh>rows[i-1].eur_per_mwh);
-    $("#h1-verdict").textContent=`Moving from the evening forecast to the one-hour forecast cuts the imbalance bill from ${fmt(base.eur_per_mwh,2)} to ${fmt(last.eur_per_mwh,2)} EUR per megawatt-hour in ${cur.area} (${PER[cur.period]}), ${fmt((base.total_keur-last.total_keur)*scale/1e3,2)} million euros over the period for a producer with ${share} percent of the zone. ${viol.length?`The ${viol.map(v=>v.horizon).join(" and ")} nomination costs more than the one before it in this period, so the fall is not monotone as registered; the five-hour forecast is not always better than the same-morning one where it matters, in the hours with large errors.`:"Each later forecast costs less than the one before, as registered."} A negative figure means the producer's remaining errors tended to help the system and were paid. These are upper bounds on the value of intraday re-nomination, because the difference would be traded at intraday prices, not settled at the imbalance price.`;
+    $("#h1-verdict").textContent=`From the evening forecast to the one-hour forecast, the bill falls from ${fmt(base.eur_per_mwh,2)} to ${fmt(last.eur_per_mwh,2)} EUR per megawatt-hour. For ${share} percent of ${cur.area} that is ${fmt((base.total_keur-last.total_keur)*scale/1e3,2)} million euros over the period. ${viol.length?`One step is out of order: the ${viol.map(v=>v.horizon).join(" and ")} nomination costs more than the one before it, so the registered monotone fall did not hold in this period.`:"Every later forecast costs less than the one before, as registered."} Upper bounds: the difference would be traded intraday, not settled at the imbalance price.`;
   }
   draw();
   const t=S2.training.h1.DK1.rows; $("#dek-h1").textContent=fmt(t[0].eur_per_mwh,2)+" EUR per megawatt-hour"; $("#dek-h1b").textContent=(t[3].eur_per_mwh<0?"is paid ":"pays ")+fmt(Math.abs(t[3].eur_per_mwh),2);
@@ -385,7 +393,7 @@ function line(el, series, opts){
   const hm=D.horizon_mae, BL=Object.fromEntries((D.baselines||[]).map(b=>[b.area,b]));
   $("#horizon-table").innerHTML=`<tr><th>Zone</th><th>Evening before</th><th>Same morning</th><th>Five hours</th><th>One hour</th><th>Yesterday's wind, same hour</th><th>Long-run average</th><th>Mean actual wind</th></tr>`+
     hm.map(r=>`<tr><td class="l">${r.area}</td><td class="num">${fmt(r.day_ahead,0)}</td><td class="num">${fmt(r.same_morning,0)}</td><td class="num">${fmt(r.five_hours,0)}</td><td class="num"><b>${fmt(r.one_hour,0)}</b></td><td class="num">${BL[r.area]?fmt(BL[r.area].yesterday_same_hour,0):""}</td><td class="num">${BL[r.area]?fmt(BL[r.area].long_run_mean,0):""}</td><td class="num">${fmt(r.mean_actual,0)}</td></tr>`).join("");
-  const r=hm.find(x=>x.area==="DK1"); if(r&&BL.DK1) $("#horizon-take").textContent=`Energinet's evening-before forecast misses DK1 wind by ${fmt(r.day_ahead,0)} MWh per hour, about a fifth of average output, against ${fmt(BL.DK1.yesterday_same_hour,0)} for assuming yesterday's wind and ${fmt(BL.DK1.long_run_mean,0)} for the long-run average; the one-hour forecast misses by ${fmt(r.one_hour,0)}. The bill above is what those errors cost at the imbalance price.`;
+  const r=hm.find(x=>x.area==="DK1"); if(r&&BL.DK1) $("#horizon-take").textContent=`DK1: the evening forecast misses by ${fmt(r.day_ahead,0)} MWh per hour, about a fifth of output. Yesterday's wind would miss by ${fmt(BL.DK1.yesterday_same_hour,0)}, the long-run average by ${fmt(BL.DK1.long_run_mean,0)}. The one-hour forecast misses by ${fmt(r.one_hour,0)}. The bill above is what those errors cost.`;
 })();
 
 /* ---------- act two: H2 ---------- */
@@ -399,9 +407,9 @@ function line(el, series, opts){
     $("#h2-stat").innerHTML=groups.map(g=>`<div><div class="k">${g.label}</div><div class="n">${Math.round(100*g.d.zero_share)}% zero</div><div class="s">mean absolute gap ${fmt(g.d.mean_abs_gap,1)} EUR, ${fmt(g.d.hours,0)} hours</div></div>`).join("");
     const d0=T.dual, d1=T.single, d2=H.single;
     const signsOK=[d0,d1,d2].every(d=>d.gap_more_wind<0&&d.gap_less_wind>0);
-    $("#h2-take").textContent=`${area}: zero-gap hours went from ${Math.round(100*d0.zero_share)} percent under dual pricing to ${Math.round(100*d1.zero_share)} percent after the switch and ${Math.round(100*d2.zero_share)} percent in 2024 to 2025; the average gap when less wind arrived than forecast went from ${fmt(d0.gap_less_wind,1)} to ${fmt(d1.gap_less_wind,1)} EUR/MWh.`;
+    $("#h2-take").textContent=`${area}: zero-gap hours ${Math.round(100*d0.zero_share)} percent before the switch, ${Math.round(100*d1.zero_share)} after, ${Math.round(100*d2.zero_share)} in 2024 to 2025. The gap when less wind arrived than forecast: ${fmt(d0.gap_less_wind,1)} before, ${fmt(d1.gap_less_wind,1)} after.`;
     $("#h2-open").textContent = signsOK ? "Both predictions held." : "The zero-share prediction held; a conditional sign did not.";
-    $("#h2-verdict").textContent=`The published series shows the signature of the rule change on the registered date: no zero-gap hours before it, ${Math.round(100*d1.zero_share)} percent after, rising to ${Math.round(100*d2.zero_share)} percent in the separate period as the system was regulated less often. The conditional signs ${signsOK?"kept their direction in every regime":"did not all keep their direction"}: when less wind arrives than forecast the system is short and the gap is positive, when more arrives it is negative. The size of the gap in the single-pricing era is also larger, ${fmt(d1.mean_abs_gap,0)} EUR on average against ${fmt(d0.mean_abs_gap,0)}, partly the 2022 price level and partly the rule. For a producer that means the bill is now zero in a third of hours and larger in the rest, which is exactly the shape act one's costs have.`;
+    $("#h2-verdict").textContent=`The rule change is visible on its date: no zero-gap hours before, ${Math.round(100*d1.zero_share)} percent after, ${Math.round(100*d2.zero_share)} percent in 2024 to 2025. The signs ${signsOK?"held in every regime":"did not all hold"}: less wind than forecast means a short system and a positive gap, more wind a negative one. The average gap also grew, from ${fmt(d0.mean_abs_gap,0)} to ${fmt(d1.mean_abs_gap,0)} EUR, partly the 2022 price level and partly the rule. A producer's bill is now zero in a third of hours and larger in the rest.`;
   }
   draw();
 })();
@@ -414,13 +422,13 @@ function line(el, series, opts){
     const R=S2[cur.period].h3[cur.area];
     bars($("#h3-chart"), R.lags.map(l=>({label:l.lag+" h later", series:[{name:"same sign as k hours before (persistence)", v:l.persistence, color:S[cur.area]},{name:"majority sign of the period", v:R.majority_baseline, color:"var(--rule2)"},{name:"the wind-error rule", v:l.wind_error_rule, color:"var(--amber)"}]})), {label:"sign persistence by lag", dec:2, xlabel:"share of hours where the sign of the gap repeats, among hours with a nonzero gap"});
     const l1=R.lags[0], l2=R.lags[1]; const r1=R.rule, r2=R.rule_lag2;
-    $("#h3-take").textContent=`${cur.area}, ${PER[cur.period]}: the gap keeps its sign ${Math.round(100*l1.persistence)} percent of the time after one hour and ${Math.round(100*l2.persistence)} after two, against ${Math.round(100*R.majority_baseline)} for the majority sign and ${Math.round(100*l1.wind_error_rule)} for the wind-error rule.`;
+    $("#h3-take").textContent=`${cur.area}, ${PER[cur.period]}: the sign repeats ${Math.round(100*l1.persistence)} percent of the time after one hour, ${Math.round(100*l2.persistence)} after two. Majority sign: ${Math.round(100*R.majority_baseline)}. Wind-error rule: ${Math.round(100*l1.wind_error_rule)}.`;
     $("#h3-table").innerHTML=`<tr><th class="l">Costed rule</th><th>Hours</th><th>Right sign</th><th>Mean, EUR per unit-hour</th><th>Std. error</th><th>Median hour</th><th>Best decile as share of total</th></tr>`+
       [["one-hour lag, as registered",r1],["two-hour lag, added for the intraday gate",r2]].map(([n,r])=>`<tr><td class="l">${n}</td><td class="num">${fmt(r.hours,0)}</td><td class="num">${Math.round(100*r.hit_rate)}%</td><td class="num ${r.mean>0?"pos":"neg"}">${fmt(r.mean,2)}</td><td class="num">${fmt(r.se,2)}</td><td class="num">${fmt(r.median,2)}</td><td class="num">${r.best_decile_share==null?"":Math.round(100*r.best_decile_share)+"%"}</td></tr>`).join("")+
       `<tr><td class="l" colspan="7"><span class="hint">Two-hour rule by year: ${r2.by_year.map(y=>`${y.year}: ${fmt(y.mean,1)} EUR, ${Math.round(100*y.hit)}% right`).join("; ")}.</span></td></tr>`;
     const ok=l1.persistence>0.8;
     $("#h3-open").textContent = ok ? "The prediction held, and the wind error is not the signal." : "The prediction did not hold.";
-    $("#h3-verdict").textContent=`Persistence at one hour is ${fmt(l1.persistence,2)}, ${Math.round(100*(l1.persistence-R.majority_baseline))} points above the majority baseline and ${Math.round(100*(l1.persistence-l1.wind_error_rule))} above the wind-error rule that the first version of this study built its added rule on. The actionable version, two hours, is ${fmt(l2.persistence,2)}. Costed at 0.6 EUR/MWh, the two-hour rule averages ${fmt(r2.mean,1)} EUR per unit-hour (standard error ${fmt(r2.se,2)}), is right ${Math.round(100*r2.hit_rate)} percent of the time, and its median hour is ${fmt(r2.median,1)}${(r2.median<0||(r2.best_decile_share||0)>0.8)?`, so the result is carried by its best hours: the top tenth of hours makes ${Math.round(100*(r2.best_decile_share||0))} percent of the total and the typical hour loses its costs`:`; the top tenth of hours makes ${Math.round(100*(r2.best_decile_share||0))} percent of the total, so the result is not carried by a tail`}. What it is not: a strategy. It settles at the imbalance price, which an intraday trade only approaches, and a deliberate imbalance is prohibited. What it is: the measured reason a desk watches the activation direction and not the wind error.`;
+    $("#h3-verdict").textContent=`Persistence at one hour is ${fmt(l1.persistence,2)}: ${Math.round(100*(l1.persistence-R.majority_baseline))} points above the majority sign and ${Math.round(100*(l1.persistence-l1.wind_error_rule))} above the wind-error rule. At the two-hour lag a position could act on, ${fmt(l2.persistence,2)}. Costed, the two-hour rule averages ${fmt(r2.mean,1)} EUR per unit-hour and is right ${Math.round(100*r2.hit_rate)} percent of the time${(r2.median<0||(r2.best_decile_share||0)>0.8)?`, but its median hour is ${fmt(r2.median,1)} and its best tenth of hours makes ${Math.round(100*(r2.best_decile_share||0))} percent of the total: most of it comes from a few hours`:`; its median hour is ${fmt(r2.median,1)}`}. Not a strategy: it settles at the imbalance price, and a deliberate imbalance is prohibited. It is the measured reason a desk watches the activation direction rather than the wind error.`;
   }
   draw();
   $("#dek-h3").textContent=Math.round(100*S2.training.h3.DK1.lags[0].persistence)+" percent";
@@ -436,7 +444,7 @@ function line(el, series, opts){
     const gains=rows.map(r=>r.r2_added-r.r2_forecast); const mx=Math.max(...gains);
     $("#h4-take").textContent=`${area}: the largest gain from adding the actual wind is ${fmt(mx,4)} of R squared, in ${rows[gains.indexOf(mx)].year}.`;
     $("#h4-open").textContent = mx<0.01 ? "The prediction held: the price tracks the forecast, not the wind." : "The prediction did not hold in every year.";
-    $("#h4-verdict").textContent=`Once the forecast is in the model, what the wind actually did adds at most ${fmt(mx,3)} of R squared in ${area}, against gains of a quarter or more from the forecast itself. The auction's expectation of wind is Energinet's expectation, published six hours later. Two consequences: a model of the price built on the later forecast is measuring the market's own view, not foresight; and when the forecast misses low for months, as the next card shows for DK1, the market misses with it and the difference is settled in the balancing market, on the sign act two established.`;
+    $("#h4-verdict").textContent=`With the forecast already in the model, the actual wind adds at most ${fmt(mx,3)} of R squared in ${area}. The forecast itself adds a quarter or more. So the market's expectation of wind is Energinet's, published six hours later. When the forecast misses low for months, as the next card shows, the market misses with it, and the difference is settled in the balancing market.`;
   }
   draw();
   const g=[...S2.training.h4.market.DK1,...S2.holdout.h4.market.DK1,...S2.training.h4.market.DK2,...S2.holdout.h4.market.DK2].map(r=>r.r2_added-r.r2_forecast);
@@ -458,11 +466,11 @@ function line(el, series, opts){
     if(DR){const by=DR[area].by_year; $("#bias-stat").innerHTML=by.map(r=>`<div><div class="k">${r.year}</div><div class="n">${r.bias>0?"+":""}${fmt(r.bias,0)}</div><div class="s">MWh per hour, ${r.pct>0?"+":""}${fmt(r.pct,0)}% of actual wind</div></div>`).join("");}
     const cap=CZ; let capText="";
     if(cap){const rows2=cap.rows.filter(r=>Date.parse(r.month+"-01")>=pts[0].x); const first=rows2[0], last=rows2[rows2.length-1]; const jumps=cap.jumps.filter(j=>Date.parse(j.month+"-01")>=pts[0].x);
-      capText=` Energinet's installed-capacity table for the zone rises from ${fmt(first.mw,0)} MW in ${first.month} to ${fmt(last.mw,0)} MW in ${last.month}, with every step of 100 MW or more marked in green: ${jumps.map(j=>`${j.month} (+${fmt(j.mw,0)} MW${j.offshore>=50?", offshore":""})`).join(", ")}.`;}
+      capText=` Installed wind capacity in the zone: ${fmt(first.mw,0)} MW in ${first.month}, ${fmt(last.mw,0)} MW in ${last.month}. Steps of 100 MW or more, marked in green: ${jumps.map(j=>`${j.month} (+${fmt(j.mw,0)} MW${j.offshore>=50?", offshore":""})`).join(", ")}.`;}
     if(DR){const d=DR[area]; const by=d.by_year; const last=by[by.length-1]; const first=by.find(r=>r.year===2023)||by[0];
-      $("#drift-anatomy").textContent=`The peaks and troughs within a year are the wind itself: months with more wind have larger errors, and the monthly bias correlates with the monthly actual wind at ${fmt(d.corr_bias_vs_actual_wind,2)}. The trend across years is the part that is not weather: ${area==="DK1"?`the bias was ${fmt(first.pct,0)} percent of actual wind in ${first.year}, ${fmt(by.find(r=>r.year===2024).pct,0)} percent in 2024 and ${fmt(last.pct,0)} percent in ${last.year}`:`the bias ran to ${fmt(Math.max(...by.map(r=>r.pct)),0)} percent of actual wind in ${by.reduce((a,b)=>b.pct>a.pct?b:a).year} and has been within a few percent of zero since 2023`}.${capText}`;
-      if(area==="DK1"){$("#drift-opener").textContent="The prediction held: the DK1 bias rises from 2023 with the capacity steps."; $("#drift-verdict").textContent=`From 2023 the day-ahead forecast has missed DK1 wind low in the windy months, and the miss has grown from ${fmt(first.pct,0)} percent of output to ${fmt(last.pct,0)} percent. ${cap?`The zone's fleet grew in steps that line up with it: the west-coast offshore farms Vesterhav Nord and Syd in late 2023 and early 2024, and the 1,000 MW Thor farm in the spring of 2026, the year the miss reached ${fmt(last.pct,0)} percent. Consistent with new capacity the forecast's model does not fully count; not a proof, since the forecast's own capacity assumptions are not public.`:"The capacity table was not available at build time."} Combined with act four's first card, the market has been pricing too little DK1 wind for three years, and act one prices what that costs the side that is wrong.`;}
-      else {$("#drift-opener").textContent="DK2 had its episode in 2021 and 2022, then recovered."; $("#drift-verdict").textContent=`In 2021 and 2022 the forecast under-predicted DK2 wind by a third or more of actual output; since 2023 the bias is within a few percent of zero. ${cap?"Energinet's capacity table shows the 605 MW Kriegers Flak offshore farm entering the zone's fleet in October 2020, marked on the chart; the under-forecast runs through the following two years and closes in 2023. Consistent with the same mechanism, and with the forecast being brought back into line.":""}`;}
+      $("#drift-anatomy").textContent=`Within a year, the peaks are windy months: the monthly bias correlates with the monthly wind at ${fmt(d.corr_bias_vs_actual_wind,2)}. Across years, the trend is not weather: ${area==="DK1"?`${fmt(first.pct,0)} percent of output in ${first.year}, ${fmt(by.find(r=>r.year===2024).pct,0)} in 2024, ${fmt(last.pct,0)} in ${last.year}`:`up to ${fmt(Math.max(...by.map(r=>r.pct)),0)} percent of output in ${by.reduce((a,b)=>b.pct>a.pct?b:a).year}, within a few percent of zero since 2023`}.${capText}`;
+      if(area==="DK1"){$("#drift-opener").textContent="The prediction held: the DK1 bias rises from 2023 with the capacity steps."; $("#drift-verdict").textContent=`Since 2023 the forecast has missed DK1 wind low, and the miss has grown from ${fmt(first.pct,0)} to ${fmt(last.pct,0)} percent of output. ${cap?`The fleet grew in steps that line up with it: Vesterhav Nord and Syd in late 2023 and early 2024, Thor (1,000 MW) in spring 2026, the year of the ${fmt(last.pct,0)} percent miss. Consistent with capacity the forecast does not fully count; not a proof, because the forecast's own capacity assumptions are not public.`:"The capacity table was not available at build time."} With the first card, the market has priced too little DK1 wind for three years, and act one prices what that costs.`;}
+      else {$("#drift-opener").textContent="DK2 had its episode in 2021 and 2022, then recovered."; $("#drift-verdict").textContent=`In 2021 and 2022 the forecast missed DK2 wind low by a third or more of output. Since 2023 the bias is within a few percent of zero. ${cap?"Kriegers Flak (605 MW) entered the zone in October 2020, marked on the chart; the miss runs through the two following years and closes in 2023. The same mechanism, and a forecast brought back into line.":""}`;}
     }
   }
   $("#bias-ctl").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b)return; if(b.dataset.a){area=b.dataset.a; $("#bias-ctl").querySelectorAll("button[data-a]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));} else {unit=b.dataset.u; $("#bias-ctl").querySelectorAll("button[data-u]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));} drawBias();});
@@ -478,7 +486,7 @@ function line(el, series, opts){
     bars($("#neg-chart"), N.map(y=>({label:String(y.year), series:[{name:"midday, 10:00 to 16:00", v:Math.round(y.hours*y.midday_share), color:"var(--s4)"},{name:"night, 22:00 to 05:00", v:Math.round(y.hours*y.night_share), color:S[area]},{name:"other hours", v:Math.round(y.hours*(1-y.midday_share-y.night_share)), color:"var(--rule2)"}]})), {label:"negative-price hours by year", dec:0, xlabel:"hours with a day-ahead price at or below zero"});
     $("#neg-stat").innerHTML=N.map(y=>`<div><div class="k">${y.year}</div><div class="n">${y.hours}</div><div class="s">${Math.round(100*y.midday_share)}% midday; solar ${fmt(y.solar_mwh,0)} MWh, wind ${fmt(y.wind_mwh,0)}</div></div>`).join("");
     const f=N[0], l=N[N.length-1];
-    $("#neg-take").textContent=`${area}: ${f.year} had ${f.hours} negative-price hours, ${Math.round(100*f.midday_share)} percent of them at midday, with ${fmt(f.solar_mwh,0)} MWh of solar in those hours on average; ${l.year} so far has ${l.hours}, ${Math.round(100*l.midday_share)} percent at midday, with ${fmt(l.solar_mwh,0)} MWh of solar. The wind in negative hours fell from ${fmt(f.wind_mwh,0)} to ${fmt(l.wind_mwh,0)}. Negative prices used to be a windy-night event; they are now a sunny-noon event, and a wind forecast error at noon lands in a different market than it did in 2020.`;
+    $("#neg-take").textContent=`${area}: ${f.hours} negative-price hours in ${f.year}, ${Math.round(100*f.midday_share)} percent at midday; ${l.hours} so far in ${l.year}, ${Math.round(100*l.midday_share)} percent at midday. Solar in those hours rose from ${fmt(f.solar_mwh,0)} to ${fmt(l.solar_mwh,0)} MWh, wind fell from ${fmt(f.wind_mwh,0)} to ${fmt(l.wind_mwh,0)}. The surplus hours, where a producer's over-delivery is worth least, have moved from windy nights to sunny middays.`;
   }
   draw();
 })();
@@ -495,7 +503,7 @@ function line(el, series, opts){
 
 /* ---------- the walkthrough ---------- */
 const STEPS=[
- {sel:"header", k:"Start here · 1 of 8", html:"Four registered hypotheses about what a wind forecast error costs and who pays. <b>Read the first paragraph:</b> the four questions and the headline numbers, all computed."},
+ {sel:"header", k:"Start here · 1 of 8", html:"Four questions about the invoice a wind forecast error produces, each answered with a number computed below. <b>Read the four questions.</b>"},
  {sel:"#primer", k:"Five things to know · 2 of 8", html:"The two zones, the auction, the forecast horizons, the imbalance price and the 2021 rule change. Then the timeline: <b>click a numbered circle</b>; every forecast used here exists before delivery."},
  {sel:"#act1", k:"Act one · 3 of 8", html:"<b>Pick a zone and a period, move the share slider.</b> A producer nominates each forecast in turn; the bars are its imbalance bill per megawatt-hour produced. Lead time has a price, and it is on the chart."},
  {sel:"#act2", k:"Act two · 4 of 8", html:"A rule change with a date. <b>Pick a zone.</b> Before November 2021 no hour had a zero gap; after it a third do, and the cost of a wrong-direction error rose."},

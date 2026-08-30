@@ -176,6 +176,9 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
     <p class="howto"><b>how to read</b>One bar per forecast horizon: the imbalance cost in euros per megawatt-hour produced, single-pricing era only. A negative bar means the producer's errors happened to help the system and it was paid for them. <b>take from it</b><span id="h1-take"></span></p>
     <div class="stat" id="h1-stat"></div>
     <div class="tscroll" style="margin-top:14px"><table id="h1-table"></table></div>
+    <div class="card-title" style="margin-top:22px;font-size:17px">How wrong each forecast is, against two guesses that need no forecast</div>
+    <div class="tscroll" style="margin-top:8px"><table id="horizon-table"></table></div>
+    <p class="howto"><b>how to read</b>Mean absolute error in megawatt-hours per hour over the whole record: Energinet's four horizons, then yesterday's actual wind at the same hour and the long-run average as baselines, then the average actual wind so the errors can be read as a share of it. <b>take from it</b><span id="horizon-take"></span></p>
     <div class="verdict"><b id="h1-open"></b> <span id="h1-verdict"></span></div>
   </div>
 </div></section>
@@ -375,6 +378,14 @@ function line(el, series, opts){
   }
   draw();
   const t=S2.training.h1.DK1.rows; $("#dek-h1").textContent=fmt(t[0].eur_per_mwh,2)+" EUR per megawatt-hour"; $("#dek-h1b").textContent=(t[3].eur_per_mwh<0?"is paid ":"pays ")+fmt(Math.abs(t[3].eur_per_mwh),2);
+})();
+
+/* ---------- act one: the horizon table ---------- */
+(function(){
+  const hm=D.horizon_mae, BL=Object.fromEntries((D.baselines||[]).map(b=>[b.area,b]));
+  $("#horizon-table").innerHTML=`<tr><th>Zone</th><th>Evening before</th><th>Same morning</th><th>Five hours</th><th>One hour</th><th>Yesterday's wind, same hour</th><th>Long-run average</th><th>Mean actual wind</th></tr>`+
+    hm.map(r=>`<tr><td class="l">${r.area}</td><td class="num">${fmt(r.day_ahead,0)}</td><td class="num">${fmt(r.same_morning,0)}</td><td class="num">${fmt(r.five_hours,0)}</td><td class="num"><b>${fmt(r.one_hour,0)}</b></td><td class="num">${BL[r.area]?fmt(BL[r.area].yesterday_same_hour,0):""}</td><td class="num">${BL[r.area]?fmt(BL[r.area].long_run_mean,0):""}</td><td class="num">${fmt(r.mean_actual,0)}</td></tr>`).join("");
+  const r=hm.find(x=>x.area==="DK1"); if(r&&BL.DK1) $("#horizon-take").textContent=`Energinet's evening-before forecast misses DK1 wind by ${fmt(r.day_ahead,0)} MWh per hour, about a fifth of average output, against ${fmt(BL.DK1.yesterday_same_hour,0)} for assuming yesterday's wind and ${fmt(BL.DK1.long_run_mean,0)} for the long-run average; the one-hour forecast misses by ${fmt(r.one_hour,0)}. The bill above is what those errors cost at the imbalance price.`;
 })();
 
 /* ---------- act two: H2 ---------- */

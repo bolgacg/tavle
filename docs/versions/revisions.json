@@ -1,0 +1,13 @@
+[
+ {
+  "night": "2026-09-02",
+  "at_utc": "2026-09-02T19:14:08Z",
+  "settled_hi": "2026-08-24T06:00:00",
+  "realtime_hi": "2026-09-02T19:00:00",
+  "day_ahead_hi": "2026-09-03T21:00:00",
+  "settlement_lag_days": 9,
+  "rows": 685003,
+  "baseline": true,
+  "window_rows": 33838
+ }
+]

@@ -20,7 +20,8 @@ WINDOW = ("2025-09-15", "2025-11-01")
 WINDOWS = {"RegulatingBalancePowerdata": ("2025-01-15", "2025-03-05")}
 TS = {"Elspotprices": "HourUTC", "DayAheadPrices": "TimeUTC",
       "ProductionConsumptionSettlement": "HourUTC", "ecb_fx": "date",
-      "Forecasts_Hour": "HourUTC", "RegulatingBalancePowerdata": "HourUTC"}
+      "Forecasts_Hour": "HourUTC", "RegulatingBalancePowerdata": "HourUTC",
+      "ElectricityProdex5MinRealtime": "Minutes5UTC"}
 
 
 def snapshot(window=WINDOW):

@@ -26,8 +26,26 @@ DATASETS = {
     "Forecasts_Hour": ("HourUTC", "2019-11-01", 60),
     # the price of being wrong: hourly imbalance settlement, to March 2025
     "RegulatingBalancePowerdata": ("HourUTC", "2020-01-01", 60),
+    # the real-time feed: upscaled SCADA measurements every five minutes,
+    # which Energinet says will contain errors that are generally not
+    # corrected. Landed as the fifth of the six versions of an hour of wind.
+    "ElectricityProdex5MinRealtime": ("Minutes5UTC", "2020-01-01", 5),
 }
 AREAS = ["DK1", "DK2"]
+# Ask for a subset of columns where the dataset is wide and the window is
+# long; the request URL is landed with the rows, so the choice is recorded.
+COLUMNS = {
+    "ElectricityProdex5MinRealtime": ["Minutes5UTC", "PriceArea", "OnshoreWindPower", "OffshoreWindPower", "SolarPower"],
+}
+# Window width in months per request: five-minute rows are twelve times as
+# many as hourly ones, so that dataset is pulled half a year at a time.
+MONTHS = {"ElectricityProdex5MinRealtime": 6}
+# How far behind the watermark an incremental pull starts. Settlement rows
+# are revised for months after first publication (Energinet: 99 percent
+# correct after 15 days, 99.9 after three months), so that dataset is
+# re-fetched a hundred days back every night and the nightly self-diff can
+# measure the claim; the others only need the seam of the last fetch.
+OVERLAP_DAYS = {"ProductionConsumptionSettlement": 100}
 
 
 def build_url(dataset, start, end, areas=AREAS, columns=None):
@@ -56,18 +74,22 @@ def windows(start, end, months=12):
 
 
 def fetch(dataset, start, end, areas=AREAS, http=None, sleep=time.sleep):
-    url = build_url(dataset, start, end, areas)
+    url = build_url(dataset, start, end, areas, columns=COLUMNS.get(dataset))
     body = _http.get_with_backoff(url, http=http or _http.get, sleep=sleep)
     payload = json.loads(body)
     return payload.get("records", []), url
 
 
-def extract(dataset, start=None, end=None, months=12, pause=8.0, areas=AREAS,
-            http=None, sleep=time.sleep, overlap_days=3):
+def extract(dataset, start=None, end=None, months=None, pause=8.0, areas=AREAS,
+            http=None, sleep=time.sleep, overlap_days=None):
     """Land everything for `dataset` from `start` (default: the watermark
-    minus a small overlap, or the dataset's first date) to `end` (default:
-    two days ahead, because day-ahead prices exist for tomorrow)."""
+    minus the dataset's overlap, or the dataset's first date) to `end`
+    (default: two days ahead, because day-ahead prices exist for tomorrow)."""
     ts_col, first, _ = DATASETS[dataset]
+    if overlap_days is None:
+        overlap_days = OVERLAP_DAYS.get(dataset, 3)
+    if months is None:
+        months = MONTHS.get(dataset, 12)
     if start is None:
         wm = watermark(dataset, ts_col)
         start = (wm - dt.timedelta(days=overlap_days)).date().isoformat() if wm else first

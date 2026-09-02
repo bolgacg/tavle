@@ -46,6 +46,15 @@ def build_page():
     return _sh(sys.executable, "-m", "tavle.page")
 
 
+def revisions():
+    from . import revisions as r
+    return r.run()
+
+
+def build_versions_page():
+    return _sh(sys.executable, "-m", "tavle.versionspage")
+
+
 TASKS = {
     "extract_elspot":     {"deps": [], "fn": extract_eds("Elspotprices")},
     "extract_dayahead":   {"deps": [], "fn": extract_eds("DayAheadPrices")},
@@ -53,9 +62,13 @@ TASKS = {
     "extract_fx":         {"deps": [], "fn": extract_ecb},
     "extract_forecasts":  {"deps": [], "fn": extract_eds("Forecasts_Hour")},
     "extract_imbalance":  {"deps": [], "fn": extract_eds("RegulatingBalancePowerdata")},
+    "extract_realtime":   {"deps": [], "fn": extract_eds("ElectricityProdex5MinRealtime")},
     "dbt_build":          {"deps": ["extract_elspot", "extract_dayahead", "extract_production", "extract_fx",
-                                    "extract_forecasts", "extract_imbalance"], "fn": dbt_build},
+                                    "extract_forecasts", "extract_imbalance", "extract_realtime"], "fn": dbt_build},
     "page":               {"deps": ["dbt_build"], "fn": build_page},
+    # rebuild yesterday: diff tonight's six versions against last night's before they are forgotten
+    "revisions":          {"deps": ["dbt_build"], "fn": revisions},
+    "versions_page":      {"deps": ["revisions"], "fn": build_versions_page},
 }
 
 

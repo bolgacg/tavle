@@ -105,3 +105,31 @@ models:
       - unique:
           arguments:
             column_name: "area || '|' || hour_utc"
+  - name: stg_realtime
+    columns:
+      - name: area
+        data_tests: [not_null, {accepted_values: {arguments: {values: ['DK1', 'DK2']}}}]
+      - name: minute_utc
+        data_tests: [not_null]
+    data_tests:
+      - unique:
+          arguments:
+            column_name: "area || '|' || minute_utc"
+  - name: wind_versions
+    columns:
+      - name: versions_present
+        data_tests: [not_null, {accepted_values: {arguments: {values: [1, 2, 3, 4, 5, 6], quote: false}}}]
+    data_tests:
+      - unique:
+          arguments:
+            column_name: "area || '|' || hour_utc"
+  - name: wind_versions_long
+    columns:
+      - name: version
+        data_tests: [not_null, {accepted_values: {arguments: {values: ['day-ahead', 'intraday', 'five-hour', 'one-hour', 'real-time', 'settled']}}}]
+      - name: value_mwh
+        data_tests: [not_null]
+    data_tests:
+      - unique:
+          arguments:
+            column_name: "area || '|' || hour_utc || '|' || version"

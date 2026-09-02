@@ -13,7 +13,7 @@ def main(argv=None):
     a.add_argument("dataset", choices=sorted(eds.DATASETS))
     a.add_argument("--start")
     a.add_argument("--end")
-    a.add_argument("--months", type=int, default=12)
+    a.add_argument("--months", type=int, default=None)
     b = sub.add_parser("ecb")
     b.add_argument("--start")
     args = p.parse_args(argv)

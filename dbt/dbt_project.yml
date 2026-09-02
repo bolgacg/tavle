@@ -7,6 +7,18 @@ target-path: target
 clean-targets: [target, dbt_packages]
 vars:
   raw_path: "../data/raw"
+  # The agreement rule between the real-time hour and the settled hour,
+  # fitted on 2025 and checked on 2026 by research/versions_study.py, which
+  # rewrites these three lines. dbt/tests/realtime_agrees_with_settlement.sql
+  # applies them; docs/versions/ quotes them.
+  versions_tolerance_pct: 24.1
+  versions_tolerance_mwh: 63.6
+  versions_max_breach_pct: 5.0
+  # The bias watch: a design choice, not a fit. In 2025 the thirty-day bias
+  # of the real-time feed against the settlement ranged from -2 to +6
+  # percent in DK1, so a five percent band warns a few times a year, which
+  # is what a calibration drift should do; it never fails the build.
+  versions_bias_band_pct: 5.0
 models:
   tavle:
     staging:

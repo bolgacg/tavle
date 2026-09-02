@@ -48,6 +48,6 @@ jobs:
           python -m tavle.sample snapshot
           git config user.name "Bolgaç Gülen"
           git config user.email "bolgacg1@gmail.com"
-          git add docs/index.html data/sample
+          git add docs/index.html docs/versions data/sample data/state
           git diff --cached --quiet || git commit -m "nightly: desk page $(date -u +%F)"
           git push

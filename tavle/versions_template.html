@@ -343,7 +343,7 @@ const pct = (x,d) => x == null ? "" : fmt(100*x, d==null?0:d) + " percent";
 const S = {DK1:"var(--s1)", DK2:"var(--s2)"};
 const VERS = ["day-ahead","intraday","five-hour","one-hour","real-time","settled"];
 const SHORT = {"day-ahead":"evening before","intraday":"same morning","five-hour":"5 h ahead","one-hour":"1 h ahead","real-time":"real-time feed","settled":"settled"};
-const NARROW = {"day-ahead":"evening","intraday":"morning","five-hour":"5 h","one-hour":"1 h","real-time":"feed","settled":"settled"};
+const NARROW = {"day-ahead":"D-1","intraday":"06:00","five-hour":"5 h","one-hour":"1 h","real-time":"feed","settled":"settled"};
 const COLV = {"day-ahead":"v_day_ahead","intraday":"v_intraday","five-hour":"v_5h","one-hour":"v_1h","real-time":"v_realtime","settled":"v_settled"};
 const conv = (a,y,v) => ST.convergence.find(r=>r.area===a&&r.year===y&&r.version===v);
 const YEARS = [...new Set(ST.convergence.map(r=>r.year))].filter(y=>y>=2023).sort();

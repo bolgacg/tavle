@@ -43,3 +43,20 @@ def test_run_writes_a_baseline_then_a_diff(tmp_path):
     import json
     entries = json.loads(log.read_text())
     assert len(entries) == 2 and entries[1]["revised"]["settled"]["n"] == 1
+
+
+def test_same_night_rerun_replaces_the_diff_but_never_the_baseline(tmp_path):
+    import datetime as dt
+    import json
+    import duckdb
+    db = tmp_path / "t.duckdb"
+    con = duckdb.connect(str(db))
+    con.execute("create table wind_versions_long as select 'DK1' as area, timestamp '2026-01-01 00:00' as hour_utc, 'settled' as version, 100.0 as value_mwh")
+    con.close()
+    state, log = tmp_path / "s.parquet", tmp_path / "l.json"
+    night = dt.datetime(2026, 1, 2, 5, 40, tzinfo=dt.timezone.utc)
+    R.run(db=db, state=state, log=log, now=night)                 # baseline
+    R.run(db=db, state=state, log=log, now=night)                 # same night: a diff, appended
+    R.run(db=db, state=state, log=log, now=night)                 # same night again: replaces the diff
+    entries = json.loads(log.read_text())
+    assert [e["baseline"] for e in entries] == [True, False]

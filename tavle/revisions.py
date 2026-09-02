@@ -124,7 +124,12 @@ def run(db=DB, state=STATE, log=LOG, now=None):
         con.close()
     pathlib.Path(log).parent.mkdir(parents=True, exist_ok=True)
     entries = json.loads(pathlib.Path(log).read_text()) if pathlib.Path(log).exists() else []
-    entries = [e for e in entries if e.get("night") != entry["night"]] + [entry]
+    # a re-run on the same night replaces that night's diff; a baseline is never replaced,
+    # because the next run's diff is against it and the log should show where it started
+    if entries and entries[-1].get("night") == entry["night"] and not entries[-1].get("baseline"):
+        entries[-1] = entry
+    else:
+        entries.append(entry)
     pathlib.Path(log).write_text(json.dumps(entries, indent=1))
     if entry["baseline"]:
         return f"baseline written: {entry['window_rows']} rows in the window"

@@ -25,12 +25,21 @@ EPS_MWH = 0.5           # below this a change is rounding, not a revision
 VERSIONS = ["day-ahead", "intraday", "five-hour", "one-hour", "real-time", "settled"]
 
 
-def current_rows(con, window_days=WINDOW_DAYS):
-    """The recent window of wind_versions_long as (area, hour, version) -> value."""
-    rows = con.execute(f"""
+def window_sql(window_days=WINDOW_DAYS, now=None):
+    """The recent window, minus the real-time row of the hour still in progress: its
+    mean changes with every five-minute reading until the hour ends, and that is
+    not a revision, it is the clock. The first CI diff logged exactly that."""
+    now = now or dt.datetime.now(dt.timezone.utc)
+    cutoff = now.replace(minute=0, second=0, microsecond=0, tzinfo=None)
+    return f"""
         select area, hour_utc, version, value_mwh from wind_versions_long
         where hour_utc >= (select max(hour_utc) from wind_versions_long) - interval {window_days} day
-        order by 1, 2, 3""").fetchall()
+          and not (version = 'real-time' and hour_utc >= timestamp '{cutoff}')"""
+
+
+def current_rows(con, window_days=WINDOW_DAYS, now=None):
+    """The recent window of wind_versions_long as (area, hour, version) -> value."""
+    rows = con.execute(window_sql(window_days, now) + " order by 1, 2, 3").fetchall()
     return {(a, h.isoformat(), v): float(x) for a, h, v, x in rows}
 
 
@@ -77,12 +86,9 @@ def diff(prev, cur, eps=EPS_MWH, top=5):
     return out
 
 
-def write_state(con, state=STATE, window_days=WINDOW_DAYS):
+def write_state(con, state=STATE, window_days=WINDOW_DAYS, now=None):
     pathlib.Path(state).parent.mkdir(parents=True, exist_ok=True)
-    con.execute(f"""
-        copy (select area, hour_utc, version, value_mwh from wind_versions_long
-              where hour_utc >= (select max(hour_utc) from wind_versions_long) - interval {window_days} day)
-        to '{state}' (format parquet)""")
+    con.execute(f"copy ({window_sql(window_days, now)}) to '{state}' (format parquet)")
 
 
 def spans(con):
@@ -104,7 +110,7 @@ def run(db=DB, state=STATE, log=LOG, now=None):
     now = now or dt.datetime.now(dt.timezone.utc)
     con = duckdb.connect(str(db), read_only=True)
     try:
-        cur = current_rows(con)
+        cur = current_rows(con, now=now)
         entry = {"night": now.strftime("%Y-%m-%d"), "at_utc": now.strftime("%Y-%m-%dT%H:%M:%SZ"), **spans(con)}
         prev = previous_rows(state)
         if prev is None:
@@ -119,7 +125,7 @@ def run(db=DB, state=STATE, log=LOG, now=None):
     # the state is written by a fresh, writable, in-memory connection reading the file
     con = duckdb.connect(str(db), read_only=True)
     try:
-        write_state(con, state)
+        write_state(con, state, now=now)
     finally:
         con.close()
     pathlib.Path(log).parent.mkdir(parents=True, exist_ok=True)

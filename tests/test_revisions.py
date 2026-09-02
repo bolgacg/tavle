@@ -60,3 +60,21 @@ def test_same_night_rerun_replaces_the_diff_but_never_the_baseline(tmp_path):
     R.run(db=db, state=state, log=log, now=night)                 # same night again: replaces the diff
     entries = json.loads(log.read_text())
     assert [e["baseline"] for e in entries] == [True, False]
+
+
+def test_the_hour_in_progress_is_not_a_revision(tmp_path):
+    import datetime as dt
+    import duckdb
+    db = tmp_path / "t.duckdb"
+    con = duckdb.connect(str(db))
+    con.execute("""create table wind_versions_long as
+        select 'DK1' as area, timestamp '2026-01-02 05:00' as hour_utc, 'real-time' as version, 100.0 as value_mwh
+        union all select 'DK1', timestamp '2026-01-02 04:00', 'real-time', 90.0
+        union all select 'DK1', timestamp '2026-01-03 12:00', 'day-ahead', 80.0""")
+    con.close()
+    now = dt.datetime(2026, 1, 2, 5, 40, tzinfo=dt.timezone.utc)
+    rows = R.current_rows(con := duckdb.connect(str(db), read_only=True), now=now)
+    con.close()
+    assert ("DK1", "2026-01-02T05:00:00", "real-time") not in rows      # the hour in progress
+    assert ("DK1", "2026-01-02T04:00:00", "real-time") in rows          # the last complete hour
+    assert ("DK1", "2026-01-03T12:00:00", "day-ahead") in rows          # a forecast for tomorrow stays

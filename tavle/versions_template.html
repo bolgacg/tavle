@@ -150,6 +150,30 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
     <button class="tour-open" id="tourbtn">Walk me through it</button></div>
 </div></header>
 
+<section id="bluf"><div class="wrap">
+  <h2>The bottom line, before anything else</h2>
+  <p class="dek">What this work is worth to a desk, in plain words. Every claim links to the place on this page where it is shown.</p>
+  <ul style="margin:10px 0 0;padding-left:20px;max-width:860px">
+    <li style="margin-bottom:9px">The number on the desk's screen is not the number the money settles on. Energinet publishes six numbers
+    for the same hour of wind, they disagree, and the invoice is computed from the last one, which arrives about two weeks late.
+    <a href="#act1">One hour, all six numbers</a>.</li>
+    <li style="margin-bottom:9px">In 2026 the live feed got worse: within 5 percent of the invoiced truth in only 59 percent of west
+    Denmark (DK1) hours, down from 87 in 2024. A desk should weight it differently this year, and nothing upstream would ever have
+    said so. <a href="#act2">How far each number sits from the truth</a>.</li>
+    <li style="margin-bottom:9px">The pipeline runs an alarm for hours where the live number turned out badly wrong. Designed to fire
+    on about 1 hour in 100, it fired on 0.9 in 100 across a year it had never seen; the 5 percent rule a desk would write instead
+    fires on 19 in 100. <a href="#act3">The rule and its out of sample test</a>.</li>
+    <li style="margin-bottom:9px">A slowly drifting feed fools any per hour alarm: every hour looks almost fine while the whole year
+    goes off. A separate monthly watch warns on drift, and that watch is what caught 2026. <a href="#act3">The second watch</a>.</li>
+    <li style="margin-bottom:9px">Honest timing: the alarm is reconciliation, not a fire alarm. It arrives with the settlement, on the
+    same rhythm as the invoices; the live protection is the nightly completeness tests. <a href="#act4">What the wrong number costs,
+    and when you learn it</a>.</li>
+    <li style="margin-bottom:9px">The pipeline checks itself: every night it rebuilds yesterday and logs what moved under the desk,
+    entry by entry. <a href="#revlog">The revision log</a>.</li>
+  </ul>
+</div></section>
+
+
 <section id="primer"><div class="wrap">
   <div class="sec-label">Before the study &middot; five things to know</div>
   <div class="primer">
@@ -267,7 +291,7 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
     <p class="hint" style="margin-top:6px">Green: all six versions for every hour of the day. Amber: five, the settlement not yet published. Red: four or fewer for at least one hour, which means a forecast or the feed is missing too. <span id="board-lag"></span></p>
     <div class="card-title" style="font-size:15px;margin-top:18px">The four tests, as of the last build</div>
     <div class="tests" id="tests"></div>
-    <div class="card-title" style="font-size:15px;margin-top:18px">The revision log</div>
+    <div class="card-title" id="revlog" style="font-size:15px;margin-top:18px">The revision log</div>
     <div class="tscroll" style="margin-top:8px"><table id="rev-table"></table></div>
     </div>
     <p class="howto"><b>how to read</b>One row per night: how many version-hours appeared since the night before (new days of settlement, new hours of feed and forecast), how many existing values moved by more than half a megawatt-hour, and the largest move by name. <b>take from it</b><span id="rev-take"></span></p>

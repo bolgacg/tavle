@@ -151,22 +151,20 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 </div></header>
 
 <section id="bluf"><div class="wrap">
-  <h2>The bottom line, before anything else</h2>
-  <p class="dek">What this work is worth to a desk, in plain words. Every claim links to the place on this page where it is shown.</p>
+  <h2>Bottom line up front</h2>
+  <p class="dek">What this is worth to a desk. Each claim links to where it is shown.</p>
   <ul style="margin:10px 0 0;padding-left:20px;max-width:860px">
     <li style="margin-bottom:9px">The number on the desk's screen is not the number the money settles on. Energinet publishes six numbers
     for the same hour of wind, they disagree, and the invoice is computed from the last one, which arrives about two weeks late.
     <a href="#act1">One hour, all six numbers</a>.</li>
     <li style="margin-bottom:9px">In 2026 the live feed got worse: within 5 percent of the invoiced truth in only 59 percent of west
-    Denmark (DK1) hours, down from 87 in 2024. A desk should weight it differently this year, and nothing upstream would ever have
-    said so. <a href="#act2">How far each number sits from the truth</a>.</li>
+    Denmark (DK1) hours, down from 87 in 2024. A desk should weight it differently this year, and the feed's own documentation says errors will generally not be corrected. <a href="#act2">How far each number sits from the truth</a>.</li>
     <li style="margin-bottom:9px">The pipeline runs an alarm for hours where the live number turned out badly wrong. Designed to fire
     on about 1 hour in 100, it fired on 0.9 in 100 across a year it had never seen; the 5 percent rule a desk would write instead
     fires on 19 in 100. <a href="#act3">The rule and its out of sample test</a>.</li>
-    <li style="margin-bottom:9px">A slowly drifting feed fools any per hour alarm: every hour looks almost fine while the whole year
-    goes off. A separate monthly watch warns on drift, and that watch is what caught 2026. <a href="#act3">The second watch</a>.</li>
-    <li style="margin-bottom:9px">Honest timing: the alarm is reconciliation, not a fire alarm. It arrives with the settlement, on the
-    same rhythm as the invoices; the live protection is the nightly completeness tests. <a href="#act4">What the wrong number costs,
+    <li style="margin-bottom:9px">A slowly drifting feed fools any per hour alarm: every hour looks almost fine while the feed moves further from the truth. A separate monthly watch warns on drift, and that watch is what caught 2026. <a href="#act3">The second watch</a>.</li>
+    <li style="margin-bottom:9px">The alarm arrives with the settlement, on the same rhythm as the invoices: it is reconciliation, not a fire
+    alarm. The live layer is the nightly completeness tests. <a href="#act4">What the wrong number costs,
     and when you learn it</a>.</li>
     <li style="margin-bottom:9px">The pipeline checks itself: every night it rebuilds yesterday and logs what moved under the desk,
     entry by entry. <a href="#revlog">The revision log</a>.</li>

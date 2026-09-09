@@ -69,10 +69,12 @@ code{font-family:var(--mono);font-size:12.5px}
 footer{border-top:1px solid var(--rule);margin-top:44px;padding:20px 0 30px;font-family:var(--mono);font-size:12px;color:var(--faint)}
 footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 /* guided tour: spotlight, card beside the element */
-#tour{position:absolute;top:0;left:0;right:0;z-index:50;display:none}
+/* the whole overlay ignores the pointer so every control on the page keeps
+   working mid-tour; only the card itself is interactive */
+#tour{position:absolute;top:0;left:0;right:0;z-index:50;display:none;pointer-events:none}
 #tour.on{display:block}
 .tour-hl{position:absolute;border:2px solid var(--accent);border-radius:8px;box-shadow:0 0 0 9999px rgba(26,29,33,.55);transition:all .35s ease;pointer-events:none}
-.tour-card{position:absolute;width:min(400px,calc(100vw - 32px));background:var(--card);border:1px solid var(--rule2);border-radius:8px;padding:18px 20px;box-shadow:0 6px 30px rgba(0,0,0,.18)}
+.tour-card{position:absolute;width:min(400px,calc(100vw - 32px));background:var(--card);border:1px solid var(--rule2);border-radius:8px;padding:18px 20px;box-shadow:0 6px 30px rgba(0,0,0,.18);pointer-events:auto}
 .tour-card .tk{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
 .tour-card p{font-size:14px;line-height:1.55;color:var(--ink);margin:0 0 12px}
 .tour-nav{display:flex;align-items:center;gap:8px}
@@ -100,10 +102,6 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 .pill.mid{color:var(--amber);border-color:var(--amber)}
 .why{font-size:14.5px;color:var(--ink);background:var(--panel);border-radius:4px;padding:10px 14px;margin:0 0 12px}
 .why b{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-right:6px}
-.qa{display:grid;grid-template-columns:1fr 1fr;gap:10px 22px;margin:18px 0 6px;max-width:860px}
-.qa div{border-top:1px solid var(--rule);padding-top:8px;font-size:14.5px;line-height:1.5;color:var(--muted)}
-.qa b{display:block;font-family:var(--serif);font-size:17px;color:var(--ink);font-weight:600;margin-bottom:2px}
-@media (max-width:640px){.qa{grid-template-columns:1fr}}
 .hyp{background:var(--panel);border-radius:4px;padding:12px 14px;margin:0 0 14px;font-size:14.5px;display:grid;grid-template-columns:auto 1fr;gap:6px 12px}
 .hyp b{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);padding-top:3px}
 .hyp span{color:var(--ink)}
@@ -135,14 +133,9 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
   <h1>One hour of wind has six numbers. Which one should a desk act on?</h1>
   <p class="dek">Energinet publishes the wind for one hour six times: four forecasts, a real-time feed, and a settlement that arrives nine to
   fifteen days later and is revised for two years. A desk sees them in that order and acts on whichever is on its screen. This page puts
-  the six on one grid, measures how far each is from the last, fits a rule for the pipeline to watch the one that matters most, and prices
+  the six on one grid, measures how far each sits from the settlement, fits a rule for the pipeline to watch the one that matters most, and prices
   acting on the wrong one.</p>
-  <div class="qa">
-    <div><b>How far apart are the six?</b><span id="dek-1"></span></div>
-    <div><b>Is the real-time feed the truth?</b><span id="dek-2"></span></div>
-    <div><b>What rule should the pipeline run?</b><span id="dek-3"></span></div>
-    <div><b>What does the wrong version cost?</b><span id="dek-4"></span></div>
-  </div>
+  <noscript><p class="note" style="max-width:760px">The numbers on this page are computed in the browser from data embedded in the file; with JavaScript off the number slots stay blank.</p></noscript>
   <div class="byline"><span>Bolga&ccedil; G&uuml;len &middot; Odense, 2026</span><span>&middot;</span>
     <a href="https://github.com/bolgacg/tavle/blob/master/research/versions_study.py">the study script</a><span>&middot;</span>
     <a href="https://github.com/bolgacg/tavle">source and data pipeline</a><span>&middot;</span>
@@ -153,18 +146,20 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 <section id="bluf"><div class="wrap">
   <h2>Bottom line up front</h2>
   <p class="dek">What this is worth to a desk. Each claim links to where it is shown.</p>
-  <ul style="margin:10px 0 0;padding-left:20px;max-width:860px">
+  <ul id="bluf-list" style="margin:10px 0 0;padding-left:20px;max-width:860px">
     <li style="margin-bottom:9px">The number on the desk's screen is not the number the money settles on. Energinet publishes six numbers
-    for the same hour of wind, they disagree, and the invoice is computed from the last one, which arrives about two weeks late.
+    for the same hour of wind, and the invoice is computed from the last one, which arrives about two weeks late. In DK1 in <span class="num" id="bl-y"></span> the
+    evening forecast missed the settled hour by a median of <span class="num" id="bl-da"></span> percent, the live feed by <span class="num" id="bl-rt"></span>.
     <a href="#act1">One hour, all six numbers</a>.</li>
-    <li style="margin-bottom:9px">In 2026 the live feed got worse: within 5 percent of the invoiced truth in only 59 percent of west
-    Denmark (DK1) hours, down from 87 in 2024. A desk should weight it differently this year, and the feed's own documentation says errors will generally not be corrected. <a href="#act2">How far each number sits from the truth</a>.</li>
-    <li style="margin-bottom:9px">The pipeline runs an alarm for hours where the live number turned out badly wrong. Designed to fire
-    on about 1 hour in 100, it fired on 0.9 in 100 across a year it had never seen; the 5 percent rule a desk would write instead
-    fires on 19 in 100. <a href="#act3">The rule and its out of sample test</a>.</li>
-    <li style="margin-bottom:9px">A slowly drifting feed fools any per hour alarm: every hour looks almost fine while the feed moves further from the truth. A separate monthly watch warns on drift, and that watch is what caught 2026. <a href="#act3">The second watch</a>.</li>
-    <li style="margin-bottom:9px">The alarm arrives with the settlement, on the same rhythm as the invoices: it is reconciliation, not a fire
-    alarm. The live layer is the nightly completeness tests. <a href="#act4">What the wrong number costs,
+    <li style="margin-bottom:9px">In <span class="num" id="bl-y2"></span> the live feed got worse: within 5 percent of the invoiced truth in only <span class="num" id="bl-26"></span> percent of west
+    Denmark (DK1) hours, down from <span class="num" id="bl-24"></span> in <span class="num" id="bl-y0"></span>. A desk should weight it differently this year, and the feed's own documentation says errors will generally not be corrected. <a href="#act2">How far each number sits from the truth</a>.</li>
+    <li style="margin-bottom:9px">The pipeline runs an alarm for hours where the live number turned out badly wrong, built to fire
+    on about one hour in a hundred. On a year it had never seen it fired on <span class="num" id="bl-chk"></span> percent of hours; the 5 percent rule a desk
+    would write instead fires on <span class="num" id="bl-base"></span> percent. <a href="#act3">The rule and its out of sample test</a>.</li>
+    <li style="margin-bottom:9px">A slowly drifting feed fools any per hour alarm: every hour looks almost fine while the feed moves further from the truth. A separate monthly watch warns on drift, and that watch is what caught <span class="num" id="bl-chky"></span>. <a href="#act3">The second watch</a>.</li>
+    <li style="margin-bottom:9px">Acting on the wrong version becomes an invoice: selling the evening forecast cost a DK1 producer
+    <span class="num" id="bl-cost"></span> euros per megawatt-hour, and only <span class="num" id="bl-meas"></span> cents of that came from the feed differing from the settlement.
+    That part is reconciliation, not a fire alarm: its test arrives with the settlement, two weeks behind the desk. <a href="#act4">What the wrong number costs,
     and when you learn it</a>.</li>
     <li style="margin-bottom:9px">The pipeline checks itself: every night it rebuilds yesterday and logs what moved under the desk,
     entry by entry. <a href="#revlog">The revision log</a>.</li>
@@ -186,7 +181,7 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
     <p>Nine to fifteen days later the metered <strong>settlement</strong> arrives: what was actually produced, the number everyone is invoiced on.
     Energinet: 99 percent correct after 15 days, 99.9 percent after three months, revised for up to two years.</p>
     <p>A producer that sold one number and delivered another pays the <strong>imbalance price</strong> on the difference. That is how a wrong
-    version becomes an invoice; act four uses it. Every number on this page is generated by the build script from the data, not typed.</p>
+    version becomes an invoice; act four uses it.</p>
   </div>
   <div class="card" style="margin-top:20px" id="t-tl">
     <div class="sec-label" style="margin-bottom:2px">The domain, drawn once: when each of the six numbers exists</div>
@@ -376,15 +371,17 @@ function multiChips(id, groups, cur, on){ // several chip groups in one row; gro
   $(id).addEventListener("click",e=>{const b=e.target.closest("button"); if(!b)return; cur[b.dataset.g]=isNaN(+b.dataset.k)?b.dataset.k:+b.dataset.k; $(id).querySelectorAll(`button[data-g="${b.dataset.g}"]`).forEach(x=>x.setAttribute("aria-pressed",String(x===b))); on();});
 }
 
-/* ---------- header numbers ---------- */
+/* ---------- the bottom line's numbers ---------- */
 (function(){
-  const da=conv("DK1",LASTY,"day-ahead"), rt=conv("DK1",LASTY,"real-time"), rtp=conv("DK1",LASTY-1,"real-time"), rt2=conv("DK2",LASTY,"real-time"), rt2p=conv("DK2",LASTY-1,"real-time");
-  $("#dek-1").textContent=`In DK1 in ${LASTY} the evening-before forecast misses the settled hour by a median of ${fmt(da.median_abs_pct,0)} percent; the real-time feed by ${fmt(rt.median_abs_pct,0)}.`;
-  $("#dek-2").textContent=`No. It was within 5 percent of the settlement in ${pct(rt.within_5pct)} of DK1 hours in ${LASTY}, ${pct(rtp.within_5pct)} in ${LASTY-1}; in DK2, ${pct(rt2.within_5pct)} both years.`;
+  const da=conv("DK1",LASTY,"day-ahead"), rt=conv("DK1",LASTY,"real-time"), rt2=conv("DK1",LASTY-2,"real-time");
+  $("#bl-y").textContent=LASTY; $("#bl-y2").textContent=LASTY; $("#bl-y0").textContent=LASTY-2;
+  $("#bl-da").textContent=fmt(da.median_abs_pct,0); $("#bl-rt").textContent=fmt(rt.median_abs_pct,0);
+  $("#bl-26").textContent=fmt(100*rt.within_5pct,0); $("#bl-24").textContent=fmt(100*rt2.within_5pct,0);
   const by=R.by_year.find(r=>r.area==="DK1"&&r.year===CHKY);
-  $("#dek-3").textContent=`A tolerance fitted on ${FITY}, ${fmt(R.tolerance_pct,0)} percent or ${fmt(R.tolerance_mwh,0)} MWh, flagged ${fmt(by.breach_pct,1)} percent of ${CHKY} DK1 hours. The 5 percent rule a desk would write flags ${fmt(by.baseline_breach_pct,0)} percent.`;
+  $("#bl-chk").textContent=fmt(by.breach_pct,2); $("#bl-base").textContent=fmt(by.baseline_breach_pct,0);
+  $("#bl-chky").textContent=CHKY;
   const c=ST.cost.rows.find(r=>r.area==="DK1"&&r.version==="day-ahead");
-  $("#dek-4").textContent=`Selling the evening forecast cost a DK1 producer ${fmt(c.eur_per_mwh,2)} euros per megawatt-hour; the part due to the settlement differing from the feed was ${fmt(100*c.measurement_part_eur_per_mwh,0)} cents.`;
+  $("#bl-cost").textContent=fmt(c.eur_per_mwh,2); $("#bl-meas").textContent=fmt(100*c.measurement_part_eur_per_mwh,0);
   $("#built-at").textContent=D.built_at;
 })();
 
@@ -518,10 +515,10 @@ const TOL = s => Math.max(V.versions_tolerance_mwh, V.versions_tolerance_pct/100
     $("#a2-stat").innerHTML=rt.map(r=>`<div><div class="k">${r.year}: feed within 5%</div><div class="n">${pct(r.within_5pct)}</div><div class="s">median miss ${fmt(r.median_abs_mwh,0)} MWh, ${fmt(r.median_abs_pct,1)} percent</div></div>`).join("");
     const da=rows[0], id=rows[1], h5=rows[2], h1=rows[3], r=rows[4];
     $("#a2-take").textContent=`${cur.area} ${cur.year}: the evening forecast misses by a median of ${fmt(da.median_abs_mwh,0)} MWh (${fmt(da.median_abs_pct,0)} percent), the one-hour forecast by ${fmt(h1.median_abs_mwh,0)}, the feed by ${fmt(r.median_abs_mwh,0)} (${fmt(r.median_abs_pct,1)} percent). The five-hour forecast ${h5.median_abs_mwh>id.median_abs_mwh?"is further off than the same-morning one":"is closer than the same-morning one"}.`;
-    const others=breaks[0]+breaks[2]+breaks[3];
+    const others=breaks[0]+breaks[2]+breaks[3], mb=Math.max(breaks[0],breaks[2],breaks[3]);
     $("#a2-open").textContent=breaks.every(b=>b===0)?"The order holds everywhere.":(breaks[1]>=ZY.length/3&&others<=2?`The order holds except at the five-hour forecast${others?`, and in ${others} single zone-year${others>1?"s":""} elsewhere`:""}.`:"The order breaks in more than one place.");
-    const d1=[LASTY-2,LASTY-1,LASTY].map(y=>conv("DK1",y,"real-time")), d2=[LASTY-1,LASTY].map(y=>conv("DK2",y,"real-time"));
-    $("#a2-verdict").textContent=`In ${breaks[1]} of ${ZY.length} zone-years the five-hour forecast is further from the settlement than the same-morning one; the other three steps break in ${breaks[0]}, ${breaks[2]} and ${breaks[3]} zone-years. The feed is the closest number in every zone-year. In DK1 its share of hours within 5 percent of the settlement went from ${pct(d1[0].within_5pct)} in ${LASTY-2} to ${pct(d1[1].within_5pct)} in ${LASTY-1} and ${pct(d1[2].within_5pct)} in ${LASTY}; in DK2 it stayed at ${pct(d2[0].within_5pct)} and ${pct(d2[1].within_5pct)}.`;
+    const d1=[LASTY-2,LASTY-1,LASTY].map(y=>conv("DK1",y,"real-time")), d2=conv("DK2",LASTY,"real-time");
+    $("#a2-verdict").textContent=`In ${breaks[1]} of ${ZY.length} zone-years the five-hour forecast is further from the settlement than the same-morning one; the other three steps break ${mb===0?"nowhere":`in at most ${mb===1?"one":mb} zone-year${mb>1?"s":""} each`}. The feed is the closest number in every zone-year. In DK1 its share of hours within 5 percent of the settlement fell from ${pct(d1[0].within_5pct)} in ${LASTY-2} to ${pct(d1[2].within_5pct)} in ${LASTY}; in DK2 it stayed at ${pct(d2.within_5pct)}.`;
   }
   draw();
   const lv=ST.by_wind_level;
@@ -543,15 +540,19 @@ const TOL = s => Math.max(V.versions_tolerance_mwh, V.versions_tolerance_pct/100
     $("#r-tol-val").textContent=`${tol} percent${tol===Math.round(R.tolerance_pct)?" (fitted)":""}`;
     const C=R.curve.filter(c=>c.area===area);
     line($("#r-chart"), [{name:`${FITY}, the fit year`, color:S[area], pts:C.map(c=>({x:c.tolerance_pct,y:c[String(FITY)]}))},{name:`${CHKY}, the check year`, color:"var(--neg)", pts:C.map(c=>({x:c.tolerance_pct,y:c[String(CHKY)]})), dash:true}], {label:"share of hours flagged by tolerance", xlabel:v=>fmt(v,0)+"%", mark:tol, markLabel:`${tol} percent`, dec:0});
-    const f=at(area,tol,FITY), c=at(area,tol,CHKY), f5=at(area,5,FITY), c5=at(area,5,CHKY);
     const by=y=>R.by_year.find(r=>r.area===area&&r.year===y);
-    $("#r-stat").innerHTML=[[`${FITY} at ${tol}%`,fmt(f,1)+"%","of hours flagged"],[`${CHKY} at ${tol}%`,fmt(c,1)+"%","of hours flagged"],[`${FITY} at 5%`,fmt(f5,1)+"%","the rule a desk writes down"],[`${CHKY} at 5%`,fmt(c5,1)+"%","the same rule, next year"]].map(([k,n,s])=>`<div><div class="k">${k}</div><div class="n">${n}</div><div class="s">${s}</div></div>`).join("");
-    $("#r-take").textContent=`${area}: at ${tol} percent the rule flags ${fmt(f,1)} percent of ${FITY} hours and ${fmt(c,1)} percent of ${CHKY} hours. At 5 percent, ${fmt(f5,1)} and ${fmt(c5,1)}.`;
-    const chk=by(CHKY), fit=by(FITY), prev=by(FITY-1); const passed=chk.breach_pct<=R.max_breach_pct;
-    $("#r-open").textContent=passed?`The fitted rule passed its check in ${area}: ${fmt(chk.breach_pct,1)} percent of ${CHKY} hours flagged, against an alarm at ${fmt(R.max_breach_pct,0)}.`:`The fitted rule failed its check in ${area}.`;
+    const atFit=tol===Math.round(R.tolerance_pct);
+    const f=atFit?by(FITY).breach_pct:at(area,tol,FITY), c=atFit?by(CHKY).breach_pct:at(area,tol,CHKY), f5=at(area,5,FITY), c5=at(area,5,CHKY);
+    const dp=atFit?2:1;
+    $("#r-stat").innerHTML=[[atFit?`fitted rule, ${FITY}`:`${FITY} at ${tol}%`,fmt(f,dp)+"%","of hours flagged"],[atFit?`fitted rule, ${CHKY}`:`${CHKY} at ${tol}%`,fmt(c,dp)+"%",atFit?"the check year":"of hours flagged"],[`${FITY} at 5%`,fmt(f5,1)+"%","the rule a desk writes down"],[`${CHKY} at 5%`,fmt(c5,1)+"%","the same rule, next year"]].map(([k,n,s])=>`<div><div class="k">${k}</div><div class="n">${n}</div><div class="s">${s}</div></div>`).join("");
+    $("#r-take").textContent=atFit
+      ?`${area}: the fitted rule (${fmt(R.tolerance_pct,1)} percent or ${fmt(R.tolerance_mwh,0)} MWh) flags ${fmt(f,2)} percent of ${FITY} hours and ${fmt(c,2)} percent of ${CHKY} hours. The 5 percent rule flags ${fmt(f5,1)} and ${fmt(c5,1)}.`
+      :`${area}: at ${tol} percent the rule flags ${fmt(f,1)} percent of ${FITY} hours and ${fmt(c,1)} percent of ${CHKY} hours. At 5 percent, ${fmt(f5,1)} and ${fmt(c5,1)}.`;
+    const chk=by(CHKY), prev=by(FITY-1); const passed=chk.breach_pct<=R.max_breach_pct;
+    $("#r-open").textContent=passed?`The fitted rule passed its check in ${area}: ${fmt(chk.breach_pct,2)} percent of ${CHKY} hours flagged, against an alarm at ${fmt(R.max_breach_pct,0)} percent of hours.`:`The fitted rule failed its check in ${area}.`;
     $("#r-verdict").textContent=(area==="DK1"
-      ?`At the 5 percent a desk would write, ${fmt(chk.baseline_breach_pct,0)} percent of ${CHKY} DK1 hours breach, ${fmt(fit.baseline_breach_pct,0)} in ${FITY}, ${fmt(prev.baseline_breach_pct,0)} in ${FITY-1}: the feed is not a 5 percent number in DK1, and the share outside 5 percent has grown each year. A tolerance that stays quiet is ${fmt(R.tolerance_pct,0)} percent, and ${fmt(R.tolerance_pct,0)} percent is wide enough to miss a feed that reads 5 percent high for a month. So the pipeline runs a second watch, below.`
-      :`In DK2 the same 5 percent rule flags ${fmt(chk.baseline_breach_pct,1)} percent of ${CHKY} hours and ${fmt(fit.baseline_breach_pct,1)} in ${FITY}: here the feed is a 5 percent number. One tolerance fitted on both zones together is loose for DK2; a per-zone fit is the obvious next step and is listed in the limits.`);
+      ?`At the 5 percent a desk would write, ${fmt(chk.baseline_breach_pct,0)} percent of ${CHKY} DK1 hours breach, against ${fmt(prev.baseline_breach_pct,0)} in ${FITY-1}: the feed is not a 5 percent number in DK1, and the share grows each year. A tolerance that stays quiet is ${fmt(R.tolerance_pct,0)} percent, wide enough to miss a feed that reads 5 percent high for a month. So the pipeline runs a second watch, below.`
+      :`In DK2 the same 5 percent rule flags ${fmt(chk.baseline_breach_pct,1)} percent of ${CHKY} hours and ${fmt(by(FITY).baseline_breach_pct,1)} in ${FITY}: here the feed is a 5 percent number. One tolerance fitted on both zones together is loose for DK2; a per-zone fit is the obvious next step and is listed in the limits.`);
   }
   draw();
 })();
@@ -571,7 +572,7 @@ const TOL = s => Math.max(V.versions_tolerance_mwh, V.versions_tolerance_pct/100
     const out=M.filter(m=>Math.abs(m.bias_pct)>band);
     $("#b-open").textContent=out.length?`${out.length} of ${M.length} months since January ${FITY} fell outside the band in ${area}.`:`No month since January ${FITY} fell outside the band in ${area}.`;
     const mx=Math.max(...M.map(m=>Math.abs(m.bias_pct)));
-    $("#b-verdict").textContent=out.length?`Outside the ${fmt(band,0)} percent band: ${out.map(m=>`${m.month} (${m.bias_pct>0?"+":""}${fmt(m.bias_pct,1)})`).join(", ")}. The tolerance above flagged under ${fmt(Math.max(...R.by_year.filter(r=>r.area===area&&r.year>=FITY).map(r=>r.breach_pct)),1)} percent of those years' hours, so without this watch the drift would have passed every test. The test warns and does not fail: the board stays up, this page says the calibration moved, and a person decides.`:`The largest monthly bias in ${area} since January ${FITY} is ${fmt(mx,1)} percent, inside the band. The watch has nothing to report for this zone; it runs every night regardless, because the DK1 drift began inside the band too.`;
+    $("#b-verdict").textContent=out.length?`Outside the ${fmt(band,0)} percent band: ${out.map(m=>`${m.month} (${m.bias_pct>0?"+":""}${fmt(m.bias_pct,1)})`).join(", ")}. The tolerance above flagged at most ${fmt(Math.max(...R.by_year.filter(r=>r.area===area&&r.year>=FITY).map(r=>r.breach_pct)),2)} percent of any of those years' hours, so without this watch the drift would have passed every test. The test warns and does not fail: the board stays up, this page says the calibration moved, and a person decides.`:`The largest monthly bias in ${area} since January ${FITY} is ${fmt(mx,1)} percent, inside the band. The watch has nothing to report for this zone; it runs every night regardless, because the DK1 drift began inside the band too.`;
   }
   draw();
 })();
@@ -645,7 +646,7 @@ const TOL = s => Math.max(V.versions_tolerance_mwh, V.versions_tolerance_pct/100
 
 /* ---------- the walkthrough ---------- */
 const STEPS=[
- {sel:".qa", k:"Start here · 1 of 9", html:"The four questions this page answers, each with one number computed below. <b>Read them first</b>; every act is one of them, measured."},
+ {sel:"#bluf-list", k:"Start here · 1 of 9", html:"The bottom line: six claims, each with its number and a link to the act that shows it. <b>Read these first</b>; everything below is one of them, measured. The page stays fully usable while this tour is open."},
  {sel:"#t-tl", k:"The six versions · 2 of 9", html:"When each of the six numbers for one hour exists, from the evening before to the settlement weeks later. <b>Click a numbered circle.</b> The settlement is the one every other number is judged against."},
  {sel:"#t-act1", k:"Act one · 3 of 9", html:"One real hour, six numbers on one chart, the settlement as a line and the pipeline's tolerance as a band. <b>Pick an hour.</b> The last two are live from the marts; one has no settlement yet."},
  {sel:"#t-act2", k:"Act two · 4 of 9", html:"Every version against the settlement over the whole record. <b>Pick a zone, a year and a measure.</b> Later is closer, except at the five-hour forecast; the feed is closest and drifting in DK1."},
@@ -683,7 +684,8 @@ const STEPS=[
   function start(){ idx=0; root.classList.add('on'); place(); }
   $('#tourbtn').addEventListener('click', start);
   window.addEventListener('resize', ()=>{ if(root.classList.contains('on')) place(); });
-  if(!location.search.includes("tour=off")) setTimeout(start,700);
+  let seen=false; try{seen=localStorage.getItem('versions-tour')==='seen'}catch(e){}
+  if(!seen && !location.search.includes("tour=off")) setTimeout(start,700);
 })();
 </script>
 </body>

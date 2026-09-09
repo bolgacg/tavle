@@ -186,6 +186,53 @@ def spans(df):
             "by_versions_present": {int(k): int(v) for k, v in W.versions_present.value_counts().sort_index().items()}}
 
 
+# ---------- the limits: gaps, short hours, and the feed's anatomy ----------
+# These describe the full record the study ran on, so they are computed here
+# and frozen with the rest. The nightly page build must not recompute them:
+# its warehouse is the committed sample plus the recent increments, and a
+# historical number read from that warehouse describes the sample, not the
+# record (that is how the page shipped claiming a 54-day feed gap that the
+# fit table on the same page disproved).
+def gap_episodes():
+    """Consecutive hours that have a settlement but no real-time hour, per zone."""
+    rows = con.execute("""
+        select area, hour_utc from wind_versions
+        where v_settled is not null and v_realtime is null and hour_utc >= timestamp '2020-01-02'
+        order by area, hour_utc""").fetchall()
+    eps = []
+    for area, h in rows:
+        if eps and eps[-1]["area"] == area and eps[-1]["end"] + dt.timedelta(hours=1) == h:
+            eps[-1]["end"] = h
+            eps[-1]["hours"] += 1
+        else:
+            eps.append({"area": area, "start": h, "end": h, "hours": 1})
+    for e in eps:
+        e["clock_change"] = e["hours"] == 1 and e["start"].month == 10 and e["start"].hour == 0 and e["start"].weekday() == 6
+        e["start"], e["end"] = str(e["start"]), str(e["end"])
+    return eps
+
+
+def short_hours():
+    return [{"area": a, "n": int(n)} for a, n in con.execute("""
+        select area, count(*) from wind_versions
+        where v_realtime is not null and realtime_readings < 12 group by 1 order by 1""").fetchall()]
+
+
+def anatomy():
+    """The feed against the settlement, split by turbine type, per zone and year."""
+    cols = ["area", "year", "onshore_bias_pct", "offshore_bias_pct", "onshore_mwh", "offshore_mwh", "hours"]
+    return [dict(zip(cols, r)) for r in con.execute("""
+        with r as (select area, date_trunc('hour', minute_utc) as h, avg(onshore_wind_mw) as on_rt, avg(offshore_wind_mw) as off_rt, count(*) as n
+                   from stg_realtime group by 1, 2)
+        select p.area, year(p.hour_utc) as year,
+               round(100 * sum(r.on_rt - p.onshore_wind_mwh) / sum(p.onshore_wind_mwh), 1)   as onshore_bias_pct,
+               round(100 * sum(r.off_rt - p.offshore_wind_mwh) / sum(p.offshore_wind_mwh), 1) as offshore_bias_pct,
+               round(avg(p.onshore_wind_mwh)) as onshore_mwh, round(avg(p.offshore_wind_mwh)) as offshore_mwh, count(*) as hours
+        from stg_production p join r on r.area = p.area and r.h = p.hour_utc
+        where r.n = 12 and p.hour_utc >= timestamp '2023-01-01'
+        group by 1, 2 order by 1, 2""").fetchall()]
+
+
 def write_vars(rule):
     s = PROJECT.read_text()
     for key, val in (("versions_tolerance_pct", rule["tolerance_pct"]), ("versions_tolerance_mwh", rule["tolerance_mwh"]),
@@ -196,8 +243,20 @@ def write_vars(rule):
 
 
 if __name__ == "__main__":
+    import sys
+    static = {"gaps": gap_episodes(), "short_hours": short_hours(), "anatomy": anatomy()}
+    if "--static-only" in sys.argv:
+        # Refresh only the limits block; the fitted rule, its check and the
+        # dbt vars stay exactly as the dated study wrote them.
+        res = json.loads(OUT.read_text())
+        res.update(static)
+        OUT.write_text(json.dumps(res, indent=1, default=str))
+        print(f"wrote {OUT}: gaps {len(static['gaps'])} episodes, short hours "
+              f"{sum(r['n'] for r in static['short_hours'])}, anatomy {len(static['anatomy'])} rows; rule untouched")
+        raise SystemExit(0)
     res = {"computed_at": dt.date.today().isoformat(), "span": spans(full), "convergence": convergence(full),
-           "by_wind_level": by_wind_level(full), "rule": fit_rule(full), "presets": presets(full), "cost": cost(full)}
+           "by_wind_level": by_wind_level(full), "rule": fit_rule(full), "presets": presets(full), "cost": cost(full),
+           **static}
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(res, indent=1, default=str))
     write_vars(res["rule"])

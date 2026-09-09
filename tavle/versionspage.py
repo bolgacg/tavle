@@ -2,10 +2,11 @@
 
 Two kinds of number meet on this page and the file keeps them apart. The
 study numbers come from research/results/versions.json, computed once by
-research/versions_study.py on the full history and dated. The live numbers
-come from the marts at build time: the last fortnight of versions, the
-newest hour that has all six, the settlement lag, the feed's gaps, and the
-revision log the nightly self-diff appends to. Nothing is typed in."""
+research/versions_study.py on the full history and dated; the feed's gap
+episodes and bias anatomy are part of that. The live numbers come from the
+marts at build time: the last fortnight of versions, the newest hour that
+has all six, the settlement lag, and the revision log the nightly
+self-diff appends to. Nothing is typed in."""
 import datetime as dt
 import json
 import pathlib
@@ -50,20 +51,6 @@ def test_status():
     return {"at": rr.get("metadata", {}).get("generated_at"), "tests": out} if out else None
 
 
-def gap_episodes(rows):
-    """Consecutive hours that have a settlement but no real-time hour, per zone."""
-    eps = []
-    for r in rows:
-        if eps and eps[-1]["area"] == r["area"] and eps[-1]["end"] + dt.timedelta(hours=1) == r["hour_utc"]:
-            eps[-1]["end"] = r["hour_utc"]
-            eps[-1]["hours"] += 1
-        else:
-            eps.append({"area": r["area"], "start": r["hour_utc"], "end": r["hour_utc"], "hours": 1})
-    for e in eps:
-        e["clock_change"] = e["hours"] == 1 and e["start"].month == 10 and e["start"].hour == 0 and e["start"].weekday() == 6
-    return eps
-
-
 def collect():
     con = duckdb.connect(str(DB), read_only=True)
     d = {"study": json.loads(RES.read_text()), "vars": dbt_vars(), "tests": test_status(),
@@ -89,22 +76,13 @@ def collect():
             min(hour_utc) as first_hour, count(*) as hours,
             count(*) filter (where versions_present = 6) as hours_six
         from wind_versions group by 1 order by 1""")
-    d["gaps"] = gap_episodes(q(con, """
-        select area, hour_utc from wind_versions
-        where v_settled is not null and v_realtime is null and hour_utc >= timestamp '2020-01-02'
-        order by area, hour_utc"""))
-    d["short_hours"] = q(con, """
-        select area, count(*) as n from wind_versions where v_realtime is not null and realtime_readings < 12 group by 1 order by 1""")
-    d["anatomy"] = q(con, """
-        with r as (select area, date_trunc('hour', minute_utc) as h, avg(onshore_wind_mw) as on_rt, avg(offshore_wind_mw) as off_rt, count(*) as n
-                   from stg_realtime group by 1, 2)
-        select p.area, year(p.hour_utc) as year,
-               round(100 * sum(r.on_rt - p.onshore_wind_mwh) / sum(p.onshore_wind_mwh), 1)   as onshore_bias_pct,
-               round(100 * sum(r.off_rt - p.offshore_wind_mwh) / sum(p.offshore_wind_mwh), 1) as offshore_bias_pct,
-               round(avg(p.onshore_wind_mwh)) as onshore_mwh, round(avg(p.offshore_wind_mwh)) as offshore_mwh, count(*) as hours
-        from stg_production p join r on r.area = p.area and r.h = p.hour_utc
-        where r.n = 12 and p.hour_utc >= timestamp '2023-01-01'
-        group by 1, 2 order by 1, 2""")
+    # Historical numbers (the feed's gap episodes, short hours, the bias
+    # anatomy) come frozen from the study: this build's warehouse is the
+    # committed sample plus recent increments, and a historical claim read
+    # from it would describe the sample, not the record.
+    d["gaps"] = d["study"]["gaps"]
+    d["short_hours"] = d["study"]["short_hours"]
+    d["anatomy"] = d["study"]["anatomy"]
     d["runs"] = q(con, """
         select run_id, task, status, started from ops.runs
         where task in ('extract_realtime', 'revisions', 'versions_page', 'dbt_build') order by started desc limit 8""")

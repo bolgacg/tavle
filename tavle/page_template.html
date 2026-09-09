@@ -86,10 +86,10 @@ footer{border-top:1px solid var(--rule);margin-top:44px;padding:20px 0 30px;font
 footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 /* the stepper: fixed, bottom, works on a phone */
 /* guided tour: spotlight, card beside the element */
-#tour{position:absolute;top:0;left:0;right:0;z-index:50;display:none}
+#tour{position:absolute;top:0;left:0;right:0;z-index:50;display:none;pointer-events:none}
 #tour.on{display:block}
 .tour-hl{position:absolute;border:2px solid var(--accent);border-radius:8px;box-shadow:0 0 0 9999px rgba(26,29,33,.55);transition:all .35s ease;pointer-events:none}
-.tour-card{position:absolute;width:min(400px,calc(100vw - 32px));background:var(--card);border:1px solid var(--rule2);border-radius:8px;padding:18px 20px;box-shadow:0 6px 30px rgba(0,0,0,.18)}
+.tour-card{position:absolute;width:min(400px,calc(100vw - 32px));background:var(--card);border:1px solid var(--rule2);border-radius:8px;padding:18px 20px;box-shadow:0 6px 30px rgba(0,0,0,.18);pointer-events:auto}
 .tour-card .tk{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
 .tour-card p{font-size:14px;line-height:1.55;color:var(--ink);margin:0 0 12px}
 .tour-nav{display:flex;align-items:center;gap:8px}

@@ -409,5 +409,107 @@
   },
   "unchanged": 33680,
   "largest": []
+ },
+ {
+  "night": "2026-09-09",
+  "at_utc": "2026-09-09T10:15:39Z",
+  "settled_hi": "2026-08-31T06:00:00",
+  "realtime_hi": "2026-09-09T10:00:00",
+  "day_ahead_hi": "2026-09-09T21:00:00",
+  "settlement_lag_days": 9,
+  "rows": 104690,
+  "baseline": false,
+  "window_rows": 34022,
+  "appeared": {
+   "day-ahead": 96,
+   "intraday": 96,
+   "five-hour": 94,
+   "one-hour": 94,
+   "real-time": 96,
+   "settled": 162
+  },
+  "vanished": {
+   "day-ahead": 96,
+   "intraday": 96,
+   "five-hour": 96,
+   "one-hour": 96,
+   "real-time": 96,
+   "settled": 96
+  },
+  "revised": {
+   "day-ahead": {
+    "n": 0,
+    "max_abs_mwh": 0.0,
+    "mean_abs_mwh": null
+   },
+   "intraday": {
+    "n": 0,
+    "max_abs_mwh": 0.0,
+    "mean_abs_mwh": null
+   },
+   "five-hour": {
+    "n": 2,
+    "max_abs_mwh": 15.25,
+    "mean_abs_mwh": 11.48
+   },
+   "one-hour": {
+    "n": 2,
+    "max_abs_mwh": 29.62,
+    "mean_abs_mwh": 26.56
+   },
+   "real-time": {
+    "n": 0,
+    "max_abs_mwh": 0.0,
+    "mean_abs_mwh": null
+   },
+   "settled": {
+    "n": 21,
+    "max_abs_mwh": 1.92,
+    "mean_abs_mwh": 1.1
+   }
+  },
+  "unchanged": 33359,
+  "largest": [
+   {
+    "area": "DK2",
+    "hour_utc": "2026-09-07T12:00:00",
+    "version": "one-hour",
+    "before_mwh": 559.5,
+    "after_mwh": 529.9,
+    "change_mwh": -29.6
+   },
+   {
+    "area": "DK1",
+    "hour_utc": "2026-09-07T12:00:00",
+    "version": "one-hour",
+    "before_mwh": 1961.3,
+    "after_mwh": 1984.8,
+    "change_mwh": 23.5
+   },
+   {
+    "area": "DK1",
+    "hour_utc": "2026-09-07T16:00:00",
+    "version": "five-hour",
+    "before_mwh": 1708.8,
+    "after_mwh": 1724.0,
+    "change_mwh": 15.2
+   },
+   {
+    "area": "DK2",
+    "hour_utc": "2026-09-07T16:00:00",
+    "version": "five-hour",
+    "before_mwh": 571.6,
+    "after_mwh": 563.9,
+    "change_mwh": -7.7
+   },
+   {
+    "area": "DK1",
+    "hour_utc": "2026-08-24T11:00:00",
+    "version": "settled",
+    "before_mwh": 163.0,
+    "after_mwh": 161.1,
+    "change_mwh": -1.9
+   }
+  ]
  }
 ]

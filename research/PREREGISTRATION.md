@@ -173,3 +173,42 @@ the market "misses with" the forecast. (3) H4 is an easy test: the 17:50 forecas
 auction had, so the prediction could hardly fail; it is reported as a check. (4) The hourly imbalance series
 (RegulatingBalancePowerdata) ends 4 March 2025 11:00 UTC; its 15-minute successor (Imbalance Price) starts 11:15 the
 same day and is out of scope, as registered above.
+
+---
+
+# The decision machine, registered 11 September 2026 (research/decision.py)
+
+One intraday position per hour, run end to end on the hourly balancing data used above: a registered
+rule, a learned gate, guards that refuse, a replay against an honest clock, and a fault injector.
+
+**Disclosure.** A first dry run on 10 to 11 September used a stricter age limit (3), an "edge floor"
+guard and an override role for the learned gate, and printed separate-period numbers before the
+choices below were fixed on the even weeks. Those numbers were: DK1 rule 8.55, learned alone 8.59 EUR
+per unit hour, 4,511 of 10,284 hours refused. The choices below were then made on the even weeks of
+the single-pricing training years only, and the separate period was computed once more with them.
+
+- Signal: the sign of the last settled nonzero gap (imbalance price minus day-ahead price). At the
+  gate, one hour before delivery, the latest settled hour is t-2. Age = hours since the hour that gave
+  the sign. Rule: take that sign, one unit; P&L = sign times gap minus 0.6 EUR, the v1 cost.
+- Guards (default, decided on the even weeks): the settled hour t-2 must exist (feed); that hour must
+  have had a direction, a nonzero gap (when it was zero, trading on the last sign before it lost money
+  on the even weeks); the feed may be late by at most the number of hours at which the rule still keeps half of
+  its fresh-feed value on the even weeks (the lag table; the limit is set per zone); the hour must be in the
+  single-pricing regime. Not adopted: an "edge floor" guard (median |gap| of the last
+  six settled hours above the cost), because on the even weeks the hours it would refuse paid about
+  11 EUR each; it stays on the page as a fault. A capacity-step-month guard is also a fault, not a default.
+- Learned gate: a two-layer network (10 inputs listed in the model card, 16 tanh units, PyTorch), fit
+  on the odd ISO weeks of November 2021 to December 2023, measured on the even weeks. Two roles are
+  measured. Override: where the gate is confident, does its sign beat the rule's? Veto: the gate's
+  probability that the rule's direction is right, P, must clear a threshold q or the hour is refused.
+  Authority is earned on the even weeks: the veto threshold is the largest q on the grid 0.50 to 0.80
+  (step 0.05) at which the kept hours' total P&L is not below the no-veto total; the override role is
+  granted only where the gate's sign beats the rule's by two points or more, else not at all.
+- Separate period, January 2024 to 4 March 2025, computed once with the choices above. Reported per
+  arm: hours traded and refused by reason, hit rate, mean and median P&L per unit hour, standard
+  error, best-decile share, and the mean of what the refused hours would have done under the rule.
+- Faults (act three): the settled feed one hour late with and without the age guard; a synthetic
+  nightly outage (00:00 to 05:59); the regime guard off; the edge guard on; the capacity-step guard on;
+  the age guard off. Each reported with the same metrics.
+- Everything on the page is an upper bound settled at the imbalance price; a deliberate imbalance is
+  prohibited; no intraday prices are public.

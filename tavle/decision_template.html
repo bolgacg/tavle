@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Can one trading decision run itself?</title>
+<meta name="description" content="One intraday trading decision run end to end on Energinet's public balancing data: a registered rule, a learned gate given only the authority it earned, guards that refuse, a replay of fourteen unseen months, and faults you can switch on.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#faf9f7;--ink:#1a1d21;--soft:#5b6470;--faint:#8b95a1;--rule:#e2e0dc;--rule2:#c9c5be;--panel:#f3f1ed;--card:#fff;
+  --pos:#2f7d54;--neg:#b03a3a;--accent:#2c4a6b;--amber:#c8860d;--s1:#2a78d6;--s2:#eb6834;
+  --serif:'Newsreader',Georgia,serif;--sans:'IBM Plex Sans',system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;padding-bottom:110px}
+a{color:var(--accent);text-decoration:none;font-weight:500}a:hover{text-decoration:underline}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px}
+header{padding:48px 0 30px;border-bottom:1px solid var(--ink)}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(34px,5vw,54px);line-height:1.08;letter-spacing:-.01em;margin:12px 0 14px;max-width:800px;text-wrap:balance}
+.dek{max-width:760px;color:var(--soft);font-size:18.5px;font-family:var(--serif);line-height:1.5}
+.dek strong{color:var(--ink);font-weight:600}
+.byline{margin-top:16px;font-family:var(--mono);font-size:12px;color:var(--faint);display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+section{padding:44px 0 6px}
+.sec-label{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+h2{font-family:var(--serif);font-weight:600;font-size:29px;line-height:1.2;margin-bottom:10px;text-wrap:balance}
+h3{font-family:var(--serif);font-size:20px;font-weight:600}
+p{margin-bottom:12px}
+.lede{color:var(--soft);max-width:760px;margin-bottom:20px}
+.lede strong,.lede em{color:var(--ink)}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:22px 24px;margin-top:16px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-family:var(--mono);font-size:12px;padding:6px 12px;border:1px solid var(--rule2);border-radius:3px;background:var(--card);color:var(--soft);cursor:pointer}
+.chip:hover{color:var(--ink);border-color:var(--soft)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper);font-weight:500}
+.viz{position:relative}.viz svg{width:100%;height:auto;display:block}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--paper);font:12px var(--mono);padding:6px 8px;border-radius:4px;display:none;white-space:nowrap;z-index:5}
+.legend{display:flex;gap:16px;font-size:12px;color:var(--soft);margin:6px 0 0 4px;flex-wrap:wrap}
+.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:16px;height:0;border-top:2px solid;display:inline-block}
+.legend i.bar{height:10px;border:0;width:12px}
+.verdict{margin-top:16px;padding:2px 0 2px 16px;border-left:3px solid var(--accent);font-size:15px;max-width:760px}
+.verdict.sting{border-left-color:var(--neg)}.verdict b{color:var(--accent)}.verdict.sting b{color:var(--neg)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);text-align:right;padding:0 0 8px;border-bottom:1px solid var(--rule)}
+th:first-child{text-align:left}
+td{padding:8px 0;border-bottom:1px solid var(--rule);text-align:right;font-variant-numeric:tabular-nums;vertical-align:top}
+td:first-child{text-align:left}td.l{text-align:left}th+th,td+td{padding-left:14px}td.num{white-space:nowrap}
+tr:last-child td{border-bottom:none}
+.tscroll{overflow-x:auto}
+.note{font-size:12.5px;color:var(--faint);margin-top:10px;line-height:1.5}
+.pos{color:var(--pos)}.neg{color:var(--neg)}
+.hint{font-size:12px;color:var(--faint);line-height:1.45}
+code{font-family:var(--mono);font-size:12.5px}
+.quote{font-family:var(--serif);font-size:17px;color:var(--ink);border-left:3px solid var(--amber);padding:2px 0 2px 16px;margin:14px 0;max-width:760px}
+.quote small{display:block;font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:6px}
+.timeline{position:relative;margin:10px 0 6px}
+.timeline svg{width:100%;height:auto;display:block}
+@media (max-width:640px){.timeline{overflow-x:auto;-webkit-overflow-scrolling:touch}.timeline svg{min-width:640px}}
+.tl-ev{cursor:pointer}
+.tl-note{min-height:3.2em;font-size:14.5px;color:var(--ink);margin-top:8px;padding:10px 14px;background:var(--panel);border-radius:4px}
+.limits{margin-top:22px;border-left:3px solid var(--neg);padding:2px 0 2px 16px;max-width:760px}
+.limits p{font-size:14px;color:var(--soft)}
+.small{font-size:13.5px;color:var(--soft)}
+.gloss{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px 24px;font-size:13px;color:var(--soft);margin-top:10px}
+.gloss b{color:var(--ink);font-family:var(--mono);font-size:12px;font-weight:500}
+footer{border-top:1px solid var(--rule);margin-top:44px;padding:20px 0 30px;font-family:var(--mono);font-size:12px;color:var(--faint)}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+/* guided tour: spotlight, card beside the element */
+#tour{position:absolute;top:0;left:0;right:0;z-index:50;display:none;pointer-events:none}
+#tour.on{display:block}
+.tour-hl{position:absolute;border:2px solid var(--accent);border-radius:8px;box-shadow:0 0 0 9999px rgba(26,29,33,.55);transition:all .35s ease;pointer-events:none}
+.tour-card{position:absolute;width:min(400px,calc(100vw - 32px));background:var(--card);border:1px solid var(--rule2);border-radius:8px;padding:18px 20px;box-shadow:0 6px 30px rgba(0,0,0,.18);pointer-events:auto}
+.tour-card .tk{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.tour-card p{font-size:14px;line-height:1.55;color:var(--ink);margin:0 0 12px}
+.tour-nav{display:flex;align-items:center;gap:8px}
+.tour-nav .dots{flex:1;display:flex;gap:5px}
+.tour-nav .dots i{width:6px;height:6px;border-radius:50%;background:var(--rule2)}
+.tour-nav .dots i.on{background:var(--accent)}
+.tour-btn{font-family:var(--mono);font-size:12px;padding:7px 14px;border-radius:4px;border:1px solid var(--rule2);background:var(--card);color:var(--soft);cursor:pointer}
+.tour-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.tour-open{font-family:var(--mono);font-size:12px;padding:6px 12px;border-radius:4px;border:1px solid var(--accent);background:var(--card);color:var(--accent);cursor:pointer}
+.tour-open:hover{background:var(--accent);color:#fff}
+/* controls that look like controls */
+.tl-ev circle{transition:stroke-width .15s, r .15s}
+.tl-ev:hover circle{stroke-width:4}
+.tl-ev text.n{font-weight:600;fill:var(--ink)}
+@keyframes ring{0%{r:9;opacity:.9}100%{r:22;opacity:0}}
+.tl-ev .ring{fill:none;stroke:var(--neg);stroke-width:2;animation:ring 1.6s ease-out infinite}
+.stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:0;background:var(--panel);border:1px solid var(--rule);border-radius:6px;overflow:hidden;margin-top:14px}
+.stat>div{padding:12px 14px;border-left:1px solid var(--rule)}.stat>div:first-child{border-left:none}
+.stat .k{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+.stat .n{font-family:var(--mono);font-size:20px;font-weight:500}.stat .s{font-size:11.5px;color:var(--soft);margin-top:3px}
+.howto{font-size:13px;color:var(--soft);margin:8px 0 0;line-height:1.5}
+.howto b{color:var(--ink);font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin-right:6px}
+.card-title{font-family:var(--serif);font-size:20px;font-weight:600;margin-bottom:4px}
+.pill{display:inline-block;font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--rule2);border-radius:3px;padding:3px 7px;color:var(--soft);white-space:nowrap;margin-left:6px}
+.pill.mid{color:var(--amber);border-color:var(--amber)}
+.why{font-size:14.5px;color:var(--ink);background:var(--panel);border-radius:4px;padding:10px 14px;margin:0 0 12px}
+.why b{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-right:6px}
+.qa{display:grid;grid-template-columns:1fr 1fr;gap:10px 22px;margin:18px 0 6px;max-width:860px}
+.qa div{border-top:1px solid var(--rule);padding-top:8px;font-size:14.5px;line-height:1.5;color:var(--muted)}
+.qa b{display:block;font-family:var(--serif);font-size:17px;color:var(--ink);font-weight:600;margin-bottom:2px}
+@media (max-width:640px){.qa{grid-template-columns:1fr}}
+.hyp{background:var(--panel);border-radius:4px;padding:12px 14px;margin:0 0 14px;font-size:14.5px;display:grid;grid-template-columns:auto 1fr;gap:6px 12px}
+.hyp b{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);padding-top:3px}
+.hyp span{color:var(--ink)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+
+/* the decision page: console strip, sliders, ledger */
+.strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:12px 0 10px}
+@media (max-width:900px){.strip{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.strip{grid-template-columns:1fr}}
+.box{border:1px solid var(--rule);border-radius:6px;padding:10px 12px;background:var(--panel);min-height:128px}
+.box .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+.box .n{font-family:var(--mono);font-size:21px;margin:4px 0 3px;color:var(--ink)}
+.box .s{font-size:12.5px;color:var(--soft);line-height:1.4}
+.box.lit{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.box.ref{border-color:var(--neg);background:color-mix(in srgb,var(--neg) 8%,var(--panel))}
+.sliderrow{display:flex;align-items:center;gap:14px;margin:8px 0 6px;flex-wrap:wrap}
+.sliderrow input[type=range]{flex:1;min-width:220px;accent-color:var(--accent)}
+.sliderval{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.hint{font-size:13px;color:var(--soft);margin:4px 0 6px}.hint b{color:var(--ink)}
+tr.hi td{background:color-mix(in srgb,var(--accent) 10%,transparent)}
+tr.ref td{background:color-mix(in srgb,var(--neg) 7%,transparent)}
+.domain svg{width:100%;height:auto;display:block}
+.dm rect{transition:stroke .15s}.dm:hover rect,.dm:focus rect{stroke:var(--accent)}
+.method{display:grid;grid-template-columns:110px 1fr;gap:6px 14px;font-size:13.5px;margin:18px 0}
+.method b{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft);padding-top:3px}
+.terms{display:grid;grid-template-columns:1fr 1fr;gap:6px 22px;font-size:13.5px;color:var(--soft)}
+@media (max-width:700px){.terms{grid-template-columns:1fr}.method{grid-template-columns:1fr}}
+.terms b{color:var(--ink);font-weight:600}
+#fail p{font-size:14px;margin:10px 0}
+@media (max-width:640px){.domain{overflow-x:auto;-webkit-overflow-scrolling:touch}.domain svg{min-width:640px}}
+
+</style>
+</head>
+<body>
+
+<header><div class="wrap">
+  <div class="eyebrow">Work sample &middot; one trading decision run end to end on Energinet's public balancing data &middot; a learned gate given only the authority it earned</div>
+  <h1>Can one trading decision run itself?</h1>
+  <p class="dek">Every hour, Denmark's balancing market settles who was short and who was long. The direction repeats from
+  one hour to the next far more often than not. This page builds a machine around that one fact: a registered rule, a
+  learned gate, guards that refuse, a replay of fourteen months it never saw, and a set of faults you can switch on.
+  Every number below is computed in your browser from the same per-hour data the build script used.</p>
+  <div class="qa">
+    <div><b>Did it run itself?</b>Yes. In <span class="num" id="dek-traded"></span> the machine traded <span class="num" id="dek-n"></span> of the hours and refused the rest; the refused hours would have <span class="num" id="dek-cf"></span> each.</div>
+    <div><b>What are the guards worth?</b>The mean per traded hour is <span class="num" id="dek-mean"></span> against <span class="num" id="dek-always"></span> when trading every hour.</div>
+    <div><b>How much authority did the learned gate earn?</b><span id="dek-gate"></span></div>
+    <div><b>When must it refuse?</b>When the last settled hour had no direction, when the feed is more than <span class="num" id="dek-late"></span> late, before single pricing, and when the feed has a hole.</div>
+  </div>
+  <div class="byline"><span>Bolga&ccedil; G&uuml;len &middot; Odense, 2026</span><span>&middot;</span>
+    <a href="https://github.com/bolgacg/tavle/blob/master/research/PREREGISTRATION.md">the registration</a><span>&middot;</span>
+    <a href="https://github.com/bolgacg/tavle/blob/master/research/decision.py">the build script</a><span>&middot;</span>
+    <a href="../wind/">the study this grew from</a>
+    <button class="tour-open" id="tourbtn">Walk me through it</button></div>
+</div></header>
+
+<section id="primer"><div class="wrap">
+  <div class="sec-label">Before the machine &middot; five things to know</div>
+  <p>Denmark has two price zones, <b>DK1</b> (Jutland and Funen) and <b>DK2</b> (Zealand). Each hour gets a <b>day-ahead price</b>
+    from an auction the day before. When the system then turns out short of power, Energinet activates reserves and the
+    <b>imbalance price</b> ends above the day-ahead price; when it has too much, below. This page calls the difference the
+    <b>gap</b>, in euros per megawatt-hour. When nothing had to be regulated the gap is zero.</p>
+  <p>The gap for an hour is settled and published shortly after the hour. A position for hour t must be placed in the
+    intraday market by the <b>gate</b>, one hour before delivery, so the freshest settled hour a machine can see is t-2.</p>
+  <p>The <b>rule</b> is the one registered in the study this page grew from: take the sign of the last settled gap, one unit,
+    for a cost of 0.6 euros per hour. The <b>learned gate</b> is a small neural network that gives the probability that
+    the rule's direction is right. The <b>guards</b> are checks that refuse an hour: no settled data, no direction in it,
+    a late feed, the wrong settlement regime.</p>
+  <p>Authority is earned, not granted. Every choice in the machine, which guards are on, how late the feed may be, what
+    the gate is allowed to do, was measured on the even weeks of November 2021 to December 2023 and frozen. The odd weeks
+    fitted the gate. January 2024 to 4 March 2025 was then replayed once and is called the separate period.</p>
+  <p>Nothing here is a strategy. A deliberate imbalance is prohibited, so the legitimate position is an intraday trade,
+    and no intraday prices are public. Every euro figure is an upper bound settled at the imbalance price, as in the study.</p>
+  <div class="card" id="t-domain">
+    <div class="card-title">The machine, drawn once</div>
+    <div class="domain" id="domain"></div>
+    <p class="howto"><b>how to read</b>Time runs left to right for one delivery hour t. The five boxes are the machine's steps, in the order they run at the gate. <b>Hover a box</b> for what it uses.</p>
+  </div>
+</div></section>
+
+<section id="words"><div class="wrap">
+  <div class="sec-label">In your ad's words</div>
+  <div class="quote">"develop fully automated, machine learning-driven trading strategies" &middot; "convert large datasets into trading signals" &middot; "move research into production"
+    <span class="who">Danske Commodities, Quantitative Analyst for Short-term Automated Trading, September 2026.</span></div>
+  <p class="small">This page is one decision automated end to end on public data, with the learned part given exactly the authority its measured error earns and a record of every refusal. It is the shape of the loop, not a product.</p>
+</div></section>
+
+<section id="act1"><div class="wrap">
+  <div class="sec-label">Act one &middot; One hour, one decision</div>
+  <h2>The decision runs in five steps, and you can watch any hour</h2>
+  <div class="hyp">
+    <b>what runs</b><span>Signal: the sign of the last settled gap. Rule: take it. Learned gate: its probability that the rule is right, shown at the authority it earned. Guards: feed, direction, lateness, regime. Action: one unit, settled at the gap minus the cost.</span>
+    <b>why it matters</b><span>A machine that trades alone must be readable hour by hour: what it saw, what it decided, and what it refused. This act is that record.</span>
+  </div>
+  <div class="card" id="t-console">
+    <div class="chips" id="a1-ctl"></div>
+    <p class="hint"><b>Drag the hour.</b> Every box recomputes for the hour under the thumb; the ledger keeps the hours around it.</p>
+    <div class="sliderrow"><input type="range" id="a1-hour" min="0" max="100" value="0" step="1"><span class="sliderval" id="a1-hour-val"></span></div>
+    <div class="strip" id="a1-strip"></div>
+    <p class="howto"><b>what you see</b>the five steps of one automated decision, left to right, for the hour under the thumb. <b>how to read</b>each box says what it saw and what it decided; a red box is a refusal and names the guard. <b>take from it</b>the learned gate's word is shown, not used: see act two for why.</p>
+  </div>
+  <div class="card" id="t-ledger">
+    <div class="card-title">The ledger around that hour</div>
+    <div class="tscroll"><table id="a1-ledger"></table></div>
+    <div class="verdict"><b id="a1-open"></b> <span id="a1-verdict"></span></div>
+  </div>
+</div></section>
+
+<section id="act2"><div class="wrap">
+  <div class="sec-label">Act two &middot; The learned gate</div>
+  <h2>How much should a learned gate be allowed to decide?</h2>
+  <div class="hyp">
+    <b>prediction</b><span>Measured on the even weeks, the gate earns authority in one of two roles: overriding the rule's direction where it is confident, or vetoing hours where it doubts the rule. It gets only what it earns; the separate period then shows what that was worth.</span>
+    <b>baseline</b><span>The rule with the guards and no learned gate.</span>
+    <b>caveat</b><span>Both roles are measured on the even weeks of the training years. The separate period is scored once and never used to choose.</span>
+  </div>
+  <div class="card" id="t-authority">
+    <div class="chips" id="a2-ctl"></div>
+    <p class="hint"><b>Drag the veto threshold.</b> Hours where the gate's probability that the rule is right falls below it are refused. The chips set it to what the gate earned, to twice the share it earned, or hand the gate the direction.</p>
+    <div class="sliderrow"><input type="range" id="a2-q" min="0.5" max="0.8" value="0.5" step="0.05"><span class="sliderval" id="a2-q-val"></span></div>
+    <div class="chips" id="a2-modes"></div>
+    <div class="tscroll"><table id="a2-table"></table></div>
+    <p class="howto"><b>what you see</b>five ways to run the same decision on the same hours of the separate period. <b>how to read</b>one row per arm; the mean is an upper bound per traded hour; the last column is what the refused hours would have done under the rule. <b>take from it</b><span id="a2-take"></span></p>
+    <div class="verdict"><b id="a2-open"></b> <span id="a2-verdict"></span></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Where the gate doubts the rule, is the rule wrong?</div>
+    <div class="viz" id="a2-veto-chart"></div>
+    <p class="howto"><b>what you see</b>the even weeks: the mean result of the hours the gate would veto at each threshold. <b>how to read</b>a bar above zero means the doubted hours were profitable, so vetoing them costs money. <b>take from it</b><span id="a2-veto-take"></span></p>
+  </div>
+  <div class="card">
+    <div class="card-title">Where the gate is confident, does it beat the rule?</div>
+    <div class="tscroll"><table id="a2-override"></table></div>
+    <p class="howto"><b>what you see</b>the even weeks, sliced by the gate's confidence. <b>how to read</b>hours where the gate is in its most confident share; the two hit rates, and how often the gate simply agreed with the rule. <b>take from it</b><span id="a2-over-take"></span></p>
+  </div>
+  <div class="card">
+    <div class="card-title">The result over time</div>
+    <div class="viz" id="a2-walk"></div>
+    <p class="howto"><b>what you see</b>the running total for the rule with guards and for the rule with the veto at the threshold above, one unit, from single pricing to the end of the data. <b>how to read</b>the dashed line is where the training years end; only the right side was never used to choose anything. <b>take from it</b>the gap between the lines is what the veto is worth at that threshold.</p>
+  </div>
+</div></section>
+
+<section id="act3"><div class="wrap">
+  <div class="sec-label">Act three &middot; The refusals</div>
+  <h2>When must the machine refuse?</h2>
+  <div class="hyp">
+    <b>what runs</b><span>The same replay with one thing broken or one guard changed. The panel shows which guard fired, how many hours it refused, what the machine still earned, and what the refused hours would have done.</span>
+    <b>why it matters</b><span>A decision that runs alone is only as good as its refusals. A guard that refuses profitable hours costs money; a guard that lets a late feed through loses it. Both are measured here, not assumed.</span>
+  </div>
+  <div class="card" id="t-faults">
+    <div class="chips" id="a3-ctl"></div>
+    <div class="chips" id="a3-faults"></div>
+    <p class="hint"><b>Flip a fault on.</b> The guards decide; the panel shows what the machine did instead of trading.</p>
+    <div class="stat" id="a3-stat"></div>
+    <div class="tscroll"><table id="a3-table"></table></div>
+    <div class="verdict"><b id="a3-open"></b> <span id="a3-verdict"></span></div>
+  </div>
+  <div class="card">
+    <div class="card-title">How stale is too stale</div>
+    <div class="viz" id="a3-lag"></div>
+    <p class="howto"><b>what you see</b>the even weeks: what the rule earns per hour when the freshest settled hour is d hours late. <b>how to read</b>the first bar is a feed on time; the limit is the last bar that keeps half of it. <b>take from it</b><span id="a3-lag-take"></span></p>
+  </div>
+</div></section>
+
+<section id="coda"><div class="wrap">
+  <div class="sec-label">Model card, failures, limits, terms</div>
+  <h2>What was trained, what it is worth, and what went wrong</h2>
+  <div class="card" id="t-card">
+    <div class="card-title">Model card: the learned gate</div>
+    <div class="stat" id="mc-stat"></div>
+    <div class="tscroll"><table id="mc-table"></table></div>
+    <div class="viz" id="mc-rel"></div>
+    <p class="howto"><b>what you see</b>reliability by decile, on the even weeks and on the separate period. <b>how to read</b>a point on the diagonal means a stated 70 percent came true 70 percent of the time. <b>take from it</b><span id="mc-take"></span></p>
+  </div>
+  <div class="card" id="t-fail">
+    <div class="card-title">Honest failures</div>
+    <div id="fail"></div>
+  </div>
+  <div class="method">
+    <b>data</b><span>Energinet's hourly imbalance settlement (RegulatingBalancePowerdata) to 4 March 2025, where that series ends and the 15-minute successor begins; its mFRR activation volumes; Forecasts_Hour at the day-ahead and five-hour horizons; settled consumption; installed capacity per municipality. All carried by the <a href="../">tavle</a> platform.</span>
+    <b>split</b><span>Odd ISO weeks of November 2021 to December 2023 fit the gate. Even weeks measured every choice. January 2024 to 4 March 2025 was replayed once.</span>
+    <b>disclosure</b><span>A first dry run used a stricter set of guards and printed separate-period numbers before the choices were frozen; the registration lists them. The choices were then made on the even weeks only and the separate period computed again.</span>
+    <b>check</b><span id="selfcheck">checking the browser's replay against the build script's numbers</span>
+  </div>
+  <div class="limits">
+    <h3 style="font-size:17px;margin-bottom:6px">Limits</h3>
+    <p>Every euro figure is an upper bound settled at the imbalance price; an intraday position would only approach it, and
+    a deliberate imbalance is prohibited. The signal is the settled gap, published after the hour; a live desk would use the
+    activation direction as it happens, which this page does not load. The feed's lateness and the outage are injected, not
+    observed. The imbalance series is hourly and ends 4 March 2025; the 15-minute successor is not loaded. One unit, no sizing:
+    the gate's probability is worth more as a size than as a vote, and that is the next thing to measure, not measured here.
+    Two zones, one country, one author who chose the questions.</p>
+  </div>
+  <h3 style="margin-top:24px;font-size:17px">Seven terms</h3>
+  <div class="terms">
+    <div><b>gap</b> imbalance price minus day-ahead price for an hour; positive when the system was short, zero when nothing was regulated</div>
+    <div><b>gate</b> the moment a position for hour t must be placed, one hour before delivery; the freshest settled hour is t-2</div>
+    <div><b>rule</b> take the sign of the last settled gap, one unit, at a cost of 0.6 euros per hour</div>
+    <div><b>learned gate</b> a small network that gives the probability the rule's direction is right for this hour</div>
+    <div><b>guard</b> a check that refuses an hour before any position is taken</div>
+    <div><b>authority</b> what the learned gate is allowed to change, granted only where the even weeks showed it helps</div>
+    <div><b>separate period</b> January 2024 to 4 March 2025, replayed once after every choice was frozen</div>
+  </div>
+</div></section>
+
+<footer><div class="wrap"><span>Bolga&ccedil; G&uuml;len &middot; every number on this page is generated by the build script from the sources named above, or recomputed in the browser from the same per-hour data, not typed</span><a href="https://github.com/bolgacg/tavle">github.com/bolgacg/tavle</a></div></footer>
+<div id="tour"><div class="tour-hl" id="tour-hl"></div><div class="tour-card" id="tour-card"></div></div>
+
+<script>
+const D = __DATA__;
+const $ = s => document.querySelector(s);
+const fmt = (n,d) => n == null ? "" : Number(n).toLocaleString("en-GB",{maximumFractionDigits: d==null?2:d});
+const S = {DK1:"var(--s1)", DK2:"var(--s2)"};
+function chips(id, items, cur, on){ $(id).innerHTML=items.map(([k,l])=>`<button class="chip" data-k="${k}" aria-pressed="${k===cur}">${l}</button>`).join(""); $(id).addEventListener("click",e=>{const b=e.target.closest("button"); if(!b)return; $(id).querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); on(b.dataset.k);}); }
+function twoChips(id, cur, on){ // zone + period in one row
+  $(id).innerHTML=["DK1","DK2"].map(a=>`<button class="chip" data-a="${a}" aria-pressed="${a===cur.area}">${a}</button>`).join("")+`<span style="width:12px"></span>`+[["training","training years"],["holdout","2024 to 2025"]].map(([p,l])=>`<button class="chip" data-p="${p}" aria-pressed="${p===cur.period}">${l}</button>`).join("");
+  $(id).addEventListener("click",e=>{const b=e.target.closest("button"); if(!b)return; if(b.dataset.a){cur.area=b.dataset.a; $(id).querySelectorAll("button[data-a]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));} else {cur.period=b.dataset.p; $(id).querySelectorAll("button[data-p]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));} on();});
+}
+
+
+/* ---------- generic bars ---------- */
+function vizW(el){ return Math.max(280, Math.round(el.getBoundingClientRect().width||960)); }
+function bars(el, groups, opts){
+  el.querySelectorAll("svg,.legend").forEach(n=>n.remove()); el._redraw=()=>bars(el,groups,opts);
+  const W=vizW(el),H=opts.h||280,P={l:52,r:12,t:16,b:40}, narrow=W<520, fs=narrow?9.5:11;
+  const vals=groups.flatMap(g=>g.series.map(s=>s.v)).filter(v=>v!=null);
+  const y0=Math.min(0,...vals), y1=Math.max(0,...vals)*1.1||1;
+  const Y=v=>P.t+(1-(v-y0)/((y1-y0)||1))*(H-P.t-P.b);
+  const n=groups.length, bw=(W-P.l-P.r)/n, k=groups[0].series.length, w=Math.min(28,(bw-8)/k);
+  let g="";
+  for(let i=0;i<=4;i++){const v=y0+(y1-y0)*i/4; g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--rule)"/><text x="${P.l-7}" y="${Y(v)+4}" text-anchor="end" font-size="${fs}" fill="var(--faint)" font-family="var(--mono)">${fmt(v,opts.dec??0)}</text>`}
+  g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--soft)"/>`;
+  groups.forEach((gr,gi)=>{const x0=P.l+gi*bw+(bw-k*w-(k-1)*3)/2;
+    gr.series.forEach((s,si)=>{if(s.v==null)return; const x=x0+si*(w+3), y=Y(Math.max(0,s.v)), h=Math.abs(Y(s.v)-Y(0));
+      g+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${s.color}" rx="2"><title>${gr.label}, ${s.name}: ${fmt(s.v,opts.dec??2)}</title></rect>`});
+    const stagger=narrow&&n>3, ly=stagger?(H-24+(gi%2)*12):(H-14);
+    g+=`<text x="${P.l+gi*bw+bw/2}" y="${ly}" text-anchor="middle" font-size="${fs}" fill="var(--faint)" font-family="var(--mono)">${gr.label}</text>`});
+  if(opts.xlabel&&!narrow) g+=`<text x="${W/2}" y="${H-1}" text-anchor="middle" font-size="11.5" fill="var(--soft)">${opts.xlabel}</text>`;
+  el.insertAdjacentHTML("beforeend", `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${opts.label}">${g}</svg><div class="legend">${groups[0].series.map(s=>`<span><i class="bar" style="background:${s.color}"></i>${s.name}</span>`).join("")}</div>`);
+}
+function line(el, series, opts){
+  el.querySelectorAll("svg,.legend").forEach(n=>n.remove()); el._redraw=()=>line(el,series,opts);
+  const W=vizW(el),H=opts.h||260,P={l:52,r:12,t:12,b:30}, narrow=W<520, fs=narrow?9.5:11, nx=narrow?2:4;
+  const xs=series.flatMap(s=>s.pts.map(p=>p.x)), ys=series.flatMap(s=>s.pts.map(p=>p.y));
+  const x0=Math.min(...xs), x1=Math.max(...xs), y0=Math.min(0,...ys)*1.05, y1=Math.max(0,...ys)*1.05||1;
+  const X=x=>P.l+(x-x0)/((x1-x0)||1)*(W-P.l-P.r), Y=y=>P.t+(1-(y-y0)/((y1-y0)||1))*(H-P.t-P.b);
+  let g="";
+  for(let i=0;i<=4;i++){const v=y0+(y1-y0)*i/4; g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--rule)"/><text x="${P.l-7}" y="${Y(v)+4}" text-anchor="end" font-size="${fs}" fill="var(--faint)" font-family="var(--mono)">${fmt(v,0)}</text>`}
+  g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--soft)"/>`;
+  for(let i=0;i<=nx;i++){const v=x0+(x1-x0)*i/nx; g+=`<text x="${X(v)}" y="${H-8}" text-anchor="${i===0?"start":i===nx?"end":"middle"}" font-size="${fs}" fill="var(--faint)" font-family="var(--mono)">${opts.xlabel(v)}</text>`}
+  if(opts.mark){g+=`<line x1="${X(opts.mark)}" x2="${X(opts.mark)}" y1="${P.t}" y2="${H-P.b}" stroke="var(--amber)" stroke-dasharray="4 3"/><text x="${X(opts.mark)+(X(opts.mark)>W*0.6?-5:5)}" y="${P.t+12}" text-anchor="${X(opts.mark)>W*0.6?"end":"start"}" font-size="10.5" fill="var(--amber)" font-family="var(--mono)">${narrow?String(opts.markLabel||"").split(",")[0]:(opts.markLabel||"")}</text>`}
+  if(opts.marks){opts.marks.forEach((m,i)=>{g+=`<line x1="${X(m.x)}" x2="${X(m.x)}" y1="${P.t}" y2="${H-P.b}" stroke="var(--pos)" stroke-dasharray="2 3"/><text x="${X(m.x)+(X(m.x)>W*0.85?-4:4)}" y="${H-P.b-6-i*12}" text-anchor="${X(m.x)>W*0.85?"end":"start"}" font-size="10" fill="var(--pos)" font-family="var(--mono)">${m.label}</text>`})}
+  g+=series.map(s=>`<path d="${s.pts.map((p,i)=>(i?"L":"M")+X(p.x).toFixed(1)+" "+Y(p.y).toFixed(1)).join(" ")}" fill="none" stroke="${s.color}" stroke-width="2.2" stroke-linejoin="round"/>`).join("");
+  el.insertAdjacentHTML("beforeend", `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${opts.label}">${g}</svg><div class="legend">${series.map(s=>`<span><i style="border-top-color:${s.color}"></i>${s.name}</span>`).join("")}</div>`);
+}
+
+
+
+/* ---------- the machine, mirrored from research/decision.py ---------- */
+const Z = D.zones;
+const REASON = D.reasons;
+const HOUR = 3600e3;
+function zstart(z){ return Date.parse(z.start.replace(" ","T")+":00Z"); }
+function hourLabel(z, t){ const d=new Date(zstart(z)+t*HOUR); return d.toISOString().slice(0,16).replace("T"," ")+" UTC"; }
+function direction(gap, delay){
+  const n=gap.length, k=2+(delay||0); const dir=new Float64Array(n).fill(NaN), settled=new Uint8Array(n);
+  for(let t=k;t<n;t++){ const g=gap[t-k]; if(g==null) continue; settled[t]=1; dir[t]=Math.sign(g); }
+  return {dir, settled};
+}
+function simulate(z, o){
+  o=o||{}; const gap=z.gap, n=gap.length, p=z.p, delay=o.delay||0;
+  const {dir,settled}=direction(gap, delay);
+  const g=Object.assign({}, D.default_guards, o.guards||{});
+  const reason=new Uint8Array(n), pos=new Float64Array(n), pnl=new Float64Array(n), cf=new Float64Array(n).fill(NaN), prule=new Float64Array(n);
+  const start=zstart(z), outage=o.outage||null;
+  for(let t=0;t<n;t++){
+    const single=t>=z.single_start_index; let r=0;
+    if(g.regime && !single) r=3;
+    if(!r && outage){ const hod=new Date(start+t*HOUR).getUTCHours(); if(outage.includes(hod)) r=5; }
+    if(!r && g.feed && !settled[t]) r=1;
+    if(!r && g.late && delay>z.late_max) r=8;
+    if(!r && g.direction && (isNaN(dir[t])||dir[t]===0)) r=2;
+    if(!r && g.edge){ const e=t-delay>=0 ? z.edge[t-delay] : 0; if(e) r=4; }
+    if(!r && g.capstep && z.capmonth[t]) r=6;
+    const rule=(isNaN(dir[t])||dir[t]===0)?z.majority_sign:dir[t];
+    const pv=p[t]==null?0.5:p[t]; const pr=rule>0?pv:1-pv; prule[t]=pr;
+    if(!r && o.q!=null && p[t]!=null && pr<o.q) r=7;
+    if(o.always) r=0;
+    reason[t]=r; let ps=rule; if(o.override && p[t]!=null) ps=pv>=0.5?1:-1; pos[t]=ps;
+    const g0=gap[t]==null?0:gap[t];
+    if(!r) pnl[t]=ps*g0-D.cost; else if(gap[t]!=null) cf[t]=rule*g0-D.cost;
+  }
+  return {reason,pos,pnl,cf,prule,dir,settled};
+}
+function summarise(z, sim, from, to){
+  let traded=0, refused=0, sum=0, sumsq=0, hit=0, nz=0, cfs=0, cfn=0; const by={}, pt=[], byYear={};
+  const start=zstart(z);
+  for(let t=from;t<to;t++){
+    const r=sim.reason[t]; const g=z.gap[t]==null?0:z.gap[t];
+    if(r===0){ traded++; const v=sim.pnl[t]; sum+=v; sumsq+=v*v; pt.push(v); if(g!==0){nz++; if(Math.sign(g)===sim.pos[t]) hit++;}
+      const y=new Date(start+t*HOUR).getUTCFullYear(); byYear[y]=byYear[y]||{traded:0,sum:0}; byYear[y].traded++; byYear[y].sum+=v; }
+    else { refused++; by[r]=(by[r]||0)+1; if(!isNaN(sim.cf[t])){cfs+=sim.cf[t]; cfn++;} }
+  }
+  pt.sort((a,b)=>b-a); const top=pt.slice(0,Math.max(1,Math.floor(pt.length/10))).reduce((a,b)=>a+b,0);
+  const mean=traded?sum/traded:null, sd=traded>1?Math.sqrt((sumsq-sum*sum/traded)/(traded-1)):null;
+  const srt=pt.slice().sort((a,b)=>a-b); const med=traded?(traded%2?srt[(traded-1)/2]:(srt[traded/2-1]+srt[traded/2])/2):null;
+  return {hours:to-from, traded, refused, by, hit: nz?hit/nz:null, mean, se: sd!=null?sd/Math.sqrt(traded):null, median:med, total:sum,
+          best: sum!==0&&traded?top/sum:null, cf: cfn?cfs/cfn:null, byYear};
+}
+function monthly(z, sim, from, to){ // cumulative total by month
+  const start=zstart(z); const out=[]; let cum=0, cur=null;
+  for(let t=from;t<to;t++){ const d=new Date(start+t*HOUR); const m=d.getUTCFullYear()*100+d.getUTCMonth();
+    if(m!==cur){ if(cur!==null) out.push({x:Date.UTC(Math.floor(cur/100),cur%100,1), y:cum}); cur=m; }
+    if(sim.reason[t]===0) cum+=sim.pnl[t]; }
+  out.push({x:Date.UTC(Math.floor(cur/100),cur%100,1), y:cum}); return out;
+}
+const nz0 = v=>Math.abs(v)<5e-3?0:v; const R1 = v=>v==null?"":nz0(Number(v)).toFixed(1), R2=v=>v==null?"":nz0(Number(v)).toFixed(2), R0=v=>fmt(v,0), PCT=v=>v==null?"":Math.round(100*v)+"%";
+const SEPLABEL = "January 2024 to 4 March 2025";
+const cfText = cf => cf==null ? "" : (cf<0 ? `would have lost ${R2(-cf)} EUR each under the rule, so refusing them paid` : `would have made ${R2(cf)} EUR each under the rule, so refusing them cost that`);
+const PCT1 = v=>v==null?"":(Math.round(1000*v)/10)+"%";
+
+/* ---------- headline numbers ---------- */
+(function(){
+  const z=Z.DK1, sep=z.sep_start_index, n=z.gap.length;
+  const rule=summarise(z, simulate(z,{}), sep, n), always=summarise(z, simulate(z,{always:true}), sep, n);
+  $("#dek-traded").textContent="DK1, "+SEPLABEL+",";
+  $("#dek-n").textContent=PCT(rule.traded/rule.hours);
+  $("#dek-cf").textContent=(rule.cf<0?"lost ":"made ")+R1(Math.abs(rule.cf))+" euros";
+  $("#dek-mean").textContent=R2(rule.mean)+" euros";
+  $("#dek-always").textContent=R2(always.mean);
+  const c=z.card; const eq=c.earned_q, es=c.earned_removed_share;
+  $("#dek-gate").textContent = es<0.01 ? "None. Where it is confident it agrees with the rule, and where it doubts the rule, the rule is right just as often. Its word is shown in every hour and used in none."
+    : `A veto over ${PCT(es)} of hours, measured on the even weeks.`;
+  $("#dek-late").textContent=z.late_max+(z.late_max===1?" hour":" hours");
+})();
+
+/* ---------- the domain, drawn once ---------- */
+(function(){
+  const steps=[["1 · signal","the last settled gap, hour t-2: its sign and size"],["2 · rule","take that sign, one unit"],["3 · learned gate","P(rule is right) from ten inputs known at the gate"],["4 · guards","feed, direction, lateness, regime: any one refuses"],["5 · action","position for hour t, settled at the gap minus 0.6"]];
+  const W=960,H=190; let g=`<line x1="40" x2="930" y1="150" y2="150" stroke="var(--rule2)" stroke-width="2"/>`;
+  [["t-2","settled hour, the signal",120],["t-1","the gate: position placed",420],["t","delivery",640],["after","settlement: the gap for t",860]].forEach(([k,l,x])=>{g+=`<circle cx="${x}" cy="150" r="7" fill="var(--accent)"/><text x="${x}" y="176" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink)">${k}</text><text x="${x}" y="134" text-anchor="middle" font-size="10.5" fill="var(--soft)">${l}</text>`;});
+  steps.forEach(([k,l],i)=>{const x=40+i*182; g+=`<g class="dm" tabindex="0"><rect x="${x}" y="22" width="170" height="64" rx="6" fill="var(--card)" stroke="var(--rule)"/><text x="${x+10}" y="44" font-size="11" font-family="var(--mono)" fill="var(--accent)">${k}</text><foreignObject x="${x+8}" y="50" width="156" height="34"><div xmlns="http://www.w3.org/1999/xhtml" style="font-size:10.5px;line-height:1.25;color:var(--soft)">${l}</div></foreignObject><title>${l}</title></g>`; if(i<4) g+=`<line x1="${x+170}" x2="${x+182}" y1="54" y2="54" stroke="var(--rule2)"/>`;});
+  g+=`<line x1="420" x2="420" y1="90" y2="140" stroke="var(--rule)" stroke-dasharray="3 3"/><text x="426" y="104" font-size="10" fill="var(--faint)" font-family="var(--mono)">all five run here</text>`;
+  $("#domain").innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="the machine and the timeline of one hour">${g}</svg>`;
+})();
+
+/* ---------- act one: the console ---------- */
+(function(){
+  const cur={area:"DK1"}; let sims={}, idx=null;
+  chips("#a1-ctl", [["DK1","DK1"],["DK2","DK2"]], "DK1", k=>{cur.area=k; setup(); draw();});
+  const sl=$("#a1-hour");
+  function setup(){ const z=Z[cur.area]; sims[cur.area]=sims[cur.area]||simulate(z,{}); sl.min=z.sep_start_index; sl.max=z.gap.length-1;
+    if(idx==null){ const want=Date.UTC(2024,2,14,16); const t=Math.round((want-zstart(z))/HOUR); idx=Math.min(Math.max(t,z.sep_start_index),z.gap.length-1); }
+    sl.value=idx; }
+  function box(k,n,s,cls){ return `<div class="box ${cls||""}"><div class="k">${k}</div><div class="n">${n}</div><div class="s">${s}</div></div>`; }
+  function draw(){
+    const z=Z[cur.area], sim=sims[cur.area], t=idx; const r=sim.reason[t]; const gap=z.gap[t]; const d=sim.dir[t];
+    $("#a1-hour-val").textContent=hourLabel(z,t)+" · hour "+fmt(t-z.sep_start_index+1,0)+" of "+fmt(z.gap.length-z.sep_start_index,0)+" in the separate period";
+    const g2=z.gap[t-2]; const sig = g2==null?"missing":g2===0?"none":(g2>0?"short":"long");
+    let run=0; for(let s=t-2;s>=0&&z.gap[s]!=null&&z.gap[s]!==0&&Math.sign(z.gap[s])===Math.sign(g2);s--) run++;
+    const p=z.p[t]; const pr=sim.prule[t]; const lag=z.card;
+    const guardTxt=`feed ${sim.settled[t]?"present":"missing"} · direction ${sig==="none"?"none":sig==="missing"?"unknown":"present"} · feed on time (limit ${z.late_max} h) · regime ${t>=z.single_start_index?"single pricing":"dual pricing"}`;
+    const boxes=[
+      box("1 · signal", sig, g2==null?"hour t-2 is missing from the settled feed":`hour t-2 settled at a gap of ${R1(g2)} EUR${g2!==0?`, the same sign for ${run} hour${run===1?"":"s"} running`:""}`),
+      box("2 · rule", sig==="short"?"long":sig==="long"?"short":"no vote", sig==="short"||sig==="long"?`follow the last settled direction; on the even weeks this earns ${R1(z.lag_table[0].mean)} EUR per hour with a hit rate of ${z.lag_table[0].hit}`:"the rule needs a nonzero settled gap"),
+      box("3 · learned gate", p==null?"no input":`P ${fmt(pr,2)}`, p==null?"an input for this hour is missing":`probability the rule's direction is right, from ten inputs. Authority earned: ${z.card.earned_removed_share<0.01?"none, so this is advisory":"a veto below "+z.card.earned_q}`, p!=null&&z.card.earned_removed_share<0.01?"":"lit"),
+      box("4 · guards", r===0||r===7?"approve":"refuse", r===0||r===7?guardTxt:REASON[r]+" · "+guardTxt, r&&r!==7?"ref":""),
+      box("5 · action", r===0?(sim.pos[t]>0?"long 1 unit":"short 1 unit"):"no position", r===0?`settled gap ${R1(gap)} EUR, cost 0.6: <span class="${sim.pnl[t]>=0?"pos":"neg"}">${sim.pnl[t]>=0?"+":""}${R1(sim.pnl[t])}</span> upper bound`:`refused by ${REASON[r]}; the hour would have settled at ${gap==null?"a missing gap":R1(gap)+" EUR"}`, r===0?"lit":"ref")];
+    $("#a1-strip").innerHTML=boxes.join("");
+    let rows=`<tr><th class="l">Hour, UTC</th><th>Settled gap at t-2</th><th>Rule</th><th>Gate P(rule right)</th><th>Guards</th><th>Position</th><th>Gap at t</th><th>Result</th></tr>`;
+    for(let s=t-3;s<=t+3;s++){ if(s<z.sep_start_index||s>=z.gap.length) continue; const rr=sim.reason[s]; const gg=z.gap[s-2];
+      rows+=`<tr class="${s===t?"hi":rr?"ref":""}"><td class="l">${hourLabel(z,s).slice(0,16)}${s===t?" · selected":""}</td><td class="num">${gg==null?"missing":R1(gg)}</td><td>${gg==null||gg===0?"no vote":gg>0?"long":"short"}</td><td class="num">${z.p[s]==null?"":fmt(sim.prule[s],2)}</td><td>${rr?"refuse: "+REASON[rr]:"approve"}</td><td>${rr?"none":sim.pos[s]>0?"long 1":"short 1"}</td><td class="num">${z.gap[s]==null?"missing":R1(z.gap[s])}</td><td class="num ${rr?"":sim.pnl[s]>=0?"pos":"neg"}">${rr?"0.0":(sim.pnl[s]>=0?"+":"")+R1(sim.pnl[s])}</td></tr>`; }
+    $("#a1-ledger").innerHTML=rows;
+    const S1=summarise(z,sim,z.sep_start_index,z.gap.length);
+    $("#a1-open").textContent=`The machine traded ${fmt(S1.traded,0)} of ${fmt(S1.hours,0)} hours in ${cur.area} and refused ${fmt(S1.refused,0)}.`;
+    $("#a1-verdict").textContent=`Per traded hour it made ${R1(S1.mean)} EUR (standard error ${R2(S1.se)}), was right ${PCT(S1.hit)} of the time, and its median hour made ${R1(S1.median)}. The refused hours ${cfText(S1.cf)}. Upper bounds settled at the imbalance price.`;
+  }
+  sl.addEventListener("input",()=>{idx=+sl.value; draw();});
+  setup(); draw();
+})();
+
+/* ---------- act two: authority ---------- */
+(function(){
+  const cur={area:"DK1"}; let q=0.5, mode="slider";
+  chips("#a2-ctl", [["DK1","DK1"],["DK2","DK2"]], "DK1", k=>{cur.area=k; q=Z[k].card.earned_q; $("#a2-q").value=q; draw();});
+  chips("#a2-modes", [["earned","as earned"],["double","twice the share it earned"],["override","the gate decides the direction"]], "earned", k=>{mode=k; const c=Z[cur.area].card; if(k==="earned") q=c.earned_q; if(k==="double") q=c.double_q; $("#a2-q").value=q; draw();});
+  const sl=$("#a2-q"); sl.addEventListener("input",()=>{q=+sl.value; mode="slider"; draw();});
+  function row(name, s, note){ return `<tr class="${note==="hi"?"hi":""}"><td class="l">${name}</td><td class="num">${fmt(s.traded,0)}</td><td class="num">${fmt(s.refused,0)}</td><td class="num">${PCT(s.hit)}</td><td class="num">${R2(s.mean)}</td><td class="num">${R2(s.median)}</td><td class="num">${fmt(s.total/1e3,1)}k</td><td class="num">${s.cf==null?"":R2(s.cf)}</td></tr>`; }
+  function draw(){
+    const z=Z[cur.area], c=z.card, sep=z.sep_start_index, n=z.gap.length;
+    const vetoShare=(c.veto_curve.find(v=>Math.abs(v.q-q)<1e-6)||{}).removed_share;
+    $("#a2-q-val").textContent=`veto below P ${fmt(q,2)} · removes ${PCT(vetoShare||0)} of the measured hours · earned ${fmt(c.earned_q,2)}`;
+    const arms=[["Trade every hour, no guards", summarise(z,simulate(z,{always:true}),sep,n)],
+                ["The rule with the guards", summarise(z,simulate(z,{}),sep,n)],
+                [`The rule, veto below P ${fmt(q,2)}`, summarise(z,simulate(z,{q}),sep,n), "hi"],
+                ["The gate decides the direction", summarise(z,simulate(z,{override:true}),sep,n)]];
+    $("#a2-table").innerHTML=`<tr><th class="l">Arm, ${SEPLABEL}</th><th>Traded</th><th>Refused</th><th>Hit</th><th>Mean, EUR</th><th>Median</th><th>Total</th><th>Refused hours would have made</th></tr>`+arms.map(a=>row(a[0],a[1],a[2])).join("");
+    const rule=arms[1][1], veto=arms[2][1], over=arms[3][1];
+    const dm=veto.mean-rule.mean, dt=veto.total-rule.total;
+    const more=veto.refused-rule.refused; $("#a2-take").textContent=`at P ${fmt(q,2)} the veto refuses ${fmt(more,0)} more hour${more===1?"":"s"}; the mean per hour moves by ${dm>=0.005?"+":""}${R2(dm)} EUR and the total by ${(()=>{const k=Math.round(dt/100)/10; const v=Math.abs(k)<0.05?0:k; return (v>0?"+":"")+v.toFixed(1);})()}k EUR.`;
+    const es=c.earned_removed_share;
+    $("#a2-open").textContent = es<0.01 ? "The gate earned no authority in either role." : `The gate earned a veto over ${PCT(es)} of hours.`;
+    $("#a2-verdict").textContent=`On the even weeks, where the gate was confident it agreed with the rule in every confidence slice, so overriding could add nothing; where it doubted the rule, the doubted hours made ${R1(c.veto_curve[2].removed_mean)} EUR each at a threshold of ${c.veto_curve[2].q}, so vetoing them costs money. On the separate period the gate deciding the direction gives ${R2(over.mean)} EUR per hour against the rule's ${R2(rule.mean)}. A better probability, measured by the Brier score in the model card, and no better decision.`;
+    // veto chart (measured set)
+    $("#a2-veto-chart").innerHTML=""; bars($("#a2-veto-chart"), c.veto_curve.map(v=>({label:"P "+fmt(v.q,2)+" ("+PCT1(v.removed_share)+")", series:[{name:"mean result of the hours the gate would veto, EUR per hour, even weeks", v:v.removed_mean==null?0:v.removed_mean, color:S[cur.area]}]})), {label:"vetoed hours' mean by threshold", dec:1, xlabel:"veto threshold (share of hours removed)"});
+    const worst=c.veto_curve.filter(v=>v.removed_mean!=null&&v.removed_share>=0.02); const mn=worst.length?Math.min(...worst.map(v=>v.removed_mean)):null;
+    $("#a2-veto-take").textContent = mn==null?"": (mn>0?`at every threshold that removes 2 percent of hours or more, the doubted hours were profitable (at least ${R1(mn)} EUR each), so the gate's doubt is not a signal.`:`at some thresholds the doubted hours lost money; the earned threshold is where removing them did not lower the total.`);
+    $("#a2-override").innerHTML=`<tr><th class="l">Most confident share</th><th>Hours</th><th>Gate hit</th><th>Rule hit</th><th>Agreed with the rule</th></tr>`+c.override_curve.filter(o=>[0.1,0.3,0.5,0.7,1.0].includes(o.share)).map(o=>`<tr><td class="l">${PCT(o.share)}</td><td class="num">${fmt(o.n,0)}</td><td class="num">${PCT(o.hit_learned)}</td><td class="num">${PCT(o.hit_rule)}</td><td class="num">${PCT(o.agree)}</td></tr>`).join("");
+    const agreeMin=Math.min(...c.override_curve.map(o=>o.agree));
+    $("#a2-over-take").textContent=`in every slice the gate agreed with the rule in ${PCT(agreeMin)} of hours, so its hit rate is the rule's hit rate; the override role was never available to earn.`;
+    // walk-forward
+    const s0=z.single_start_index; const simR=simulate(z,{}), simV=simulate(z,{q});
+    $("#a2-walk").innerHTML=""; line($("#a2-walk"), [{name:"rule with guards, running total, EUR", color:S[cur.area], pts:monthly(z,simR,s0,n)},{name:`rule with veto below P ${fmt(q,2)}`, color:"var(--amber)", pts:monthly(z,simV,s0,n)}], {label:"running total", xlabel:v=>new Date(v).toISOString().slice(0,7), mark:Date.UTC(2024,0,1), markLabel:"separate period begins, Jan 2024"});
+  }
+  q=Z.DK1.card.earned_q; sl.value=q; draw();
+})();
+
+/* ---------- act three: faults ---------- */
+(function(){
+  const cur={area:"DK1"}; let fault="none";
+  const FAULTS=[["none","no fault"],["late1","feed late by 1 hour"],["late3","feed late by 3 hours"],["late6","feed late by 6 hours"],["late6off","6 hours late, lateness guard off"],["outage","nightly outage, 00 to 05 UTC"],["regime","regime guard off"],["edge","edge-floor guard on"],["capstep","capacity-step guard on"],["diroff","direction guard off"]];
+  chips("#a3-ctl", [["DK1","DK1"],["DK2","DK2"]], "DK1", k=>{cur.area=k; draw();});
+  chips("#a3-faults", FAULTS, "none", k=>{fault=k; draw();});
+  function opts(){ const q=Z[cur.area].card.earned_q; switch(fault){
+    case "late1": return {q,delay:1}; case "late3": return {q,delay:3}; case "late6": return {q,delay:6}; case "late6off": return {q,delay:6,guards:{late:false}};
+    case "outage": return {q,outage:[0,1,2,3,4,5]}; case "regime": return {q,guards:{regime:false}}; case "edge": return {q,guards:{edge:true}}; case "capstep": return {q,guards:{capstep:true}}; case "diroff": return {q,guards:{direction:false}}; default: return {q}; } }
+  function draw(){
+    const z=Z[cur.area], n=z.gap.length; const all=fault==="regime"; const from=all?0:z.sep_start_index;
+    const base=summarise(z,simulate(z,{q:z.card.earned_q}),z.sep_start_index,n), s=summarise(z,simulate(z,opts()),from,n);
+    const stat=[["hours traded",fmt(s.traded,0),`of ${fmt(s.hours,0)}${all?" since December 2019":""}`],["mean per traded hour",R2(s.mean)+" EUR",`no fault: ${R2(base.mean)}`],["total",fmt(s.total/1e3,1)+"k EUR",`no fault: ${fmt(base.total/1e3,1)}k`],["refused hours would have made",s.cf==null?"":R2(s.cf)+" EUR",`each, under the rule`]];
+    $("#a3-stat").innerHTML=stat.map(([k,v,t])=>`<div><div class="k">${k}</div><div class="n">${v}</div><div class="s">${t}</div></div>`).join("");
+    const rows=Object.entries(s.by).sort((a,b)=>b[1]-a[1]).map(([r,c])=>`<tr><td class="l">${REASON[r]}</td><td class="num">${fmt(c,0)}</td><td class="num">${PCT(c/s.hours)}</td></tr>`).join("");
+    $("#a3-table").innerHTML=`<tr><th class="l">Guard that refused</th><th>Hours</th><th>Share</th></tr>`+(rows||`<tr><td class="l">nothing refused</td><td></td><td></td></tr>`);
+    const dm=s.mean-base.mean;
+    const text={
+      none:[`No fault: the guards refused ${fmt(s.refused,0)} hours.`,`Almost all of them because the last settled hour had no direction. Those hours ${cfText(s.cf)}: the direction guard removed noise, not profit.`],
+      late1:[`A feed one hour late costs ${R2(-dm)} EUR per traded hour.`,`The machine still trades, on a direction one hour staler. The lag chart below is why: a stale direction pays less every hour it ages.`],
+      late3:[z.late_max>=3?`Three hours late is inside the limit for ${cur.area}; the mean falls by ${R2(-dm)} EUR.`:`Three hours late is beyond the limit for ${cur.area}, so the lateness guard refused every hour.`, z.late_max>=3?`The limit was set on the even weeks where the rule keeps half its fresh value.`:`The refused hours would have made ${R2(s.cf)} EUR each: the guard cost that on the separate period, and it stays because it was set before the separate period was read.`],
+      late6:[`Six hours late, the lateness guard refuses every hour.`,`The refused hours would have made ${R2(s.cf)} EUR each under a six-hour-old direction. That is the price of the limit on this period; the next chip shows what trading through would have done.`],
+      late6off:[`With the lateness guard off, a six-hour-old direction still made ${R2(s.mean)} EUR per hour.`,`Against ${R2(base.mean)} on a fresh feed. The direction persists for hours, as the study found, so staleness costs money slowly; the guard is a limit on that slope, chosen before this period was read.`],
+      outage:[`A nightly outage refuses ${fmt(s.by[5]||0,0)} hours and the machine keeps its mean.`,`The refused night hours would have made ${R2(s.cf)} EUR each. The machine sits out and its record shows why.`],
+      regime:[`With the regime guard off the machine trades through the dual-pricing years.`,`The mean is ${R2(s.mean)} EUR over ${fmt(s.traded,0)} hours since December 2019, but the figure is not honest there: before November 2021 a producer's wrong-direction error settled at the regulating price, not at this series. The guard exists for scope, not profit.`],
+      edge:[`The edge-floor guard refuses ${fmt(s.by[4]||0,0)} hours and moves the mean by ${dm>=0?"+":""}${R2(dm)}.`,`On the even weeks the hours it would refuse made ${R1(z.edge_measured.counterfactual_mean)} EUR each, so it was not adopted. A guard that sounds prudent and costs money.`],
+      capstep:[`The capacity-step guard refuses ${fmt(s.by[6]||0,0)} hours and moves the mean by ${dm>=0?"+":""}${R2(dm)}.`,`The refused hours would have made ${R2(s.cf)} EUR each. Months with a new wind farm are not worse months for this rule.`],
+      diroff:[`With the direction guard off the mean falls from ${R2(base.mean)} to ${R2(s.mean)} EUR.`,`The machine then trades the zero-gap hours on the last sign before them; on the even weeks those hours made ${R2(z.zero_gap_hours.mean_if_traded_on_last_sign)} EUR each. The guard is worth exactly that.`]}[fault];
+    $("#a3-open").textContent=text[0]; $("#a3-verdict").textContent=text[1];
+    $("#a3-lag").innerHTML=""; bars($("#a3-lag"), z.lag_table.map(l=>({label:l.delay===0?"on time":`${l.delay} h late`, series:[{name:"rule's mean per hour, EUR, even weeks", v:l.mean, color:l.delay<=z.late_max?S[cur.area]:"var(--faint)"}]})), {label:"the rule by feed lateness", dec:1, xlabel:"how late the settled feed is"});
+    $("#a3-lag-take").textContent=`on time the rule earns ${R1(z.lag_table[0].mean)} EUR per hour; at ${z.late_max+1} hours late it keeps less than half, so the limit for ${cur.area} is ${z.late_max} hour${z.late_max===1?"":"s"}. Grey bars are beyond the limit.`;
+  }
+  draw();
+})();
+
+/* ---------- model card, failures, self-check ---------- */
+(function(){
+  const z=Z.DK1, c=z.card;
+  $("#mc-stat").innerHTML=[["framework",c.framework,"trained on "+c.device],["inputs",String(c.inputs.length),"the last gap's sign, age and size, its run length, activated mFRR volume, system imbalance, the five-hour wind revision, the forecast share of consumption, hour of day as sine and cosine"],["shape","10 → 16 → 1",`tanh hidden layer, ${c.params} parameters, seed ${c.seed}`],["fitted on",fmt(c.fit.hours,0)+" hours",`odd ISO weeks, ${c.fit.from} to ${c.fit.to}`],["measured on",fmt(c.measured.hours,0)+" hours","even ISO weeks of the same years"],["scored once on",fmt(c.separate.hours,0)+" hours",`${c.separate.from} to ${c.separate.to}`]].map(([k,v,s])=>`<div><div class="k">${k}</div><div class="n" style="font-size:15px">${v}</div><div class="s">${s}</div></div>`).join("");
+  const rows=["DK1","DK2"].map(a=>{const b=Z[a].card.brier; return `<tr><td class="l">${a}</td><td class="num">${b.measured.gate}</td><td class="num">${b.measured.logistic}</td><td class="num">${b.measured.rule_as_probability}</td><td class="num">${b.measured.majority}</td><td class="num"><b>${b.separate.gate}</b></td><td class="num">${b.separate.logistic}</td><td class="num">${b.separate.rule_as_probability}</td><td class="num">${b.separate.majority}</td></tr>`;}).join("");
+  $("#mc-table").innerHTML=`<tr><th class="l">Brier score, lower is better</th><th>gate, even weeks</th><th>logistic</th><th>rule as a probability</th><th>majority</th><th>gate, separate</th><th>logistic</th><th>rule</th><th>majority</th></tr>`+rows;
+  const rel=c.reliability; bars($("#mc-rel"), rel.measured.map((r,i)=>({label:"decile "+r.decile, series:[{name:"stated, even weeks", v:r.predicted, color:"var(--faint)"},{name:"came true, even weeks", v:r.observed, color:S.DK1},{name:"came true, separate period", v:rel.separate[i]?rel.separate[i].observed:0, color:"var(--amber)"}]})), {label:"reliability by decile, DK1", dec:2, xlabel:"deciles of the gate's stated probability that the system is short"});
+  const drift=rel.separate.slice(-3).map((r,i)=>r.predicted-r.observed); const md=Math.max(...drift);
+  $("#mc-take").textContent=`the gate is a better probability than the rule or the majority on both sets (Brier ${c.brier.separate.gate} against ${c.brier.separate.rule_as_probability} on the separate period), and in its top deciles it overstates the chance of a short system on the separate period by up to ${Math.round(100*md)} points.`;
+  // failures
+  const v=z.arms.veto_earned.separate; const worst=z.worst_hours.slice(0,5);
+  const late=z.faults.feed_late_3h, rule=z.arms.rule_guards.separate, always=z.arms.always_rule.separate;
+  $("#fail").innerHTML=`
+  <p><b>The worst hours were invisible to the machine.</b> The five worst traded hours in DK1, ${SEPLABEL}, all shorts against a system that flipped to a large shortage, each after a run of one hour, with the gate's probability that the rule was right between ${fmt(Math.min(...worst.map(w=>w.p_rule_right)),2)} and ${fmt(Math.max(...worst.map(w=>w.p_rule_right)),2)}. Nothing in the ten inputs saw them coming.</p>
+  <div class="tscroll"><table><tr><th class="l">Hour, UTC</th><th>Position</th><th>Gap at t</th><th>Result, EUR</th><th>Run before it</th><th>Gate P(rule right)</th></tr>${worst.map(w=>`<tr><td class="l">${w.hour_utc}</td><td>${w.position>0?"long":"short"}</td><td class="num">${R1(w.gap)}</td><td class="num neg">${R1(w.pnl)}</td><td class="num">${w.run}</td><td class="num">${fmt(w.p_rule_right,2)}</td></tr>`).join("")}</table></div>
+  <p><b>The guards trade volume for quality, and the volume was not free.</b> Trading every hour made ${R2(always.mean)} EUR per hour over ${fmt(always.traded,0)} hours; the guarded machine made ${R2(rule.mean)} over ${fmt(rule.traded,0)}. Per hour the guards more than doubled the result; in total they ${rule.total>=always.total?"also added":"gave up"} ${fmt(Math.abs(rule.total-always.total)/1e3,1)}k EUR over the period.</p>
+  <p><b>The lateness limit cost money on the separate period.</b> It was set on the even weeks at ${z.late_max} hour${z.late_max===1?"":"s"}. Three hours late, the machine ${z.late_max>=3?"still trades":"refuses every hour, and those hours would have made "+R2(late.refused_counterfactual_mean)+" EUR each under a three-hour-old direction"}. The limit stays because it was fixed before this period was read; the chart in act three is the evidence it was fixed on.</p>
+  <p><b>The learned gate's confidence drifted.</b> In its top deciles the stated probability of a short system ran ahead of what came true on the separate period, by up to ${Math.round(100*md)} points. A gate with authority would have been wrong most often exactly where it was surest; this one had none.</p>
+  <p><b>Two hours had a hole in the feed.</b> ${z.feed_gap_hours.map(h=>h.hour_utc).join(" and ")} had no settled value at t-2; the machine sat both out. They settled at ${z.feed_gap_hours.map(h=>R1(h.gap)+" EUR").join(" and ")}.</p>`;
+  // self-check against the build script
+  const chk=[]; ["DK1","DK2"].forEach(a=>{const zz=Z[a]; const s=summarise(zz,simulate(zz,{}),zz.sep_start_index,zz.gap.length); const e=zz.arms.rule_guards.separate;
+    chk.push({a, traded:[s.traded,e.traded], mean:[+s.mean.toFixed(2),e.mean], total:[Math.round(s.total),Math.round(e.total)]});});
+  const ok=chk.every(x=>x.traded[0]===x.traded[1]&&Math.abs(x.mean[0]-x.mean[1])<0.011&&Math.abs(x.total[0]-x.total[1])<=1);
+  $("#selfcheck").textContent= ok ? `the browser's replay of the rule with guards matches the build script in both zones: ${chk.map(x=>`${x.a} ${fmt(x.traded[0],0)} hours, ${R2(x.mean[0])} EUR per hour`).join("; ")}.` : "MISMATCH between the browser's replay and the build script: "+JSON.stringify(chk);
+  console.log("selfcheck", ok, chk);
+})();
+
+const STEPS=[
+ {sel:".qa", k:"Start here · 1 of 8", html:"The four questions this page answers, each with one number computed in your browser from the per-hour data. <b>Read them first</b>; every act below is one of them."},
+ {sel:"#t-domain", k:"The machine · 2 of 8", html:"The five steps and when they run inside one delivery hour. <b>Hover a box</b> for what it uses. Everything the machine sees is settled before the gate."},
+ {sel:"#t-console", k:"Act one · 3 of 8", html:"One hour, one decision. <b>Drag the hour</b> and watch the five boxes recompute; a red box names the guard that refused."},
+ {sel:"#t-ledger", k:"The ledger · 4 of 8", html:"The hours around the one you chose, with what each step said and what the hour settled at. The verdict under it is the whole separate period."},
+ {sel:"#t-authority", k:"Act two · 5 of 8", html:"How much the learned gate is allowed to decide. <b>Drag the veto threshold</b> or press a chip; the table recomputes on hours the gate never saw."},
+ {sel:"#t-faults", k:"Act three · 6 of 8", html:"The refusals. <b>Flip a fault on</b>: a late feed, an outage, a guard switched off or on. The panel says which guard fired and what it cost or saved."},
+ {sel:"#t-card", k:"Model card · 7 of 8", html:"What was trained, on what, and how good its probabilities are against three things that need no model."},
+ {sel:"#t-fail", k:"Honest failures · 8 of 8", html:"What the machine got wrong and what the guards cost. Limits and terms follow. The button at the top restarts this walkthrough."}
+];
+
+(function(){
+  const root=$('#tour'), hl=$('#tour-hl'), card=$('#tour-card'); let idx=0;
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function place(){
+    const st=STEPS[idx]; const elm=document.querySelector(st.sel); if(!elm){next();return;}
+    // geometry in document coordinates, so it does not depend on how far a smooth scroll has got
+    const r=elm.getBoundingClientRect(), sx=window.scrollX, sy=window.scrollY;
+    const docTop=r.top+sy, docLeft=r.left+sx;
+    root.style.height=document.documentElement.scrollHeight+'px';
+    const maxScroll=Math.max(0,document.documentElement.scrollHeight-innerHeight);
+    const target=Math.max(0,Math.min(docTop-14, maxScroll)), vTop=docTop-target;
+    const cw=Math.min(400, innerWidth-32), ch=250;
+    const fitsRight = r.left+r.width+18+cw <= innerWidth-16;
+    // the card never covers the highlight: it goes to the right when there is room, otherwise the
+    // highlight is shortened to leave room for the card below it, inside the viewport
+    const hh = fitsRight ? r.height : Math.max(120, Math.min(r.height, innerHeight - vTop - ch - 40));
+    hl.style.left=(docLeft-8)+'px'; hl.style.top=(docTop-8)+'px'; hl.style.width=(r.width+16)+'px'; hl.style.height=(hh+16)+'px';
+    const dots=STEPS.map((_,i)=>`<i class="${i===idx?'on':''}"></i>`).join('');
+    card.innerHTML=`<div class="tk">${st.k}</div><p>${st.html}</p><div class="tour-nav"><div class="dots">${dots}</div>${idx>0?'<button class="tour-btn" id="tprev">Back</button>':''}<button class="tour-btn" id="tskip">Close</button><button class="tour-btn primary" id="tnext">${idx<STEPS.length-1?'Next':'Done'}</button></div>`;
+    let cx, cy;
+    if(fitsRight){ cx=docLeft+r.width+18; cy=docTop; }
+    else { cx=Math.min(docLeft, sx+innerWidth-16-cw); cy=docTop+hh+22; }
+    card.style.left=Math.max(sx+16,cx)+'px'; card.style.top=Math.max(target+16,cy)+'px';
+    $('#tnext').onclick=next; $('#tskip').onclick=stop; const pv=$('#tprev'); if(pv) pv.onclick=()=>{idx=Math.max(0,idx-1);place();};
+    window.scrollTo({top:target, behavior:reduced?'auto':'smooth'});
+  }
+  function next(){ if(idx>=STEPS.length-1){stop();return;} idx++; place(); }
+  function stop(){ root.classList.remove('on'); try{localStorage.setItem('decision-tour','seen')}catch(e){} }
+  function start(){ idx=0; root.classList.add('on'); place(); }
+  $('#tourbtn').addEventListener('click', start);
+  window.addEventListener('resize', ()=>{ if(root.classList.contains('on')) place(); });
+  if(!location.search.includes("tour=off")) setTimeout(start,700);
+})();
+</script>
+</body>
+</html>

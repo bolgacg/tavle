@@ -7,3 +7,4 @@ dbt/dbt_packages/
 __pycache__/
 .pytest_cache/
 logs/
+research/results/decision_hours.parquet

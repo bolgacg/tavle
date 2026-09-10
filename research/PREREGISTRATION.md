@@ -212,3 +212,37 @@ the single-pricing training years only, and the separate period was computed onc
   the age guard off. Each reported with the same metrics.
 - Everything on the page is an upper bound settled at the imbalance price; a deliberate imbalance is
   prohibited; no intraday prices are public.
+
+---
+
+# The battery, registered 11 September 2026, 00:10 (research/activation.py)
+
+What a prequalified one-megawatt, two-megawatt-hour battery earns in Danish balancing activations as a
+price taker, at the prices Energinet actually paid, and whether the last settled direction helps.
+
+- Data: Energinet's hourly regulating power series (December 2019 to 4 March 2025): the up-regulation
+  price paid to an activated megawatt, the down-regulation price an activated megawatt pays for the
+  energy it takes, activated mFRR volumes, the imbalance price; the day-ahead price for the hour. An hour
+  counts as up-activated when the up price exceeds the day-ahead price or up volume was activated; down
+  likewise. The dominating direction is the side the imbalance price settled on.
+- Asset: 1 MW, 2.2 MWh usable (a two-hour-class store with room for a full charge and a full delivery after
+  losses; at exactly 2.0 the state machine has a dead zone, found in the first run and fixed before any period was
+  read), 0.949 one-way efficiency (0.90 round trip), cycle cost 30 EUR per MWh delivered, starting at 1.1 MWh. Whole-hour, whole-megawatt bids (the Danish minimum). Price taker: a bid at or below
+  the marginal price counts as activated; the marginal bid's partial activation and location limits are ignored
+  and said so.
+- Decision each hour, from information settled by t-2 and the day-ahead price for t: offer up-regulation at
+  the day-ahead price plus a margin m_up when the store holds a full delivery; offer down-regulation at the
+  day-ahead price minus m_down when there is room. Cash: an activated discharge earns the up price minus the
+  cycle cost; an activated charge pays the down price (negative prices pay the battery). When both directions
+  were activated in an hour, only the dominating one can activate the battery.
+- Machine A (flat): one pair (m_up, m_down) from the grid {0, 5, 10, 20, 40, 80} EUR, chosen as the pair
+  with the highest net on the even ISO weeks of November 2021 to December 2023, the battery state running
+  through all hours. Machine B (direction-aware): a pair per last settled direction (up, none, down), chosen
+  on the same even weeks by one pass of coordinate search from A's pair. Baseline: always offer at cost
+  (both margins zero).
+- Separate period, January 2024 to 4 March 2025, replayed once: net per MW-year, discharges and charges,
+  the mean price captured, and the cycle-cost sensitivity (0, 15, 30, 60). Verdict ruler: a two-hour battery
+  costs roughly 30 to 60 thousand euros per MW-year; the page says whether this market alone would pay it.
+- Prediction, written now: the market pays on the order of tens of thousands of euros per MW-year in 2024;
+  the direction-aware pairs beat the flat pair on the even weeks by construction and by less, or not at all, on
+  the separate period. Everything else is reported as found.

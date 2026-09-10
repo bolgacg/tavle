@@ -8,3 +8,4 @@ __pycache__/
 .pytest_cache/
 logs/
 research/results/decision_hours.parquet
+research/results/activation_hours.parquet

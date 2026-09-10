@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What does a one-megawatt battery earn in Danish balancing?</title>
+<meta name="description" content="A one-megawatt, two-hour battery in Danish balancing activations at the prices Energinet actually paid: margins chosen on the even weeks, fourteen unseen months replayed, the direction rule measured and declined.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#faf9f7;--ink:#1a1d21;--soft:#5b6470;--faint:#8b95a1;--rule:#e2e0dc;--rule2:#c9c5be;--panel:#f3f1ed;--card:#fff;
+  --pos:#2f7d54;--neg:#b03a3a;--accent:#2c4a6b;--amber:#c8860d;--s1:#2a78d6;--s2:#eb6834;
+  --serif:'Newsreader',Georgia,serif;--sans:'IBM Plex Sans',system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;padding-bottom:110px}
+a{color:var(--accent);text-decoration:none;font-weight:500}a:hover{text-decoration:underline}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px}
+header{padding:48px 0 30px;border-bottom:1px solid var(--ink)}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(34px,5vw,54px);line-height:1.08;letter-spacing:-.01em;margin:12px 0 14px;max-width:800px;text-wrap:balance}
+.dek{max-width:760px;color:var(--soft);font-size:18.5px;font-family:var(--serif);line-height:1.5}
+.dek strong{color:var(--ink);font-weight:600}
+.byline{margin-top:16px;font-family:var(--mono);font-size:12px;color:var(--faint);display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+section{padding:44px 0 6px}
+.sec-label{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+h2{font-family:var(--serif);font-weight:600;font-size:29px;line-height:1.2;margin-bottom:10px;text-wrap:balance}
+h3{font-family:var(--serif);font-size:20px;font-weight:600}
+p{margin-bottom:12px}
+.lede{color:var(--soft);max-width:760px;margin-bottom:20px}
+.lede strong,.lede em{color:var(--ink)}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:22px 24px;margin-top:16px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-family:var(--mono);font-size:12px;padding:6px 12px;border:1px solid var(--rule2);border-radius:3px;background:var(--card);color:var(--soft);cursor:pointer}
+.chip:hover{color:var(--ink);border-color:var(--soft)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper);font-weight:500}
+.viz{position:relative}.viz svg{width:100%;height:auto;display:block}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--paper);font:12px var(--mono);padding:6px 8px;border-radius:4px;display:none;white-space:nowrap;z-index:5}
+.legend{display:flex;gap:16px;font-size:12px;color:var(--soft);margin:6px 0 0 4px;flex-wrap:wrap}
+.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:16px;height:0;border-top:2px solid;display:inline-block}
+.legend i.bar{height:10px;border:0;width:12px}
+.verdict{margin-top:16px;padding:2px 0 2px 16px;border-left:3px solid var(--accent);font-size:15px;max-width:760px}
+.verdict.sting{border-left-color:var(--neg)}.verdict b{color:var(--accent)}.verdict.sting b{color:var(--neg)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);text-align:right;padding:0 0 8px;border-bottom:1px solid var(--rule)}
+th:first-child{text-align:left}
+td{padding:8px 0;border-bottom:1px solid var(--rule);text-align:right;font-variant-numeric:tabular-nums;vertical-align:top}
+td:first-child{text-align:left}td.l{text-align:left}th+th,td+td{padding-left:14px}td.num{white-space:nowrap}
+tr:last-child td{border-bottom:none}
+.tscroll{overflow-x:auto}
+.note{font-size:12.5px;color:var(--faint);margin-top:10px;line-height:1.5}
+.pos{color:var(--pos)}.neg{color:var(--neg)}
+.hint{font-size:12px;color:var(--faint);line-height:1.45}
+code{font-family:var(--mono);font-size:12.5px}
+.quote{font-family:var(--serif);font-size:17px;color:var(--ink);border-left:3px solid var(--amber);padding:2px 0 2px 16px;margin:14px 0;max-width:760px}
+.quote small{display:block;font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:6px}
+.timeline{position:relative;margin:10px 0 6px}
+.timeline svg{width:100%;height:auto;display:block}
+@media (max-width:640px){.timeline{overflow-x:auto;-webkit-overflow-scrolling:touch}.timeline svg{min-width:640px}}
+.tl-ev{cursor:pointer}
+.tl-note{min-height:3.2em;font-size:14.5px;color:var(--ink);margin-top:8px;padding:10px 14px;background:var(--panel);border-radius:4px}
+.limits{margin-top:22px;border-left:3px solid var(--neg);padding:2px 0 2px 16px;max-width:760px}
+.limits p{font-size:14px;color:var(--soft)}
+.small{font-size:13.5px;color:var(--soft)}
+.gloss{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px 24px;font-size:13px;color:var(--soft);margin-top:10px}
+.gloss b{color:var(--ink);font-family:var(--mono);font-size:12px;font-weight:500}
+footer{border-top:1px solid var(--rule);margin-top:44px;padding:20px 0 30px;font-family:var(--mono);font-size:12px;color:var(--faint)}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+/* guided tour: spotlight, card beside the element */
+#tour{position:absolute;top:0;left:0;right:0;z-index:50;display:none;pointer-events:none}
+#tour.on{display:block}
+.tour-hl{position:absolute;border:2px solid var(--accent);border-radius:8px;box-shadow:0 0 0 9999px rgba(26,29,33,.55);transition:all .35s ease;pointer-events:none}
+.tour-card{position:absolute;width:min(400px,calc(100vw - 32px));background:var(--card);border:1px solid var(--rule2);border-radius:8px;padding:18px 20px;box-shadow:0 6px 30px rgba(0,0,0,.18);pointer-events:auto}
+.tour-card .tk{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.tour-card p{font-size:14px;line-height:1.55;color:var(--ink);margin:0 0 12px}
+.tour-nav{display:flex;align-items:center;gap:8px}
+.tour-nav .dots{flex:1;display:flex;gap:5px}
+.tour-nav .dots i{width:6px;height:6px;border-radius:50%;background:var(--rule2)}
+.tour-nav .dots i.on{background:var(--accent)}
+.tour-btn{font-family:var(--mono);font-size:12px;padding:7px 14px;border-radius:4px;border:1px solid var(--rule2);background:var(--card);color:var(--soft);cursor:pointer}
+.tour-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.tour-open{font-family:var(--mono);font-size:12px;padding:6px 12px;border-radius:4px;border:1px solid var(--accent);background:var(--card);color:var(--accent);cursor:pointer}
+.tour-open:hover{background:var(--accent);color:#fff}
+/* controls that look like controls */
+.tl-ev circle{transition:stroke-width .15s, r .15s}
+.tl-ev:hover circle{stroke-width:4}
+.tl-ev text.n{font-weight:600;fill:var(--ink)}
+@keyframes ring{0%{r:9;opacity:.9}100%{r:22;opacity:0}}
+.tl-ev .ring{fill:none;stroke:var(--neg);stroke-width:2;animation:ring 1.6s ease-out infinite}
+.stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:0;background:var(--panel);border:1px solid var(--rule);border-radius:6px;overflow:hidden;margin-top:14px}
+.stat>div{padding:12px 14px;border-left:1px solid var(--rule)}.stat>div:first-child{border-left:none}
+.stat .k{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+.stat .n{font-family:var(--mono);font-size:20px;font-weight:500}.stat .s{font-size:11.5px;color:var(--soft);margin-top:3px}
+.howto{font-size:13px;color:var(--soft);margin:8px 0 0;line-height:1.5}
+.howto b{color:var(--ink);font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin-right:6px}
+.card-title{font-family:var(--serif);font-size:20px;font-weight:600;margin-bottom:4px}
+.pill{display:inline-block;font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--rule2);border-radius:3px;padding:3px 7px;color:var(--soft);white-space:nowrap;margin-left:6px}
+.pill.mid{color:var(--amber);border-color:var(--amber)}
+.why{font-size:14.5px;color:var(--ink);background:var(--panel);border-radius:4px;padding:10px 14px;margin:0 0 12px}
+.why b{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-right:6px}
+.qa{display:grid;grid-template-columns:1fr 1fr;gap:10px 22px;margin:18px 0 6px;max-width:860px}
+.qa div{border-top:1px solid var(--rule);padding-top:8px;font-size:14.5px;line-height:1.5;color:var(--muted)}
+.qa b{display:block;font-family:var(--serif);font-size:17px;color:var(--ink);font-weight:600;margin-bottom:2px}
+@media (max-width:640px){.qa{grid-template-columns:1fr}}
+.hyp{background:var(--panel);border-radius:4px;padding:12px 14px;margin:0 0 14px;font-size:14.5px;display:grid;grid-template-columns:auto 1fr;gap:6px 12px}
+.hyp b{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);padding-top:3px}
+.hyp span{color:var(--ink)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+
+/* the decision page: console strip, sliders, ledger */
+.strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:12px 0 10px}
+@media (max-width:900px){.strip{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.strip{grid-template-columns:1fr}}
+.box{border:1px solid var(--rule);border-radius:6px;padding:10px 12px;background:var(--panel);min-height:128px}
+.box .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+.box .n{font-family:var(--mono);font-size:21px;margin:4px 0 3px;color:var(--ink)}
+.box .s{font-size:12.5px;color:var(--soft);line-height:1.4}
+.box.lit{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.box.ref{border-color:var(--neg);background:color-mix(in srgb,var(--neg) 8%,var(--panel))}
+.sliderrow{display:flex;align-items:center;gap:14px;margin:8px 0 6px;flex-wrap:wrap}
+.sliderrow input[type=range]{flex:1;min-width:220px;accent-color:var(--accent)}
+.sliderval{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.hint{font-size:13px;color:var(--soft);margin:4px 0 6px}.hint b{color:var(--ink)}
+tr.hi td{background:color-mix(in srgb,var(--accent) 10%,transparent)}
+tr.ref td{background:color-mix(in srgb,var(--neg) 7%,transparent)}
+.domain svg{width:100%;height:auto;display:block}
+.dm rect{transition:stroke .15s}.dm:hover rect,.dm:focus rect{stroke:var(--accent)}
+.method{display:grid;grid-template-columns:110px 1fr;gap:6px 14px;font-size:13.5px;margin:18px 0}
+.method b{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft);padding-top:3px}
+.terms{display:grid;grid-template-columns:1fr 1fr;gap:6px 22px;font-size:13.5px;color:var(--soft)}
+@media (max-width:700px){.terms{grid-template-columns:1fr}.method{grid-template-columns:1fr}}
+.terms b{color:var(--ink);font-weight:600}
+#fail p{font-size:14px;margin:10px 0}
+@media (max-width:640px){.domain{overflow-x:auto;-webkit-overflow-scrolling:touch}.domain svg{min-width:640px}}
+
+</style>
+</head>
+<body>
+
+<header><div class="wrap">
+  <div class="eyebrow">Work sample &middot; a one-megawatt battery in Danish balancing activations, at the prices Energinet actually paid &middot; legal for a prequalified asset, nothing is an upper bound</div>
+  <h1>What does a one-megawatt battery earn in Danish balancing?</h1>
+  <p class="dek">When Denmark's grid runs short, Energinet activates reserves and pays every activated megawatt the
+  marginal price; when it runs long, an activated megawatt takes energy at a price below the day-ahead price, sometimes
+  below zero. Those prices are public for every hour since 2019. This page puts a one-megawatt, two-hour battery in that
+  market as a price taker, fixes its rules on the even weeks of 2021 to 2023, and replays fourteen months it never saw.
+  Every number is recomputed in your browser from the same per-hour prices the build script used.</p>
+  <div class="qa">
+    <div><b>What did it earn?</b><span id="dek-earn"></span></div>
+    <div><b>Does that pay for the battery?</b><span id="dek-pay"></span></div>
+    <div><b>Did knowing the direction help?</b><span id="dek-dir"></span></div>
+    <div><b>How much of the market did it catch?</b><span id="dek-catch"></span></div>
+  </div>
+  <div class="byline"><span>Bolga&ccedil; G&uuml;len &middot; Odense, 2026</span><span>&middot;</span>
+    <a href="https://github.com/bolgacg/tavle/blob/master/research/PREREGISTRATION.md">the registration</a><span>&middot;</span>
+    <a href="https://github.com/bolgacg/tavle/blob/master/research/activation.py">the build script</a><span>&middot;</span>
+    <a href="../decision/">the decision machine</a><span>&middot;</span>
+    <a href="../wind/">the wind study</a>
+    <button class="tour-open" id="tourbtn">Walk me through it</button></div>
+</div></header>
+
+<section id="primer"><div class="wrap">
+  <div class="sec-label">Before the battery &middot; five things to know</div>
+  <p>Denmark has two price zones, <b>DK1</b> (Jutland and Funen) and <b>DK2</b> (Zealand). Each hour has a <b>day-ahead price</b>
+    set in an auction the day before. Inside the hour, Energinet keeps the grid balanced by activating reserves:
+    <b>up-regulation</b> when the system is short (more production, less consumption), <b>down-regulation</b> when it is long.</p>
+  <p>An activated megawatt of up-regulation is paid the <b>up price</b>, the price of the last bid Energinet needed; every
+    activated bid gets that price. An activated megawatt of down-regulation consumes energy and pays the <b>down price</b>,
+    which sits below the day-ahead price and can be negative, in which case the megawatt is paid to consume. When a direction
+    was not activated, Energinet records its price as equal to the day-ahead price.</p>
+  <p>The <b>battery</b> here is 1 MW with 2.2 MWh of usable store, 90 percent round-trip efficiency, and a cycle cost of 30
+    euros per megawatt-hour delivered. It bids whole megawatts for whole hours, the Danish minimum, and lives only in this
+    market: it charges only when activated for down-regulation and discharges only when activated for up-regulation.</p>
+  <p>A <b>price taker</b>: a bid at or below the marginal price counts as activated at that price. That is right for one
+    megawatt except at the margin, where the last bid may be partly activated; the page says so and lets you require a safety
+    margin in act three. The battery must be prequalified with Energinet; that is the asset owner's status, not a modelling choice.</p>
+  <p>Every rule was fixed on the even weeks of November 2021 to December 2023 and then frozen. January 2024 to 4 March 2025,
+    where Energinet's hourly series ends, was replayed once and is called the <b>separate period</b>.</p>
+  <div class="card" id="t-domain">
+    <div class="card-title">One hour, drawn once</div>
+    <div class="domain" id="domain"></div>
+    <p class="howto"><b>how to read</b>The battery decides before the hour from the day-ahead price and its own store; Energinet decides inside the hour; the price is known after. <b>Hover a box</b> for what it uses.</p>
+  </div>
+</div></section>
+
+<section id="words"><div class="wrap">
+  <div class="sec-label">In your ad's words</div>
+  <div class="quote">"develop fully automated, machine learning-driven trading strategies" &middot; "convert large datasets into trading signals" &middot; "move research into production"
+    <span class="who">Danske Commodities, Quantitative Analyst for Short-term Automated Trading, September 2026.</span></div>
+  <p class="small">The decision machine on the previous page showed the loop with a learned gate that earned nothing and a settlement no one may trade. This page keeps the loop and changes the instrument to one a Danish asset owner can actually bid into, so that every euro is a price that was paid.</p>
+</div></section>
+
+<section id="act1"><div class="wrap">
+  <div class="sec-label">Act one &middot; One hour, one decision</div>
+  <h2>The battery decides before the hour, and you can watch any hour</h2>
+  <div class="hyp">
+    <b>what runs</b><span>From the store and the day-ahead price the battery offers up-regulation at the day-ahead price plus a margin when it holds a full delivery, and down-regulation at the day-ahead price minus a margin when it has room. Energinet's activation and price settle the hour.</span>
+    <b>why it matters</b><span>An asset that bids alone every hour must be readable hour by hour: what it offered, what the market did, what it earned or paid. This act is that record.</span>
+  </div>
+  <div class="card" id="t-console">
+    <div class="chips" id="a1-ctl"></div>
+    <p class="hint"><b>Drag the hour.</b> Every box recomputes for the hour under the thumb; the ledger keeps the hours around it.</p>
+    <div class="sliderrow"><input type="range" id="a1-hour" min="0" max="100" value="0" step="1"><span class="sliderval" id="a1-hour-val"></span></div>
+    <div class="strip" id="a1-strip"></div>
+    <p class="howto"><b>what you see</b>the five steps of one hour, left to right. <b>how to read</b>a lit box is an activation; a grey box is an offer that was not taken or could not be made. <b>take from it</b>the battery is a price taker: it never sets the price, it only chooses when to be available.</p>
+  </div>
+  <div class="card" id="t-ledger">
+    <div class="card-title">The ledger around that hour</div>
+    <div class="tscroll"><table id="a1-ledger"></table></div>
+    <div class="verdict"><b id="a1-open"></b> <span id="a1-verdict"></span></div>
+  </div>
+</div></section>
+
+<section id="act2"><div class="wrap">
+  <div class="sec-label">Act two &middot; The margins</div>
+  <h2>How choosy should a battery be?</h2>
+  <div class="hyp">
+    <b>prediction</b><span>A store of two hours cannot take every activation, so a margin above the day-ahead price for discharging and below it for charging should beat offering at cost. The pair chosen on the even weeks is replayed on the separate period.</span>
+    <b>baseline</b><span>Always offer at cost: both margins zero.</span>
+    <b>caveat</b><span>The margins are chosen on the even weeks of the training years from a fixed grid. The separate period is replayed once and never used to choose.</span>
+  </div>
+  <div class="card" id="t-margins">
+    <div class="chips" id="a2-ctl"></div>
+    <p class="hint"><b>Drag the margins and the cycle cost.</b> The table replays the separate period with your settings next to the chosen pair. The chip resets to what the even weeks chose.</p>
+    <div class="sliderrow"><span class="sliderval">discharge margin</span><input type="range" id="a2-mu" min="0" max="120" value="40" step="5"><span class="sliderval" id="a2-mu-val"></span></div>
+    <div class="sliderrow"><span class="sliderval">charge margin</span><input type="range" id="a2-md" min="0" max="120" value="10" step="5"><span class="sliderval" id="a2-md-val"></span></div>
+    <div class="sliderrow"><span class="sliderval">cycle cost</span><input type="range" id="a2-cyc" min="0" max="90" value="30" step="5"><span class="sliderval" id="a2-cyc-val"></span></div>
+    <div class="chips" id="a2-modes"></div>
+    <div class="tscroll"><table id="a2-table"></table></div>
+    <p class="howto"><b>what you see</b>four ways to run the same battery on the separate period. <b>how to read</b>net is cash after the cycle cost; per megawatt-year scales it to a full year; the last columns say what it was paid to discharge and paid to charge on average. <b>take from it</b><span id="a2-take"></span></p>
+    <div class="verdict"><b id="a2-open"></b> <span id="a2-verdict"></span></div>
+  </div>
+  <div class="card">
+    <div class="card-title">The result over time</div>
+    <div class="viz" id="a2-walk"></div>
+    <p class="howto"><b>what you see</b>the running net of the chosen pair and of your settings, from single pricing to the end of the data. <b>how to read</b>the dashed line is where the training years end; only the right side was never used to choose. <b>take from it</b>a line that climbs on the right side is a rule that survived contact with hours it had not seen.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">What the even weeks saw</div>
+    <div class="tscroll"><table id="a2-grid"></table></div>
+    <p class="howto"><b>what you see</b>the net on the even weeks for every pair on the grid, in thousands of euros. <b>how to read</b>rows are the discharge margin, columns the charge margin; the chosen cell is marked. <b>take from it</b><span id="a2-grid-take"></span></p>
+  </div>
+</div></section>
+
+<section id="act3"><div class="wrap">
+  <div class="sec-label">Act three &middot; What it caught, what it missed, what would change it</div>
+  <h2>Where the money came from, and what could take it away</h2>
+  <div class="hyp">
+    <b>what runs</b><span>The battery's cash against what the market offered, the direction rule that was measured and did not help, the cycle cost, and a safety margin for the price-taker assumption.</span>
+    <b>why it matters</b><span>A revenue number without its share of the market, its sensitivities and its failed ideas is a brochure. This act is the rest of the story.</span>
+  </div>
+  <div class="card" id="t-catch">
+    <div class="chips" id="a3-ctl"></div>
+    <div class="viz" id="a3-catch"></div>
+    <p class="howto"><b>what you see</b>the separate period: what every activated hour offered above (up) or below (down) the day-ahead price, and what the battery took of it. <b>how to read</b>the first bar of each pair is the market, the second is the battery. <b>take from it</b><span id="a3-catch-take"></span></p>
+  </div>
+  <div class="card" id="t-dir">
+    <div class="card-title">The direction rule, measured and declined</div>
+    <div class="tscroll"><table id="a3-dir"></table></div>
+    <p class="howto"><b>what you see</b>a margin pair per last settled direction, chosen on the even weeks, next to the single pair. <b>how to read</b>the even-week column is where the pairs were chosen; the separate column is the test. <b>take from it</b><span id="a3-dir-take"></span></p>
+  </div>
+  <div class="card" id="t-faults">
+    <div class="chips" id="a3-faults"></div>
+    <p class="hint"><b>Flip a fault on.</b> The panel replays the separate period with the chosen pair and the fault.</p>
+    <div class="stat" id="a3-stat"></div>
+    <div class="verdict"><b id="a3-open"></b> <span id="a3-verdict"></span></div>
+  </div>
+</div></section>
+
+<section id="coda"><div class="wrap">
+  <div class="sec-label">Asset card, failures, limits, terms</div>
+  <h2>What was assumed, what went wrong, and what this cannot say</h2>
+  <div class="card" id="t-card">
+    <div class="card-title">Asset card</div>
+    <div class="stat" id="ac-stat"></div>
+    <p class="small">The battery lives only in the activation market on this page. A real operator stacks the day-ahead market, capacity payments for aFRR and mFRR reserves, and activations; the activation income here is one layer of that stack, not the whole.</p>
+  </div>
+  <div class="card" id="t-fail">
+    <div class="card-title">Honest failures</div>
+    <div id="fail"></div>
+  </div>
+  <div class="method">
+    <b>data</b><span>Energinet's hourly regulating power series (RegulatingBalancePowerdata) to 4 March 2025: up and down regulation prices, activated mFRR volumes, the imbalance price; the day-ahead price carried by the <a href="../">tavle</a> platform. The 15-minute successor that began in March 2025 uses a new price design and is not loaded.</span>
+    <b>split</b><span>Even ISO weeks of November 2021 to December 2023 chose the margins. January 2024 to 4 March 2025 was replayed once.</span>
+    <b>disclosure</b><span>The first run found a dead zone in the state machine at exactly 2.0 MWh (neither a full charge nor a full delivery fit after losses) before any period was read; the store was set to 2.2 MWh and the run repeated. The registration records it.</span>
+    <b>check</b><span id="selfcheck">checking the browser's replay against the build script's numbers</span>
+  </div>
+  <div class="limits">
+    <h3 style="font-size:17px;margin-bottom:6px">Limits</h3>
+    <p>Price taker: the marginal bid may be partly activated and bids have location limits; act three's safety margin shows the
+    cost of being conservative about that. Whole-hour, whole-megawatt bids; a real battery also trades the day-ahead market and
+    sells reserve capacity, none of which is here. The cycle cost and the efficiency are stated assumptions; the annual cost of a
+    two-hour battery in the verdict is an external figure, not computed here. Energinet's hourly series ends 4 March 2025 and the
+    market moved to quarter-hours and a new price design; the separate period stops there. Two zones, one country, one author
+    who chose the questions.</p>
+  </div>
+  <h3 style="margin-top:24px;font-size:17px">Seven terms</h3>
+  <div class="terms">
+    <div><b>up-regulation</b> reserves activated when the system is short; an activated megawatt is paid the up price</div>
+    <div><b>down-regulation</b> reserves activated when the system is long; an activated megawatt consumes and pays the down price, which can be negative</div>
+    <div><b>marginal price</b> the price of the last bid Energinet needed in the hour; every activated bid in that direction gets it</div>
+    <div><b>price taker</b> a bid small enough not to move the price; at or below the marginal price it counts as activated</div>
+    <div><b>margin</b> what the battery adds to the day-ahead price to offer a discharge, or subtracts to offer a charge</div>
+    <div><b>even weeks</b> the half of the training years on which every choice was made</div>
+    <div><b>separate period</b> January 2024 to 4 March 2025, replayed once after every choice was frozen</div>
+  </div>
+</div></section>
+
+<footer><div class="wrap"><span>Bolga&ccedil; G&uuml;len &middot; every number on this page is generated by the build script from the sources named above, or recomputed in the browser from the same per-hour prices, not typed</span><a href="https://github.com/bolgacg/tavle">github.com/bolgacg/tavle</a></div></footer>
+<div id="tour"><div class="tour-hl" id="tour-hl"></div><div class="tour-card" id="tour-card"></div></div>
+
+<script>
+const D = __DATA__;
+const $ = s => document.querySelector(s);
+const fmt = (n,d) => n == null ? "" : Number(n).toLocaleString("en-GB",{maximumFractionDigits: d==null?2:d});
+const S = {DK1:"var(--s1)", DK2:"var(--s2)"};
+function chips(id, items, cur, on){ $(id).innerHTML=items.map(([k,l])=>`<button class="chip" data-k="${k}" aria-pressed="${k===cur}">${l}</button>`).join(""); $(id).addEventListener("click",e=>{const b=e.target.closest("button"); if(!b)return; $(id).querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); on(b.dataset.k);}); }
+function twoChips(id, cur, on){ // zone + period in one row
+  $(id).innerHTML=["DK1","DK2"].map(a=>`<button class="chip" data-a="${a}" aria-pressed="${a===cur.area}">${a}</button>`).join("")+`<span style="width:12px"></span>`+[["training","training years"],["holdout","2024 to 2025"]].map(([p,l])=>`<button class="chip" data-p="${p}" aria-pressed="${p===cur.period}">${l}</button>`).join("");
+  $(id).addEventListener("click",e=>{const b=e.target.closest("button"); if(!b)return; if(b.dataset.a){cur.area=b.dataset.a; $(id).querySelectorAll("button[data-a]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));} else {cur.period=b.dataset.p; $(id).querySelectorAll("button[data-p]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));} on();});
+}
+
+
+/* ---------- generic bars ---------- */
+function vizW(el){ return Math.max(280, Math.round(el.getBoundingClientRect().width||960)); }
+function bars(el, groups, opts){
+  el.querySelectorAll("svg,.legend").forEach(n=>n.remove()); el._redraw=()=>bars(el,groups,opts);
+  const W=vizW(el),H=opts.h||280,P={l:52,r:12,t:16,b:40}, narrow=W<520, fs=narrow?9.5:11;
+  const vals=groups.flatMap(g=>g.series.map(s=>s.v)).filter(v=>v!=null);
+  const y0=Math.min(0,...vals), y1=Math.max(0,...vals)*1.1||1;
+  const Y=v=>P.t+(1-(v-y0)/((y1-y0)||1))*(H-P.t-P.b);
+  const n=groups.length, bw=(W-P.l-P.r)/n, k=groups[0].series.length, w=Math.min(28,(bw-8)/k);
+  let g="";
+  for(let i=0;i<=4;i++){const v=y0+(y1-y0)*i/4; g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--rule)"/><text x="${P.l-7}" y="${Y(v)+4}" text-anchor="end" font-size="${fs}" fill="var(--faint)" font-family="var(--mono)">${fmt(v,opts.dec??0)}</text>`}
+  g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--soft)"/>`;
+  groups.forEach((gr,gi)=>{const x0=P.l+gi*bw+(bw-k*w-(k-1)*3)/2;
+    gr.series.forEach((s,si)=>{if(s.v==null)return; const x=x0+si*(w+3), y=Y(Math.max(0,s.v)), h=Math.abs(Y(s.v)-Y(0));
+      g+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${s.color}" rx="2"><title>${gr.label}, ${s.name}: ${fmt(s.v,opts.dec??2)}</title></rect>`});
+    const stagger=narrow&&n>3, ly=stagger?(H-24+(gi%2)*12):(H-14);
+    g+=`<text x="${P.l+gi*bw+bw/2}" y="${ly}" text-anchor="middle" font-size="${fs}" fill="var(--faint)" font-family="var(--mono)">${gr.label}</text>`});
+  if(opts.xlabel&&!narrow) g+=`<text x="${W/2}" y="${H-1}" text-anchor="middle" font-size="11.5" fill="var(--soft)">${opts.xlabel}</text>`;
+  el.insertAdjacentHTML("beforeend", `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${opts.label}">${g}</svg><div class="legend">${groups[0].series.map(s=>`<span><i class="bar" style="background:${s.color}"></i>${s.name}</span>`).join("")}</div>`);
+}
+function line(el, series, opts){
+  el.querySelectorAll("svg,.legend").forEach(n=>n.remove()); el._redraw=()=>line(el,series,opts);
+  const W=vizW(el),H=opts.h||260,P={l:52,r:12,t:12,b:30}, narrow=W<520, fs=narrow?9.5:11, nx=narrow?2:4;
+  const xs=series.flatMap(s=>s.pts.map(p=>p.x)), ys=series.flatMap(s=>s.pts.map(p=>p.y));
+  const x0=Math.min(...xs), x1=Math.max(...xs), y0=Math.min(0,...ys)*1.05, y1=Math.max(0,...ys)*1.05||1;
+  const X=x=>P.l+(x-x0)/((x1-x0)||1)*(W-P.l-P.r), Y=y=>P.t+(1-(y-y0)/((y1-y0)||1))*(H-P.t-P.b);
+  let g="";
+  for(let i=0;i<=4;i++){const v=y0+(y1-y0)*i/4; g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--rule)"/><text x="${P.l-7}" y="${Y(v)+4}" text-anchor="end" font-size="${fs}" fill="var(--faint)" font-family="var(--mono)">${fmt(v,0)}</text>`}
+  g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--soft)"/>`;
+  for(let i=0;i<=nx;i++){const v=x0+(x1-x0)*i/nx; g+=`<text x="${X(v)}" y="${H-8}" text-anchor="${i===0?"start":i===nx?"end":"middle"}" font-size="${fs}" fill="var(--faint)" font-family="var(--mono)">${opts.xlabel(v)}</text>`}
+  if(opts.mark){g+=`<line x1="${X(opts.mark)}" x2="${X(opts.mark)}" y1="${P.t}" y2="${H-P.b}" stroke="var(--amber)" stroke-dasharray="4 3"/><text x="${X(opts.mark)+(X(opts.mark)>W*0.6?-5:5)}" y="${P.t+12}" text-anchor="${X(opts.mark)>W*0.6?"end":"start"}" font-size="10.5" fill="var(--amber)" font-family="var(--mono)">${narrow?String(opts.markLabel||"").split(",")[0]:(opts.markLabel||"")}</text>`}
+  if(opts.marks){opts.marks.forEach((m,i)=>{g+=`<line x1="${X(m.x)}" x2="${X(m.x)}" y1="${P.t}" y2="${H-P.b}" stroke="var(--pos)" stroke-dasharray="2 3"/><text x="${X(m.x)+(X(m.x)>W*0.85?-4:4)}" y="${H-P.b-6-i*12}" text-anchor="${X(m.x)>W*0.85?"end":"start"}" font-size="10" fill="var(--pos)" font-family="var(--mono)">${m.label}</text>`})}
+  g+=series.map(s=>`<path d="${s.pts.map((p,i)=>(i?"L":"M")+X(p.x).toFixed(1)+" "+Y(p.y).toFixed(1)).join(" ")}" fill="none" stroke="${s.color}" stroke-width="2.2" stroke-linejoin="round"/>`).join("");
+  el.insertAdjacentHTML("beforeend", `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${opts.label}">${g}</svg><div class="legend">${series.map(s=>`<span><i style="border-top-color:${s.color}"></i>${s.name}</span>`).join("")}</div>`);
+}
+
+
+
+/* ---------- the battery, mirrored from research/activation.py ---------- */
+const Z = D.zones, HOUR = 3600e3;
+const nz0 = v=>Math.abs(v)<5e-3?0:v; const R1 = v=>v==null?"":nz0(Number(v)).toFixed(1), R2=v=>v==null?"":nz0(Number(v)).toFixed(2), K=v=>v==null?"":(Math.round(v/100)/10).toFixed(1)+"k", K0=v=>v==null?"":Math.round(v/1000)+" thousand", PCT=v=>v==null?"":Math.round(100*v)+"%";
+const SEPLABEL="January 2024 to 4 March 2025";
+function zstart(z){ return Date.parse(z.start.replace(" ","T")+":00Z"); }
+function hourLabel(z,t){ return new Date(zstart(z)+t*HOUR).toISOString().slice(0,16).replace("T"," ")+" UTC"; }
+function simulate(z, o){
+  o=o||{}; const mu=o.mu, md=o.md, cyc=o.cycle==null?D.cycle:o.cycle, by=o.byDir||null, eta=D.eta, emax=D.e_mwh, safety=o.safety||0;
+  const spot=z.spot, up=z.up, down=z.down, dir=z.dir, upa=z.up_act, downa=z.down_act, n=spot.length;
+  const act=new Int8Array(n), cash=new Float64Array(n), state=new Float64Array(n), offUp=new Uint8Array(n), offDown=new Uint8Array(n);
+  let s=D.s0; const needUp=1/eta, roomDown=emax-eta;
+  for(let t=0;t<n;t++){
+    if(spot[t]==null||up[t]==null||down[t]==null){ state[t]=s; continue; }
+    let m1=mu, m2=md;
+    if(by){ const d=(t>=2&&dir[t-2]!=null)?dir[t-2]:0; [m1,m2]=by[String(d)]; }
+    const canUp=s>=needUp-1e-9, canDown=s<=roomDown+1e-9;
+    offUp[t]=canUp?1:0; offDown[t]=canDown?1:0;
+    let did=0;
+    if(canUp && upa[t] && up[t]>=spot[t]+m1+safety-1e-9 && !(downa[t]&&dir[t]===-1)) did=1;
+    else if(canDown && downa[t] && down[t]<=spot[t]-m2-safety+1e-9 && !(upa[t]&&dir[t]===1)) did=-1;
+    if(did===1){ s-=needUp; cash[t]=up[t]*D.p_mw-cyc*D.p_mw; }
+    else if(did===-1){ s+=eta; cash[t]=-down[t]*D.p_mw; }
+    act[t]=did; state[t]=s;
+  }
+  return {act,cash,state,offUp,offDown};
+}
+function summarise(z, sim, from, to){
+  let dis=0,chg=0,net=0,upRev=0,downCost=0,upP=0,spotDis=0,downP=0,downDisc=0; const start=zstart(z); const byYear={};
+  for(let t=from;t<to;t++){ const a=sim.act[t]; if(!a) continue; const y=new Date(start+t*HOUR).getUTCFullYear(); byYear[y]=byYear[y]||0; byYear[y]+=sim.cash[t]; net+=sim.cash[t];
+    if(a===1){dis++; upRev+=sim.cash[t]; upP+=z.up[t]; spotDis+=z.spot[t];} else {chg++; downCost-=sim.cash[t]; downP+=z.down[t]; downDisc+=z.spot[t]-z.down[t];} }
+  const yrs=(to-from)/8766;
+  return {hours:to-from, years:yrs, discharges:dis, charges:chg, net, perMwYear:net/yrs, upRev, downCost, meanUp:dis?upP/dis:null, meanSpotDis:dis?spotDis/dis:null, meanDown:chg?downP/chg:null, downDisc, byYear};
+}
+function monthly(z, sim, from, to){ const start=zstart(z); const out=[]; let cum=0, cur=null;
+  for(let t=from;t<to;t++){ const d=new Date(start+t*HOUR); const m=d.getUTCFullYear()*100+d.getUTCMonth(); if(m!==cur){ if(cur!==null) out.push({x:Date.UTC(Math.floor(cur/100),cur%100,1),y:cum}); cur=m; } cum+=sim.cash[t]; }
+  out.push({x:Date.UTC(Math.floor(cur/100),cur%100,1),y:cum}); return out; }
+function chosen(z){ return z.chosen.flat; }
+
+/* ---------- headline ---------- */
+(function(){
+  const z=Z.DK1, c=chosen(z), sep=z.sep_start_index, n=z.spot.length;
+  const flat=summarise(z,simulate(z,{mu:c.m_up,md:c.m_down}),sep,n), cost=summarise(z,simulate(z,{mu:0,md:0}),sep,n);
+  const dk2=Z.DK2, c2=chosen(dk2); const flat2=summarise(dk2,simulate(dk2,{mu:c2.m_up,md:c2.m_down}),dk2.sep_start_index,dk2.spot.length);
+  $("#dek-earn").textContent=`${K(flat.perMwYear)} euros per megawatt-year in DK1 over ${SEPLABEL}, after a cycle cost of ${D.cycle} euros per megawatt-hour; ${K(flat2.perMwYear)} in DK2. Offering at cost with no margins earned ${K(cost.perMwYear)}.`;
+  const [lo,hi]=D.capex_per_mw_year;
+  $("#dek-pay").textContent=`Roughly. A two-hour megawatt costs about ${K0(lo)} to ${K0(hi)} euros a year at 2024 system prices, an external figure. This one market alone lands inside that range, before the day-ahead and reserve income a real operator adds on top.`;
+  const dirA=z.arms.direction_aware.separate.net_per_mw_year, flatA=z.arms.flat.separate.net_per_mw_year;
+  $("#dek-dir").textContent=`No. Margins per last settled direction beat the single pair on the even weeks where they were chosen, and made ${K(flatA-dirA)} euros per megawatt-year less on the separate period.`;
+  const m=z.market_separate; $("#dek-catch").textContent=`${PCT(flat.upRev/m.up_premium_available)} of the premium the market paid above the day-ahead price for up-regulation, with ${flat.discharges} discharges in ${m.up_hours} up-regulated hours.`;
+})();
+
+/* ---------- the domain ---------- */
+(function(){
+  const steps=[["1 · store","how much energy is in the battery before the hour"],["2 · offers","up-regulation at day-ahead plus the margin if a full delivery is in store; down-regulation at day-ahead minus the margin if there is room"],["3 · Energinet","activates up or down inside the hour, or nothing"],["4 · price","the marginal price for the direction that ran; every activated bid gets it"],["5 · cash","a discharge earns the up price minus the cycle cost; a charge pays the down price"]];
+  const W=960,H=190; let g=`<line x1="40" x2="930" y1="150" y2="150" stroke="var(--rule2)" stroke-width="2"/>`;
+  [["D-1, 12:45","day-ahead price known",120],["before t","offers placed",400],["t","the hour: activation",640],["after","price settled",860]].forEach(([k,l,x])=>{g+=`<circle cx="${x}" cy="150" r="7" fill="var(--accent)"/><text x="${x}" y="176" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink)">${k}</text><text x="${x}" y="134" text-anchor="middle" font-size="10.5" fill="var(--soft)">${l}</text>`;});
+  steps.forEach(([k,l],i)=>{const x=40+i*182; g+=`<g class="dm" tabindex="0"><rect x="${x}" y="22" width="170" height="64" rx="6" fill="var(--card)" stroke="var(--rule)"/><text x="${x+10}" y="44" font-size="11" font-family="var(--mono)" fill="var(--accent)">${k}</text><foreignObject x="${x+8}" y="50" width="156" height="34"><div xmlns="http://www.w3.org/1999/xhtml" style="font-size:10px;line-height:1.2;color:var(--soft)">${l}</div></foreignObject><title>${l}</title></g>`; if(i<4) g+=`<line x1="${x+170}" x2="${x+182}" y1="54" y2="54" stroke="var(--rule2)"/>`;});
+  $("#domain").innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="one hour of the battery in the balancing market">${g}</svg>`;
+})();
+
+/* ---------- act one ---------- */
+(function(){
+  const cur={area:"DK1"}; let sims={}, idx=null; const sl=$("#a1-hour");
+  chips("#a1-ctl", [["DK1","DK1"],["DK2","DK2"]], "DK1", k=>{cur.area=k; setup(); draw();});
+  function setup(){ const z=Z[cur.area], c=chosen(z); sims[cur.area]=sims[cur.area]||simulate(z,{mu:c.m_up,md:c.m_down}); sl.min=z.sep_start_index; sl.max=z.spot.length-1;
+    if(idx==null){ const want=Date.UTC(2024,10,13,7); idx=Math.min(Math.max(Math.round((want-zstart(z))/HOUR),z.sep_start_index),z.spot.length-1); } sl.value=idx; }
+  function box(k,n,s,cls){ return `<div class="box ${cls||""}"><div class="k">${k}</div><div class="n">${n}</div><div class="s">${s}</div></div>`; }
+  function draw(){
+    const z=Z[cur.area], c=chosen(z), sim=sims[cur.area], t=idx; const sBefore=t>0?sim.state[t-1]:D.s0; const a=sim.act[t];
+    $("#a1-hour-val").textContent=hourLabel(z,t)+" · hour "+fmt(t-z.sep_start_index+1,0)+" of "+fmt(z.spot.length-z.sep_start_index,0)+" in the separate period";
+    const canUp=sim.offUp[t], canDown=sim.offDown[t]; const spot=z.spot[t];
+    const dirTxt=z.dir[t]===1?"short: up-regulation":z.dir[t]===-1?"long: down-regulation":"balanced: nothing activated";
+    const boxes=[
+      box("1 · store", R2(sBefore)+" MWh", `of ${D.e_mwh}; a delivery needs ${R2(1/D.eta)}, a charge needs room for ${R2(D.eta)}`),
+      box("2 · offers", spot==null?"no price":`up ≥ ${R1(spot+c.m_up)}${canUp?"":" (no store)"}`, spot==null?"the day-ahead price is missing":`down ≤ ${R1(spot-c.m_down)}${canDown?"":" (no room)"} · day-ahead ${R1(spot)}`, (canUp||canDown)?"":"ref"),
+      box("3 · Energinet", z.dir[t]==null?"unknown":(z.dir[t]===1?"short":z.dir[t]===-1?"long":"balanced"), dirTxt+(z.up_act[t]&&z.down_act[t]?"; both directions ran, the dominating one counts":""), z.dir[t]?"lit":""),
+      box("4 · price", z.dir[t]===1?R1(z.up[t])+" up":z.dir[t]===-1?R1(z.down[t])+" down":"= day-ahead", z.dir[t]===1?`up price, ${R1(z.up[t]-spot)} above day-ahead`:z.dir[t]===-1?`down price, ${R1(spot-z.down[t])} below day-ahead`:"no activation price this hour"),
+      box("5 · cash", a===1?"discharged":a===-1?"charged":"nothing", a===1?`paid ${R1(z.up[t])}, cycle cost ${D.cycle}: <span class="pos">+${R1(sim.cash[t])}</span>`:a===-1?`paid ${R1(z.down[t])} for the energy: <span class="${sim.cash[t]>=0?"pos":"neg"}">${sim.cash[t]>=0?"+":""}${R1(sim.cash[t])}</span>`:(z.dir[t]?"offer not taken: the price did not clear the margin, or the store could not":"no activation to take"), a?"lit":"")];
+    $("#a1-strip").innerHTML=boxes.join("");
+    let rows=`<tr><th class="l">Hour, UTC</th><th>Store before</th><th>Day-ahead</th><th>System</th><th>Up price</th><th>Down price</th><th>Action</th><th>Cash, EUR</th></tr>`;
+    for(let s=t-3;s<=t+3;s++){ if(s<z.sep_start_index||s>=z.spot.length) continue; const aa=sim.act[s];
+      rows+=`<tr class="${s===t?"hi":""}"><td class="l">${hourLabel(z,s).slice(0,16)}${s===t?" · selected":""}</td><td class="num">${R2(s>0?sim.state[s-1]:D.s0)}</td><td class="num">${R1(z.spot[s])}</td><td>${z.dir[s]===1?"short":z.dir[s]===-1?"long":"balanced"}</td><td class="num">${z.dir[s]===1?R1(z.up[s]):""}</td><td class="num">${z.dir[s]===-1?R1(z.down[s]):""}</td><td>${aa===1?"discharge":aa===-1?"charge":""}</td><td class="num ${aa?(sim.cash[s]>=0?"pos":"neg"):""}">${aa?(sim.cash[s]>=0?"+":"")+R1(sim.cash[s]):""}</td></tr>`; }
+    $("#a1-ledger").innerHTML=rows;
+    const S1=summarise(z,sim,z.sep_start_index,z.spot.length);
+    $("#a1-open").textContent=`In ${cur.area} the battery discharged ${S1.discharges} times and charged ${S1.charges} times over the separate period.`;
+    $("#a1-verdict").textContent=`It was paid ${R1(S1.meanUp)} euros per megawatt-hour on average when discharging, against a day-ahead price of ${R1(S1.meanSpotDis)} in those hours, and paid ${R1(S1.meanDown)} per megawatt-hour to charge. Net of the cycle cost: ${K(S1.net)} euros, ${K(S1.perMwYear)} per megawatt-year. These are prices Energinet paid, not upper bounds.`;
+  }
+  sl.addEventListener("input",()=>{idx=+sl.value; draw();});
+  setup(); draw();
+})();
+
+/* ---------- act two ---------- */
+(function(){
+  const cur={area:"DK1"}; let mu=40, md=10, cyc=30;
+  const sMu=$("#a2-mu"), sMd=$("#a2-md"), sCyc=$("#a2-cyc");
+  chips("#a2-ctl", [["DK1","DK1"],["DK2","DK2"]], "DK1", k=>{cur.area=k; reset(); draw();});
+  chips("#a2-modes", [["chosen","as chosen on the even weeks"]], "chosen", k=>{reset(); draw();});
+  function reset(){ const c=chosen(Z[cur.area]); mu=c.m_up; md=c.m_down; cyc=D.cycle; sMu.value=mu; sMd.value=md; sCyc.value=cyc; }
+  [sMu,sMd,sCyc].forEach(s=>s.addEventListener("input",()=>{mu=+sMu.value; md=+sMd.value; cyc=+sCyc.value; draw();}));
+  function row(name,s,cls){ return `<tr class="${cls||""}"><td class="l">${name}</td><td class="num">${s.discharges}</td><td class="num">${s.charges}</td><td class="num">${K(s.net)}</td><td class="num">${K(s.perMwYear)}</td><td class="num">${R1(s.meanUp)}</td><td class="num">${R1(s.meanDown)}</td></tr>`; }
+  function draw(){
+    const z=Z[cur.area], c=chosen(z), sep=z.sep_start_index, n=z.spot.length;
+    $("#a2-mu-val").textContent=`+${mu} EUR (chosen ${c.m_up})`; $("#a2-md-val").textContent=`−${md} EUR (chosen ${c.m_down})`; $("#a2-cyc-val").textContent=`${cyc} EUR per MWh delivered (registered ${D.cycle})`;
+    const byDir={}; Object.entries(z.chosen.by_dir).forEach(([k,v])=>byDir[k]=v);
+    const arms=[["Always at cost, no margins", summarise(z,simulate(z,{mu:0,md:0,cycle:cyc}),sep,n)],
+                [`Chosen pair, +${c.m_up} / −${c.m_down}`, summarise(z,simulate(z,{mu:c.m_up,md:c.m_down,cycle:cyc}),sep,n)],
+                [`Your settings, +${mu} / −${md}`, summarise(z,simulate(z,{mu,md,cycle:cyc}),sep,n), "hi"],
+                ["Margins per last settled direction", summarise(z,simulate(z,{mu:c.m_up,md:c.m_down,cycle:cyc,byDir}),sep,n)]];
+    $("#a2-table").innerHTML=`<tr><th class="l">Arm, ${SEPLABEL}</th><th>Discharges</th><th>Charges</th><th>Net, EUR</th><th>Per MW-year</th><th>Paid to discharge, EUR/MWh</th><th>Paid to charge</th></tr>`+arms.map(a=>row(a[0],a[1],a[2])).join("");
+    const cost=arms[0][1], ch=arms[1][1], yours=arms[2][1];
+    $("#a2-take").textContent=`your settings make ${K(yours.perMwYear)} per megawatt-year against ${K(ch.perMwYear)} for the chosen pair; the difference is ${yours.perMwYear>=ch.perMwYear?"+":""}${K(yours.perMwYear-ch.perMwYear)}.`;
+    $("#a2-open").textContent=`The chosen pair earned ${K(ch.perMwYear)} euros per megawatt-year on the separate period, against ${K(cost.perMwYear)} offering at cost.`;
+    $("#a2-verdict").textContent=`Being choosy paid: the chosen pair discharged ${ch.discharges} times against ${cost.discharges} at cost and was paid ${R1(ch.meanUp)} per megawatt-hour against ${R1(cost.meanUp)}. A two-hour store cannot take every activation, so a margin buys the better hours. The even weeks preferred a large discharge margin and a small charge margin; the separate period agreed.`;
+    $("#a2-walk").innerHTML=""; const s0=z.single_start_index;
+    line($("#a2-walk"), [{name:"chosen pair, running net, EUR", color:S[cur.area], pts:monthly(z,simulate(z,{mu:c.m_up,md:c.m_down,cycle:cyc}),s0,n)},{name:"your settings", color:"var(--amber)", pts:monthly(z,simulate(z,{mu,md,cycle:cyc}),s0,n)}], {label:"running net", xlabel:v=>new Date(v).toISOString().slice(0,7), mark:Date.UTC(2024,0,1), markLabel:"separate period begins, Jan 2024"});
+    const G=D.grid; const map={}; z.gridA.forEach(g=>map[g.m_up+"|"+g.m_down]=g.net_measured);
+    $("#a2-grid").innerHTML=`<tr><th class="l">discharge margin \\ charge margin</th>${G.map(g=>`<th>−${g}</th>`).join("")}</tr>`+G.map(mu2=>`<tr><td class="l">+${mu2}</td>${G.map(md2=>`<td class="num ${mu2===c.m_up&&md2===c.m_down?"pos":""}">${K(map[mu2+"|"+md2])}${mu2===c.m_up&&md2===c.m_down?" ◂":""}</td>`).join("")}</tr>`).join("");
+    const vals=z.gridA.map(g=>g.net_measured); $("#a2-grid-take").textContent=`the best cell and the worst cell on the even weeks differ by ${K(Math.max(...vals)-Math.min(...vals))} euros; the surface is flat around the chosen cell, so the choice is not a knife edge.`;
+  }
+  reset(); draw();
+})();
+
+/* ---------- act three ---------- */
+(function(){
+  const cur={area:"DK1"}; let fault="none";
+  chips("#a3-ctl", [["DK1","DK1"],["DK2","DK2"]], "DK1", k=>{cur.area=k; draw();});
+  chips("#a3-faults", [["none","no fault"],["safety10","require 10 EUR above the margin (partial activation)"],["safety25","require 25 EUR"],["cyc60","cycle cost 60"],["cyc0","cycle cost 0"],["eta85","round trip 85 percent"],["store1","store 1.2 MWh"]], "none", k=>{fault=k; draw();});
+  function draw(){
+    const z=Z[cur.area], c=chosen(z), sep=z.sep_start_index, n=z.spot.length, m=z.market_separate;
+    const base=summarise(z,simulate(z,{mu:c.m_up,md:c.m_down}),sep,n);
+    $("#a3-catch").innerHTML=""; bars($("#a3-catch"), [{label:"up-regulation premium", series:[{name:"the market paid above day-ahead, EUR", v:m.up_premium_available, color:"var(--faint)"},{name:"the battery took, EUR", v:base.upRev, color:S[cur.area]}]},{label:"down-regulation discount", series:[{name:"the market paid above day-ahead, EUR", v:m.down_discount_available, color:"var(--faint)"},{name:"the battery took, EUR", v:base.downDisc, color:S[cur.area]}]}], {label:"market and battery, separate period", dec:0, xlabel:"euros over the separate period, one megawatt"});
+    $("#a3-catch-take").textContent=`the market paid ${K(m.up_premium_available)} euros of premium over ${m.up_hours} up-regulated hours; a one-megawatt, two-hour store took ${K(base.upRev)} of it in ${base.discharges} of those hours. The rest fell in hours when the store was empty or the premium was under the margin.`;
+    const bd=z.chosen.by_dir; const A=z.arms;
+    $("#a3-dir").innerHTML=`<tr><th class="l">Rule</th><th>after short</th><th>after balanced</th><th>after long</th><th>even weeks, net</th><th>separate, per MW-year</th></tr>`+
+      `<tr><td class="l">one pair</td><td class="num">+${c.m_up} / −${c.m_down}</td><td class="num">same</td><td class="num">same</td><td class="num">${K(A.flat.measured.net)}</td><td class="num">${K(A.flat.separate.net_per_mw_year)}</td></tr>`+
+      `<tr><td class="l">a pair per direction</td><td class="num">+${bd["1"][0]} / −${bd["1"][1]}</td><td class="num">+${bd["0"][0]} / −${bd["0"][1]}</td><td class="num">+${bd["-1"][0]} / −${bd["-1"][1]}</td><td class="num">${K(A.direction_aware.measured.net)}</td><td class="num">${K(A.direction_aware.separate.net_per_mw_year)}</td></tr>`;
+    $("#a3-dir-take").textContent=`the direction pairs won ${K(A.direction_aware.measured.net-A.flat.measured.net)} on the weeks that chose them and lost ${K(A.flat.separate.net_per_mw_year-A.direction_aware.separate.net_per_mw_year)} per megawatt-year on the unseen period, so the page runs the single pair. The persistence the earlier pages found is real; a price-taking battery cannot turn it into money, because it is paid the marginal price either way.`;
+    const o={mu:c.m_up,md:c.m_down}; let label="";
+    if(fault==="safety10"){o.safety=10; label="a 10 euro safety margin";} if(fault==="safety25"){o.safety=25; label="a 25 euro safety margin";}
+    if(fault==="cyc60"){o.cycle=60; label="a cycle cost of 60";} if(fault==="cyc0"){o.cycle=0; label="no cycle cost";}
+    if(fault==="eta85"){ label="85 percent round trip"; } if(fault==="store1"){ label="a 1.2 MWh store"; }
+    let s;
+    if(fault==="eta85"||fault==="store1"){ const saveE=D.eta, saveS=D.e_mwh; if(fault==="eta85") D.eta=Math.sqrt(0.85); if(fault==="store1") D.e_mwh=1.2; s=summarise(z,simulate(z,o),sep,n); D.eta=saveE; D.e_mwh=saveS; }
+    else s=summarise(z,simulate(z,o),sep,n);
+    $("#a3-stat").innerHTML=[["net per MW-year",K(s.perMwYear)+" EUR",`no fault: ${K(base.perMwYear)}`],["discharges",String(s.discharges),`no fault: ${base.discharges}`],["paid to discharge",R1(s.meanUp)+" EUR/MWh",`no fault: ${R1(base.meanUp)}`],["paid to charge",R1(s.meanDown)+" EUR/MWh",`no fault: ${R1(base.meanDown)}`]].map(([k,v,t])=>`<div><div class="k">${k}</div><div class="n">${v}</div><div class="s">${t}</div></div>`).join("");
+    const d=s.perMwYear-base.perMwYear;
+    const text={none:[`No fault: ${K(base.perMwYear)} euros per megawatt-year.`,`Every other chip changes one assumption and shows what it costs or adds.`],
+      safety10:[`Requiring 10 euros above the margin costs ${K(-d)} per megawatt-year.`,`That is the price of being conservative about the marginal bid, which may be partly activated. The battery still clears the annual-cost range.`],
+      safety25:[`Requiring 25 euros above the margin costs ${K(-d)} per megawatt-year.`,`A large allowance for partial activation. Where the result lands relative to the battery's annual cost is the honest question, not the headline.`],
+      cyc60:[`A cycle cost of 60 euros costs ${K(-d)} per megawatt-year.`,`Degradation is the largest single assumption on this page; the registered 30 sits in the middle of what operators report.`],
+      cyc0:[`With no cycle cost the battery makes ${K(s.perMwYear)}.`,`That is the gross activation income; the difference to the base case is what wear costs at 30 euros per delivered megawatt-hour.`],
+      eta85:[`At 85 percent round trip the battery makes ${K(s.perMwYear)}.`,`Losses change how often a full delivery is in store; the effect is ${K(d)} per megawatt-year.`],
+      store1:[`With a 1.2 megawatt-hour store the battery makes ${K(s.perMwYear)}.`,`A one-hour-class store can take only one activation per swing; the two-hour store earns ${K(-d)} more per megawatt-year, which is what the second hour is worth here.`]}[fault];
+    $("#a3-open").textContent=text[0]; $("#a3-verdict").textContent=text[1];
+  }
+  draw();
+})();
+
+/* ---------- asset card, failures, self-check ---------- */
+(function(){
+  const z=Z.DK1, c=chosen(z), A=z.arms;
+  $("#ac-stat").innerHTML=[["power",D.p_mw+" MW","whole-megawatt, whole-hour bids"],["store",D.e_mwh+" MWh","usable; a two-hour class"],["efficiency",Math.round(100*D.eta*D.eta)+"% round trip",`${D.eta} each way`],["cycle cost",D.cycle+" EUR/MWh","per megawatt-hour delivered"],["margins",`+${c.m_up} / −${c.m_down}`,"chosen on the even weeks, DK1"],["market","balancing activations only","no day-ahead trading, no capacity payments"]].map(([k,v,s])=>`<div><div class="k">${k}</div><div class="n" style="font-size:15px">${v}</div><div class="s">${s}</div></div>`).join("");
+  const w=z.worst_hours;
+  $("#fail").innerHTML=`
+  <p><b>The direction rule did not survive.</b> Chosen on the even weeks it looked ${K(A.direction_aware.measured.net-A.flat.measured.net)} euros better; on the unseen period it was ${K(A.flat.separate.net_per_mw_year-A.direction_aware.separate.net_per_mw_year)} per megawatt-year worse. It is the third page in this series on which the persistence of the balancing direction is real and not worth money to the party modelled.</p>
+  <p><b>The worst hours were charges at high prices.</b> ${w.map(x=>`${x.hour_utc}: charged at ${R1(x.price)} with the day-ahead at ${R1(x.spot)}`).join("; ")}. The down price cleared the margin because the day-ahead price was high that hour, and the energy was then delivered later at whatever the up price was. A rule that also looked at the level of the day-ahead price might avoid these; it was not registered and is not run.</p>
+  <p><b>The state machine had a dead zone.</b> At exactly 2.0 megawatt-hours, after a few cycles the store landed where neither a full charge nor a full delivery fit, and the first run traded nothing for a year. It was found before any period was read and the store set to 2.2. The registration records it.</p>
+  <p><b>The 2025 market is not here.</b> Energinet's hourly series ends 4 March 2025 and the market moved to quarter-hours with a new price design. Whether these margins hold there is untested.</p>
+  <p><b>One layer of a stack.</b> A real battery earns day-ahead spreads and reserve capacity payments too; this page prices one layer and compares it to the whole annual cost, which is the conservative direction.</p>`;
+  const chk=["DK1","DK2"].map(a=>{const zz=Z[a], cc=chosen(zz); const s=summarise(zz,simulate(zz,{mu:cc.m_up,md:cc.m_down}),zz.sep_start_index,zz.spot.length); const e=zz.arms.flat.separate; return {a, dis:[s.discharges,e.discharges], net:[Math.round(s.net),e.net]};});
+  const ok=chk.every(x=>x.dis[0]===x.dis[1]&&Math.abs(x.net[0]-x.net[1])<=1);
+  $("#selfcheck").textContent= ok ? `the browser's replay of the chosen pair matches the build script in both zones: ${chk.map(x=>`${x.a} ${x.dis[0]} discharges, ${K(x.net[0])} euros net`).join("; ")}.` : "MISMATCH between the browser's replay and the build script: "+JSON.stringify(chk);
+  console.log("selfcheck", ok, chk);
+})();
+
+const STEPS=[
+ {sel:".qa", k:"Start here · 1 of 8", html:"The four questions this page answers, each with one number computed in your browser from the per-hour prices. <b>Read them first</b>; every act below is one of them."},
+ {sel:"#t-domain", k:"One hour · 2 of 8", html:"The five steps of an hour and when they happen. <b>Hover a box</b> for what it uses. The battery decides before the hour; Energinet decides inside it."},
+ {sel:"#t-console", k:"Act one · 3 of 8", html:"One hour, one decision. <b>Drag the hour</b>: the store, the offers, what Energinet did, the price, the cash."},
+ {sel:"#t-ledger", k:"The ledger · 4 of 8", html:"The hours around the one you chose. The verdict under it is the whole separate period, at prices Energinet paid."},
+ {sel:"#t-margins", k:"Act two · 5 of 8", html:"How choosy the battery should be. <b>Drag the margins and the cycle cost</b>; the table replays the unseen months with your settings next to the chosen pair."},
+ {sel:"#t-catch", k:"Act three · 6 of 8", html:"What the market offered and what one megawatt took of it. Below: the direction rule that was measured and declined, and the faults you can switch on."},
+ {sel:"#t-card", k:"Asset card · 7 of 8", html:"What was assumed about the battery, and what this page leaves out of a real operator's income."},
+ {sel:"#t-fail", k:"Honest failures · 8 of 8", html:"What went wrong and what is untested. Limits and terms follow. The button at the top restarts this walkthrough."}
+];
+
+(function(){
+  const root=$('#tour'), hl=$('#tour-hl'), card=$('#tour-card'); let idx=0;
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function place(){
+    const st=STEPS[idx]; const elm=document.querySelector(st.sel); if(!elm){next();return;}
+    // geometry in document coordinates, so it does not depend on how far a smooth scroll has got
+    const r=elm.getBoundingClientRect(), sx=window.scrollX, sy=window.scrollY;
+    const docTop=r.top+sy, docLeft=r.left+sx;
+    root.style.height=document.documentElement.scrollHeight+'px';
+    const maxScroll=Math.max(0,document.documentElement.scrollHeight-innerHeight);
+    const target=Math.max(0,Math.min(docTop-14, maxScroll)), vTop=docTop-target;
+    const cw=Math.min(400, innerWidth-32), ch=250;
+    const fitsRight = r.left+r.width+18+cw <= innerWidth-16;
+    // the card never covers the highlight: it goes to the right when there is room, otherwise the
+    // highlight is shortened to leave room for the card below it, inside the viewport
+    const hh = fitsRight ? r.height : Math.max(120, Math.min(r.height, innerHeight - vTop - ch - 40));
+    hl.style.left=(docLeft-8)+'px'; hl.style.top=(docTop-8)+'px'; hl.style.width=(r.width+16)+'px'; hl.style.height=(hh+16)+'px';
+    const dots=STEPS.map((_,i)=>`<i class="${i===idx?'on':''}"></i>`).join('');
+    card.innerHTML=`<div class="tk">${st.k}</div><p>${st.html}</p><div class="tour-nav"><div class="dots">${dots}</div>${idx>0?'<button class="tour-btn" id="tprev">Back</button>':''}<button class="tour-btn" id="tskip">Close</button><button class="tour-btn primary" id="tnext">${idx<STEPS.length-1?'Next':'Done'}</button></div>`;
+    let cx, cy;
+    if(fitsRight){ cx=docLeft+r.width+18; cy=docTop; }
+    else { cx=Math.min(docLeft, sx+innerWidth-16-cw); cy=docTop+hh+22; }
+    card.style.left=Math.max(sx+16,cx)+'px'; card.style.top=Math.max(target+16,cy)+'px';
+    $('#tnext').onclick=next; $('#tskip').onclick=stop; const pv=$('#tprev'); if(pv) pv.onclick=()=>{idx=Math.max(0,idx-1);place();};
+    window.scrollTo({top:target, behavior:reduced?'auto':'smooth'});
+  }
+  function next(){ if(idx>=STEPS.length-1){stop();return;} idx++; place(); }
+  function stop(){ root.classList.remove('on'); try{localStorage.setItem('decision-tour','seen')}catch(e){} }
+  function start(){ idx=0; root.classList.add('on'); place(); }
+  $('#tourbtn').addEventListener('click', start);
+  window.addEventListener('resize', ()=>{ if(root.classList.contains('on')) place(); });
+  if(!location.search.includes("tour=off")) setTimeout(start,700);
+})();
+</script>
+</body>
+</html>

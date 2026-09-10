@@ -162,3 +162,14 @@ move from night to midday as solar grows.
 **Added after v2 was registered (30 August 2026, same day):** the H3 costed rule is also reported at k = 2,
 because the intraday gate closes an hour before delivery, so a position for hour t can only be placed when
 hour t-2 is the last settled hour. Labelled as added on the page.
+
+**Added 10 September 2026, after a cold read from a trading desk's side (labelled as added; no number changed):**
+(1) H1's "one hour ahead" nomination is information, not action: Energinet releases the one-hour forecast up to 15
+minutes before the hour and the intraday gate closes 60 minutes before, so the five-hour forecast is the last one a
+position can follow; the page now reports evening-to-five-hours as the actionable difference and evening-to-one-hour
+as the value of the information. (2) H4's zero gain cannot distinguish a market that shares Energinet's bias from one
+that corrects it by a constant, since the coefficient on the forecast absorbs any rescaling; the page no longer says
+the market "misses with" the forecast. (3) H4 is an easy test: the 17:50 forecast is six hours newer than anything the
+auction had, so the prediction could hardly fail; it is reported as a check. (4) The hourly imbalance series
+(RegulatingBalancePowerdata) ends 4 March 2025 11:00 UTC; its 15-minute successor (Imbalance Price) starts 11:15 the
+same day and is out of scope, as registered above.

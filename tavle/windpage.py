@@ -1,4 +1,4 @@
-"""Build docs/wind/index.html: does the wind forecast already know tomorrow's price?
+"""Build docs/wind/index.html: who pays when the wind forecast is wrong?
 
 Every number on the page comes from research/results/*.json (the
 pre-registered study, training and the once-read holdout) or is computed

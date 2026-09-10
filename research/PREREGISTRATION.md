@@ -176,12 +176,12 @@ same day and is out of scope, as registered above.
 
 ---
 
-# The decision machine, registered 11 September 2026 (research/decision.py)
+# The decision machine, registered 10 September 2026, evening (research/decision.py)
 
 One intraday position per hour, run end to end on the hourly balancing data used above: a registered
 rule, a learned gate, guards that refuse, a replay against an honest clock, and a fault injector.
 
-**Disclosure.** A first dry run on 10 to 11 September used a stricter age limit (3), an "edge floor"
+**Disclosure.** A first dry run the same evening used a stricter age limit (3), an "edge floor"
 guard and an override role for the learned gate, and printed separate-period numbers before the
 choices below were fixed on the even weeks. Those numbers were: DK1 rule 8.55, learned alone 8.59 EUR
 per unit hour, 4,511 of 10,284 hours refused. The choices below were then made on the even weeks of

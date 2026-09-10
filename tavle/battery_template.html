@@ -177,7 +177,8 @@ tr.ref td{background:color-mix(in srgb,var(--neg) 7%,transparent)}
     market: it charges only when activated for down-regulation and discharges only when activated for up-regulation.</p>
   <p>A <b>price taker</b>: a bid at or below the marginal price counts as activated at that price. That is right for one
     megawatt except at the margin, where the last bid may be partly activated; the page says so and lets you require a safety
-    margin in act three. The battery must be prequalified with Energinet; that is the asset owner's status, not a modelling choice.</p>
+    margin in act three. An hour counts as activated only when mFRR energy actually ran; hours where the price moved on the
+    automatic reserve alone do not count. Activations can also end inside the hour; act three prices that too. The battery must be prequalified with Energinet; that is the asset owner's status, not a modelling choice.</p>
   <p>Every rule was fixed on the even weeks of November 2021 to December 2023 and then frozen. January 2024 to 4 March 2025,
     where Energinet's hourly series ends, was replayed once and is called the <b>separate period</b>.</p>
   <div class="card" id="t-domain">
@@ -286,13 +287,14 @@ tr.ref td{background:color-mix(in srgb,var(--neg) 7%,transparent)}
   <div class="method">
     <b>data</b><span>Energinet's hourly regulating power series (RegulatingBalancePowerdata) to 4 March 2025: up and down regulation prices, activated mFRR volumes, the imbalance price; the day-ahead price carried by the <a href="../">tavle</a> platform. The 15-minute successor that began in March 2025 uses a new price design and is not loaded.</span>
     <b>split</b><span>Even ISO weeks of November 2021 to December 2023 chose the margins. January 2024 to 4 March 2025 was replayed once.</span>
-    <b>disclosure</b><span>The first run found a dead zone in the state machine at exactly 2.0 MWh (neither a full charge nor a full delivery fit after losses) before any period was read; the store was set to 2.2 MWh and the run repeated. The registration records it.</span>
+    <b>disclosure</b><span>The first run found a dead zone in the state machine at exactly 2.0 MWh (neither a full charge nor a full delivery fit after losses) before any period was read; the store was set to 2.2 MWh and the run repeated. The separate period was recomputed twice more: when prices were rounded for the browser replay, and when an audit tightened the activation flag to require mFRR energy in the hour, which re-chose the margins and moved the headline. The registration lists every number seen.</span>
     <b>check</b><span id="selfcheck">checking the browser's replay against the build script's numbers</span>
   </div>
   <div class="limits">
     <h3 style="font-size:17px;margin-bottom:6px">Limits</h3>
     <p>Price taker: the marginal bid may be partly activated and bids have location limits; act three's safety margin shows the
-    cost of being conservative about that. Whole-hour, whole-megawatt bids; a real battery also trades the day-ahead market and
+    cost of being conservative about that, and its partial-hour chip scales delivery by the system's activated volume over
+    60 megawatt-hours, a crude proxy, capped at one. Whole-hour, whole-megawatt bids; a real battery also trades the day-ahead market and
     sells reserve capacity, none of which is here. The cycle cost and the efficiency are stated assumptions; the annual cost of a
     two-hour battery in the verdict is an external figure, not computed here. Energinet's hourly series ends 4 March 2025 and the
     market moved to quarter-hours and a new price design; the separate period stops there. Two zones, one country, one author
@@ -383,18 +385,21 @@ function simulate(z, o){
     let did=0;
     if(canUp && upa[t] && up[t]>=spot[t]+m1+safety-1e-9 && !(downa[t]&&dir[t]===-1)) did=1;
     else if(canDown && downa[t] && down[t]<=spot[t]-m2-safety+1e-9 && !(upa[t]&&dir[t]===1)) did=-1;
-    if(did===1){ s-=needUp; cash[t]=up[t]*D.p_mw-cyc*D.p_mw; }
-    else if(did===-1){ s+=eta; cash[t]=-down[t]*D.p_mw; }
+    const f=o.haircut&&did?(did===1?z.up_frac[t]:z.down_frac[t]):1;
+    if(did===1){ s-=f*needUp; cash[t]=f*(up[t]-cyc)*D.p_mw; }
+    else if(did===-1){ s+=f*eta; cash[t]=-f*down[t]*D.p_mw; }
     act[t]=did; state[t]=s;
   }
   return {act,cash,state,offUp,offDown};
 }
 function summarise(z, sim, from, to){
-  let dis=0,chg=0,net=0,upRev=0,downCost=0,upP=0,spotDis=0,downP=0,downDisc=0; const start=zstart(z); const byYear={};
+  let dis=0,chg=0,net=0,upRev=0,downCost=0,upP=0,spotDis=0,downP=0,downDisc=0; const actCash=[]; const start=zstart(z); const byYear={};
   for(let t=from;t<to;t++){ const a=sim.act[t]; if(!a) continue; const y=new Date(start+t*HOUR).getUTCFullYear(); byYear[y]=byYear[y]||0; byYear[y]+=sim.cash[t]; net+=sim.cash[t];
-    if(a===1){dis++; upRev+=sim.cash[t]; upP+=z.up[t]; spotDis+=z.spot[t];} else {chg++; downCost-=sim.cash[t]; downP+=z.down[t]; downDisc+=z.spot[t]-z.down[t];} }
+    if(a===1){dis++; upRev+=sim.cash[t]; upP+=z.up[t]; spotDis+=z.spot[t];} else {chg++; downCost-=sim.cash[t]; downP+=z.down[t]; downDisc+=z.spot[t]-z.down[t];} actCash.push(sim.cash[t]); }
   const yrs=(to-from)/8766;
-  return {hours:to-from, years:yrs, discharges:dis, charges:chg, net, perMwYear:net/yrs, upRev, downCost, meanUp:dis?upP/dis:null, meanSpotDis:dis?spotDis/dis:null, meanDown:chg?downP/chg:null, downDisc, byYear};
+  return {hours:to-from, years:yrs, discharges:dis, charges:chg, net, perMwYear:net/yrs, upRev, downCost, meanUp:dis?upP/dis:null, meanSpotDis:dis?spotDis/dis:null, meanDown:chg?downP/chg:null, downDisc, byYear,
+    medianActive:(()=>{if(actCash.length<2)return null;const ss=[...actCash].sort((x,y)=>x-y);return ss.length%2?ss[(ss.length-1)/2]:(ss[ss.length/2-1]+ss[ss.length/2])/2;})(),
+    bestDecile:(()=>{if(actCash.length<2||!net)return null;const sd=[...actCash].sort((x,y)=>y-x);return sd.slice(0,Math.max(1,Math.floor(sd.length/10))).reduce((p,q)=>p+q,0)/net;})()};
 }
 function monthly(z, sim, from, to){ const start=zstart(z); const out=[]; let cum=0, cur=null;
   for(let t=from;t<to;t++){ const d=new Date(start+t*HOUR); const m=d.getUTCFullYear()*100+d.getUTCMonth(); if(m!==cur){ if(cur!==null) out.push({x:Date.UTC(Math.floor(cur/100),cur%100,1),y:cum}); cur=m; } cum+=sim.cash[t]; }
@@ -408,7 +413,7 @@ function chosen(z){ return z.chosen.flat; }
   const dk2=Z.DK2, c2=chosen(dk2); const flat2=summarise(dk2,simulate(dk2,{mu:c2.m_up,md:c2.m_down}),dk2.sep_start_index,dk2.spot.length);
   $("#dek-earn").textContent=`${K(flat.perMwYear)} euros per megawatt-year in DK1 over ${SEPLABEL}, after a cycle cost of ${D.cycle} euros per megawatt-hour; ${K(flat2.perMwYear)} in DK2. Offering at cost with no margins earned ${K(cost.perMwYear)}.`;
   const [lo,hi]=D.capex_per_mw_year;
-  $("#dek-pay").textContent=`Roughly. A two-hour megawatt costs about ${K0(lo)} to ${K0(hi)} euros a year at 2024 system prices, an external figure. This one market alone lands inside that range, before the day-ahead and reserve income a real operator adds on top.`;
+  const side=v=>v>hi?"clears it":v>=lo?"lands inside it":"falls below it"; $("#dek-pay").textContent=`A two-hour megawatt costs about ${K0(lo)} to ${K0(hi)} euros a year at 2024 system prices, an external figure. On this market alone DK1's ${K(flat.perMwYear)} ${side(flat.perMwYear)} and DK2's ${K(flat2.perMwYear)} ${side(flat2.perMwYear)}, before the day-ahead and reserve income a real operator adds on top.`;
   const dirA=z.arms.direction_aware.separate.net_per_mw_year, flatA=z.arms.flat.separate.net_per_mw_year;
   $("#dek-dir").textContent=`No. Margins per last settled direction beat the single pair on the even weeks where they were chosen, and made ${K(flatA-dirA)} euros per megawatt-year less on the separate period.`;
   const m=z.market_separate; $("#dek-catch").textContent=`${PCT(flat.upRev/m.up_premium_available)} of the premium the market paid above the day-ahead price for up-regulation, with ${flat.discharges} discharges in ${m.up_hours} up-regulated hours.`;
@@ -448,7 +453,7 @@ function chosen(z){ return z.chosen.flat; }
     $("#a1-ledger").innerHTML=rows;
     const S1=summarise(z,sim,z.sep_start_index,z.spot.length);
     $("#a1-open").textContent=`In ${cur.area} the battery discharged ${S1.discharges} times and charged ${S1.charges} times over the separate period.`;
-    $("#a1-verdict").textContent=`It was paid ${R1(S1.meanUp)} euros per megawatt-hour on average when discharging, against a day-ahead price of ${R1(S1.meanSpotDis)} in those hours, and paid ${R1(S1.meanDown)} per megawatt-hour to charge. Net of the cycle cost: ${K(S1.net)} euros, ${K(S1.perMwYear)} per megawatt-year. These are prices Energinet paid, not upper bounds.`;
+    $("#a1-verdict").textContent=`It was paid ${R1(S1.meanUp)} euros per megawatt-hour on average when discharging, against a day-ahead price of ${R1(S1.meanSpotDis)} in those hours, and paid ${R1(S1.meanDown)} per megawatt-hour to charge. Net of the cycle cost: ${K(S1.net)} euros, ${K(S1.perMwYear)} per megawatt-year; the median active hour made ${R1(S1.medianActive)} and the best tenth of active hours carried ${PCT(S1.bestDecile)} of the net, so the income lives in the spikes. These are prices Energinet paid, not upper bounds.`;
   }
   sl.addEventListener("input",()=>{idx=+sl.value; draw();});
   setup(); draw();
@@ -489,7 +494,7 @@ function chosen(z){ return z.chosen.flat; }
 (function(){
   const cur={area:"DK1"}; let fault="none";
   chips("#a3-ctl", [["DK1","DK1"],["DK2","DK2"]], "DK1", k=>{cur.area=k; draw();});
-  chips("#a3-faults", [["none","no fault"],["safety10","require 10 EUR above the margin (partial activation)"],["safety25","require 25 EUR"],["cyc60","cycle cost 60"],["cyc0","cycle cost 0"],["eta85","round trip 85 percent"],["store1","store 1.2 MWh"]], "none", k=>{fault=k; draw();});
+  chips("#a3-faults", [["none","no fault"],["haircut","partial-hour haircut (delivery scaled by activated volume)"],["safety10","require 10 EUR above the margin (price at the margin)"],["safety25","require 25 EUR"],["cyc60","cycle cost 60"],["cyc0","cycle cost 0"],["eta85","round trip 85 percent"],["store1","store 1.2 MWh"]], "none", k=>{fault=k; draw();});
   function draw(){
     const z=Z[cur.area], c=chosen(z), sep=z.sep_start_index, n=z.spot.length, m=z.market_separate;
     const base=summarise(z,simulate(z,{mu:c.m_up,md:c.m_down}),sep,n);
@@ -501,7 +506,7 @@ function chosen(z){ return z.chosen.flat; }
       `<tr><td class="l">a pair per direction</td><td class="num">+${bd["1"][0]} / −${bd["1"][1]}</td><td class="num">+${bd["0"][0]} / −${bd["0"][1]}</td><td class="num">+${bd["-1"][0]} / −${bd["-1"][1]}</td><td class="num">${K(A.direction_aware.measured.net)}</td><td class="num">${K(A.direction_aware.separate.net_per_mw_year)}</td></tr>`;
     $("#a3-dir-take").textContent=`the direction pairs won ${K(A.direction_aware.measured.net-A.flat.measured.net)} on the weeks that chose them and lost ${K(A.flat.separate.net_per_mw_year-A.direction_aware.separate.net_per_mw_year)} per megawatt-year on the unseen period, so the page runs the single pair. The persistence the earlier pages found is real; a price-taking battery cannot turn it into money, because it is paid the marginal price either way.`;
     const o={mu:c.m_up,md:c.m_down}; let label="";
-    if(fault==="safety10"){o.safety=10; label="a 10 euro safety margin";} if(fault==="safety25"){o.safety=25; label="a 25 euro safety margin";}
+    if(fault==="haircut"){o.haircut=true; label="partial-hour haircut";} if(fault==="safety10"){o.safety=10; label="a 10 euro safety margin";} if(fault==="safety25"){o.safety=25; label="a 25 euro safety margin";}
     if(fault==="cyc60"){o.cycle=60; label="a cycle cost of 60";} if(fault==="cyc0"){o.cycle=0; label="no cycle cost";}
     if(fault==="eta85"){ label="85 percent round trip"; } if(fault==="store1"){ label="a 1.2 MWh store"; }
     let s;
@@ -510,6 +515,7 @@ function chosen(z){ return z.chosen.flat; }
     $("#a3-stat").innerHTML=[["net per MW-year",K(s.perMwYear)+" EUR",`no fault: ${K(base.perMwYear)}`],["discharges",String(s.discharges),`no fault: ${base.discharges}`],["paid to discharge",R1(s.meanUp)+" EUR/MWh",`no fault: ${R1(base.meanUp)}`],["paid to charge",R1(s.meanDown)+" EUR/MWh",`no fault: ${R1(base.meanDown)}`]].map(([k,v,t])=>`<div><div class="k">${k}</div><div class="n">${v}</div><div class="s">${t}</div></div>`).join("");
     const d=s.perMwYear-base.perMwYear;
     const text={none:[`No fault: ${K(base.perMwYear)} euros per megawatt-year.`,`Every other chip changes one assumption and shows what it costs or adds.`],
+      haircut:[`Scaling delivery by activated volume costs ${K(-d)} per megawatt-year.`,`A system activation under 60 megawatt-hours cannot have run at 60 megawatts for the whole hour, so delivery is scaled by volume over 60, capped at one: a crude proxy for activations that end inside the hour, priced rather than ignored. ${cur.area==="DK2"?"DK2 leans on smaller activations than DK1, so it loses more.":"DK1 discharges into large activations, so it loses little."}`],
       safety10:[`Requiring 10 euros above the margin costs ${K(-d)} per megawatt-year.`,`That is the price of being conservative about the marginal bid, which may be partly activated. The battery still clears the annual-cost range.`],
       safety25:[`Requiring 25 euros above the margin costs ${K(-d)} per megawatt-year.`,`A large allowance for partial activation. Where the result lands relative to the battery's annual cost is the honest question, not the headline.`],
       cyc60:[`A cycle cost of 60 euros costs ${K(-d)} per megawatt-year.`,`Degradation is the largest single assumption on this page; the registered 30 sits in the middle of what operators report.`],
@@ -529,6 +535,7 @@ function chosen(z){ return z.chosen.flat; }
   $("#fail").innerHTML=`
   <p><b>The direction rule did not survive.</b> Chosen on the even weeks it looked ${K(A.direction_aware.measured.net-A.flat.measured.net)} euros better; on the unseen period it was ${K(A.flat.separate.net_per_mw_year-A.direction_aware.separate.net_per_mw_year)} per megawatt-year worse. It is the third page in this series on which the persistence of the balancing direction is real and not worth money to the party modelled.</p>
   <p><b>The worst hours were charges at high prices.</b> ${w.map(x=>`${x.hour_utc}: charged at ${R1(x.price)} with the day-ahead at ${R1(x.spot)}`).join("; ")}. The down price cleared the margin because the day-ahead price was high that hour, and the energy was then delivered later at whatever the up price was. A rule that also looked at the level of the day-ahead price might avoid these; it was not registered and is not run.</p>
+  <p><b>The first version was too generous, and DK2 paid for it.</b> Its activation flag accepted hours where only the automatic reserve moved the price; in DK2 a quarter of its charges and 3.7 percent of its discharges fell in hours with no mFRR energy at all. The flag now requires mFRR energy in the hour, the margins were re-chosen on the even weeks, and the headline moved from 52.7k to ${K(z.arms.flat.separate.net_per_mw_year)} per megawatt-year in DK1 and from 55.3k to ${K(Z.DK2.arms.flat.separate.net_per_mw_year)} in DK2. The registration records the revision and every number seen on the way.</p>
   <p><b>The state machine had a dead zone.</b> At exactly 2.0 megawatt-hours, after a few cycles the store landed where neither a full charge nor a full delivery fit, and the first run traded nothing for a year. It was found before any period was read and the store set to 2.2. The registration records it.</p>
   <p><b>The 2025 market is not here.</b> Energinet's hourly series ends 4 March 2025 and the market moved to quarter-hours with a new price design. Whether these margins hold there is untested.</p>
   <p><b>One layer of a stack.</b> A real battery earns day-ahead spreads and reserve capacity payments too; this page prices one layer and compares it to the whole annual cost, which is the conservative direction.</p>`;

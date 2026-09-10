@@ -39,8 +39,15 @@ def build():
     for area, g in df.groupby("area"):
         idx = pd.date_range(g.hour_utc.min(), g.hour_utc.max(), freq="h")
         g = g.set_index("hour_utc").reindex(idx); g.index.name = "hour_utc"; g["area"] = area
-        up_act = (g["up_eur"] > g["spot_eur"] + 1e-9) | (g["mfrr_up_mwh"].fillna(0) > 0)
-        down_act = (g["down_eur"] < g["spot_eur"] - 1e-9) | (g["mfrr_down_mwh"].fillna(0) > 0)
+        # tightened 11 Sep after the audit: the price signal alone is not enough, mFRR energy must
+        # actually have run in the hour, else a 1 MW mFRR bid had nothing to be activated into
+        # (the price can move on the automatic reserve alone, common in DK2)
+        up_act = (g["up_eur"] > g["spot_eur"] + 1e-9) & (g["mfrr_up_mwh"].fillna(0) > 0)
+        down_act = (g["down_eur"] < g["spot_eur"] - 1e-9) & (g["mfrr_down_mwh"].fillna(0).abs() > 0)
+        # crude partial-hour proxy: a system activation under 60 MWh in the hour cannot have run at
+        # 60 MW for the whole hour; delivery share = min(1, volume/60), used only by the haircut fault
+        g["up_frac"] = np.minimum(1.0, g["mfrr_up_mwh"].fillna(0) / 60.0)
+        g["down_frac"] = np.minimum(1.0, g["mfrr_down_mwh"].fillna(0).abs() / 60.0)
         # the dominating direction: the side the imbalance price settled on
         dom = np.where(g["imbalance_eur"].isna(), np.nan,
               np.where((g["imbalance_eur"] > g["spot_eur"] + 1e-9), 1.0, np.where(g["imbalance_eur"] < g["spot_eur"] - 1e-9, -1.0, 0.0)))

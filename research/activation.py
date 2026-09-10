@@ -31,7 +31,7 @@ SEP = pd.Timestamp("2024-01-01")
 CAPEX_PER_MW_YEAR = (30000, 60000)   # the range a two-hour battery costs per MW-year, for the verdict
 
 
-def simulate(z, m_up, m_down, cycle=CYCLE, by_dir=None, s0=S0, eta=ETA, e_max=E_MWH):
+def simulate(z, m_up, m_down, cycle=CYCLE, by_dir=None, s0=S0, eta=ETA, e_max=E_MWH, haircut=False):
     """m_up, m_down: reservation margins; by_dir: optional dict {1:(mu,md), 0:(mu,md), -1:(mu,md)} keyed by
     the last settled direction d(t-2). Returns per-hour action (+1 discharged, -1 charged, 0 none), cash, state."""
     spot, up, down, dir_, upa, downa = z["spot"], z["up"], z["down"], z["dir"], z["up_act"], z["down_act"]
@@ -54,10 +54,13 @@ def simulate(z, m_up, m_down, cycle=CYCLE, by_dir=None, s0=S0, eta=ETA, e_max=E_
             did = 1
         elif can_down and downa[t] and down[t] <= r_down + 1e-9 and not (upa[t] and dir_[t] == 1):
             did = -1
+        f = 1.0
+        if haircut and did:
+            f = z["up_frac"][t] if did == 1 else z["down_frac"][t]
         if did == 1:
-            s -= need_up; cash[t] = up[t] * P_MW - cycle * P_MW
+            s -= f * need_up; cash[t] = f * (up[t] - cycle) * P_MW
         elif did == -1:
-            s += eta; cash[t] = -down[t] * P_MW
+            s += f * eta; cash[t] = -f * down[t] * P_MW
         act[t] = did; state[t] = s
     return act, cash, state, offered_up, offered_down
 
@@ -80,6 +83,12 @@ def summarise(z, act, cash, off_up, off_down, m, years):
            "mean_spot_when_discharging": round(float(z["spot"][m][ups].mean()), 1) if ups.any() else None,
            "mean_down_price_paid": round(float(z["down"][m][downs].mean()), 1) if downs.any() else None,
            "by_year": []}
+    c_act = c[a != 0]
+    if len(c_act) > 1:
+        srt = np.sort(c_act)[::-1]; top = srt[: max(1, len(srt) // 10)].sum()
+        out["median_active"] = round(float(np.median(c_act)), 1)
+        out["se_active"] = round(float(c_act.std(ddof=1) / np.sqrt(len(c_act))), 1)
+        out["best_decile_share"] = round(float(top / c_act.sum()), 2) if c_act.sum() else None
     for y in np.unique(years[m]):
         mm = m & (years == y)
         if mm.sum():
@@ -92,6 +101,7 @@ def zone_run(df):
     z = {k: np.round(df[c].values.astype(float), 2) for k, c in [("spot", "spot_eur"), ("up", "up_eur"), ("down", "down_eur")]}  # the browser replays the same two-decimal prices
     z["dir"] = df["dir"].values.astype(float)
     z["up_act"] = df["up_activated"].fillna(False).values.astype(bool); z["down_act"] = df["down_activated"].fillna(False).values.astype(bool)
+    z["up_frac"] = df["up_frac"].fillna(0).values.astype(float); z["down_frac"] = df["down_frac"].fillna(0).values.astype(float)
     years = df.hour_utc.dt.year.values
     iso = df.hour_utc.dt.isocalendar(); even = (iso.week.astype(int) % 2 == 0).values
     single = df["single_pricing"].values; train = (df["period"] == "training").values; sep = (df["period"] == "separate").values
@@ -129,6 +139,7 @@ def zone_run(df):
     for cyc in (0, 15, 30, 60):
         act, cash, *_ = simulate(z, muA, mdA, cycle=cyc)
         sens.append({"cycle": cyc, "net_separate": round(float(cash[sep].sum()), 0), "discharges": int((act[sep] == 1).sum())})
+    hc_act, hc_cash, *_ = simulate(z, muA, mdA, haircut=True)
     # the market's own ruler on the separate period: every activated hour, the premium and discount available
     up_avail = float(np.where(z["up_act"][sep], z["up"][sep] - z["spot"][sep], 0).sum()); down_avail = float(np.where(z["down_act"][sep], z["spot"][sep] - z["down"][sep], 0).sum())
     # a worst-hours list for the direction-aware machine on the separate period (largest losses)
@@ -149,6 +160,9 @@ def zone_run(df):
         "market_separate": {"up_premium_available": round(up_avail, 0), "down_discount_available": round(down_avail, 0),
                             "up_hours": int(z["up_act"][sep].sum()), "down_hours": int(z["down_act"][sep].sum())},
         "worst_hours": worst_rows,
+        "up_frac": [round(float(v), 2) for v in z["up_frac"]],
+        "down_frac": [round(float(v), 2) for v in z["down_frac"]],
+        "haircut_separate": {"net": round(float(hc_cash[sep].sum()), 0), "discharges": int((hc_act[sep] == 1).sum())},
     }
     return export
 

@@ -246,3 +246,18 @@ price taker, at the prices Energinet actually paid, and whether the last settled
 - Prediction, written now: the market pays on the order of tens of thousands of euros per MW-year in 2024;
   the direction-aware pairs beat the flat pair on the even weeks by construction and by less, or not at all, on
   the separate period. Everything else is reported as found.
+
+**Revision after an audit, 11 September 2026 (labelled as revision; every number seen is listed).**
+The first published version flagged an hour as activated on the price signal alone. An audit found that
+in DK2 a quarter of the battery's charge hours and 3.7 percent of its discharge hours had no mFRR energy
+activated at all (DK1: none of its discharges, 1.2 percent of charges), so the price there came from the
+automatic reserve or special regulation and a 1 MW mFRR bid had nothing to be activated into. The flag now
+also requires activated mFRR energy in the hour. The margins were re-chosen on the even weeks under the new
+flag (+40/-5 in DK1, +80/-0 in DK2) and the separate period recomputed: flat per MW-year 51,702 in DK1 and
+54,600 in DK2, against 52,739 and 55,319 before. For the record, the separate period had also been printed
+twice before this revision: once in the dead-zone run (zeros) and once more when prices were rounded to two
+decimals for the browser replay, which alone moved DK1 from 51,852 to 52,739 while the flat pair stayed
++40/-10 in both zones. A partial-hour delivery proxy is added as a fault, not a default: delivery scaled by
+the system's activated mFRR volume over 60 MWh, capped at one, since an activation under 60 MWh cannot have
+run at 60 MW for the whole hour. Under it the separate net falls about 3 percent in DK1 and 19 percent in
+DK2. Concentration is now reported: the best decile of active hours carries about half of the net.

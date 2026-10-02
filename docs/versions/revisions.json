@@ -2001,5 +2001,99 @@
   },
   "unchanged": 33128,
   "largest": []
+ },
+ {
+  "night": "2026-10-02",
+  "at_utc": "2026-10-02T11:30:10Z",
+  "settled_hi": "2026-09-08T06:00:00",
+  "realtime_hi": "2026-10-02T11:00:00",
+  "day_ahead_hi": "2026-10-02T21:00:00",
+  "settlement_lag_days": 24,
+  "rows": 110600,
+  "baseline": false,
+  "window_rows": 33320,
+  "appeared": {
+   "day-ahead": 48,
+   "intraday": 48,
+   "five-hour": 46,
+   "one-hour": 46,
+   "real-time": 48,
+   "settled": 0
+  },
+  "vanished": {
+   "day-ahead": 48,
+   "intraday": 48,
+   "five-hour": 48,
+   "one-hour": 48,
+   "real-time": 48,
+   "settled": 48
+  },
+  "revised": {
+   "day-ahead": {
+    "n": 0,
+    "max_abs_mwh": 0.0,
+    "mean_abs_mwh": null
+   },
+   "intraday": {
+    "n": 0,
+    "max_abs_mwh": 0.0,
+    "mean_abs_mwh": null
+   },
+   "five-hour": {
+    "n": 2,
+    "max_abs_mwh": 6.12,
+    "mean_abs_mwh": 4.48
+   },
+   "one-hour": {
+    "n": 2,
+    "max_abs_mwh": 16.42,
+    "mean_abs_mwh": 13.25
+   },
+   "real-time": {
+    "n": 0,
+    "max_abs_mwh": 0.0,
+    "mean_abs_mwh": null
+   },
+   "settled": {
+    "n": 0,
+    "max_abs_mwh": 0.0,
+    "mean_abs_mwh": null
+   }
+  },
+  "unchanged": 33080,
+  "largest": [
+   {
+    "area": "DK1",
+    "hour_utc": "2026-10-01T13:00:00",
+    "version": "one-hour",
+    "before_mwh": 1688.4,
+    "after_mwh": 1704.8,
+    "change_mwh": 16.4
+   },
+   {
+    "area": "DK2",
+    "hour_utc": "2026-10-01T13:00:00",
+    "version": "one-hour",
+    "before_mwh": 838.5,
+    "after_mwh": 848.5,
+    "change_mwh": 10.1
+   },
+   {
+    "area": "DK1",
+    "hour_utc": "2026-10-01T17:00:00",
+    "version": "five-hour",
+    "before_mwh": 1036.8,
+    "after_mwh": 1042.9,
+    "change_mwh": 6.1
+   },
+   {
+    "area": "DK2",
+    "hour_utc": "2026-10-01T17:00:00",
+    "version": "five-hour",
+    "before_mwh": 588.6,
+    "after_mwh": 591.4,
+    "change_mwh": 2.8
+   }
+  ]
  }
 ]

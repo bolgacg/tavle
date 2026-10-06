@@ -26,3 +26,8 @@
 - B's weather archive has values from 25 March 2021, not 1 January 2021; B's building window starts there.
 - Weather timing: the archive's "two days before" value is the forecast made 48 hours before the valid time. To stay safe even if the nearest model run is up to three hours later and takes up to five hours to publish, B uses the two-day value only for delivery hours up to 21:00 and the three-day value for 22:00 and 23:00.
 - Real-time price corrections: NYISO rewrote 18 to 52 zone files a year after the day. A corrected day's prices count as public only from the rewrite time, so on those days the previous day's real-time prices are not used at 05:00.
+
+6 Oct 2026, night, modelling contract (before any model ran; research/us/model/CONTRACT.md):
+- Each idea's verdict uses gradient boosting; the deep model runs inside every idea in its place for the secondary comparison.
+- Positions: A is supply only (supply when the predicted gap is at or below minus the fee, else none). B and D trade both sides (supply at or below minus the fee, load at or above plus the fee, else none). C trades up to five zone pairs chosen on the build years, when the predicted difference is at least twice the fee.
+- The holdout is locked in code: every loader refuses delivery dates from 1 January 2024 unless a freeze commit is named and the model code is unchanged since it.

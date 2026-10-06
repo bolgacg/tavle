@@ -231,6 +231,12 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 2
         <li>Weather timing: the archive&#x27;s &ldquo;two days before&rdquo; value is the forecast made 48 hours before the valid time. To stay safe even if the nearest model run is up to three hours later and takes up to five hours to publish, B uses the two-day value only for delivery hours up to 21:00 and the three-day value for 22:00 and 23:00.</li>
         <li>Real-time price corrections: NYISO rewrote 18 to 52 zone files a year after the day. A corrected day&#x27;s prices count as public only from the rewrite time, so on those days the previous day&#x27;s real-time prices are not used at 05:00.</li>
       </ul>
+      <p class="meta">6 Oct 2026, night, modelling contract (before any model ran; <a href="https://github.com/bolgacg/tavle/blob/master/research/us/model/CONTRACT.md">research/us/model/CONTRACT.md</a>):</p>
+      <ul>
+        <li>Each idea&#x27;s verdict uses gradient boosting; the deep model runs inside every idea in its place for the secondary comparison.</li>
+        <li>Positions: A is supply only (supply when the predicted gap is at or below minus the fee, else none). B and D trade both sides (supply at or below minus the fee, load at or above plus the fee, else none). C trades up to five zone pairs chosen on the build years, when the predicted difference is at least twice the fee.</li>
+        <li>The holdout is locked in code: every loader refuses delivery dates from 1 January 2024 unless a freeze commit is named and the model code is unchanged since it.</li>
+      </ul>
     </div>
     <div class="fixed-foot">Committed copy: <a href="https://github.com/bolgacg/tavle/blob/master/research/us/OBJECTIVES.md">research/us/OBJECTIVES.md</a>. Its <a href="https://github.com/bolgacg/tavle/commits/master/research/us/OBJECTIVES.md">git history</a> shows every change since it was published.</div>
   </div>

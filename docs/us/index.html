@@ -67,6 +67,8 @@ td:first-child{text-align:left}th+th,td+td{padding-left:14px}
 td.n{font-family:var(--mono);font-size:13px;white-space:nowrap}
 tr.grp td{font-family:var(--sans);font-weight:600;font-size:13px;color:var(--ink);text-align:left;padding-top:16px;border-bottom:1px solid var(--rule2)}
 .zc{font-family:var(--mono);font-size:11px;color:var(--faint);margin-left:6px}
+#check-table td:first-child{white-space:nowrap}
+@media (max-width:640px){#check-table .zc{display:none}#check-table td:first-child{white-space:normal}#check-table th+th,#check-table td+td{padding-left:8px}#check-table td.n{font-size:12px}#check-table th{font-size:9px;letter-spacing:.05em}}
 .tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .timing td{text-align:left;font-size:14px;line-height:1.5}
 .timing th{text-align:left}
@@ -118,7 +120,7 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 2
 
 <header><div class="wrap">
   <div class="eyebrow">Study plan &middot; New York's wholesale power market &middot; fixed before any model ran</div>
-  <h1>Can a model trade New York's day-ahead to real-time gap after costs?</h1>
+  <h1>Can a model trade New York's <span style="white-space:nowrap">day-ahead</span> to <span style="white-space:nowrap">real-time</span> gap after costs?</h1>
   <p class="dek">This study tests four ideas for trading the gap between New York's day-ahead and real-time power prices, using only what is public at the bidding deadline and paying the grid operator's fee on every megawatt-hour. The rules, the test period and the bar for success were fixed and published on 6&nbsp;October&nbsp;2026, before any model ran.</p>
   <div class="qa">
     <div><b>What is tested?</b>Four ideas for a 1&nbsp;MW virtual position, each scored against a plain baseline on January 2024 to September 2026, in one run.</div>
@@ -269,19 +271,19 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 2
     <thead><tr><th>Zone</th><th>Hours real-time below day-ahead</th><th>Supply earned, all hours, USD per MWh</th><th>Supply earned without the extreme 1%, USD per MWh</th><th>Worst single hour for supply, USD per MWh</th></tr></thead>
     <tbody>
       <tr class="grp"><td colspan="5">Real-time below day-ahead in most hours; supply lost money (nine zones)</td></tr>
-      <tr><td>Capital<span class="zc">CAPITL &middot; F</span></td><td class="n">62.0%</td><td class="n neg">−0.05</td><td class="n pos">2.29</td><td class="n">−2,752</td></tr>
-      <tr><td>Hudson Valley<span class="zc">HUD VL &middot; G</span></td><td class="n">61.3%</td><td class="n neg">−0.07</td><td class="n pos">2.02</td><td class="n">−2,868</td></tr>
-      <tr><td>Long Island<span class="zc">LONGIL &middot; K</span></td><td class="n">64.1%</td><td class="n neg">−0.82</td><td class="n pos">1.89</td><td class="n">−2,914</td></tr>
-      <tr><td>Dunwoodie<span class="zc">DUNWOD &middot; I</span></td><td class="n">61.0%</td><td class="n neg">−0.39</td><td class="n pos">1.82</td><td class="n">−2,893</td></tr>
-      <tr><td>Millwood<span class="zc">MILLWD &middot; H</span></td><td class="n">60.9%</td><td class="n neg">−0.53</td><td class="n pos">1.77</td><td class="n">−2,890</td></tr>
-      <tr><td>New York City<span class="zc">N.Y.C. &middot; J</span></td><td class="n">60.5%</td><td class="n neg">−0.67</td><td class="n pos">1.63</td><td class="n">−2,903</td></tr>
-      <tr><td>Mohawk Valley<span class="zc">MHK VL &middot; E</span></td><td class="n">54.9%</td><td class="n neg">−0.25</td><td class="n pos">1.10</td><td class="n">−2,872</td></tr>
-      <tr><td>Genesee<span class="zc">GENESE &middot; B</span></td><td class="n">55.0%</td><td class="n neg">−0.21</td><td class="n pos">1.08</td><td class="n">−2,631</td></tr>
-      <tr><td>Central<span class="zc">CENTRL &middot; C</span></td><td class="n">54.8%</td><td class="n neg">−0.37</td><td class="n pos">1.00</td><td class="n">−2,789</td></tr>
+      <tr><td>Capital<span class="zc">CAPITL &middot; F</span></td><td class="n">62%</td><td class="n neg">−0.05</td><td class="n pos">2.29</td><td class="n">−2,752</td></tr>
+      <tr><td>Hudson Valley<span class="zc">HUD VL &middot; G</span></td><td class="n">61%</td><td class="n neg">−0.07</td><td class="n pos">2.02</td><td class="n">−2,868</td></tr>
+      <tr><td>Long Island<span class="zc">LONGIL &middot; K</span></td><td class="n">64%</td><td class="n neg">−0.82</td><td class="n pos">1.89</td><td class="n">−2,914</td></tr>
+      <tr><td>Dunwoodie<span class="zc">DUNWOD &middot; I</span></td><td class="n">61%</td><td class="n neg">−0.39</td><td class="n pos">1.82</td><td class="n">−2,893</td></tr>
+      <tr><td>Millwood<span class="zc">MILLWD &middot; H</span></td><td class="n">61%</td><td class="n neg">−0.53</td><td class="n pos">1.77</td><td class="n">−2,890</td></tr>
+      <tr><td>New York City<span class="zc">N.Y.C. &middot; J</span></td><td class="n">60%</td><td class="n neg">−0.67</td><td class="n pos">1.63</td><td class="n">−2,903</td></tr>
+      <tr><td>Mohawk Valley<span class="zc">MHK VL &middot; E</span></td><td class="n">55%</td><td class="n neg">−0.25</td><td class="n pos">1.10</td><td class="n">−2,872</td></tr>
+      <tr><td>Genesee<span class="zc">GENESE &middot; B</span></td><td class="n">55%</td><td class="n neg">−0.21</td><td class="n pos">1.08</td><td class="n">−2,631</td></tr>
+      <tr><td>Central<span class="zc">CENTRL &middot; C</span></td><td class="n">55%</td><td class="n neg">−0.37</td><td class="n pos">1.00</td><td class="n">−2,789</td></tr>
       <tr class="grp"><td colspan="5">Real-time below day-ahead in most hours; supply earned money (one zone)</td></tr>
-      <tr><td>West<span class="zc">WEST &middot; A</span></td><td class="n">57.4%</td><td class="n pos">0.55</td><td class="n pos">1.69</td><td class="n">−2,490</td></tr>
+      <tr><td>West<span class="zc">WEST &middot; A</span></td><td class="n">57%</td><td class="n pos">0.55</td><td class="n pos">1.69</td><td class="n">−2,490</td></tr>
       <tr class="grp"><td colspan="5">Real-time below day-ahead in fewer than half the hours (one zone)</td></tr>
-      <tr><td>North<span class="zc">NORTH &middot; D</span></td><td class="n">48.2%</td><td class="n neg">−0.50</td><td class="n neg">−0.10</td><td class="n">−2,663</td></tr>
+      <tr><td>North<span class="zc">NORTH &middot; D</span></td><td class="n">48%</td><td class="n neg">−0.50</td><td class="n neg">−0.10</td><td class="n">−2,663</td></tr>
     </tbody>
   </table>
   </div>

@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Can a model trade New York's day-ahead to real-time gap after costs?</title>
+<meta name="description" content="A study plan, fixed and published on 6 October 2026 before any model ran: four ideas for trading the gap between New York's day-ahead and real-time power prices with a 1 MW virtual position, scored after NYISO's fees. Bolgaç Gülen, October 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light;--paper:#faf9f7;--ink:#1a1d21;--soft:#5b6470;--faint:#8b95a1;--rule:#e2e0dc;--rule2:#c9c5be;--panel:#f3f1ed;--card:#fff;
+  --pos:#2f7d54;--neg:#b03a3a;--accent:#2c4a6b;--amber:#c8860d;
+  --serif:'Newsreader',Georgia,serif;--sans:'IBM Plex Sans',system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;overflow-wrap:break-word}
+a{color:var(--accent);text-decoration:none;font-weight:500}a:hover{text-decoration:underline}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px}
+@media (max-width:640px){.wrap{padding:0 16px}}
+header{padding:48px 0 30px;border-bottom:1px solid var(--ink)}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(32px,5vw,52px);line-height:1.08;letter-spacing:-.01em;margin:12px 0 14px;max-width:820px;text-wrap:balance}
+.dek{max-width:760px;color:var(--soft);font-size:18.5px;font-family:var(--serif);line-height:1.5}
+.byline{margin-top:18px;font-family:var(--mono);font-size:12px;color:var(--faint);display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+section{padding:44px 0 6px}
+.sec-label{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+h2{font-family:var(--serif);font-weight:600;font-size:29px;line-height:1.2;margin-bottom:10px;text-wrap:balance;max-width:820px}
+h3{font-family:var(--serif);font-size:20px;font-weight:600;line-height:1.3}
+p{margin-bottom:12px}
+.prose{max-width:760px}
+.why{font-size:15px;color:var(--ink);background:var(--panel);border-radius:4px;padding:10px 14px;margin:0 0 18px;max-width:760px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.94em}
+.qa{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px;margin:22px 0 4px;max-width:880px}
+.qa div{border-top:1px solid var(--rule);padding-top:8px;font-size:14.5px;line-height:1.5;color:var(--soft)}
+.qa b{display:block;font-family:var(--serif);font-size:17px;color:var(--ink);font-weight:600;margin-bottom:2px}
+@media (max-width:640px){.qa{grid-template-columns:1fr}}
+.gloss{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:8px 26px;font-size:13.5px;color:var(--soft);margin-top:10px}
+.gloss b{color:var(--ink);font-family:var(--mono);font-size:12px;font-weight:500}
+.ideas{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px}
+@media (max-width:760px){.ideas{grid-template-columns:1fr}}
+.idea{background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:18px 20px}
+.idea.main{border:2px solid var(--accent);grid-column:1/-1}
+.idea h3{margin-bottom:6px}
+.idea p{font-size:15px;color:var(--ink);margin-bottom:0}
+.idea .k{font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+.idea.main .k{color:var(--accent)}
+.fixed{border:2px solid var(--ink);border-radius:4px;background:var(--card);margin-top:6px;max-width:860px}
+.fixed-head{background:var(--ink);color:var(--paper);font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;padding:9px 18px;display:flex;flex-wrap:wrap;gap:4px 16px;justify-content:space-between}
+.fixed-body{padding:18px 22px 8px}
+@media (max-width:640px){.fixed-body{padding:14px 14px 4px}}
+.fixed-body p{font-size:15px;line-height:1.55;margin-bottom:10px}
+.fixed-body p.sub{padding-left:22px}
+.fixed-body p.meta{font-family:var(--mono);font-size:12px;color:var(--soft)}
+.fixed-body h4{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.06em;color:var(--soft);margin:4px 0 10px}
+.fixed-body ul{padding-left:20px;margin:0 0 12px}
+.fixed-body li{font-size:15px;line-height:1.55;margin-bottom:8px}
+.fixed-line{border:0;border-top:1px dashed var(--rule2);margin:8px 0 16px}
+.fixed-foot{border-top:1px solid var(--rule);padding:10px 22px;font-size:13px;color:var(--soft)}
+@media (max-width:640px){.fixed-foot{padding:10px 14px}}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-align:right;padding:0 0 8px;border-bottom:1px solid var(--rule);vertical-align:bottom;line-height:1.35}
+th:first-child{text-align:left}
+td{padding:8px 0;border-bottom:1px solid var(--rule);text-align:right;font-variant-numeric:tabular-nums;vertical-align:top}
+td:first-child{text-align:left}th+th,td+td{padding-left:14px}
+td.n{font-family:var(--mono);font-size:13px;white-space:nowrap}
+tr.grp td{font-family:var(--sans);font-weight:600;font-size:13px;color:var(--ink);text-align:left;padding-top:16px;border-bottom:1px solid var(--rule2)}
+.zc{font-family:var(--mono);font-size:11px;color:var(--faint);margin-left:6px}
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.timing td{text-align:left;font-size:14px;line-height:1.5}
+.timing th{text-align:left}
+.timing td:first-child{font-weight:500;width:24%}
+.timing td:nth-child(2){width:36%}
+@media (max-width:640px){
+  .timing thead{display:none}
+  .timing tr{display:block;border-bottom:1px solid var(--rule);padding:10px 0}
+  .timing td{display:block;border:0;padding:2px 0;width:auto!important}
+  .timing td+td{padding-left:0}
+  .timing td:nth-child(2)::before,.timing td:nth-child(3)::before{content:attr(data-label);display:block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-top:4px}
+}
+.pos{color:var(--pos)}.neg{color:var(--neg)}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:20px 22px;margin-top:16px}
+@media (max-width:640px){.card{padding:14px 12px}}
+.chart-title{font-family:var(--serif);font-size:19px;font-weight:600;margin-bottom:6px;line-height:1.3}
+.legend{display:flex;gap:6px 18px;font-size:12.5px;color:var(--soft);margin:2px 0 6px;flex-wrap:wrap;align-items:center}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend svg{flex:none}
+#chart{position:relative;width:100%}
+#chart svg{display:block;width:100%;height:auto}
+.three{font-size:13.5px;color:var(--soft);margin:10px 0 0;line-height:1.5}
+.three b{color:var(--ink);font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;margin-right:6px;font-weight:500}
+.three p{margin-bottom:6px}
+.note{font-size:12.5px;color:var(--faint);margin-top:10px;line-height:1.5}
+.verdict{margin-top:20px;padding:2px 0 2px 16px;border-left:3px solid var(--accent);font-size:15px;max-width:760px}
+.verdict b{color:var(--accent)}
+.limits{margin-top:20px;border-left:3px solid var(--neg);padding:2px 0 2px 16px;max-width:760px}
+.limits p{font-size:14.5px;color:var(--soft)}
+.limits b{color:var(--neg)}
+.log{list-style:none;padding:0;margin:8px 0 0;max-width:820px}
+.log li{display:grid;grid-template-columns:118px 1fr;gap:4px 16px;padding:10px 0;border-top:1px solid var(--rule);font-size:15px}
+.log li:last-child{border-bottom:1px solid var(--rule)}
+.log .d{font-family:var(--mono);font-size:12.5px;color:var(--ink);padding-top:2px;white-space:nowrap}
+.log .d small{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--pos)}
+.log.plan .d small{color:var(--amber)}
+.log.plan li{color:var(--soft)}
+@media (max-width:640px){.log li{grid-template-columns:1fr}.log .d small{display:inline;margin-left:8px}}
+.log-h{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin:22px 0 2px}
+.sources{padding-left:22px;max-width:820px;font-size:14.5px}
+.sources li{margin-bottom:10px;padding-left:4px}
+.sources li span{color:var(--soft)}
+footer{border-top:1px solid var(--rule);margin-top:48px;padding:20px 0 34px;font-family:var(--mono);font-size:12px;color:var(--faint)}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 20px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<header><div class="wrap">
+  <div class="eyebrow">Study plan &middot; New York's wholesale power market &middot; fixed before any model ran</div>
+  <h1>Can a model trade New York's day-ahead to real-time gap after costs?</h1>
+  <p class="dek">This study tests four ideas for trading the gap between New York's day-ahead and real-time power prices, using only what is public at the bidding deadline and paying the grid operator's fee on every megawatt-hour. The rules, the test period and the bar for success were fixed and published on 6&nbsp;October&nbsp;2026, before any model ran.</p>
+  <div class="qa">
+    <div><b>What is tested?</b>Four ideas for a 1&nbsp;MW virtual position, each scored against a plain baseline on January 2024 to September 2026, in one run.</div>
+    <div><b>Why is it hard?</b>New York's market monitor reports that all virtual trading there earned <span class="num">0.06</span> USD per MWh on average in 2024 before fees, less than that year's fee of <span class="num">0.1333</span>.</div>
+    <div><b>What has run so far?</b>No model. One data check on the build years 2020 to 2023, shown in <a href="#check">section 5</a>, is the reason for the main idea.</div>
+    <div><b>When is the answer due?</b>The single held-out run is planned for 11&nbsp;October&nbsp;2026. Each idea then gets one word: pays, doesn't pay, inconclusive, or not run.</div>
+  </div>
+  <div class="byline"><span>Bolgaç Gülen &middot; October 2026</span><span>&middot;</span>
+    <a href="https://github.com/bolgacg/tavle/blob/master/research/us/OBJECTIVES.md">the objectives file</a><span>&middot;</span>
+    <a href="https://github.com/bolgacg/tavle/commits/master/research/us/OBJECTIVES.md">its change history</a><span>&middot;</span>
+    <a href="https://github.com/bolgacg/tavle/tree/master/research/us">code and results</a></div>
+</div></header>
+
+<section id="bet"><div class="wrap">
+  <div class="sec-label">1 &middot; The bet</div>
+  <h2>What a virtual position is, and what it costs</h2>
+  <p class="why">Every idea on this page is a rule for when to take one kind of position and on which side, so the position is defined here once.</p>
+  <div class="prose">
+    <p>NYISO, the operator of New York's power grid, prices electricity twice. The day-ahead market sets a price for every hour of tomorrow, and the real-time market prices the same hour again as it happens, from what the grid actually needed. Prices are in US dollars per megawatt-hour (USD per MWh); one megawatt-hour is roughly what 800 average American homes use in an hour.</p>
+    <p>A virtual position trades the difference between those two prices without producing or using any power. Virtual supply sells 1&nbsp;MW in the day-ahead market and buys it back at the real-time price, so in each hour it earns the day-ahead price minus the real-time price. Virtual load does the opposite. NYISO takes virtual bids only at its 11 load zones, the regions it prices from West, around Buffalo, to Long Island.</p>
+    <p>Bids for a delivery day close at 05:00 New York time the day before. Day-ahead results usually appear near 09:50, so the position is fixed about five hours before anyone sees the day-ahead price it will get. <a href="#timing">Section 4</a> checks every input against that deadline.</p>
+    <p>NYISO charges a fee on every cleared virtual megawatt-hour. It was <span class="num">0.1066</span> USD in 2023 and <span class="num">0.1333</span> in 2024. In 2026 it is <span class="num">0.1919</span>, 80 percent more than in 2023.</p>
+    <p>That fee is a high bar here. NYISO's market monitor reports that all virtual trading in New York earned <span class="num">0.06</span> USD per MWh on average in 2024, before fees, which is less than that year's fee. A result in which no idea pays is therefore the expected outcome, and it will be reported as one.</p>
+  </div>
+  <h3 style="margin-top:22px;font-size:17px">Terms used below</h3>
+  <div class="gloss">
+    <div><b>day-ahead price</b> the price set the day before for each hour of tomorrow, one per zone</div>
+    <div><b>real-time price</b> the price set as the hour happens; this study uses the hourly value</div>
+    <div><b>gap</b> real-time price minus day-ahead price, for one zone and one hour</div>
+    <div><b>virtual supply, virtual load</b> selling or buying 1&nbsp;MW day-ahead and reversing it at the real-time price</div>
+    <div><b>load zone</b> one of NYISO's 11 pricing regions, lettered A (West) to K (Long Island)</div>
+    <div><b>extreme 1% of hours</b> in each zone, the 1% of hours with the largest gap in either direction</div>
+    <div><b>baseline</b> the rule every idea must beat: in each zone and hour, take the side the gap favoured on average over the past 365 days</div>
+    <div><b>gradient boosting</b> a standard machine-learning method that adds many small decision trees, each correcting the errors of the ones before</div>
+    <div><b>sequence model</b> a neural network, here written in PyTorch, that reads recent prices hour by hour</div>
+    <div><b>build years, held-out run</b> 2020 to 2023 are for building and tuning; January 2024 to September 2026 is run once, after the code is frozen</div>
+    <div><b>bootstrap over whole days</b> resampling whole days many times to put a 95% interval around daily profit</div>
+    <div><b>Holm correction</b> a rule that raises the bar when several ideas are tested, so one lucky idea out of four is not called a win</div>
+    <div><b>break-even fee</b> the fee at which an idea's profit would fall to zero</div>
+    <div><b>GFS</b> the Global Forecast System, the US weather service's public forecast model</div>
+  </div>
+</div></section>
+
+<section id="ideas"><div class="wrap">
+  <div class="sec-label">2 &middot; Four ideas</div>
+  <h2>Four ideas, one of them the main test</h2>
+  <p class="why">Testing four ideas raises the chance that one wins by luck. Idea A is therefore named the main test in advance, and the other three face a stricter bar (objective 5 below).</p>
+  <div class="ideas">
+    <div class="idea main">
+      <div class="k">Idea A &middot; the main test</div>
+      <h3>Take the steady side, and sit out the hours a model flags as spike risk</h3>
+      <p>In the build years, real-time settled below day-ahead in most hours in ten of the 11 zones, so virtual supply usually won. It still lost money in nine of them, because of a few hours when real-time jumped as much as 2,900 USD per MWh above day-ahead (<a href="#check">section 5</a>). Idea A takes virtual supply by default and stays out of the hours a model flags as spike risk the day before. It pays only if the model avoids enough spikes to beat the baseline after fees.</p>
+    </div>
+    <div class="idea">
+      <div class="k">Idea B</div>
+      <h3>Predict where NYISO's load forecast will be wrong</h3>
+      <p>NYISO commits extra generators in the day-ahead market to cover its own forecast of tomorrow's demand, which the industry calls load. If public weather forecasts can tell when that load forecast will run high or low, real-time prices should miss day-ahead in a predictable direction. B uses archived GFS weather forecasts issued two days before each hour; these start in 2021, so B is built on 2021 to 2023.</p>
+    </div>
+    <div class="idea">
+      <div class="k">Idea C</div>
+      <h3>Trade the price difference between two zones</h3>
+      <p>Power flows from upstate New York toward New York City and Long Island. When the lines between them fill up, which is called congestion, the zone prices split, and that pattern repeats by hour and season. C takes virtual supply in one zone and virtual load in another, so a move in the overall price level cancels and only the change in the difference between the two zones counts.</p>
+    </div>
+    <div class="idea">
+      <div class="k">Idea D</div>
+      <h3>Trade congestion that planned outages make predictable</h3>
+      <p>NYISO publishes the transmission outages it has scheduled, and the latest list is public before the bidding deadline. A line taken out of service limits how much power can move between zones, which can push zone prices apart in a known direction. D tests whether the day-ahead price already allows for that, using the schedule as published, including outages that were later cancelled.</p>
+    </div>
+  </div>
+  <p class="prose" style="margin-top:18px">The exact wording of all four ideas, and the rules that will score them, follow as they were fixed.</p>
+</div></section>
+
+<section id="objectives"><div class="wrap">
+  <div class="sec-label">3 &middot; The objectives</div>
+  <h2>The objectives, as fixed on 6 October 2026</h2>
+  <p class="why">Fixing the question, the test period and the bar before any model runs means the result cannot be tuned toward an answer. The text below is the approved objectives file, reproduced word for word.</p>
+  <div class="fixed">
+    <div class="fixed-head"><span>Fixed on 6 October 2026, before any model ran. Never edited.</span><span>Later changes: dated addenda below the line</span></div>
+    <div class="fixed-body">
+      <p>1. Question. Using only what is public by 05:00 New York time the day before delivery, which of four ideas turns New York&#x27;s day-ahead to real-time price gap into profit after costs for a 1 MW virtual position? Positions are assumed to clear at the market price.</p>
+      <p class="sub">A (main test). Take the steady downward gap, and sit out the hours a model flags as spike risk.</p>
+      <p class="sub">B. Use public weather forecasts to predict where the operator&#x27;s load forecast runs wrong, and trade on it.</p>
+      <p class="sub">C. Bet up in one zone and down in another, to trade the repeating congestion patterns.</p>
+      <p class="sub">D. Trade the congestion that planned transmission outages make predictable.</p>
+      <p>2. Data. Day-ahead and real-time prices for the 11 tradable zones, January 2020 to September 2026, with generator and border points as inputs only, each used only while it existed. The operator&#x27;s load forecast issued before the deadline. Archived weather forecasts for B. Outage notices for D. Every input carries its publication time; a test fails the build if anything was published after 05:00 New York time.</p>
+      <p>3. Models. Baseline: always take each zone-hour&#x27;s usual side (average gap over the trailing 365 days). Gradient boosting. A PyTorch sequence model averaged over three seeds, trained on one 6 GB consumer GPU, used inside each idea where it fits. All tuning on 2020 to 2023 only, with a rehearsal on 2023. Code and settings frozen in a public commit before the held-out run. Anything not frozen by 10 Oct 23:59 is reported as not run.</p>
+      <p>4. Test. January 2024 to September 2026, run once. Each month predicted only from data up to two days earlier. Any rerun after a bug fix is published beside the original with the difference.</p>
+      <p>5. Score. Each idea against the baseline: daily net profit after each year&#x27;s NYISO virtual charge, 95% interval from a bootstrap over whole days. Primary: A. Secondary in order B, C, D, with Holm correction. Ranking table: profit per MWh, break-even fee, worst month, results without the most extreme 1% of hours; costs stressed at 0.50 and 1.00 USD per MWh. Deep against gradient boosting reported inside every idea.</p>
+      <p>6. Bar (never edited). Each idea gets one word: pays, doesn&#x27;t pay, inconclusive, or not run. Pays = lower end of its corrected interval above zero. Deep against gradient boosting: better, worse, equivalent (interval inside plus or minus one fee per MWh), or inconclusive.</p>
+      <p>7. Delivery. 6 Oct plan page live. 8 Oct data, timing test, data checks for B and D. 9 Oct baselines and rehearsal. 10 Oct freeze. 11 Oct single held-out run. From 13 Oct every idea that ran publishes next-day positions before 05:00 New York time, labelled a pipeline test, until an interview. 14 Oct page complete.</p>
+      <hr class="fixed-line">
+      <h4>Addenda (dated; written before any model has run)</h4>
+      <p class="meta">6 Oct 2026, data checks for B and D (done the same day, before any model):</p>
+      <ul>
+        <li>B: NYISO&#x27;s own load-forecast weather file (lfweather) is written about 08:00 New York time and its forecast for the delivery day first appears after the 05:00 deadline, so it is not used as a bid input. B uses archived GFS forecasts (Open-Meteo previous-runs archive), taking the run issued two days before each target hour; available from 2021, so B&#x27;s building window is 2021 to 2023.</li>
+        <li>D: NYISO outSched, a daily snapshot of scheduled transmission outages (about 100 lines), written about 09:40 New York time the day before its date, archived from January 2020. Scheduled, not actual: some outages are cancelled.</li>
+        <li>Disclosure: before the freeze, a reviewer scanned descriptive statistics across all years, 2024 onward included (real-time below day-ahead in most zone-years; NYC 2024 always-supply earned 0.00 USD per MWh, 1.74 without its worst 1% of hours). These motivated idea A. No model has seen 2024 onward.</li>
+      </ul>
+    </div>
+    <div class="fixed-foot">Committed copy: <a href="https://github.com/bolgacg/tavle/blob/master/research/us/OBJECTIVES.md">research/us/OBJECTIVES.md</a>. Its <a href="https://github.com/bolgacg/tavle/commits/master/research/us/OBJECTIVES.md">git history</a> shows every change since it was published.</div>
+  </div>
+</div></section>
+
+<section id="timing"><div class="wrap">
+  <div class="sec-label">4 &middot; Timing</div>
+  <h2>What is known at 05:00, and what is not</h2>
+  <p class="why">A backtest that uses anything published after 05:00 makes money no trader could have made. Objective 2 therefore gives every input its publication time and makes the build fail if one is late; that test is written on 8 October.</p>
+  <div class="tscroll">
+  <table class="timing">
+    <thead><tr><th>Input</th><th>When it is published, New York time</th><th>At the 05:00 deadline</th></tr></thead>
+    <tbody>
+      <tr><td>Day-ahead bids for the delivery day</td><td data-label="Published">Close at 05:00 the day before delivery</td><td data-label="At 05:00">The deadline every other input is checked against.</td></tr>
+      <tr><td>Day-ahead prices for the delivery day</td><td data-label="Published">Usually near 09:50 the day before</td><td data-label="At 05:00">Not known. They settle the position and are never an input.</td></tr>
+      <tr><td>NYISO load forecast</td><td data-label="Published">The file for the next day is written about 07:00 to 09:00, after the close</td><td data-label="At 05:00">Only the forecast issued the previous morning is known, so that is the one used.</td></tr>
+      <tr><td>NYISO load-forecast weather file</td><td data-label="Published">Written about 08:00; its forecast for the delivery day first appears after the deadline</td><td data-label="At 05:00">Not used. Idea B uses archived GFS forecasts issued two days earlier, available from 2021.</td></tr>
+      <tr><td>Scheduled transmission outages</td><td data-label="Published">A daily snapshot, written about 09:40 the day before its date</td><td data-label="At 05:00">Known. The latest snapshot is public at the deadline, and idea D uses it.</td></tr>
+      <tr><td>Real-time prices for past hours</td><td data-label="Published">Posted as each day runs; NYISO later corrected prices in 123 of 2,446 day files, and the archive keeps only the corrected values</td><td data-label="At 05:00">Known, with the limit below.</td></tr>
+      <tr><td>Prices at generator and border points</td><td data-label="Published">Posted with the zone prices; 559 points in January 2020 and 747 in September 2026</td><td data-label="At 05:00">Inputs only, never traded. Each point is used only while it existed.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">Publication times were checked on 6 October 2026 against the timestamps of NYISO's archived files and NYISO's own documents (<a href="#sources">section 7</a>).</p>
+  <div class="limits">
+    <p><b>Two limits.</b> Settlement uses the corrected real-time prices, so profits are computed correctly, but as an input a corrected price for a recent hour may differ from what was on screen at 05:00 that day. Positions are also assumed to clear at the market price, which a real bid with a price limit may not.</p>
+  </div>
+</div></section>
+
+<section id="check"><div class="wrap">
+  <div class="sec-label">5 &middot; Build-years check</div>
+  <h2>What always taking virtual supply earned in 2020 to 2023</h2>
+  <p class="why">This is the only data check run so far, and it is the reason idea A exists. It uses the build years 2020 to 2023 only; no model has seen 2024 onward.</p>
+  <div class="card">
+    <div class="chart-title">Virtual supply, all hours against all but the extreme 1%</div>
+    <div class="legend" aria-hidden="true">
+      <span><svg width="14" height="14"><circle cx="7" cy="7" r="5" fill="#fff" stroke="#1a1d21" stroke-width="2"/></svg>all hours</span>
+      <span><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" fill="#2c4a6b"/></svg>without the extreme 1% of hours</span>
+      <span><svg width="18" height="14"><line x1="9" y1="0" x2="9" y2="14" stroke="#c8860d" stroke-width="2" stroke-dasharray="3 2"/></svg>2024 fee, 0.1333 USD per MWh</span>
+    </div>
+    <div id="chart" role="img" aria-label="In 2020 to 2023, real time settled below day ahead in most hours in ten of eleven zones, yet always taking the virtual-supply side lost money in nine of them, because of the most extreme 1 percent of hours. WEST is the zone where it earned money (0.55 USD per MWh); NORTH is the zone where real time was below day ahead in only 48 percent of hours. Without the most extreme 1 percent of hours, the same bet earned 1.00 to 2.29 USD per MWh in ten zones."></div>
+    <div class="three">
+      <p><b>what you see</b>For each zone, what always taking virtual supply earned per MWh before fees over 2020 to 2023: over all hours (open circle) and without the extreme 1% of hours (filled circle).</p>
+      <p><b>how to read</b>Right of the zero line is profit. The dashed line is the 2024 fee; a position has to land to its right to pay.</p>
+      <p><b>take-away</b>Over all hours, supply lost money in every zone but West. Without the extreme 1% of hours it earned 1.00 to 2.29 USD per MWh in ten zones, between 7.5 and 17.2 times the 2024 fee.</p>
+    </div>
+  </div>
+  <div class="tscroll" style="margin-top:22px">
+  <table id="check-table">
+    <thead><tr><th>Zone</th><th>Hours real-time below day-ahead</th><th>Supply earned, all hours, USD per MWh</th><th>Supply earned without the extreme 1%, USD per MWh</th><th>Worst single hour for supply, USD per MWh</th></tr></thead>
+    <tbody>
+      <tr class="grp"><td colspan="5">Real-time below day-ahead in most hours; supply lost money (nine zones)</td></tr>
+      <tr><td>Capital<span class="zc">CAPITL &middot; F</span></td><td class="n">62.0%</td><td class="n neg">−0.05</td><td class="n pos">2.29</td><td class="n">−2,752</td></tr>
+      <tr><td>Hudson Valley<span class="zc">HUD VL &middot; G</span></td><td class="n">61.3%</td><td class="n neg">−0.07</td><td class="n pos">2.02</td><td class="n">−2,868</td></tr>
+      <tr><td>Long Island<span class="zc">LONGIL &middot; K</span></td><td class="n">64.1%</td><td class="n neg">−0.82</td><td class="n pos">1.89</td><td class="n">−2,914</td></tr>
+      <tr><td>Dunwoodie<span class="zc">DUNWOD &middot; I</span></td><td class="n">61.0%</td><td class="n neg">−0.39</td><td class="n pos">1.82</td><td class="n">−2,893</td></tr>
+      <tr><td>Millwood<span class="zc">MILLWD &middot; H</span></td><td class="n">60.9%</td><td class="n neg">−0.53</td><td class="n pos">1.77</td><td class="n">−2,890</td></tr>
+      <tr><td>New York City<span class="zc">N.Y.C. &middot; J</span></td><td class="n">60.5%</td><td class="n neg">−0.67</td><td class="n pos">1.63</td><td class="n">−2,903</td></tr>
+      <tr><td>Mohawk Valley<span class="zc">MHK VL &middot; E</span></td><td class="n">54.9%</td><td class="n neg">−0.25</td><td class="n pos">1.10</td><td class="n">−2,872</td></tr>
+      <tr><td>Genesee<span class="zc">GENESE &middot; B</span></td><td class="n">55.0%</td><td class="n neg">−0.21</td><td class="n pos">1.08</td><td class="n">−2,631</td></tr>
+      <tr><td>Central<span class="zc">CENTRL &middot; C</span></td><td class="n">54.8%</td><td class="n neg">−0.37</td><td class="n pos">1.00</td><td class="n">−2,789</td></tr>
+      <tr class="grp"><td colspan="5">Real-time below day-ahead in most hours; supply earned money (one zone)</td></tr>
+      <tr><td>West<span class="zc">WEST &middot; A</span></td><td class="n">57.4%</td><td class="n pos">0.55</td><td class="n pos">1.69</td><td class="n">−2,490</td></tr>
+      <tr class="grp"><td colspan="5">Real-time below day-ahead in fewer than half the hours (one zone)</td></tr>
+      <tr><td>North<span class="zc">NORTH &middot; D</span></td><td class="n">48.2%</td><td class="n neg">−0.50</td><td class="n neg">−0.10</td><td class="n">−2,663</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">Each zone has 35,064 hours, January 2020 to December 2023, 385,704 zone-hours in all. The extreme 1% is about 350 hours per zone, chosen after the fact. Earnings are before fees. Generated from <a href="https://github.com/bolgacg/tavle/blob/master/research/us/results/build_check.json">research/us/results/build_check.json</a>, written by <a href="https://github.com/bolgacg/tavle/blob/master/research/us/build_check.py">research/us/build_check.py</a> from NYISO's monthly price archives.</p>
+  <div class="verdict">
+    <p>In 2020 to 2023, real time settled below day ahead in most hours in ten of eleven zones, yet always taking the virtual-supply side lost money in nine of them, because of the most extreme 1 percent of hours. WEST is the zone where it earned money (0.55 USD per MWh); NORTH is the zone where real time was below day ahead in only 48 percent of hours. Without the most extreme 1 percent of hours, the same bet earned 1.00 to 2.29 USD per MWh in ten zones.</p>
+    <p>Those hours were picked with hindsight, so this is a premise, not a strategy. Idea A asks whether a model can flag enough of them by 05:00 the day before.</p>
+  </div>
+  <p class="prose note" style="font-size:13.5px">One disclosed exception to "build years only": before the freeze, a reviewer looked at summary statistics for all years, 2024 onward included. The third addendum in <a href="#objectives">section 3</a> lists what was seen. No model has seen 2024 onward.</p>
+</div></section>
+
+<section id="log"><div class="wrap">
+  <div class="sec-label">6 &middot; Log</div>
+  <h2>What has been done, and what comes next</h2>
+  <p class="why">A plan only means something if it was fixed before the results existed. Every change to this repository is timestamped in its public git history, and the <a href="https://github.com/bolgacg/tavle/commits/master/research/us/OBJECTIVES.md">history of research/us/OBJECTIVES.md</a> shows when the objectives were committed and every change since.</p>
+  <div class="log-h">Done, newest first</div>
+  <ul class="log">
+    <li><div class="d">6 Oct 2026<small>done</small></div><div>This page published, with the objectives as approved.</div></li>
+    <li><div class="d">6 Oct 2026<small>done</small></div><div>Build-years check (<a href="#check">section 5</a>): 2020 to 2023 only, 385,704 zone-hours, no model.</div></li>
+    <li><div class="d">6 Oct 2026<small>done</small></div><div>Data checks for ideas B and D. NYISO's own weather file is published after the deadline, so B uses archived GFS forecasts; the outage snapshot is public before it, so D can run. Both are recorded in the addenda.</div></li>
+    <li><div class="d">6 Oct 2026<small>done</small></div><div>Data downloaded: 405 monthly NYISO archives, January 2020 to September 2026.</div></li>
+    <li><div class="d">6 Oct 2026<small>done</small></div><div>Objectives written and reviewed in three independent passes: a hiring-desk read, a check of every NYISO market fact against primary sources, and a statistics red team. Approved and published before any model ran.</div></li>
+  </ul>
+  <div class="log-h">Planned, as fixed in objective 7</div>
+  <ul class="log plan">
+    <li><div class="d">8 Oct 2026<small>planned</small></div><div>Data pipeline and the timing test that fails the build if any input was published after 05:00. The data checks for B and D planned for this day were done on 6 October.</div></li>
+    <li><div class="d">9 Oct 2026<small>planned</small></div><div>Baselines, and a rehearsal of the whole test on 2023.</div></li>
+    <li><div class="d">10 Oct 2026<small>planned</small></div><div>Freeze: code and settings in a public commit by 23:59. Anything not frozen by then is reported as not run.</div></li>
+    <li><div class="d">11 Oct 2026<small>planned</small></div><div>The single held-out run, January 2024 to September 2026.</div></li>
+    <li><div class="d">13 Oct 2026<small>planned</small></div><div>From this day, every idea that ran publishes next-day positions before 05:00 New York time, labelled a pipeline test.</div></li>
+    <li><div class="d">14 Oct 2026<small>planned</small></div><div>This page complete, with every idea's result in one word and its interval.</div></li>
+  </ul>
+</div></section>
+
+<section id="sources"><div class="wrap">
+  <div class="sec-label">7 &middot; Sources</div>
+  <h2>Sources</h2>
+  <ol class="sources">
+    <li><a href="https://www.nyiso.com/documents/20142/3037451/7-Virtual-Trading.pdf/b8ec4017-daac-5654-33d2-d032eb59e2b5">NYISO, Virtual Trading</a> <span>(New York Market Orientation Course, June 2026): what a virtual bid is, bidding at the zonal level, and how virtual supply and virtual load settle.</span></li>
+    <li><a href="https://www.nyiso.com/documents/20142/3035389/Virtual-Trading-Settlements.pdf/2e4e8a27-b4b1-a0e1-b376-0cab32b93180">NYISO, Virtual Trading Market Settlements</a> <span>(Accounting and Billing Workshop, December 2024): the settlement formulas and the 2023 fee of 0.1066 USD per cleared MWh.</span></li>
+    <li><a href="https://www.nyiso.com/documents/20142/39240890/2024-Sched-One-Posting-non-Physical-for-posting.pdf/e0e5b9a6-04b4-e0c3-bb08-ebf489192f83">NYISO, Non-Physical Schedule 1 Rates for 2024</a><span>: the 2024 fee of 0.1333 USD per cleared MWh for virtual resources.</span></li>
+    <li><a href="https://www.nyiso.com/documents/20142/3037451/6-Ancillary-Services.pdf/b39ad462-5e08-6514-a170-fd344244ef48">NYISO, Ancillary Services</a> <span>(New York Market Orientation Course, June 2026): the 2026 fee of 0.1919 USD per cleared MWh for virtual trading.</span></li>
+    <li><a href="https://www.nyiso.com/documents/20142/1406794/DAMPostingTime_Aug6thMIWG.pdf/ea980810-9280-7e2f-edef-ff1acda43964">NYISO, DAM Posting Time</a> <span>(Market Issues Working Group, 6 August 2013): the day-ahead close at 05:00 and the typical posting of results at 09:50.</span></li>
+    <li><a href="https://www.nyiso.com/documents/20142/3037451/2-Energy-Marketplace.pdf/5f7d9870-a07f-bb21-19b1-ffb34ded64c7">NYISO, Energy Marketplace</a> <span>(New York Market Orientation Course, June 2026): the day-ahead market and its close at 05:00 the day before dispatch.</span></li>
+    <li><a href="https://www.nyiso.com/documents/20142/25467833/Price-Validation.pdf/5b5759d6-60f2-37b5-4b75-e11eeabf34bc">NYISO, Price Validation</a> <span>(LBMP In Depth Course, September 2026): how posted prices are reviewed and corrected.</span></li>
+    <li><a href="https://www.nyiso.com/documents/20142/2223763/2024-State-of-the-Market-Report.pdf/63b4d5c8-7e8c-45ac-02f7-7885406bae71">Potomac Economics, 2024 State of the Market Report for the New York ISO Markets</a> <span>(NYISO's market monitoring unit): virtual trading averaged a profit of 0.06 USD per MWh in 2024.</span></li>
+    <li><a href="http://mis.nyiso.com/public/">NYISO public data archive</a><span>: day-ahead and real-time zone prices, generator and border point prices, the load forecast, the load-forecast weather file and the scheduled outage snapshots, January 2020 to September 2026.</span></li>
+    <li><a href="https://open-meteo.com/en/docs/previous-runs-api">Open-Meteo previous runs archive</a><span>: archived GFS weather forecasts by issue time, used by idea B.</span></li>
+  </ol>
+</div></section>
+
+<footer><div class="wrap"><span>Bolgaç Gülen &middot; October 2026 &middot; the numbers in section 5 are generated from build_check.json, not typed; every other number is quoted from the sources above</span><a href="https://github.com/bolgacg/tavle">github.com/bolgacg/tavle</a></div></footer>
+
+<script>
+(function(){
+  var D = [{"name": "Capital", "all": -0.05, "calm": 2.29, "gapBefore": false}, {"name": "Hudson Valley", "all": -0.07, "calm": 2.02, "gapBefore": false}, {"name": "Long Island", "all": -0.82, "calm": 1.89, "gapBefore": false}, {"name": "Dunwoodie", "all": -0.39, "calm": 1.82, "gapBefore": false}, {"name": "Millwood", "all": -0.53, "calm": 1.77, "gapBefore": false}, {"name": "New York City", "all": -0.67, "calm": 1.63, "gapBefore": false}, {"name": "Mohawk Valley", "all": -0.25, "calm": 1.1, "gapBefore": false}, {"name": "Genesee", "all": -0.21, "calm": 1.08, "gapBefore": false}, {"name": "Central", "all": -0.37, "calm": 1.0, "gapBefore": false}, {"name": "West", "all": 0.55, "calm": 1.69, "gapBefore": true}, {"name": "North", "all": -0.5, "calm": -0.1, "gapBefore": true}];
+  var FEE = 0.1333;
+  var box = document.getElementById('chart');
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(name, attrs, text){
+    var e = document.createElementNS(NS, name);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (text != null) e.textContent = text;
+    return e;
+  }
+  function fmt(v){ return (v < 0 ? '−' : '') + Math.abs(v).toFixed(2); }
+  function draw(){
+    var W = Math.max(280, Math.round(box.clientWidth));
+    var narrow = W < 520;
+    var mL = narrow ? 100 : 124, mR = 14, mT = 26, rowH = narrow ? 26 : 28, mB = 50;
+    var H = mT + D.length * rowH + mB;
+    var x0 = -1, x1 = 2.5;
+    var X = function(v){ return mL + (v - x0) / (x1 - x0) * (W - mL - mR); };
+    var svg = el('svg', {viewBox: '0 0 ' + W + ' ' + H, width: W, height: H});
+    var ticks = narrow ? [-1, 0, 1, 2] : [-1, -0.5, 0, 0.5, 1, 1.5, 2, 2.5];
+    var yTop = mT - 6, yBot = mT + D.length * rowH;
+    ticks.forEach(function(t){
+      svg.appendChild(el('line', {x1: X(t), x2: X(t), y1: yTop, y2: yBot, stroke: t === 0 ? '#1a1d21' : '#e2e0dc', 'stroke-width': t === 0 ? 1.2 : 1}));
+      svg.appendChild(el('text', {x: X(t), y: yBot + 16, 'text-anchor': 'middle', 'font-family': 'IBM Plex Mono, monospace', 'font-size': 11, fill: '#5b6470'}, t === 0 ? '0' : fmt(t).replace(/\.00$/, '').replace(/0$/, '')));
+    });
+    svg.appendChild(el('line', {x1: X(FEE), x2: X(FEE), y1: yTop - 14, y2: yBot, stroke: '#c8860d', 'stroke-width': 1.6, 'stroke-dasharray': '4 3'}));
+    svg.appendChild(el('text', {x: X(FEE) + 5, y: yTop - 6, 'font-family': 'IBM Plex Sans, sans-serif', 'font-size': 11, fill: '#8a5d09'}, '2024 fee'));
+    D.forEach(function(d, i){
+      var y = mT + i * rowH + rowH / 2;
+      if (d.gapBefore) svg.appendChild(el('line', {x1: 0, x2: W - mR, y1: y - rowH / 2, y2: y - rowH / 2, stroke: '#c9c5be', 'stroke-width': 1}));
+      svg.appendChild(el('text', {x: mL - 10, y: y + 4, 'text-anchor': 'end', 'font-family': 'IBM Plex Sans, sans-serif', 'font-size': narrow ? 12 : 13, fill: '#1a1d21'}, d.name));
+      svg.appendChild(el('line', {x1: X(d.all), x2: X(d.calm), y1: y, y2: y, stroke: '#8b95a1', 'stroke-width': 2}));
+      var a = el('circle', {cx: X(d.all), cy: y, r: 5, fill: '#fff', stroke: '#1a1d21', 'stroke-width': 2});
+      a.appendChild(el('title', {}, d.name + ', all hours: ' + fmt(d.all) + ' USD per MWh'));
+      svg.appendChild(a);
+      var c = el('circle', {cx: X(d.calm), cy: y, r: 5.5, fill: '#2c4a6b'});
+      c.appendChild(el('title', {}, d.name + ', without the extreme 1%: ' + fmt(d.calm) + ' USD per MWh'));
+      svg.appendChild(c);
+    });
+    svg.appendChild(el('text', {x: mL + (W - mL - mR) / 2, y: H - 10, 'text-anchor': 'middle', 'font-family': 'IBM Plex Sans, sans-serif', 'font-size': 12, fill: '#5b6470'}, narrow ? 'USD per MWh earned by virtual supply' : 'USD per MWh earned by always taking virtual supply, before fees'));
+    box.innerHTML = '';
+    box.appendChild(svg);
+  }
+  draw();
+  var last = box.clientWidth;
+  window.addEventListener('resize', function(){ if (Math.abs(box.clientWidth - last) > 4) { last = box.clientWidth; draw(); } });
+})();
+</script>
+</body>
+</html>

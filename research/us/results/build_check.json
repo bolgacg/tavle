@@ -1,0 +1,110 @@
+{
+ "years": "2020-2023 (build years only)",
+ "inventory": {
+  "months": 48,
+  "da_rows": 385704,
+  "rt_rows": 385704,
+  "paired_hours": 385704
+ },
+ "zones": [
+  {
+   "zone": "CAPITL",
+   "hours": 35064,
+   "mean_gap": 0.05,
+   "share_rt_below_da": 0.62,
+   "supply_per_mwh": -0.05,
+   "supply_per_mwh_without_top1pct": 2.29,
+   "worst_hour_for_supply": -2752.29
+  },
+  {
+   "zone": "CENTRL",
+   "hours": 35064,
+   "mean_gap": 0.37,
+   "share_rt_below_da": 0.548,
+   "supply_per_mwh": -0.37,
+   "supply_per_mwh_without_top1pct": 1.0,
+   "worst_hour_for_supply": -2788.9
+  },
+  {
+   "zone": "DUNWOD",
+   "hours": 35064,
+   "mean_gap": 0.39,
+   "share_rt_below_da": 0.61,
+   "supply_per_mwh": -0.39,
+   "supply_per_mwh_without_top1pct": 1.82,
+   "worst_hour_for_supply": -2893.39
+  },
+  {
+   "zone": "GENESE",
+   "hours": 35064,
+   "mean_gap": 0.21,
+   "share_rt_below_da": 0.55,
+   "supply_per_mwh": -0.21,
+   "supply_per_mwh_without_top1pct": 1.08,
+   "worst_hour_for_supply": -2631.05
+  },
+  {
+   "zone": "HUD VL",
+   "hours": 35064,
+   "mean_gap": 0.07,
+   "share_rt_below_da": 0.613,
+   "supply_per_mwh": -0.07,
+   "supply_per_mwh_without_top1pct": 2.02,
+   "worst_hour_for_supply": -2867.57
+  },
+  {
+   "zone": "LONGIL",
+   "hours": 35064,
+   "mean_gap": 0.82,
+   "share_rt_below_da": 0.641,
+   "supply_per_mwh": -0.82,
+   "supply_per_mwh_without_top1pct": 1.89,
+   "worst_hour_for_supply": -2913.56
+  },
+  {
+   "zone": "MHK VL",
+   "hours": 35064,
+   "mean_gap": 0.25,
+   "share_rt_below_da": 0.549,
+   "supply_per_mwh": -0.25,
+   "supply_per_mwh_without_top1pct": 1.1,
+   "worst_hour_for_supply": -2871.86
+  },
+  {
+   "zone": "MILLWD",
+   "hours": 35064,
+   "mean_gap": 0.53,
+   "share_rt_below_da": 0.609,
+   "supply_per_mwh": -0.53,
+   "supply_per_mwh_without_top1pct": 1.77,
+   "worst_hour_for_supply": -2890.46
+  },
+  {
+   "zone": "N.Y.C.",
+   "hours": 35064,
+   "mean_gap": 0.67,
+   "share_rt_below_da": 0.605,
+   "supply_per_mwh": -0.67,
+   "supply_per_mwh_without_top1pct": 1.63,
+   "worst_hour_for_supply": -2902.91
+  },
+  {
+   "zone": "NORTH",
+   "hours": 35064,
+   "mean_gap": 0.5,
+   "share_rt_below_da": 0.482,
+   "supply_per_mwh": -0.5,
+   "supply_per_mwh_without_top1pct": -0.1,
+   "worst_hour_for_supply": -2662.75
+  },
+  {
+   "zone": "WEST",
+   "hours": 35064,
+   "mean_gap": -0.55,
+   "share_rt_below_da": 0.574,
+   "supply_per_mwh": 0.55,
+   "supply_per_mwh_without_top1pct": 1.69,
+   "worst_hour_for_supply": -2489.67
+  }
+ ]
+}

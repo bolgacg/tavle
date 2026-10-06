@@ -1,8 +1,8 @@
 #!/bin/bash
 # Second-wave downloads for the New York study, same skip-if-present pattern as fetch.sh.
 #  1. NYISO outSched monthly zips (daily snapshots of scheduled transmission outages), Jan 2020 to Sep 2026.
-#  2. Open-Meteo previous-runs archive, GFS temperature_2m_previous_day2, one point per load zone,
-#     2021 to 2026-09-30, one JSON per point per year (fetch_gfs.py).
+#  2. Open-Meteo previous-runs archive, GFS temperature_2m_previous_day2 and _day3, one point per load
+#     zone, 2021 to 2026-09-30, one JSON per point, year and lead (fetch_gfs.py).
 # Validity check uses python zipfile (gene has no unzip binary).
 set -u
 HERE="$(cd "$(dirname "$0")" && pwd)"

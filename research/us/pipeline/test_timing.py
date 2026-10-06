@@ -3,7 +3,8 @@
 For 500 random bid days D (Jan 2020 .. Sep 2026, fixed seed) every row used for delivery day D+1
 must have published_at <= 05:00 New York time on D. Real lookahead rows (the isolf file named
 D+1, the target day's own day-ahead prices, the outSched snapshot for D+1, real-time prices for
-hours not yet over, GFS values not yet public) are injected and must be caught.
+hours not yet over, GFS values not yet public, including the day2 values for 22:00 and 23:00 of
+D+1 that the three-day weather rule replaces with day3) are injected and must be caught.
 Only timestamps and row counts are compared; no price statistic is computed (holdout rule).
 """
 from __future__ import annotations
@@ -17,7 +18,8 @@ import pandas as pd
 import pytest
 
 import timing as T
-from common import FIRST_DAY, LAST_DAY, PARQUET, RESULTS, TZ, decision_time, local_midnight
+from common import (FIRST_DAY, GFS_DAY2_LAST_LOCAL_HOUR, LAST_DAY, PARQUET, RESULTS, TZ, decision_time,
+                    local_midnight)
 
 pytestmark = pytest.mark.skipif(not (PARQUET / "prices_zone.parquet").exists(), reason="tables not built")
 
@@ -61,7 +63,19 @@ def test_500_bid_days_no_lookahead(store):
         cover["lf_from_file_D"] += int(len(lf) and (pd.to_datetime(lf["issue_date"]) == pd.Timestamp(D)).all())
         cover["outage_snapshot_D"] += int(len(x["outages_latest"]) and
                                           pd.Timestamp(x["outages_latest"]["snapshot_date"].iloc[0]) == pd.Timestamp(D))
-        cover["gfs_d1_hours_ge_22"] += int(x["weather_d1"]["target_hour"].nunique() >= 22)
+        wx = x["weather_d1"]
+        cover["gfs_d1_hours_ge_22"] += int(wx["target_hour"].nunique() >= 22)
+        n_hours_d1 = len(pd.date_range(d1, pd.Timestamp(D + dt.timedelta(days=2), tz=TZ), freq="h",
+                                       inclusive="left"))                     # 23, 24 or 25
+        cover["gfs_d1_every_hour_every_point"] += int(len(wx) == 12 * n_hours_d1)
+        cover["gfs_d1_rows_day2"] += int((wx["run_lead_hours"] == T.DAY2).sum())
+        cover["gfs_d1_rows_day3"] += int((wx["run_lead_hours"] == T.DAY3).sum())
+        # Three-day rule: day2 only for hours up to 21:00; one row per point and hour.
+        hour = wx["target_hour"].dt.tz_convert(TZ).dt.hour
+        if ((wx["run_lead_hours"] == T.DAY2) & (hour > GFS_DAY2_LAST_LOCAL_HOUR)).any():
+            failures.append(f"{D}: day2 GFS value used after 21:00")
+        if wx.duplicated(["point", "target_hour"]).any():
+            failures.append(f"{D}: more than one GFS value per point and hour")
         cover["da_for_D_present"] += int(len(x["da_prices_zone"]) and
                                          local_midnight(x["da_prices_zone"]["delivery_hour"]).max() == pd.Timestamp(D))
         for k, n in x.excluded.items():
@@ -73,6 +87,9 @@ def test_500_bid_days_no_lookahead(store):
     # The filter must actually have removed future rows from the candidate windows.
     for k in ("da_prices_zone", "rt_prices_zone", "load_forecast", "outages", "weather_gfs"):
         assert cover[f"excluded_rows_{k}"] > 0, k
+    # The day3 rows must actually be exercised when the table holds them.
+    if (store.table("weather_gfs")["run_lead_hours"] == T.DAY3).any():
+        assert cover["gfs_d1_rows_day3"] > 0 and cover["gfs_d1_rows_day2"] > 0
 
 
 def _inject(x: T.Frames, name: str, rows: pd.DataFrame) -> dict:
@@ -104,11 +121,15 @@ def test_injected_lookahead_is_caught(store, D):
     # 4. the outSched snapshot for D+1 (written ~09:40 on D)
     og = store.table("outages")
     osd = og[og["snapshot_date"] == pd.Timestamp(d1)]
-    # 5. a GFS value for the evening of D+1 issued too late (published_at after t)
-    wx = store.window("weather_gfs", t, t + pd.Timedelta(days=3))
-    wx = wx[wx["published_at"] > t].head(5)
+    # 5. GFS values not yet public at t: the day2 values for 22:00 and 23:00 of D+1 (published
+    #    06:00 and 07:00 on D), and day3 values for later hours.
+    wx_all = store.window("weather_gfs", pd.Timestamp(d1, tz=TZ), pd.Timestamp(d1, tz=TZ) + pd.Timedelta(days=3))
+    hour = wx_all["target_hour"].dt.tz_convert(TZ).dt.hour
+    wx2 = wx_all[(wx_all["run_lead_hours"] == T.DAY2) & (local_midnight(wx_all["target_hour"]) == pd.Timestamp(d1))
+                 & (hour >= 22) & wx_all["temperature_2m_c"].notna()]
+    wx3 = wx_all[(wx_all["run_lead_hours"] == T.DAY3) & (wx_all["published_at"] > t)].head(5)
     for name, inj in (("load_forecast_d1", rows), ("da_prices_zone", da), ("rt_prices_zone", rt),
-                      ("outages_latest", osd), ("weather_d1", wx)):
+                      ("outages_latest", osd), ("weather_d1", wx2), ("weather_d1", wx3)):
         if len(inj) == 0:
             continue                                                   # source missing that day
         with pytest.raises(T.LookaheadError):
@@ -170,3 +191,28 @@ def test_dst_days_have_23_and_25_hours(store):
     fall = [pd.Timestamp(d) for d in ("2020-11-01", "2021-11-07", "2022-11-06", "2023-11-05",
                                       "2024-11-03", "2025-11-02")]
     assert all(n[d] == 23 for d in spring) and all(n[d] == 25 for d in fall)
+
+
+def test_three_day_rule_on_dst_days(store):
+    """Counts only. Ordinary day: day2 for 00:00..21:00, day3 for 22:00, 23:00. Spring-forward
+    D+1: still day3 for 22:00 although its day2 value is public at exactly 05:00. Fall-back D+1:
+    21:00 EST's day2 value is published 06:00 EDT on D, so day3 is used for it as well."""
+    wx = store.table("weather_gfs")
+    if not (wx["run_lead_hours"] == T.DAY3).any():
+        pytest.skip("no day3 rows in weather_gfs")
+    for d1, day3_hours in (("2023-07-11", {22, 23}), ("2023-03-12", {22, 23}), ("2023-11-05", {21, 22, 23}),
+                           ("2022-11-06", {21, 22, 23})):
+        D = (pd.Timestamp(d1) - pd.Timedelta(days=1)).date()
+        x = T.bid_inputs(D, store)
+        T.assert_no_lookahead(x, decision_time(D))
+        w = x["weather_d1"]
+        w = w[w["point"] == "albany"]
+        hours = w["target_hour"].dt.tz_convert(TZ).dt.hour
+        got = set(hours[w["run_lead_hours"] == T.DAY3])
+        d2 = pd.Timestamp(pd.Timestamp(d1).date() + dt.timedelta(days=1), tz=TZ)  # calendar day, not 24 h
+        raw = store.window("weather_gfs", pd.Timestamp(d1, tz=TZ), d2)
+        null2 = raw[(raw["point"] == "albany") & (raw["run_lead_hours"] == T.DAY2) & raw["temperature_2m_c"].isna()]
+        expected = day3_hours | set(null2["target_hour"].dt.tz_convert(TZ).dt.hour)   # archive gaps fall back
+        assert got == expected, (d1, sorted(got), sorted(expected))
+        n = len(pd.date_range(pd.Timestamp(d1, tz=TZ), d2, freq="h", inclusive="left"))
+        assert len(w) == n, (d1, len(w), n)

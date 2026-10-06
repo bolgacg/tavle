@@ -1,0 +1,35 @@
+{
+ "bid_days": 40,
+ "rows": 10571,
+ "day3_in_table": true,
+ "non_null_share": {
+  "wx_temp_f": 1.0,
+  "wx_run_lead_hours": 1.0,
+  "wx_temp_f_wow": 1.0,
+  "lf_mw": 1.0,
+  "lf_mw_wow": 1.0,
+  "lf_mw_wow_pct": 1.0,
+  "wx_d1_max_f": 1.0,
+  "wx_d1_min_f": 1.0,
+  "wx_d1_mean_f": 1.0,
+  "wx_d1_hdh65": 1.0,
+  "wx_d1_cdh65": 1.0,
+  "wx_d1_max_f_wow": 1.0,
+  "wx_d1_min_f_wow": 1.0,
+  "wx_d1_mean_f_wow": 1.0,
+  "wx_d1_hdh65_wow": 1.0,
+  "wx_d1_cdh65_wow": 1.0,
+  "lf_d1_peak_mw": 1.0,
+  "lf_d1_min_mw": 1.0,
+  "lf_d1_mean_mw": 1.0,
+  "lf_d1_peak_wow_pct": 1.0,
+  "lf_d1_min_wow_pct": 1.0,
+  "lf_d1_mean_wow_pct": 1.0,
+  "lf_vintage_age_days": 1.0
+ },
+ "rows_by_lead": {
+  "48.0": 9680,
+  "72.0": 891
+ },
+ "late_hours_non_null_share": 1.0
+}

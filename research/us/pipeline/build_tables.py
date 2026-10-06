@@ -7,7 +7,7 @@ Tables (every one carries published_at, America/New_York; rules in README.md):
   prices_gen/YYYYMM.parquet generator points (gen files) and the 4 border proxies (zone files)
   load_forecast.parquet    isolf: every vintage, issue date = file name date, per zone
   outages.parquet          outSched daily snapshots of scheduled transmission outages
-  weather_gfs.parquet      Open-Meteo GFS temperature_2m_previous_day2, one point per zone
+  weather_gfs.parquet      Open-Meteo GFS temperature_2m_previous_day2 and _day3, one point per zone
 
 Congestion sign: NYISO publishes "Marginal Cost Congestion" with the opposite sign to the usual
 convention, so LBMP = energy + losses - congestion_raw. Columns *_congestion_raw keep the file
@@ -26,9 +26,9 @@ import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-from common import (DA_POST_BOUND, EXTERNAL, GFS_PUB_OFFSET, GFS_RAW, ISOLF_COLS, PARQUET, RT_LAG,
-                    RT_REVISION_GRACE, TZ, ZONES, entries, later, local_at, local_midnight,
-                    localize_wall, localize_written, month_keys, zip_path)
+from common import (DA_POST_BOUND, EXTERNAL, GFS_LEAD_HOURS, GFS_RAW, ISOLF_COLS, PARQUET, RT_LAG,
+                    RT_REVISION_GRACE, TZ, ZONES, entries, gfs_published_at, later, local_at,
+                    local_midnight, localize_wall, localize_written, month_keys, zip_path)
 from points import POINTS
 
 PRICE_COLS = ["ts", "name", "ptid", "lbmp", "loss", "cong_raw"]
@@ -208,28 +208,43 @@ def build_outages():
 
 
 # ----------------------------------------------------------------------------------- weather
+def gfs_file(point: str, year: int, day: int):
+    """Raw JSON path: day2 keeps its original name, day3 gets a suffix (see fetch_gfs.py)."""
+    return GFS_RAW / (f"{point}_{year}.json" if day == 2 else f"{point}_{year}_day{day}.json")
+
+
 def build_weather():
+    """One row per point, target hour and run lead (48 h = previous_day2, 72 h = previous_day3).
+    The three-day rule (which lead a bid uses) is applied in timing.gfs_rule, not here."""
     frames = []
     for name, (zone, lat, lon, primary) in POINTS.items():
-        for f in sorted(GFS_RAW.glob(f"{name}_*.json")):
-            d = json.loads(f.read_text())
-            h = d["hourly"]
-            t = pd.to_datetime(pd.Series(h["time"]), format="%Y-%m-%dT%H:%M").dt.tz_localize("UTC")
-            df = pd.DataFrame({"point": name, "zone": zone, "primary": primary,
-                               "lat_req": lat, "lon_req": lon,
-                               "lat_grid": d.get("latitude"), "lon_grid": d.get("longitude"),
-                               "target_hour": t.dt.tz_convert(TZ),
-                               "temperature_2m_c": pd.to_numeric(pd.Series(h["temperature_2m_previous_day2"]),
-                                                                 errors="coerce"),
-                               "run_lead_hours": 48})
-            frames.append(df)
-    df = pd.concat(frames, ignore_index=True).drop_duplicates(["point", "target_hour"], keep="last")
-    # Open-Meteo previous_day2 = value predicted >= 48 h before the target hour (run init <=
-    # target - 48 h); GFS output is public about 3.5-5 h after init, so 6 h is a safe bound.
-    df["published_at"] = df["target_hour"] - GFS_PUB_OFFSET
-    df = df.sort_values(["point", "target_hour"])
+        for day, lead in GFS_LEAD_HOURS.items():
+            for year in range(2021, 2027):
+                f = gfs_file(name, year, day)
+                if not f.exists():
+                    LOG.setdefault("gfs_files_missing", []).append(f.name)
+                    continue
+                d = json.loads(f.read_text())
+                h = d["hourly"]
+                t = pd.to_datetime(pd.Series(h["time"]), format="%Y-%m-%dT%H:%M").dt.tz_localize("UTC")
+                df = pd.DataFrame({"point": name, "zone": zone, "primary": primary,
+                                   "lat_req": lat, "lon_req": lon,
+                                   "lat_grid": d.get("latitude"), "lon_grid": d.get("longitude"),
+                                   "target_hour": t.dt.tz_convert(TZ),
+                                   "temperature_2m_c": pd.to_numeric(
+                                       pd.Series(h[f"temperature_2m_previous_day{day}"]), errors="coerce"),
+                                   "run_lead_hours": lead})
+                frames.append(df)
+    df = pd.concat(frames, ignore_index=True).drop_duplicates(["point", "target_hour", "run_lead_hours"],
+                                                              keep="last")
+    # previous_dayN = value predicted N*24 h before the target hour. If Open-Meteo took the nearest
+    # 6-hourly run, its initialisation is at most 3 h later; GFS output is public about 3.5-5 h after
+    # initialisation. So published_at = target - lead + 3 h + 5 h (day2: -40 h, day3: -64 h).
+    df["published_at"] = gfs_published_at(df["target_hour"], df["run_lead_hours"])
+    df = df.sort_values(["point", "run_lead_hours", "target_hour"])
     df.to_parquet(PARQUET / "weather_gfs.parquet", index=False, compression="zstd")
-    log(f"weather_gfs rows={len(df)} points={df.point.nunique()}")
+    log(f"weather_gfs rows={len(df)} points={df.point.nunique()} "
+        f"leads={sorted(df.run_lead_hours.unique().tolist())}")
 
 
 def main(what: str):

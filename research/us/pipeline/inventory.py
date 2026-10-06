@@ -60,7 +60,9 @@ def raw_files():
                   "most_common_write_clock_times": clock,
                   "write_day_minus_file_day_counts": {str(k): v for k, v in sorted(rel.items())}}
     pd.DataFrame(rows).to_csv(RESULTS / "file_write_times.csv", index=False)
-    out["gfs_json"] = {"files": len(list(GFS_RAW.glob("*.json"))), "expected": len(POINTS) * 6}
+    out["gfs_json"] = {"files_day2": len([f for f in GFS_RAW.glob("*.json") if "_day" not in f.stem]),
+                       "files_day3": len(list(GFS_RAW.glob("*_day3.json"))),
+                       "expected_per_lead": len(POINTS) * 6}
     return out
 
 
@@ -137,16 +139,20 @@ def og_extra(df, yr):
 
 
 def wx_extra(df, yr):
-    out = {}
-    for p, g in df.groupby("point"):
+    """Per point: day2 (run_lead_hours 48) counts at the top level as before, day3 (72) under 'day3'."""
+    def counts(g):
         gy = yr[g.index]
         nn = g["temperature_2m_c"].notna()
-        out[p] = {"zone": g["zone"].iloc[0],
-                  "rows_per_year": {str(y): int(n) for y, n in gy.value_counts().sort_index().items()},
-                  "null_values_per_year": {str(y): int(n) for y, n in (~nn).groupby(gy).sum().items()},
-                  "first_non_null_target_hour": str(g.loc[nn, "target_hour"].min()) if nn.any() else None,
+        return {"rows_per_year": {str(y): int(n) for y, n in gy.value_counts().sort_index().items()},
+                "null_values_per_year": {str(y): int(n) for y, n in (~nn).groupby(gy).sum().items()},
+                "first_non_null_target_hour": str(g.loc[nn, "target_hour"].min()) if nn.any() else None}
+    out = {}
+    for p, g in df.groupby("point"):
+        out[p] = {"zone": g["zone"].iloc[0], **counts(g[g["run_lead_hours"] == 48]),
+                  "day3": counts(g[g["run_lead_hours"] == 72]),
                   "grid_cell": [g["lat_grid"].iloc[0], g["lon_grid"].iloc[0]]}
-    return {"points": out}
+    return {"rows_per_lead_hours": {str(k): int(n) for k, n in df["run_lead_hours"].value_counts().sort_index().items()},
+            "points": out}
 
 
 def congestion_sign_check_build_years():

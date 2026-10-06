@@ -44,6 +44,7 @@ cd ~/nyiso-us/pipeline && ../.venv/bin/python -m pytest -q -p no:cacheprovider t
 | `build_tables.py` | raw files to parquet |
 | `timing.py` | `features_available_at`, `bid_inputs`, `assert_no_lookahead`, `rule_violations` |
 | `test_timing.py` | objective 2 timing test (pytest) |
+| `test_gfs_rule.py` | three-day weather rule on synthetic tables (pytest, needs no parquet) |
 | `inventory.py` | counts per series, table, year and zone |
 
 ## Raw sources
@@ -54,7 +55,7 @@ cd ~/nyiso-us/pipeline && ../.venv/bin/python -m pytest -q -p no:cacheprovider t
 | rtlbmp zone, gen | `.../rtlbmp/<yyyymm01>rtlbmp_{zone,gen}_csv.zip` | hourly integrated real-time LBMP for D |
 | isolf | `.../isolf/<yyyymm01>isolf_csv.zip` | NYISO load forecast for D to D+5, 11 zones + NYISO total |
 | outSched | `.../outSched/<yyyymm01>outSched_csv.zip` | snapshot of scheduled transmission outages for D |
-| GFS | `previous-runs-api.open-meteo.com/v1/forecast?...&hourly=temperature_2m_previous_day2&models=gfs_seamless` | one JSON per point per year, UTC hours |
+| GFS | `previous-runs-api.open-meteo.com/v1/forecast?...&hourly=temperature_2m_previous_day{2,3}&models=gfs_seamless` | one JSON per point, year and lead (`<point>_<year>.json` = day2, `<point>_<year>_day3.json` = day3), UTC hours |
 
 Each monthly zip holds one CSV per day. The zip entry modification time is the time NYISO
 wrote that daily file, in NYISO server wall-clock time (Eastern, DST-aware: DAM files show
@@ -99,9 +100,10 @@ are in the inventory.
 `sched_in`, plus the raw strings. These are scheduled outages, not actual ones: some are
 cancelled.
 
-**weather_gfs.parquet**: one row per point and target hour.
+**weather_gfs.parquet**: one row per point, target hour and run lead.
 `point, zone, primary, lat_req, lon_req, lat_grid, lon_grid, target_hour, temperature_2m_c,
-run_lead_hours (48), published_at`.
+run_lead_hours (48 = previous_day2, 72 = previous_day3), published_at`. Which lead a bid uses is
+decided in `timing.gfs_rule` (see the three-day weather rule below), not in the table.
 
 ## published_at rules
 
@@ -112,21 +114,30 @@ run_lead_hours (48), published_at`.
 | prices row | later of da_published_at and rt_published_at | when the whole row was known |
 | load_forecast | zip entry write time of the file holding the row | |
 | outages | zip entry write time of the file holding the row | |
-| weather_gfs | target_hour minus 42 hours | see the GFS assumption below |
+| weather_gfs | target_hour minus 40 hours (day2) or 64 hours (day3) | see the GFS assumption below |
 
 `features_available_at` uses the component times, not the row time: DA and RT prices are
 returned as separate frames, each filtered on its own `published_at`.
 
-**GFS assumption.** Open-Meteo documents `_previous_day2` as "the value that was predicted 48
-hours before valid time" and does not say which 6-hourly run is chosen. We assume the run's
-initialisation is at or before target minus 48 hours. GFS output is public about 3.5 to 5
-hours after initialisation, so `published_at = target - 48 h + 6 h`. If Open-Meteo instead
-picked the nearest run, the initialisation could be up to 3 hours later and this bound could
-be up to about 2 hours early. Consequence: the last hour of a delivery day is exactly at the
-05:00 deadline (23:00 on D+1 minus 42 h = 05:00 on D), and on the fall-back day one hour falls
-after it and is excluded. Values exist only from 25 March 2021 00:00 UTC (earlier hours are null), so idea
-B's build window starts on 25 March 2021. The archive also has null hours at all 12 points in
-2023 (53) and 2024 (463); see the inventory.
+**GFS assumption.** Open-Meteo documents `_previous_dayN` as "the value that was predicted N x 24
+hours before valid time" and does not say which 6-hourly run is chosen. If it picked the nearest
+run, the initialisation could be up to 3 hours later than valid time minus N x 24 hours; GFS output
+is public about 3.5 to 5 hours after initialisation. So `published_at = target - N x 24 h + 3 h + 5 h`:
+target minus 40 hours for day2 and minus 64 hours for day3 (until 6 Oct evening the rule was target
+minus 42 hours for day2, which assumed the run was never later than target minus 48 hours).
+
+**Three-day weather rule** (OBJECTIVES addendum, 6 Oct evening; `timing.gfs_rule`, applied in
+`bid_inputs` to `weather_d1`). With the 40-hour bound, a day2 value for hour h of D+1 is public by
+05:00 on D only for hours up to 21:00 (21:00 on D+1 minus 40 h = 05:00 on D). So a bid uses
+`previous_day2` for delivery hours up to 21:00 New York time and `previous_day3` for 22:00 and
+23:00, one value per point and hour. Day3 also fills in where day2 is absent: the archive's null
+hours, and 21:00 on the fall-back day, whose day2 value (21:00 EST on D+1 minus 40 h = 06:00 EDT on
+D) is published after the deadline and is removed by the `published_at` filter. On the
+spring-forward day the day2 value for 22:00 EDT is public at exactly 05:00, but the rule still uses
+day3 there. Day2 values exist from 25 March 2021 00:00 UTC and day3 values from 26 March 2021 00:00
+UTC (earlier hours are null), so idea B has every hour from delivery day 25 March 2021 (its day3
+hours are 02:00 and 03:00 UTC on the 26th). The archive also has null day2 hours at all 12 points
+in 2023 (53) and 2024 (463); see the inventory.
 
 ## Time handling
 
@@ -155,13 +166,16 @@ the naive sign. The figures are in `inventory.json` under `congestion_sign_check
 
 * `bid_inputs(D)` gathers the rows a model may use for D+1: zone and generator price
   history, the newest public load-forecast vintage for every D+1 hour, the newest public outage
-  snapshot, and the GFS values for D+1 hours. Every row must have `published_at <= 05:00` on D,
+  snapshot, and one GFS value per point and D+1 hour under the three-day weather rule. The test
+  also checks that no day2 value is used after 21:00 and that day3 rows are exercised. Every row must have `published_at <= 05:00` on D,
   no price row may be for D+1, and no load-forecast row may come from a file named after D.
 * Candidate windows reach past the deadline on purpose, so the `published_at` filter does the
   excluding, and the test asserts it removed rows from every source.
 * Injected lookahead must raise `LookaheadError`: the isolf file named D+1, the target day's
   own DA prices, the RT price for the hour starting 05:00 on D, the outSched snapshot for D+1,
-  and GFS values published after the deadline. They are checked on 20 of the days.
+  the day2 GFS values for 22:00 and 23:00 of D+1, and day3 values published after the deadline.
+  They are checked on 20 of the days. `test_three_day_rule_on_dst_days` checks the rule on an
+  ordinary day and on both DST days.
 * A row with a wrongly early `published_at` would slip through any filter, so
   `rule_violations` re-derives every table's `published_at` from its rule and must find zero
   violations, including in all 81 generator month files. A deliberately mislabelled row must
@@ -187,7 +201,8 @@ HistGradientBoosting is not needed as a fallback. The full list is in `~/nyiso-u
 * outSched has no snapshot for 25 September 2026. On the next day the model uses the
   snapshot for the 24th.
 * GFS `previous_day2` is null before 25 March 2021, and for 53 hours in 2023 and 463 in 2024,
-  identically at all points (a gap in the source archive).
+  identically at all points (a gap in the source archive). `previous_day3` is null before
+  26 March 2021 00:00 UTC.
 * Weather points: GFS runs on a grid of about 25 km, so the N.Y.C., DUNWOD and MILLWD points
   can share neighbouring grid cells. NORTH has two points: Plattsburgh (primary) and Massena
   (secondary).

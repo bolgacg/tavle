@@ -237,6 +237,14 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 2
         <li>Positions: A is supply only (supply when the predicted gap is at or below minus the fee, else none). B and D trade both sides (supply at or below minus the fee, load at or above plus the fee, else none). C trades up to five zone pairs chosen on the build years, when the predicted difference is at least twice the fee.</li>
         <li>The holdout is locked in code: every loader refuses delivery dates from 1 January 2024 unless a freeze commit is named and the model code is unchanged since it.</li>
       </ul>
+      <p class="meta">6 Oct 2026, late evening, after the 2023 rehearsal (2023 is a build year; no held-out data has been read):</p>
+      <ul>
+        <li>The rehearsal is published as it ran. Gradient boosting&#x27;s predicted gap barely tracked the real gap in 2023 (hourly correlation 0.011, against 0.111 on 2022), its spike warnings did not come true, and idea A under the regression rule earned 112 USD a day on its own, less than always taking supply (198). The deep model had no skill either.</li>
+        <li>Idea A&#x27;s rule is changed to match its own wording: both models now predict the probability that an hour is a spike, and A takes virtual supply in every zone-hour except those whose spike probability exceeds a cut. The spike threshold and the cut are chosen on 2020 to 2022 only, then rehearsed on 2023. B, C and D are unchanged.</li>
+        <li>Verdict wording made exact: &ldquo;doesn&#x27;t pay&rdquo; means the upper end of the corrected interval is below zero. For deep against gradient boosting, better and worse are checked first; equivalent applies only when the interval contains zero and lies inside plus or minus one fee per MWh.</li>
+        <li>Shown beside every verdict as context, not as tests: each idea&#x27;s own net profit with its interval; idea A against always taking supply; and return on a bankroll fixed before the freeze plus the Sharpe ratio, beside the S&amp;P 500 and a Danish bank deposit rate over the same months.</li>
+        <li>Audit fixes before the freeze: a verdict could read &ldquo;pays&rdquo; when the Holm step had not rejected, now consistent; for the rehearsal, idea D&#x27;s most frequent outage sites are counted only on data before 2023.</li>
+      </ul>
     </div>
     <div class="fixed-foot">Committed copy: <a href="https://github.com/bolgacg/tavle/blob/master/research/us/OBJECTIVES.md">research/us/OBJECTIVES.md</a>. Its <a href="https://github.com/bolgacg/tavle/commits/master/research/us/OBJECTIVES.md">git history</a> shows every change since it was published.</div>
   </div>
@@ -324,7 +332,7 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 2
       <tr><td>Plan page live, objectives fixed before any model</td><td class="dt">6 Oct</td><td class="dt">6 Oct</td><td class="ahead">on the day</td></tr>
       <tr><td>Data checks for ideas B and D</td><td class="dt">8 Oct</td><td class="dt">6 Oct</td><td class="ahead">2 days early</td></tr>
       <tr><td>Data pipeline and the timing test</td><td class="dt">8 Oct</td><td class="dt">6 Oct</td><td class="ahead">2 days early</td></tr>
-      <tr><td>Baselines and the 2023 rehearsal</td><td class="dt">9 Oct</td><td class="wait">in progress</td><td class="wait"></td></tr>
+      <tr><td>Baselines and the 2023 rehearsal</td><td class="dt">9 Oct</td><td class="dt">6 Oct, first pass</td><td class="ahead">rerun with the redesigned idea A</td></tr>
       <tr><td>Freeze: code and settings in a public commit</td><td class="dt">10 Oct</td><td class="wait">not yet</td><td class="wait"></td></tr>
       <tr><td>The single held-out run, 2024 to September 2026</td><td class="dt">11 Oct</td><td class="wait">not yet</td><td class="wait"></td></tr>
       <tr><td>Daily next-day positions, labelled a pipeline test</td><td class="dt">from 13 Oct</td><td class="wait">not yet</td><td class="wait"></td></tr>
@@ -333,6 +341,7 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 2
   </table>
   <div class="log-h">Log, newest first</div>
   <ul class="log">
+    <li><div class="d">6 Oct 2026<small>done, late</small></div><div>2023 rehearsal on development data, published as it ran (<a href="https://github.com/bolgacg/tavle/blob/master/research/us/results/rehearsal_2023.md">rehearsal_2023.md</a>). Neither model showed real hourly skill, and the regression version of idea A earned less than always taking supply. An independent audit of the profit code passed and found one labelling bug. Idea A was redesigned around a spike flag, as its wording always said, and the change is recorded as a dated addendum before any held-out data is read.</div></li>
     <li><div class="d">6 Oct 2026<small>done, evening</small></div><div>Data layer built, two days ahead of plan. The timing test passes: on 500 random bid days, nothing used for the delivery day was published after 05:00 New York time, and every deliberately injected lookahead row was caught. Two timing rules added as dated addenda: a conservative cut for late-day weather forecasts, and corrected real-time prices count only from the moment they were corrected.</div></li>
     <li><div class="d">6 Oct 2026<small>done</small></div><div>This page published, with the objectives as approved.</div></li>
     <li><div class="d">6 Oct 2026<small>done</small></div><div>Build-years check (<a href="#check">section 5</a>): 2020 to 2023 only, 385,704 zone-hours, no model.</div></li>

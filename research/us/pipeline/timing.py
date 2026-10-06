@@ -3,6 +3,8 @@
     features_available_at(decision_time)  every table row with published_at <= decision_time
     bid_inputs(bid_day)                   the rows a model may use for delivery day D+1,
                                           decided at 05:00 New York time on D
+    gfs_rule(weather, d1)                 the three-day weather rule: one GFS value per point and
+                                          D+1 hour (day2 up to 21:00, day3 for 22:00 and 23:00)
     assert_no_lookahead(frames, t)        raises LookaheadError if any row has published_at > t
     rule_violations(table, df)            counts rows whose published_at breaks the documented rule
 
@@ -21,8 +23,8 @@ import pandas as pd
 import pyarrow as pa
 import pyarrow.dataset as ds
 
-from common import (DA_POST_BOUND, GFS_PUB_OFFSET, PARQUET, RT_LAG, TZ, decision_time, local_at,
-                    local_midnight)
+from common import (DA_POST_BOUND, GFS_DAY2_LAST_LOCAL_HOUR, GFS_LEAD_HOURS, PARQUET, RT_LAG, TZ,
+                    decision_time, gfs_published_at, local_at, local_midnight)
 
 TABLES = ["prices_zone", "load_forecast", "outages", "weather_gfs"]
 DA_COLS = ["delivery_hour", "zone", "ptid", "da_lbmp", "da_loss", "da_congestion_raw", "da_congestion",
@@ -181,9 +183,32 @@ def bid_inputs(bid_day: dt.date, store: Store | None = None, **kw) -> Frames:
     out["load_forecast_d1"] = lf
     og = f["outages"]
     out["outages_latest"] = og[og["snapshot_date"] == og["snapshot_date"].max()] if len(og) else og
-    wx = f["weather_gfs"]
-    out["weather_d1"] = wx[local_midnight(wx["target_hour"]) == d1]
+    out["weather_d1"] = gfs_rule(f["weather_gfs"], d1)
     return out
+
+
+DAY2, DAY3 = GFS_LEAD_HOURS[2], GFS_LEAD_HOURS[3]
+
+
+def gfs_rule(wx: pd.DataFrame, d1: pd.Timestamp) -> pd.DataFrame:
+    """Three-day weather rule (OBJECTIVES addendum, 6 Oct evening). `wx` must already be filtered
+    to rows public at the decision time with a non-null value (features_available_at does both).
+    For each point and hour of delivery day d1 (naive local midnight) keep one row:
+      * previous_day2 (run_lead_hours 48) for hours beginning up to 21:00 New York time,
+      * previous_day3 (72) for 22:00 and 23:00, and wherever day2 is absent.
+    Day2 is absent in two cases only: the archive's null hours, and 21:00 on the fall-back day,
+    whose day2 value is published at 21:00 EST on D+1 minus 40 h = 06:00 EDT on D, after the
+    deadline, so the published_at filter has already removed it and day3 is used. On the
+    spring-forward day the day2 value for 22:00 EDT is public exactly at the deadline, but the rule
+    still uses day3 there."""
+    if len(wx) == 0:
+        return wx
+    wx = wx[local_midnight(wx["target_hour"]) == d1]
+    hour = wx["target_hour"].dt.tz_convert(TZ).dt.hour
+    lead = wx["run_lead_hours"]
+    keep = ((lead == DAY2) & (hour <= GFS_DAY2_LAST_LOCAL_HOUR)) | (lead == DAY3)
+    wx = wx[keep].sort_values(["point", "target_hour", "run_lead_hours"], kind="stable")
+    return wx.drop_duplicates(["point", "target_hour"], keep="first")
 
 
 def assert_no_lookahead(frames: dict, decision: pd.Timestamp):
@@ -226,5 +251,8 @@ def rule_violations(table: str, df: pd.DataFrame) -> dict[str, int]:
         v["published_not_file_written"] = int((df["published_at"] != df["file_written_at"]).sum())
         v["published_missing"] = int(df["published_at"].isna().sum())
     elif table == "weather_gfs":
-        v["published_not_target_minus_42h"] = int((df["published_at"] != df["target_hour"] - GFS_PUB_OFFSET).sum())
+        lead_ok = df["run_lead_hours"].isin(list(GFS_LEAD_HOURS.values()))
+        v["run_lead_not_48_or_72"] = int((~lead_ok).sum())
+        exp = gfs_published_at(df.loc[lead_ok, "target_hour"], df.loc[lead_ok, "run_lead_hours"])
+        v["published_not_target_minus_lead_plus_8h"] = int((df.loc[lead_ok, "published_at"] != exp).sum())
     return {k: n for k, n in v.items() if n}

@@ -36,9 +36,19 @@ DECISION_HOUR = 5                                 # 05:00 New York time on bid d
 DA_POST_BOUND = dt.time(11, 0)                    # DAM results for D are public by 11:00 on D-1
 RT_LAG = pd.Timedelta(minutes=15)                 # hourly RT price public 15 min after its hour ends
 RT_REVISION_GRACE = pd.Timedelta(hours=0)         # RT file written after 24:00 of its day = revised
-GFS_RUN_LEAD = pd.Timedelta(hours=48)             # previous_day2: run issued >= 48 h before target
-GFS_PROCESSING = pd.Timedelta(hours=6)            # run init to public, conservative
-GFS_PUB_OFFSET = GFS_RUN_LEAD - GFS_PROCESSING    # published_at = target - 42 h
+# GFS (Open-Meteo previous-runs archive). previous_dayN = the value predicted N*24 h before valid
+# time. Three-day weather rule (OBJECTIVES addendum, 6 Oct evening): day2 for delivery hours up to
+# 21:00 New York time, day3 for 22:00 and 23:00.
+GFS_LEAD_HOURS = {2: 48, 3: 72}                   # previous_dayN -> nominal hours before valid time
+GFS_NEAREST_RUN_SLACK = pd.Timedelta(hours=3)     # Open-Meteo may take the nearest 6-hourly run: up to 3 h later
+GFS_PROCESSING = pd.Timedelta(hours=5)            # run init to public, conservative
+GFS_DAY2_LAST_LOCAL_HOUR = 21                     # day2 used for hours beginning <= 21:00, day3 after
+
+
+def gfs_published_at(target_hour: pd.Series, run_lead_hours) -> pd.Series:
+    """published_at = valid time - lead + 3 h + 5 h: day2 = valid - 40 h, day3 = valid - 64 h."""
+    lead = pd.to_timedelta(pd.Series(run_lead_hours, index=target_hour.index).astype("int64"), unit="h")
+    return target_hour - lead + GFS_NEAREST_RUN_SLACK + GFS_PROCESSING
 
 
 def month_keys():

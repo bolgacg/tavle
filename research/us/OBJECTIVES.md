@@ -71,3 +71,9 @@ Ideas 3 to 6 predict, then decide by a rule; 11 learns how to combine simple str
 Correction, 6 Oct 2026, 21:16: the clock times written in the two previous addenda are wrong. The ten ideas were registered at 20:48 (commit 42ad84b) and ideas 11 and 12 at 21:07 (commit a156551), New York study written from Denmark, times in Danish time; the commit times are the record.
 
 Disclosure, 6 Oct 2026, 21:30: two side scripts (side/spike_value.py and side/storm_value.py, written by the coordinator) loaded the whole price table, 2024 onward included, into memory and dropped every row on or after 1 January 2024 in the next statement, then asserted it. No value from 2024 onward was used, computed, printed or saved. Found by the lead modeller's review; both scripts now filter at read time so those rows never load, the same rule the locked loaders follow.
+
+Correction: the disclosure above was committed at 21:18 (commit 2f51db8), not 21:30. From here on, addenda carry a date but no clock time; the commit time on GitHub is the record.
+
+6 Oct 2026, Bo's decision on size and the bar (before the freeze; no held-out data read):
+- Every strategy keeps its registered 1 MW verdict. Beside it, a sizing view: the number of MW per zone-hour at which its worst drawdown in the 2021 to 2023 walk-forward equals 100,000 USD (20 percent of the bankroll), capped at 5 MW for collateral and price impact, with the return on the 500,000 USD bankroll at that size, the Sharpe ratio, the Sortino ratio and the return over maximum drawdown.
+- For the held-out list, the 10 percent a year bar is judged on that sizing view, and only for strategies not flagged fragile. The size is fixed from the build years before the freeze and carried unchanged into the held-out run.

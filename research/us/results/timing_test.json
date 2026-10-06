@@ -1,0 +1,20 @@
+{
+ "bid_days": 500,
+ "seed": 20261006,
+ "failures": 0,
+ "coverage_counts": {
+  "days": 500,
+  "lf_d1_complete": 500,
+  "lf_from_file_D": 496,
+  "outage_snapshot_D": 499,
+  "gfs_d1_hours_ge_22": 400,
+  "da_for_D_present": 500,
+  "excluded_rows_da_prices_zone": 423500,
+  "excluded_rows_rt_prices_zone": 711656,
+  "excluded_rows_load_forecast": 2598060,
+  "excluded_rows_outages": 207965,
+  "excluded_rows_weather_gfs": 255348,
+  "excluded_rows_da_prices_gen": 25429903,
+  "excluded_rows_rt_prices_gen": 32579561
+ }
+}

@@ -219,6 +219,13 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 2
         <li>D: NYISO outSched, a daily snapshot of scheduled transmission outages (about 100 lines), written about 09:40 New York time the day before its date, archived from January 2020. Scheduled, not actual: some outages are cancelled.</li>
         <li>Disclosure: before the freeze, a reviewer scanned descriptive statistics across all years, 2024 onward included (real-time below day-ahead in most zone-years; NYC 2024 always-supply earned 0.00 USD per MWh, 1.74 without its worst 1% of hours). These motivated idea A. No model has seen 2024 onward.</li>
       </ul>
+      <p class="meta">6 Oct 2026, evening, data layer built (before any model):</p>
+      <ul>
+        <li>Timing test: on 500 random bid days from 2020 to 2026, no row used for delivery day D+1 was published after 05:00 New York time on day D. Lookahead rows injected on 20 of those days (the next day&#x27;s load forecast file, the target day&#x27;s own day-ahead price, the real-time price for the hour starting 05:00, the next day&#x27;s outage snapshot, late weather values) were all caught. 30 of 30 tests pass.</li>
+        <li>B&#x27;s weather archive has values from 25 March 2021, not 1 January 2021; B&#x27;s building window starts there.</li>
+        <li>Weather timing: the archive&#x27;s &ldquo;two days before&rdquo; value is the forecast made 48 hours before the valid time. To stay safe even if the nearest model run is up to three hours later and takes up to five hours to publish, B uses the two-day value only for delivery hours up to 21:00 and the three-day value for 22:00 and 23:00.</li>
+        <li>Real-time price corrections: NYISO rewrote 18 to 52 zone files a year after the day. A corrected day&#x27;s prices count as public only from the rewrite time, so on those days the previous day&#x27;s real-time prices are not used at 05:00.</li>
+      </ul>
     </div>
     <div class="fixed-foot">Committed copy: <a href="https://github.com/bolgacg/tavle/blob/master/research/us/OBJECTIVES.md">research/us/OBJECTIVES.md</a>. Its <a href="https://github.com/bolgacg/tavle/commits/master/research/us/OBJECTIVES.md">git history</a> shows every change since it was published.</div>
   </div>
@@ -301,6 +308,7 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 2
   <p class="why">A plan only means something if it was fixed before the results existed. Every change to this repository is timestamped in its public git history, and the <a href="https://github.com/bolgacg/tavle/commits/master/research/us/OBJECTIVES.md">history of research/us/OBJECTIVES.md</a> shows when the objectives were committed and every change since.</p>
   <div class="log-h">Done, newest first</div>
   <ul class="log">
+    <li><div class="d">6 Oct 2026<small>done, evening</small></div><div>Data layer built, two days ahead of plan. The timing test passes: on 500 random bid days, nothing used for the delivery day was published after 05:00 New York time, and every deliberately injected lookahead row was caught. Two timing rules added as dated addenda: a conservative cut for late-day weather forecasts, and corrected real-time prices count only from the moment they were corrected.</div></li>
     <li><div class="d">6 Oct 2026<small>done</small></div><div>This page published, with the objectives as approved.</div></li>
     <li><div class="d">6 Oct 2026<small>done</small></div><div>Build-years check (<a href="#check">section 5</a>): 2020 to 2023 only, 385,704 zone-hours, no model.</div></li>
     <li><div class="d">6 Oct 2026<small>done</small></div><div>Data checks for ideas B and D. NYISO's own weather file is published after the deadline, so B uses archived GFS forecasts; the outage snapshot is public before it, so D can run. Both are recorded in the addenda.</div></li>
@@ -309,7 +317,7 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 2
   </ul>
   <div class="log-h">Planned, as fixed in objective 7</div>
   <ul class="log plan">
-    <li><div class="d">8 Oct 2026<small>planned</small></div><div>Data pipeline and the timing test that fails the build if any input was published after 05:00. The data checks for B and D planned for this day were done on 6 October.</div></li>
+    <li><div class="d">8 Oct 2026<small>done early</small></div><div>Data pipeline and the timing test that fails the build if any input was published after 05:00: done on 6 October, see above.</div></li>
     <li><div class="d">9 Oct 2026<small>planned</small></div><div>Baselines, and a rehearsal of the whole test on 2023.</div></li>
     <li><div class="d">10 Oct 2026<small>planned</small></div><div>Freeze: code and settings in a public commit by 23:59. Anything not frozen by then is reported as not run.</div></li>
     <li><div class="d">11 Oct 2026<small>planned</small></div><div>The single held-out run, January 2024 to September 2026.</div></li>

@@ -47,3 +47,18 @@
 6 Oct 2026, night, a gate before the held-out run (Bo's rule, before any held-out data is read):
 - The held-out years stay unread until the build years show something worth testing. Every strategy is first scored out of sample inside 2020 to 2023 (a walk-forward over 2021 to 2023, each month predicted only from earlier data), with the corrected costs, and the full list is approved in writing before the freeze.
 - The held-out run then includes every strategy on that list, the strong, the weak and the basic ones (always taking supply, the baseline, the simple hourly-mean version of idea A), so all of them are compared on the same unseen years. The freeze and held-out dates in objective 7 move if the gate is not yet passed; the page shows the actual dates.
+
+6 Oct 2026, 22:30, ten registered ideas, one family (written before any of ideas 3 to 10 has been run; no held-out data read):
+The family in one sentence: take virtual supply on calm days, and on dangerous days either sit out or take virtual load; the models' only job is to tell the days and hours apart using what is public by 05:00.
+1. Storm-day filter: sit out the whole delivery day when a hand-made storm score is high (max of four trailing-365-day percentile ranks: NYISO peak load forecast, coldest and hottest GFS forecast temperature, the gap of D's hours already published). Found in exploration earlier on 6 Oct and disclosed as such.
+2. Storm-day flip: the same score, virtual load instead of supply on storm days. Also found in exploration on 6 Oct.
+3. Deep storm-day filter: a deep model reads every weather point, every zone's load forecast, outage counts and the recent price history, and predicts the probability that the next day's supply book loses more than a set amount; sit out when it is high.
+4. Deep storm-day three-way: the same model; supply when low, sit out when middling, virtual load when very high.
+5. Deep zone-day profit model: predicts each zone's next-day supply profit; supply where it beats the cost, load where it is strongly negative, otherwise none.
+6. Two gates: the deep storm-day gate, then the deep hourly spike gate inside the days that pass.
+7. Gradient-boosting storm-day filter: same target and inputs as 3, the non-deep comparison.
+8. Storm-day zone pairs: on flagged days, load in New York City and Long Island against supply upstate, to trade storm congestion.
+9. Extreme-tail spike flag: idea A with spikes defined as real time at least 100 USD above day ahead.
+10. Weather surprise: the change in the GFS forecast for D+1 between the two newest runs public at 05:00; take load when the forecast turns sharply more extreme, otherwise supply.
+The bar for the held-out list (Bo's): average net profit of at least 10 percent a year on the 500,000 USD bankroll (50,000 USD a year) over a walk-forward on 2021 to 2023 after full costs, positive in at least two of the three years, Sharpe above 0.42, and positive at the 0.50 USD per MWh cost stress.
+Safeguards, applied to every idea: all inputs pass the publication-time test; an injected-lookahead test per idea; two placebos per idea (the same rule fed a score shifted one day late, and a shuffled score) that must not earn what the real rule earns; every choice made only on years before the scored year; any idea that passes is recomputed independently before it reaches the list. The list reports how many ideas were tried. All ten, the basic strategies and A to D go to the held-out run together once the list is approved.

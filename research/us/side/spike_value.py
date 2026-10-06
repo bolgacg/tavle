@@ -12,7 +12,8 @@ S = 25.0   # must match spike_threshold in the prediction files (checked below)
 COST = {2020: 0.0862+0.010+0.007, 2021: 0.0757+0.015+0.004, 2022: 0.0853+0.016+0.003, 2023: 0.1066+0.017+0.026}
 BANKROLL = 500_000
 
-px = pd.read_parquet(f'{P}/parquet/prices_zone.parquet', columns=['delivery_hour', 'zone', 'da_lbmp', 'rt_lbmp'])
+px = pd.read_parquet(f'{P}/parquet/prices_zone.parquet', columns=['delivery_hour', 'zone', 'da_lbmp', 'rt_lbmp'],
+                     filters=[('delivery_hour', '<', pd.Timestamp('2024-01-01', tz='America/New_York'))])   # never loads 2024 onward
 px = px[px.delivery_hour < pd.Timestamp('2024-01-01', tz='America/New_York')]          # holdout guard
 assert px.delivery_hour.max() < pd.Timestamp('2024-01-01', tz='America/New_York')
 ZONES = ["CAPITL", "CENTRL", "DUNWOD", "GENESE", "HUD VL", "LONGIL", "MHK VL", "MILLWD", "N.Y.C.", "NORTH", "WEST"]

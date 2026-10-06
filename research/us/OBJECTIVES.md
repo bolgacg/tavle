@@ -69,3 +69,5 @@ Safeguards, applied to every idea: all inputs pass the publication-time test; an
 Ideas 3 to 6 predict, then decide by a rule; 11 learns how to combine simple strategies; 12 learns the decision itself. Same bar, same safeguards, same walk-forward, and both count in the total number of ideas tried.
 
 Correction, 6 Oct 2026, 21:16: the clock times written in the two previous addenda are wrong. The ten ideas were registered at 20:48 (commit 42ad84b) and ideas 11 and 12 at 21:07 (commit a156551), New York study written from Denmark, times in Danish time; the commit times are the record.
+
+Disclosure, 6 Oct 2026, 21:30: two side scripts (side/spike_value.py and side/storm_value.py, written by the coordinator) loaded the whole price table, 2024 onward included, into memory and dropped every row on or after 1 January 2024 in the next statement, then asserted it. No value from 2024 onward was used, computed, printed or saved. Found by the lead modeller's review; both scripts now filter at read time so those rows never load, the same rule the locked loaders follow.

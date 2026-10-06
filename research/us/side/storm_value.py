@@ -11,7 +11,8 @@ LOADCOST = {y: c - u for (y, c), u in zip(COST.items(), [0.007, 0.004, 0.003, 0.
 ZONES = ["CAPITL", "CENTRL", "DUNWOD", "GENESE", "HUD VL", "LONGIL", "MHK VL", "MILLWD", "N.Y.C.", "NORTH", "WEST"]
 BANK = 500_000
 
-px = pd.read_parquet(f'{P}/parquet/prices_zone.parquet', columns=['delivery_hour', 'zone', 'da_lbmp', 'rt_lbmp', 'rt_published_at'])
+px = pd.read_parquet(f'{P}/parquet/prices_zone.parquet', columns=['delivery_hour', 'zone', 'da_lbmp', 'rt_lbmp', 'rt_published_at'],
+                     filters=[('delivery_hour', '<', END)])   # never loads 2024 onward
 px = px[(px.delivery_hour < END) & px.zone.isin(ZONES)].copy()
 assert px.delivery_hour.max() < END
 px['gap'] = px.rt_lbmp - px.da_lbmp
@@ -20,9 +21,9 @@ px['year'] = px.ddate.dt.year
 bid_dates = pd.date_range('2020-01-02', '2023-12-30', freq='D')            # D; delivery = D+1
 
 # --- day-level storm inputs, each known by 05:00 on D ---
-lf = pd.read_parquet(f'{P}/parquet/load_forecast.parquet')
+lf = pd.read_parquet(f'{P}/parquet/load_forecast.parquet', filters=[('target_hour', '<', END)])
 lf = lf[lf.zone == 'NYISO']
-w = pd.read_parquet(f'{P}/parquet/weather_gfs.parquet')
+w = pd.read_parquet(f'{P}/parquet/weather_gfs.parquet', filters=[('target_hour', '<', END)])
 w = w[w.primary & w.temperature_2m_c.notna()]
 rows = []
 for D in bid_dates:

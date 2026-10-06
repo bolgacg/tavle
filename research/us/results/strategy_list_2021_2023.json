@@ -1,0 +1,2977 @@
+{
+ "generated": "2026-10-06T21:06:38+02:00",
+ "status": "build years only (2021 to 2023 scored, 2020 used for training); nothing on or after 2024-01-01 was read",
+ "rules": "* Each month is predicted by a model refit on the 1st, trained on delivery dates up to two days before\n    the month whose prices were public by 05:00 on its first bid day (walkforward.py), expanding from\n    January 2020 (idea B from 25 March 2021, the start of the weather archive).\n  * A choice is never made on the year it is scored. For year Y every configuration (for A the spike\n    threshold S and cut p*; for C the five pairs) is fitted once on delivery dates up to two days before\n    year Y-1 and scored on Y-1 by the idea's own mean daily net P&L, exactly as the rehearsal tuned for\n    2023 (so 2023 reuses the v2 rehearsal's choices and predictions); only the chosen configuration is\n    walked forward through Y. 2021 has no earlier year, so it uses defaults declared here before any\n    result: regression gbm.GRID[0]; spike S = 50 USD/MWh, p* = 0.05. C's 2021 pairs are chosen on a\n    2020 walk-forward (March to December) of the default regression. B's 2022 choice is fitted on its\n    first five weeks of weather data and scored on May to December 2021. D's 20 outage sites for year Y\n    are counted on snapshots up to 30 December of Y-1.\n  * Deep strategies: the deep agent kept its configuration c2 (chosen on 2022) for every year, and the\n    spike threshold S = 25 (chosen on 2022) for every year, so deep 2021 and 2022 numbers carry an\n    in-sample configuration choice; the JSON says so per strategy.\n  * Idea B is scored from 1 May 2021 (its first month with a month of weather-era training data).\n  * Costs: full per-MWh costs of the cost audit (fees.py); 0.50 USD/MWh stress replaces them.\n  * Deep strategies use the deep agent's predictions where they exist (2023 now); years without them\n    are reported as pending and such a strategy is not assessed against the bar.",
+ "bankroll_usd": 500000.0,
+ "bar": {
+  "positive_total_net": true,
+  "positive_in_at_least": "2 of 3 years",
+  "sharpe_above": 0.42,
+  "positive_at_cost_stress_usd_per_mwh": 0.5
+ },
+ "costs": {
+  "load_usd_per_mwh": {
+   "2020": 0.0962,
+   "2021": 0.0907,
+   "2022": 0.1013,
+   "2023": 0.1236,
+   "2024": 0.1503,
+   "2025": 0.1866,
+   "2026": 0.2119
+  },
+  "supply_usd_per_mwh": {
+   "2020": 0.1032,
+   "2021": 0.0947,
+   "2022": 0.1043,
+   "2023": 0.1496,
+   "2024": 0.1673,
+   "2025": 0.2146,
+   "2026": 0.2419
+  }
+ },
+ "choices": {
+  "2021": {
+   "base": {
+    "how": "default (no earlier period)",
+    "config": "leaves15_minleaf200_clipnone"
+   },
+   "weather": {
+    "how": "default (no earlier period)",
+    "config": "leaves15_minleaf200_clipnone"
+   },
+   "outages": {
+    "how": "default (no earlier period)",
+    "config": "leaves15_minleaf200_clipnone"
+   },
+   "spike": {
+    "how": "default (no earlier period)",
+    "S": 50,
+    "p_star": 0.05
+   },
+   "pairs": {
+    "pairs": [
+     "LONGIL|MHK VL",
+     "GENESE|LONGIL",
+     "DUNWOD|LONGIL",
+     "CENTRL|LONGIL",
+     "CAPITL|NORTH"
+    ],
+    "chosen_on": "2020-03-01..2020-12-31 walk-forward of the default regression",
+    "top": [
+     {
+      "pair": "LONGIL|MHK VL",
+      "pnl": 5808.7466,
+      "mwh": 13822.0,
+      "per_mwh": 0.42025369700477505
+     },
+     {
+      "pair": "GENESE|LONGIL",
+      "pnl": 5265.6796,
+      "mwh": 13832.0,
+      "per_mwh": 0.3806882301908618
+     },
+     {
+      "pair": "DUNWOD|LONGIL",
+      "pnl": 4512.8218000000015,
+      "mwh": 13706.0,
+      "per_mwh": 0.32925885013862555
+     },
+     {
+      "pair": "CENTRL|LONGIL",
+      "pnl": 3916.1585999999998,
+      "mwh": 13862.0,
+      "per_mwh": 0.28251035925551865
+     },
+     {
+      "pair": "CAPITL|NORTH",
+      "pnl": 2929.009199999999,
+      "mwh": 13364.0,
+      "per_mwh": 0.21917159533073924
+     },
+     {
+      "pair": "HUD VL|NORTH",
+      "pnl": 2487.8309999999997,
+      "mwh": 13370.0,
+      "per_mwh": 0.18607561705310394
+     },
+     {
+      "pair": "LONGIL|N.Y.C.",
+      "pnl": 2398.666800000001,
+      "mwh": 13756.0,
+      "per_mwh": 0.1743724047688282
+     },
+     {
+      "pair": "LONGIL|WEST",
+      "pnl": 2240.844000000001,
+      "mwh": 13880.0,
+      "per_mwh": 0.16144409221902023
+     }
+    ]
+   },
+   "storm": {
+    "how": "best of 4 on 2020-01-02..2020-12-31",
+    "cut": 0.8,
+    "scores_mean_daily_net": {
+     "0.8": -20.02051835616439,
+     "0.9": -34.74918904109588,
+     "0.95": -24.84040767123289,
+     "0.98": -48.07140712328768
+    }
+   },
+   "storm_flip": {
+    "how": "best of 4 on 2020-01-02..2020-12-31",
+    "cut": 0.8,
+    "scores_mean_daily_net": {
+     "0.8": 11.77005753424658,
+     "0.9": -13.937471232876721,
+     "0.95": 9.780136986301367,
+     "0.98": -32.93204931506851
+    }
+   },
+   "tail": {
+    "how": "default (no earlier period)",
+    "S": 100,
+    "p_star": 0.05
+   },
+   "zones": {
+    "zones": [
+     "WEST",
+     "GENESE",
+     "CENTRL",
+     "MHK VL",
+     "HUD VL",
+     "DUNWOD"
+    ],
+    "chosen_on": "2020-01-01..2020-12-31",
+    "table": [
+     {
+      "zone": "CAPITL",
+      "per_mwh_without_top1pct": 0.5228595607680809,
+      "worst_day_usd": -1479.2168
+     },
+     {
+      "zone": "CENTRL",
+      "per_mwh_without_top1pct": 0.3101843146274149,
+      "worst_day_usd": -898.4368
+     },
+     {
+      "zone": "DUNWOD",
+      "per_mwh_without_top1pct": 0.5193160993560257,
+      "worst_day_usd": -1346.4168
+     },
+     {
+      "zone": "GENESE",
+      "per_mwh_without_top1pct": 0.30492212511499533,
+      "worst_day_usd": -866.3568
+     },
+     {
+      "zone": "HUD VL",
+      "per_mwh_without_top1pct": 0.5168908463661452,
+      "worst_day_usd": -1336.4468
+     },
+     {
+      "zone": "LONGIL",
+      "per_mwh_without_top1pct": 1.089485142594296,
+      "worst_day_usd": -1559.8668
+     },
+     {
+      "zone": "MHK VL",
+      "per_mwh_without_top1pct": 0.20319374425022985,
+      "worst_day_usd": -977.2868000000001
+     },
+     {
+      "zone": "MILLWD",
+      "per_mwh_without_top1pct": 0.4170138914443422,
+      "worst_day_usd": -1350.9568
+     },
+     {
+      "zone": "N.Y.C.",
+      "per_mwh_without_top1pct": 0.07934829806807718,
+      "worst_day_usd": -1351.1268
+     },
+     {
+      "zone": "NORTH",
+      "per_mwh_without_top1pct": -0.7724939282428702,
+      "worst_day_usd": -870.0468000000001
+     },
+     {
+      "zone": "WEST",
+      "per_mwh_without_top1pct": 0.9001314167433303,
+      "worst_day_usd": -854.4668
+     }
+    ]
+   },
+   "roll_k": {
+    "how": "default (no earlier period)",
+    "k": 0.1
+   }
+  },
+  "2022": {
+   "base": {
+    "how": "best of 8: one fit trained to two days before 2021, scored on 2021",
+    "config": "leaves63_minleaf2000_clipnone",
+    "scores_mean_daily_net": {
+     "leaves15_minleaf200_clipnone": 21.837034794520566,
+     "leaves15_minleaf200_clip250.0": 6.85984547945208,
+     "leaves15_minleaf2000_clipnone": 33.30864739726029,
+     "leaves15_minleaf2000_clip250.0": -1.7265424657533974,
+     "leaves63_minleaf200_clipnone": 14.308277808219197,
+     "leaves63_minleaf200_clip250.0": 4.421412602739739,
+     "leaves63_minleaf2000_clipnone": 35.29001095890412,
+     "leaves63_minleaf2000_clip250.0": -7.640410684931479
+    }
+   },
+   "weather": {
+    "how": "default (under 28 days of training data before 2021)",
+    "config": "leaves15_minleaf200_clipnone"
+   },
+   "outages": {
+    "how": "best of 8: one fit trained to two days before 2021, scored on 2021",
+    "config": "leaves63_minleaf2000_clipnone",
+    "scores_mean_daily_net": {
+     "leaves15_minleaf200_clipnone": 3.8058153424658197,
+     "leaves15_minleaf200_clip250.0": -2.4229304109588194,
+     "leaves15_minleaf2000_clipnone": -0.7280008219177507,
+     "leaves15_minleaf2000_clip250.0": 20.014857534246623,
+     "leaves63_minleaf200_clipnone": 20.576810136986353,
+     "leaves63_minleaf200_clip250.0": 19.149443835616506,
+     "leaves63_minleaf2000_clipnone": 85.61691863013702,
+     "leaves63_minleaf2000_clip250.0": 28.873092328767186
+    }
+   },
+   "spike": {
+    "how": "best of 6: one fit per S trained to two days before 2021, scored on 2021",
+    "S": 25,
+    "p_star": 0.05,
+    "scores_mean_daily_net": {
+     "S25_p0.02": 0.2117534246575578,
+     "S25_p0.05": 59.4165975342466,
+     "S50_p0.02": -22.32751041095885,
+     "S50_p0.05": -11.256576164383535,
+     "S100_p0.02": -13.618174246575286,
+     "S100_p0.05": -12.110860000000017
+    }
+   },
+   "pairs": {
+    "pairs": [
+     "LONGIL|NORTH",
+     "CENTRL|LONGIL",
+     "LONGIL|WEST",
+     "LONGIL|MHK VL",
+     "GENESE|LONGIL"
+    ],
+    "chosen_on": "2021 predictions of this period's chosen regression (leaves63_minleaf2000_clipnone), one fit trained before 2021",
+    "top": [
+     {
+      "pair": "LONGIL|NORTH",
+      "pnl": 21895.3328,
+      "mwh": 16636.0,
+      "per_mwh": 1.3161416686703535
+     },
+     {
+      "pair": "CENTRL|LONGIL",
+      "pnl": 17679.1238,
+      "mwh": 16706.0,
+      "per_mwh": 1.0582499580988867
+     },
+     {
+      "pair": "LONGIL|WEST",
+      "pnl": 14425.602799999999,
+      "mwh": 16736.0,
+      "per_mwh": 0.8619504541108985
+     },
+     {
+      "pair": "LONGIL|MHK VL",
+      "pnl": 13442.232999999997,
+      "mwh": 16610.0,
+      "per_mwh": 0.8092855508729678
+     },
+     {
+      "pair": "GENESE|LONGIL",
+      "pnl": 13280.150799999998,
+      "mwh": 16696.0,
+      "per_mwh": 0.7954091279348345
+     },
+     {
+      "pair": "CAPITL|LONGIL",
+      "pnl": 12986.484400000001,
+      "mwh": 16528.0,
+      "per_mwh": 0.785726306873185
+     },
+     {
+      "pair": "LONGIL|MILLWD",
+      "pnl": 12523.5328,
+      "mwh": 16236.0,
+      "per_mwh": 0.7713434836166544
+     },
+     {
+      "pair": "LONGIL|N.Y.C.",
+      "pnl": 11310.346999999998,
+      "mwh": 16290.0,
+      "per_mwh": 0.6943122774708409
+     }
+    ]
+   },
+   "storm": {
+    "how": "best of 4 on 2021-01-01..2021-12-31",
+    "cut": 0.8,
+    "scores_mean_daily_net": {
+     "0.8": 108.15415260273976,
+     "0.9": 108.0761383561644,
+     "0.95": 99.49278246575348,
+     "0.98": 18.52497753424661
+    }
+   },
+   "storm_flip": {
+    "how": "best of 4 on 2021-01-01..2021-12-31",
+    "cut": 0.9,
+    "scores_mean_daily_net": {
+     "0.8": 203.89288219178087,
+     "0.9": 212.98958356164394,
+     "0.95": 203.06972602739734,
+     "0.98": 45.96162739726035
+    }
+   },
+   "tail": {
+    "how": "best of 2 cuts, one fit trained before 2021, scored on 2021",
+    "S": 100,
+    "p_star": 0.05,
+    "scores_mean_daily_net": {
+     "0.02": -13.618174246575286,
+     "0.05": -12.110860000000017
+    }
+   },
+   "zones": {
+    "zones": [
+     "GENESE",
+     "CENTRL",
+     "MHK VL",
+     "HUD VL",
+     "DUNWOD",
+     "WEST"
+    ],
+    "chosen_on": "2020-01-01..2021-12-31",
+    "table": [
+     {
+      "zone": "CAPITL",
+      "per_mwh_without_top1pct": 1.1537735145094425,
+      "worst_day_usd": -1551.3928
+     },
+     {
+      "zone": "CENTRL",
+      "per_mwh_without_top1pct": 0.5702090856748042,
+      "worst_day_usd": -898.4368
+     },
+     {
+      "zone": "DUNWOD",
+      "per_mwh_without_top1pct": 0.8615423710271765,
+      "worst_day_usd": -1346.4168
+     },
+     {
+      "zone": "GENESE",
+      "per_mwh_without_top1pct": 0.5422136342699218,
+      "worst_day_usd": -866.3568
+     },
+     {
+      "zone": "HUD VL",
+      "per_mwh_without_top1pct": 0.9746685513588209,
+      "worst_day_usd": -1336.4468
+     },
+     {
+      "zone": "LONGIL",
+      "per_mwh_without_top1pct": 0.46440346614463357,
+      "worst_day_usd": -3777.5128
+     },
+     {
+      "zone": "MHK VL",
+      "per_mwh_without_top1pct": 0.4394843620451406,
+      "worst_day_usd": -977.2868000000001
+     },
+     {
+      "zone": "MILLWD",
+      "per_mwh_without_top1pct": 0.7889584235375403,
+      "worst_day_usd": -1950.8228
+     },
+     {
+      "zone": "N.Y.C.",
+      "per_mwh_without_top1pct": 0.5632567883463842,
+      "worst_day_usd": -1580.6028000000001
+     },
+     {
+      "zone": "NORTH",
+      "per_mwh_without_top1pct": -1.1652547558728696,
+      "worst_day_usd": -870.0468000000001
+     },
+     {
+      "zone": "WEST",
+      "per_mwh_without_top1pct": 0.8274718678028559,
+      "worst_day_usd": -1451.9728
+     }
+    ]
+   },
+   "roll_k": {
+    "how": "best of 6 on 2021",
+    "k": 0.1,
+    "scores_mean_daily_net": {
+     "0.01": 0.709535890410986,
+     "0.02": 11.126897808219217,
+     "0.05": 22.527097260274022,
+     "0.1": 33.889031506849385,
+     "0.2": 27.60586602739729,
+     "0.3": 17.057784383561675
+    }
+   }
+  },
+  "2023": {
+   "base": {
+    "how": "v2 rehearsal tuning: best of 8, trained to 2021-12-30, scored on 2022",
+    "config": "leaves15_minleaf200_clip250.0"
+   },
+   "weather": {
+    "how": "v2 rehearsal tuning: best of 8, trained to 2021-12-30, scored on 2022",
+    "config": "leaves15_minleaf2000_clip250.0"
+   },
+   "outages": {
+    "how": "v2 rehearsal tuning: best of 8, trained to 2021-12-30, scored on 2022",
+    "config": "leaves15_minleaf200_clipnone"
+   },
+   "spike": {
+    "how": "v2 rehearsal tuning on 2022",
+    "S": 25,
+    "p_star": 0.05
+   },
+   "pairs": {
+    "pairs": [
+     "CAPITL|NORTH",
+     "CAPITL|GENESE",
+     "CAPITL|CENTRL",
+     "CAPITL|MHK VL",
+     "CAPITL|WEST"
+    ],
+    "chosen_on": "v2 rehearsal: 2022 predictions of the tuned base regression trained to 30 Dec 2021"
+   },
+   "storm": {
+    "how": "best of 4 on 2022-01-01..2022-12-31",
+    "cut": 0.8,
+    "scores_mean_daily_net": {
+     "0.8": 244.81305726027398,
+     "0.9": 124.75224328767125,
+     "0.95": -311.68543342465745,
+     "0.98": -366.7135189041095
+    }
+   },
+   "storm_flip": {
+    "how": "best of 4 on 2022-01-01..2022-12-31",
+    "cut": 0.8,
+    "scores_mean_daily_net": {
+     "0.8": 1002.2018657534247,
+     "0.9": 772.7810136986302,
+     "0.95": -91.17186301369865,
+     "0.98": -196.61808767123287
+    }
+   },
+   "tail": {
+    "how": "best of 2 cuts, one fit trained before 2022, scored on 2022",
+    "S": 100,
+    "p_star": 0.02,
+    "scores_mean_daily_net": {
+     "0.02": -259.81343342465743,
+     "0.05": -364.8940936986301
+    }
+   },
+   "zones": {
+    "zones": [
+     "WEST",
+     "GENESE",
+     "MHK VL",
+     "CENTRL",
+     "LONGIL",
+     "HUD VL"
+    ],
+    "chosen_on": "2020-01-01..2022-12-31",
+    "table": [
+     {
+      "zone": "CAPITL",
+      "per_mwh_without_top1pct": 1.9487439592933946,
+      "worst_day_usd": -17286.1332
+     },
+     {
+      "zone": "CENTRL",
+      "per_mwh_without_top1pct": 0.8632245660522274,
+      "worst_day_usd": -12339.0632
+     },
+     {
+      "zone": "DUNWOD",
+      "per_mwh_without_top1pct": 1.5566159485407067,
+      "worst_day_usd": -15407.503200000001
+     },
+     {
+      "zone": "GENESE",
+      "per_mwh_without_top1pct": 0.8736307565284178,
+      "worst_day_usd": -10829.163199999999
+     },
+     {
+      "zone": "HUD VL",
+      "per_mwh_without_top1pct": 1.735843966973886,
+      "worst_day_usd": -15286.653199999999
+     },
+     {
+      "zone": "LONGIL",
+      "per_mwh_without_top1pct": 1.614174950076805,
+      "worst_day_usd": -14141.4732
+     },
+     {
+      "zone": "MHK VL",
+      "per_mwh_without_top1pct": 0.8456785253456224,
+      "worst_day_usd": -12174.923200000001
+     },
+     {
+      "zone": "MILLWD",
+      "per_mwh_without_top1pct": 1.4966174231950846,
+      "worst_day_usd": -15442.583200000001
+     },
+     {
+      "zone": "N.Y.C.",
+      "per_mwh_without_top1pct": 1.3779073694316437,
+      "worst_day_usd": -15477.6032
+     },
+     {
+      "zone": "NORTH",
+      "per_mwh_without_top1pct": -0.6264918241167433,
+      "worst_day_usd": -10451.4732
+     },
+     {
+      "zone": "WEST",
+      "per_mwh_without_top1pct": 1.5225176267281109,
+      "worst_day_usd": -9252.9432
+     }
+    ]
+   },
+   "roll_k": {
+    "how": "best of 6 on 2022",
+    "k": 0.3,
+    "scores_mean_daily_net": {
+     "0.01": -466.1255742465752,
+     "0.02": -414.42094082191784,
+     "0.05": -243.39799424657525,
+     "0.1": -164.11506136986296,
+     "0.2": -104.25517369863009,
+     "0.3": -39.33262136986303
+    }
+   }
+  }
+ },
+ "strategies": [
+  {
+   "strategy": "B_gbm",
+   "what": "Trade either side where a forecast using weather forecasts expects the gap to beat the cost.",
+   "status": "complete",
+   "total": {
+    "days": 975,
+    "first": "2021-05-01",
+    "last": "2023-12-31",
+    "net_usd": 583946.02,
+    "mwh": 248334.0,
+    "profit_per_mwh": 2.3514541593176936,
+    "sharpe_annualised": 2.07793343757825,
+    "max_drawdown_usd": 43514.82,
+    "return_on_bankroll_annualised": 0.43721086416,
+    "return_over_max_drawdown": 5.023700154711432,
+    "worst_day": {
+     "date": "2022-06-13",
+     "usd": -12800.2
+    },
+    "months_positive": 23,
+    "months": 32,
+    "net_usd_at_0_50_stress": 492551.66,
+    "net_usd_without_best_5_days": 329675.76,
+    "best_5_days": {
+     "2022-12-24": 141752.93,
+     "2022-12-23": 38766.62,
+     "2022-01-16": 35996.5,
+     "2022-03-29": 18980.01,
+     "2022-12-26": 18774.2
+    },
+    "mean_daily_net_interval_95": [
+     206.50194503846157,
+     1204.7189054435898
+    ]
+   },
+   "years": {
+    "2021": {
+     "days": 245,
+     "first": "2021-05-01",
+     "last": "2021-12-31",
+     "net_usd": 51186.57,
+     "mwh": 63807.0,
+     "profit_per_mwh": 0.8022092419327036,
+     "sharpe_annualised": 2.9746601111380384,
+     "max_drawdown_usd": 14644.0,
+     "return_on_bankroll_annualised": 0.152515071522449,
+     "return_over_max_drawdown": 5.2074242460867355,
+     "worst_day": {
+      "date": "2021-11-15",
+      "usd": -3158.75
+     },
+     "months_positive": 7,
+     "months": 8,
+     "net_usd_at_0_50_stress": 28294.62,
+     "net_usd_without_best_5_days": 25318.11,
+     "best_5_days": {
+      "2021-06-28": 7255.75,
+      "2021-07-07": 5236.87,
+      "2021-06-09": 4651.97,
+      "2021-12-17": 4402.53,
+      "2021-06-29": 4321.35
+     }
+    },
+    "2022": {
+     "days": 365,
+     "first": "2022-01-01",
+     "last": "2022-12-31",
+     "net_usd": 555120.46,
+     "mwh": 93811.0,
+     "profit_per_mwh": 5.917434626003347,
+     "sharpe_annualised": 3.3548268560180206,
+     "max_drawdown_usd": 22350.33,
+     "return_on_bankroll_annualised": 1.1102409194,
+     "return_over_max_drawdown": 24.83723884780398,
+     "worst_day": {
+      "date": "2022-06-13",
+      "usd": -12800.2
+     },
+     "months_positive": 10,
+     "months": 12,
+     "net_usd_at_0_50_stress": 514920.02,
+     "net_usd_without_best_5_days": 300850.2,
+     "best_5_days": {
+      "2022-12-24": 141752.93,
+      "2022-12-23": 38766.62,
+      "2022-01-16": 35996.5,
+      "2022-03-29": 18980.01,
+      "2022-12-26": 18774.2
+     }
+    },
+    "2023": {
+     "days": 365,
+     "first": "2023-01-01",
+     "last": "2023-12-31",
+     "net_usd": -22361.01,
+     "mwh": 90716.0,
+     "profit_per_mwh": -0.24649463821156117,
+     "sharpe_annualised": -0.6233723826174294,
+     "max_drawdown_usd": 43514.82,
+     "return_on_bankroll_annualised": -0.04472201519999999,
+     "return_over_max_drawdown": -0.5138710244789954,
+     "worst_day": {
+      "date": "2023-02-04",
+      "usd": -12506.43
+     },
+     "months_positive": 6,
+     "months": 12,
+     "net_usd_at_0_50_stress": -50662.98,
+     "net_usd_without_best_5_days": -65609.64,
+     "best_5_days": {
+      "2023-01-11": 15545.53,
+      "2023-09-05": 12983.35,
+      "2023-02-05": 6402.93,
+      "2023-10-10": 4494.51,
+      "2023-04-01": 3822.31
+     }
+    }
+   },
+   "positive_years": 2,
+   "bar": {
+    "positive_total": true,
+    "positive_years_at_least_2_of_3": true,
+    "sharpe_above_0_42": true,
+    "positive_at_0_50_stress": true
+   },
+   "selection_note": null,
+   "passes_bar": true,
+   "rank": 1
+  },
+  {
+   "strategy": "B_deep",
+   "what": "As B, with the deep model.",
+   "status": "complete",
+   "total": {
+    "days": 975,
+    "first": "2021-05-01",
+    "last": "2023-12-31",
+    "net_usd": 310452.89,
+    "mwh": 245934.0,
+    "profit_per_mwh": 1.2623422910211684,
+    "sharpe_annualised": 1.252704636927177,
+    "max_drawdown_usd": 69152.07,
+    "return_on_bankroll_annualised": 0.23244165022564103,
+    "return_over_max_drawdown": 1.6806558234105584,
+    "worst_day": {
+     "date": "2023-02-04",
+     "usd": -12471.54
+    },
+    "months_positive": 19,
+    "months": 32,
+    "net_usd_at_0_50_stress": 215615.98,
+    "net_usd_without_best_5_days": 70949.78,
+    "best_5_days": {
+     "2022-12-24": 127579.88,
+     "2022-12-23": 41644.19,
+     "2022-01-16": 34205.31,
+     "2022-03-29": 20055.98,
+     "2023-01-11": 16017.75
+    },
+    "mean_daily_net_interval_95": [
+     49.19910341538466,
+     718.6641884205129
+    ]
+   },
+   "years": {
+    "2021": {
+     "days": 245,
+     "first": "2021-05-01",
+     "last": "2021-12-31",
+     "net_usd": 35464.07,
+     "mwh": 62801.0,
+     "profit_per_mwh": 0.5647054871737714,
+     "sharpe_annualised": 2.420043826367166,
+     "max_drawdown_usd": 11512.35,
+     "return_on_bankroll_annualised": 0.10566845138367353,
+     "return_over_max_drawdown": 4.5893520496373394,
+     "worst_day": {
+      "date": "2021-08-22",
+      "usd": -3125.38
+     },
+     "months_positive": 6,
+     "months": 8,
+     "net_usd_at_0_50_stress": 12800.6,
+     "net_usd_without_best_5_days": 15711.48,
+     "best_5_days": {
+      "2021-07-07": 5256.67,
+      "2021-06-28": 4202.13,
+      "2021-06-08": 3578.2,
+      "2021-08-27": 3552.64,
+      "2021-07-17": 3162.95
+     }
+    },
+    "2022": {
+     "days": 365,
+     "first": "2022-01-01",
+     "last": "2022-12-31",
+     "net_usd": 310719.41,
+     "mwh": 93445.0,
+     "profit_per_mwh": 3.325158269570335,
+     "sharpe_annualised": 2.122902728709965,
+     "max_drawdown_usd": 23080.36,
+     "return_on_bankroll_annualised": 0.621438829,
+     "return_over_max_drawdown": 13.462503296200863,
+     "worst_day": {
+      "date": "2022-12-26",
+      "usd": -11083.15
+     },
+     "months_positive": 7,
+     "months": 12,
+     "net_usd_at_0_50_stress": 262004.1,
+     "net_usd_without_best_5_days": 74047.94,
+     "best_5_days": {
+      "2022-12-24": 127579.88,
+      "2022-12-23": 41644.19,
+      "2022-01-16": 34205.31,
+      "2022-03-29": 20055.98,
+      "2022-01-28": 13186.11
+     }
+    },
+    "2023": {
+     "days": 365,
+     "first": "2023-01-01",
+     "last": "2023-12-31",
+     "net_usd": -35730.59,
+     "mwh": 89688.0,
+     "profit_per_mwh": -0.39838768620105236,
+     "sharpe_annualised": -1.0701790940741158,
+     "max_drawdown_usd": 68205.36,
+     "return_on_bankroll_annualised": -0.07146118960000002,
+     "return_over_max_drawdown": -0.5238678395723281,
+     "worst_day": {
+      "date": "2023-02-04",
+      "usd": -12471.54
+     },
+     "months_positive": 6,
+     "months": 12,
+     "net_usd_at_0_50_stress": -59188.72,
+     "net_usd_without_best_5_days": -66362.87,
+     "best_5_days": {
+      "2023-01-11": 16017.75,
+      "2023-02-05": 4198.93,
+      "2023-11-12": 3742.6,
+      "2023-09-08": 3388.41,
+      "2023-12-07": 3284.59
+     }
+    }
+   },
+   "positive_years": 2,
+   "bar": {
+    "positive_total": true,
+    "positive_years_at_least_2_of_3": true,
+    "sharpe_above_0_42": true,
+    "positive_at_0_50_stress": true
+   },
+   "selection_note": "deep configuration c2 and spike threshold S = 25 were chosen on 2022 and kept for every year, so 2021 and 2022 are not out of sample in their configuration choice",
+   "passes_bar": true,
+   "rank": 2
+  },
+  {
+   "strategy": "storm_day_flip",
+   "what": "As the storm-day filter, but on storm days buy virtual load everywhere instead of sitting out.",
+   "status": "complete",
+   "total": {
+    "days": 1095,
+    "first": "2021-01-01",
+    "last": "2023-12-31",
+    "net_usd": 306733.25,
+    "mwh": 289080.0,
+    "profit_per_mwh": 1.0610670195101704,
+    "sharpe_annualised": 0.8980851396771777,
+    "max_drawdown_usd": 134282.45,
+    "return_on_bankroll_annualised": 0.204488836,
+    "return_over_max_drawdown": 0.761413116049579,
+    "worst_day": {
+     "date": "2022-03-29",
+     "usd": -26790.01
+    },
+    "months_positive": 20,
+    "months": 36,
+    "net_usd_at_0_50_stress": 194333.12,
+    "net_usd_without_best_5_days": 24259.94,
+    "best_5_days": {
+     "2022-12-24": 148035.24,
+     "2022-12-23": 56800.89,
+     "2022-01-16": 35544.15,
+     "2022-12-27": 21483.81,
+     "2023-09-05": 20609.23
+    },
+    "mean_daily_net_interval_95": [
+     -83.70287828767118,
+     781.569508328767
+    ]
+   },
+   "years": {
+    "2021": {
+     "days": 365,
+     "first": "2021-01-01",
+     "last": "2021-12-31",
+     "net_usd": 74420.9,
+     "mwh": 96360.0,
+     "profit_per_mwh": 0.7723215234537154,
+     "sharpe_annualised": 1.9614994919061128,
+     "max_drawdown_usd": 22424.53,
+     "return_on_bankroll_annualised": 0.14884180400000002,
+     "return_over_max_drawdown": 3.318727808004794,
+     "worst_day": {
+      "date": "2021-01-29",
+      "usd": -9351.06
+     },
+     "months_positive": 8,
+     "months": 12,
+     "net_usd_at_0_50_stress": 35160.23,
+     "net_usd_without_best_5_days": 36243.28,
+     "best_5_days": {
+      "2021-02-19": 10812.9,
+      "2021-02-10": 9460.1,
+      "2021-06-28": 7255.75,
+      "2021-08-19": 5404.32,
+      "2021-11-05": 5244.57
+     }
+    },
+    "2022": {
+     "days": 365,
+     "first": "2022-01-01",
+     "last": "2022-12-31",
+     "net_usd": 282065.07,
+     "mwh": 96360.0,
+     "profit_per_mwh": 2.927200809464509,
+     "sharpe_annualised": 1.5093554469464778,
+     "max_drawdown_usd": 134282.45,
+     "return_on_bankroll_annualised": 0.5641301400000001,
+     "return_over_max_drawdown": 2.100535638800767,
+     "worst_day": {
+      "date": "2022-03-29",
+      "usd": -26790.01
+     },
+     "months_positive": 6,
+     "months": 12,
+     "net_usd_at_0_50_stress": 243829.29,
+     "net_usd_without_best_5_days": 168.8,
+     "best_5_days": {
+      "2022-12-24": 148035.24,
+      "2022-12-23": 56800.89,
+      "2022-01-16": 35544.15,
+      "2022-12-27": 21483.81,
+      "2022-08-08": 20032.19
+     }
+    },
+    "2023": {
+     "days": 365,
+     "first": "2023-01-01",
+     "last": "2023-12-31",
+     "net_usd": -49752.72,
+     "mwh": 96360.0,
+     "profit_per_mwh": -0.5163212743877128,
+     "sharpe_annualised": -1.0077381036127349,
+     "max_drawdown_usd": 102966.93,
+     "return_on_bankroll_annualised": -0.09950543600000002,
+     "return_over_max_drawdown": -0.4831912549596412,
+     "worst_day": {
+      "date": "2023-01-11",
+      "usd": -16145.92
+     },
+     "months_positive": 6,
+     "months": 12,
+     "net_usd_at_0_50_stress": -84656.4,
+     "net_usd_without_best_5_days": -105480.09,
+     "best_5_days": {
+      "2023-09-05": 20609.23,
+      "2023-09-06": 15736.59,
+      "2023-08-11": 8995.31,
+      "2023-09-07": 5644.11,
+      "2023-02-05": 4742.13
+     }
+    }
+   },
+   "positive_years": 2,
+   "bar": {
+    "positive_total": true,
+    "positive_years_at_least_2_of_3": true,
+    "sharpe_above_0_42": true,
+    "positive_at_0_50_stress": true
+   },
+   "selection_note": null,
+   "passes_bar": true,
+   "rank": 3
+  },
+  {
+   "strategy": "C_gbm",
+   "what": "Buy one zone and sell another in five fixed zone pairs when the forecast spread beats both legs' costs.",
+   "status": "complete",
+   "total": {
+    "days": 1095,
+    "first": "2021-01-01",
+    "last": "2023-12-31",
+    "net_usd": 168566.6,
+    "mwh": 237748.0,
+    "profit_per_mwh": 0.70901372461598,
+    "sharpe_annualised": 1.6591335973774064,
+    "max_drawdown_usd": 29340.7,
+    "return_on_bankroll_annualised": 0.11237772999999998,
+    "return_over_max_drawdown": 1.9150484197685524,
+    "worst_day": {
+     "date": "2022-05-10",
+     "usd": -12567.88
+    },
+    "months_positive": 27,
+    "months": 36,
+    "net_usd_at_0_50_stress": 105040.73,
+    "net_usd_without_best_5_days": 106276.83,
+    "best_5_days": {
+     "2022-12-25": 23801.67,
+     "2022-03-13": 13364.77,
+     "2022-08-09": 9297.8,
+     "2021-08-12": 8818.07,
+     "2022-11-21": 7007.46
+    },
+    "mean_daily_net_interval_95": [
+     45.6590789817352,
+     272.68666210045666
+    ]
+   },
+   "years": {
+    "2021": {
+     "days": 365,
+     "first": "2021-01-01",
+     "last": "2021-12-31",
+     "net_usd": 41134.67,
+     "mwh": 84150.0,
+     "profit_per_mwh": 0.4888254901960785,
+     "sharpe_annualised": 1.653149950800346,
+     "max_drawdown_usd": 21054.5,
+     "return_on_bankroll_annualised": 0.08226932999999999,
+     "return_over_max_drawdown": 1.953723176007759,
+     "worst_day": {
+      "date": "2021-08-08",
+      "usd": -6428.52
+     },
+     "months_positive": 10,
+     "months": 12,
+     "net_usd_at_0_50_stress": 16654.81,
+     "net_usd_without_best_5_days": 13383.48,
+     "best_5_days": {
+      "2021-08-12": 8818.07,
+      "2021-08-13": 6328.29,
+      "2021-08-22": 4439.75,
+      "2021-02-10": 4144.31,
+      "2021-01-28": 4020.77
+     }
+    },
+    "2022": {
+     "days": 365,
+     "first": "2022-01-01",
+     "last": "2022-12-31",
+     "net_usd": 123520.91,
+     "mwh": 86086.0,
+     "profit_per_mwh": 1.4348547870733916,
+     "sharpe_annualised": 2.467295162208679,
+     "max_drawdown_usd": 29340.7,
+     "return_on_bankroll_annualised": 0.2470418184,
+     "return_over_max_drawdown": 4.209882544732569,
+     "worst_day": {
+      "date": "2022-05-10",
+      "usd": -12567.88
+     },
+     "months_positive": 9,
+     "months": 12,
+     "net_usd_at_0_50_stress": 96619.96,
+     "net_usd_without_best_5_days": 63149.25,
+     "best_5_days": {
+      "2022-12-25": 23801.67,
+      "2022-03-13": 13364.77,
+      "2022-08-09": 9297.8,
+      "2022-11-21": 7007.46,
+      "2022-12-19": 6899.96
+     }
+    },
+    "2023": {
+     "days": 365,
+     "first": "2023-01-01",
+     "last": "2023-12-31",
+     "net_usd": 3911.02,
+     "mwh": 67512.0,
+     "profit_per_mwh": 0.05793075008887312,
+     "sharpe_annualised": 0.22541376971946597,
+     "max_drawdown_usd": 15464.82,
+     "return_on_bankroll_annualised": 0.007822041600000001,
+     "return_over_max_drawdown": 0.25289789311245603,
+     "worst_day": {
+      "date": "2023-02-05",
+      "usd": -5062.82
+     },
+     "months_positive": 8,
+     "months": 12,
+     "net_usd_at_0_50_stress": -8234.04,
+     "net_usd_without_best_5_days": -16481.09,
+     "best_5_days": {
+      "2023-02-28": 6345.99,
+      "2023-02-27": 4947.01,
+      "2023-04-15": 3729.55,
+      "2023-03-01": 2829.33,
+      "2023-01-25": 2540.23
+     }
+    }
+   },
+   "positive_years": 3,
+   "bar": {
+    "positive_total": true,
+    "positive_years_at_least_2_of_3": true,
+    "sharpe_above_0_42": true,
+    "positive_at_0_50_stress": true
+   },
+   "selection_note": null,
+   "passes_bar": true,
+   "rank": 4
+  },
+  {
+   "strategy": "C_deep",
+   "what": "As C (same pairs), with the deep model's forecasts.",
+   "status": "complete",
+   "total": {
+    "days": 1095,
+    "first": "2021-01-01",
+    "last": "2023-12-31",
+    "net_usd": 164625.29,
+    "mwh": 239808.0,
+    "profit_per_mwh": 0.6864879170002669,
+    "sharpe_annualised": 2.144679986792382,
+    "max_drawdown_usd": 25598.27,
+    "return_on_bankroll_annualised": 0.10975019626666667,
+    "return_over_max_drawdown": 2.1437032877959807,
+    "worst_day": {
+     "date": "2023-02-04",
+     "usd": -11384.61
+    },
+    "months_positive": 26,
+    "months": 36,
+    "net_usd_at_0_50_stress": 93643.42,
+    "net_usd_without_best_5_days": 121884.78,
+    "best_5_days": {
+     "2021-08-22": 10944.98,
+     "2023-02-27": 8939.71,
+     "2023-02-05": 8358.7,
+     "2022-06-08": 7412.1,
+     "2022-03-13": 7085.03
+    },
+    "mean_daily_net_interval_95": [
+     77.72846953881279,
+     228.57978285844746
+    ]
+   },
+   "years": {
+    "2021": {
+     "days": 365,
+     "first": "2021-01-01",
+     "last": "2021-12-31",
+     "net_usd": 57647.95,
+     "mwh": 82868.0,
+     "profit_per_mwh": 0.6956599218033498,
+     "sharpe_annualised": 2.292043428671753,
+     "max_drawdown_usd": 15526.74,
+     "return_on_bankroll_annualised": 0.11529589279999998,
+     "return_over_max_drawdown": 3.712817044329535,
+     "worst_day": {
+      "date": "2021-08-27",
+      "usd": -10990.86
+     },
+     "months_positive": 11,
+     "months": 12,
+     "net_usd_at_0_50_stress": 33121.69,
+     "net_usd_without_best_5_days": 28186.36,
+     "best_5_days": {
+      "2021-08-22": 10944.98,
+      "2021-02-10": 5807.39,
+      "2021-08-23": 4679.42,
+      "2021-08-29": 4022.28,
+      "2021-08-20": 4007.52
+     }
+    },
+    "2022": {
+     "days": 365,
+     "first": "2022-01-01",
+     "last": "2022-12-31",
+     "net_usd": 72885.48,
+     "mwh": 81290.0,
+     "profit_per_mwh": 0.8966106286136056,
+     "sharpe_annualised": 2.513725462618909,
+     "max_drawdown_usd": 25598.27,
+     "return_on_bankroll_annualised": 0.14577095599999998,
+     "return_over_max_drawdown": 2.8472812648379184,
+     "worst_day": {
+      "date": "2022-12-29",
+      "usd": -4205.1
+     },
+     "months_positive": 8,
+     "months": 12,
+     "net_usd_at_0_50_stress": 47013.87,
+     "net_usd_without_best_5_days": 40208.38,
+     "best_5_days": {
+      "2022-06-08": 7412.1,
+      "2022-03-13": 7085.03,
+      "2022-12-23": 6859.95,
+      "2022-04-06": 6356.52,
+      "2022-02-05": 4963.5
+     }
+    },
+    "2023": {
+     "days": 365,
+     "first": "2023-01-01",
+     "last": "2023-12-31",
+     "net_usd": 34091.87,
+     "mwh": 75650.0,
+     "profit_per_mwh": 0.45065261070720425,
+     "sharpe_annualised": 1.5366322381322752,
+     "max_drawdown_usd": 12245.35,
+     "return_on_bankroll_annualised": 0.06818374,
+     "return_over_max_drawdown": 2.784066332046074,
+     "worst_day": {
+      "date": "2023-02-04",
+      "usd": -11384.61
+     },
+     "months_positive": 7,
+     "months": 12,
+     "net_usd_at_0_50_stress": 13507.86,
+     "net_usd_without_best_5_days": 5451.13,
+     "best_5_days": {
+      "2023-02-27": 8939.71,
+      "2023-02-05": 8358.7,
+      "2023-02-28": 5891.29,
+      "2023-01-25": 3213.69,
+      "2023-02-26": 2237.36
+     }
+    }
+   },
+   "positive_years": 3,
+   "bar": {
+    "positive_total": true,
+    "positive_years_at_least_2_of_3": true,
+    "sharpe_above_0_42": true,
+    "positive_at_0_50_stress": true
+   },
+   "selection_note": "deep configuration c2 and spike threshold S = 25 were chosen on 2022 and kept for every year, so 2021 and 2022 are not out of sample in their configuration choice",
+   "passes_bar": true,
+   "rank": 5
+  },
+  {
+   "strategy": "D_gbm",
+   "what": "Trade either side where a forecast using scheduled transmission outages expects the gap to beat the cost.",
+   "status": "complete",
+   "total": {
+    "days": 1095,
+    "first": "2021-01-01",
+    "last": "2023-12-31",
+    "net_usd": 147316.92,
+    "mwh": 276758.0,
+    "profit_per_mwh": 0.5322950700612089,
+    "sharpe_annualised": 0.8440664855243928,
+    "max_drawdown_usd": 48108.81,
+    "return_on_bankroll_annualised": 0.09821127933333337,
+    "return_over_max_drawdown": 1.020720352550049,
+    "worst_day": {
+     "date": "2022-01-16",
+     "usd": -30520.18
+    },
+    "months_positive": 22,
+    "months": 36,
+    "net_usd_at_0_50_stress": 57299.87,
+    "net_usd_without_best_5_days": 36893.33,
+    "best_5_days": {
+     "2022-12-24": 58258.62,
+     "2023-01-11": 15217.55,
+     "2022-02-25": 13163.83,
+     "2022-12-26": 12152.5,
+     "2022-08-09": 11631.09
+    },
+    "mean_daily_net_interval_95": [
+     -27.69977140639263,
+     320.04015354109566
+    ]
+   },
+   "years": {
+    "2021": {
+     "days": 365,
+     "first": "2021-01-01",
+     "last": "2021-12-31",
+     "net_usd": 40449.9,
+     "mwh": 93625.0,
+     "profit_per_mwh": 0.43204163951935926,
+     "sharpe_annualised": 1.4066089236683175,
+     "max_drawdown_usd": 33990.97,
+     "return_on_bankroll_annualised": 0.08089979700000002,
+     "return_over_max_drawdown": 1.190018917082422,
+     "worst_day": {
+      "date": "2021-02-19",
+      "usd": -10861.84
+     },
+     "months_positive": 8,
+     "months": 12,
+     "net_usd_at_0_50_stress": 5494.58,
+     "net_usd_without_best_5_days": 12884.27,
+     "best_5_days": {
+      "2021-06-28": 7160.06,
+      "2021-01-29": 7137.46,
+      "2021-12-07": 4984.87,
+      "2021-06-29": 4190.74,
+      "2021-09-14": 4092.5
+     }
+    },
+    "2022": {
+     "days": 365,
+     "first": "2022-01-01",
+     "last": "2022-12-31",
+     "net_usd": 145899.79,
+     "mwh": 95171.0,
+     "profit_per_mwh": 1.5330278309569092,
+     "sharpe_annualised": 1.6060251458269221,
+     "max_drawdown_usd": 48108.81,
+     "return_on_bankroll_annualised": 0.29179958340000006,
+     "return_over_max_drawdown": 3.0327043458125007,
+     "worst_day": {
+      "date": "2022-01-16",
+      "usd": -30520.18
+     },
+     "months_positive": 10,
+     "months": 12,
+     "net_usd_at_0_50_stress": 112663.75,
+     "net_usd_without_best_5_days": 39202.96,
+     "best_5_days": {
+      "2022-12-24": 58258.62,
+      "2022-02-25": 13163.83,
+      "2022-12-26": 12152.5,
+      "2022-08-09": 11631.09,
+      "2022-01-19": 11490.79
+     }
+    },
+    "2023": {
+     "days": 365,
+     "first": "2023-01-01",
+     "last": "2023-12-31",
+     "net_usd": -39032.77,
+     "mwh": 87962.0,
+     "profit_per_mwh": -0.44374583570178033,
+     "sharpe_annualised": -1.2072662190164773,
+     "max_drawdown_usd": 47689.06,
+     "return_on_bankroll_annualised": -0.07806554240000001,
+     "return_over_max_drawdown": -0.8184848646450897,
+     "worst_day": {
+      "date": "2023-09-06",
+      "usd": -12689.16
+     },
+     "months_positive": 4,
+     "months": 12,
+     "net_usd_at_0_50_stress": -60858.46,
+     "net_usd_without_best_5_days": -71194.86,
+     "best_5_days": {
+      "2023-01-11": 15217.55,
+      "2023-09-08": 4734.3,
+      "2023-02-05": 4677.13,
+      "2023-08-19": 4277.71,
+      "2023-08-17": 3255.4
+     }
+    }
+   },
+   "positive_years": 2,
+   "bar": {
+    "positive_total": true,
+    "positive_years_at_least_2_of_3": true,
+    "sharpe_above_0_42": true,
+    "positive_at_0_50_stress": true
+   },
+   "selection_note": null,
+   "passes_bar": true,
+   "rank": 6
+  },
+  {
+   "strategy": "storm_day_filter",
+   "what": "Sell supply everywhere, but skip whole days whose forecast load, forecast cold or heat, or this morning's real-time gap is extreme for the past year.",
+   "status": "complete",
+   "total": {
+    "days": 1095,
+    "first": "2021-01-01",
+    "last": "2023-12-31",
+    "net_usd": 144018.32,
+    "mwh": 139403.0,
+    "profit_per_mwh": 1.0331077552133026,
+    "sharpe_annualised": 1.7748341981082028,
+    "max_drawdown_usd": 40823.26,
+    "return_on_bankroll_annualised": 0.09601221360000001,
+    "return_over_max_drawdown": 1.1759498032664548,
+    "worst_day": {
+     "date": "2023-01-11",
+     "usd": -16145.92
+    },
+    "months_positive": 21,
+    "months": 36,
+    "net_usd_at_0_50_stress": 90806.19,
+    "net_usd_without_best_5_days": 96606.9,
+    "best_5_days": {
+     "2022-12-28": 13966.38,
+     "2021-02-19": 10812.9,
+     "2021-02-10": 9460.1,
+     "2022-12-29": 7144.99,
+     "2022-12-17": 6027.04
+    },
+    "mean_daily_net_interval_95": [
+     26.36578492237443,
+     246.475697652968
+    ]
+   },
+   "years": {
+    "2021": {
+     "days": 365,
+     "first": "2021-01-01",
+     "last": "2021-12-31",
+     "net_usd": 39476.27,
+     "mwh": 44869.0,
+     "profit_per_mwh": 0.8798115781497249,
+     "sharpe_annualised": 1.558086078277372,
+     "max_drawdown_usd": 19783.94,
+     "return_on_bankroll_annualised": 0.07895253140000003,
+     "return_over_max_drawdown": 1.9953689464462696,
+     "worst_day": {
+      "date": "2021-01-29",
+      "usd": -9351.06
+     },
+     "months_positive": 7,
+     "months": 12,
+     "net_usd_at_0_50_stress": 21290.86,
+     "net_usd_without_best_5_days": 9052.84,
+     "best_5_days": {
+      "2021-02-19": 10812.9,
+      "2021-02-10": 9460.1,
+      "2021-02-14": 3729.9,
+      "2021-02-05": 3250.34,
+      "2021-02-09": 3170.19
+     }
+    },
+    "2022": {
+     "days": 365,
+     "first": "2022-01-01",
+     "last": "2022-12-31",
+     "net_usd": 89356.77,
+     "mwh": 41987.0,
+     "profit_per_mwh": 2.1282007740491107,
+     "sharpe_annualised": 2.8825926199329905,
+     "max_drawdown_usd": 23932.38,
+     "return_on_bankroll_annualised": 0.1787135318,
+     "return_over_max_drawdown": 3.7337177689229417,
+     "worst_day": {
+      "date": "2022-04-05",
+      "usd": -5614.48
+     },
+     "months_positive": 7,
+     "months": 12,
+     "net_usd_at_0_50_stress": 72742.51,
+     "net_usd_without_best_5_days": 52898.18,
+     "best_5_days": {
+      "2022-12-28": 13966.38,
+      "2022-12-29": 7144.99,
+      "2022-12-17": 6027.04,
+      "2022-12-30": 4833.3,
+      "2022-09-20": 4486.85
+     }
+    },
+    "2023": {
+     "days": 365,
+     "first": "2023-01-01",
+     "last": "2023-12-31",
+     "net_usd": 15185.29,
+     "mwh": 52547.0,
+     "profit_per_mwh": 0.28898488591166016,
+     "sharpe_annualised": 0.6261631128206947,
+     "max_drawdown_usd": 23178.64,
+     "return_on_bankroll_annualised": 0.03037057760000001,
+     "return_over_max_drawdown": 0.6551413905859446,
+     "worst_day": {
+      "date": "2023-01-11",
+      "usd": -16145.92
+     },
+     "months_positive": 7,
+     "months": 12,
+     "net_usd_at_0_50_stress": -3227.18,
+     "net_usd_without_best_5_days": -1719.58,
+     "best_5_days": {
+      "2023-08-19": 4390.6,
+      "2023-01-19": 4230.55,
+      "2023-11-01": 3264.34,
+      "2023-11-20": 2636.58,
+      "2023-01-09": 2382.82
+     }
+    }
+   },
+   "positive_years": 3,
+   "bar": {
+    "positive_total": true,
+    "positive_years_at_least_2_of_3": true,
+    "sharpe_above_0_42": true,
+    "positive_at_0_50_stress": true
+   },
+   "selection_note": null,
+   "passes_bar": true,
+   "rank": 7
+  },
+  {
+   "strategy": "A_regression_v1",
+   "what": "Sell supply where a gradient-boosting forecast of the gap is below minus the cost (A as first registered).",
+   "status": "complete",
+   "total": {
+    "days": 1095,
+    "first": "2021-01-01",
+    "last": "2023-12-31",
+    "net_usd": 97227.16,
+    "mwh": 143971.0,
+    "profit_per_mwh": 0.6753245855068036,
+    "sharpe_annualised": 0.7165363111373811,
+    "max_drawdown_usd": 58513.84,
+    "return_on_bankroll_annualised": 0.06481810393333336,
+    "return_over_max_drawdown": 0.5538698976149095,
+    "worst_day": {
+     "date": "2022-01-16",
+     "usd": -31715.0
+    },
+    "months_positive": 24,
+    "months": 36,
+    "net_usd_at_0_50_stress": 52788.91,
+    "net_usd_without_best_5_days": 41712.5,
+    "best_5_days": {
+     "2022-12-26": 12152.88,
+     "2022-01-19": 11724.12,
+     "2022-01-14": 11597.6,
+     "2022-01-26": 10552.03,
+     "2022-01-31": 9488.02
+    },
+    "mean_daily_net_interval_95": [
+     -38.12577435159814,
+     216.94835795890413
+    ]
+   },
+   "years": {
+    "2021": {
+     "days": 365,
+     "first": "2021-01-01",
+     "last": "2021-12-31",
+     "net_usd": 25768.54,
+     "mwh": 49271.0,
+     "profit_per_mwh": 0.5229960077936312,
+     "sharpe_annualised": 1.3496260809143488,
+     "max_drawdown_usd": 17060.24,
+     "return_on_bankroll_annualised": 0.05153707260000004,
+     "return_over_max_drawdown": 1.5104437201848473,
+     "worst_day": {
+      "date": "2021-11-05",
+      "usd": -5263.3
+     },
+     "months_positive": 8,
+     "months": 12,
+     "net_usd_at_0_50_stress": 11662.01,
+     "net_usd_without_best_5_days": 12210.96,
+     "best_5_days": {
+      "2021-11-24": 2788.49,
+      "2021-11-15": 2751.99,
+      "2021-12-21": 2742.5,
+      "2021-02-24": 2650.2,
+      "2021-12-23": 2624.4
+     }
+    },
+    "2022": {
+     "days": 365,
+     "first": "2022-01-01",
+     "last": "2022-12-31",
+     "net_usd": 32400.49,
+     "mwh": 55832.0,
+     "profit_per_mwh": 0.5803211849835223,
+     "sharpe_annualised": 0.4367677000586754,
+     "max_drawdown_usd": 54319.28,
+     "return_on_bankroll_annualised": 0.06480098480000007,
+     "return_over_max_drawdown": 0.5964823514443844,
+     "worst_day": {
+      "date": "2022-01-16",
+      "usd": -31715.0
+     },
+     "months_positive": 8,
+     "months": 12,
+     "net_usd_at_0_50_stress": 15788.0,
+     "net_usd_without_best_5_days": -23114.16,
+     "best_5_days": {
+      "2022-12-26": 12152.88,
+      "2022-01-19": 11724.12,
+      "2022-01-14": 11597.6,
+      "2022-01-26": 10552.03,
+      "2022-01-31": 9488.02
+     }
+    },
+    "2023": {
+     "days": 365,
+     "first": "2023-01-01",
+     "last": "2023-12-31",
+     "net_usd": 39058.13,
+     "mwh": 38868.0,
+     "profit_per_mwh": 1.0048916126376455,
+     "sharpe_annualised": 2.3311749777131916,
+     "max_drawdown_usd": 19095.37,
+     "return_on_bankroll_annualised": 0.07811625440000002,
+     "return_over_max_drawdown": 2.045424339173718,
+     "worst_day": {
+      "date": "2023-09-06",
+      "usd": -5774.18
+     },
+     "months_positive": 8,
+     "months": 12,
+     "net_usd_at_0_50_stress": 25338.9,
+     "net_usd_without_best_5_days": 19014.01,
+     "best_5_days": {
+      "2023-07-28": 5564.23,
+      "2023-09-08": 5034.35,
+      "2023-02-02": 3622.81,
+      "2023-02-01": 3309.77,
+      "2023-02-03": 2512.96
+     }
+    }
+   },
+   "positive_years": 3,
+   "bar": {
+    "positive_total": true,
+    "positive_years_at_least_2_of_3": true,
+    "sharpe_above_0_42": true,
+    "positive_at_0_50_stress": true
+   },
+   "selection_note": null,
+   "passes_bar": true,
+   "rank": 8
+  },
+  {
+   "strategy": "risk_sized_supply_gbm",
+   "what": "Sell supply everywhere, sized down from 1 MW in proportion to how high the hour's spike score ranks in the last 30 days.",
+   "status": "complete",
+   "total": {
+    "days": 1095,
+    "first": "2021-01-01",
+    "last": "2023-12-31",
+    "net_usd": 58442.52,
+    "mwh": 142994.63820820928,
+    "profit_per_mwh": 0.40870427487791217,
+    "sharpe_annualised": 0.8867500135197269,
+    "max_drawdown_usd": 42709.63,
+    "return_on_bankroll_annualised": 0.03896167994687704,
+    "return_over_max_drawdown": 0.4561228725601429,
+    "worst_day": {
+     "date": "2022-12-24",
+     "usd": -12821.2
+    },
+    "months_positive": 20,
+    "months": 36,
+    "net_usd_at_0_50_stress": 3684.81,
+    "net_usd_without_best_5_days": 32313.83,
+    "best_5_days": {
+     "2022-12-25": 7915.98,
+     "2022-12-26": 4971.17,
+     "2022-12-29": 4888.71,
+     "2022-12-28": 4683.76,
+     "2022-06-19": 3669.06
+    },
+    "mean_daily_net_interval_95": [
+     -22.64061202620691,
+     131.29805434524715
+    ]
+   },
+   "years": {
+    "2021": {
+     "days": 365,
+     "first": "2021-01-01",
+     "last": "2021-12-31",
+     "net_usd": -8109.91,
+     "mwh": 46406.407668863045,
+     "profit_per_mwh": -0.17475831980777365,
+     "sharpe_annualised": -0.616290702648016,
+     "max_drawdown_usd": 21898.91,
+     "return_on_bankroll_annualised": -0.016219811665050172,
+     "return_over_max_drawdown": -0.3703337420420939,
+     "worst_day": {
+      "date": "2021-01-01",
+      "usd": -3555.19
+     },
+     "months_positive": 3,
+     "months": 12,
+     "net_usd_at_0_50_stress": -26918.42,
+     "net_usd_without_best_5_days": -17364.74,
+     "best_5_days": {
+      "2021-02-24": 2099.65,
+      "2021-02-25": 2071.06,
+      "2021-03-08": 1878.09,
+      "2021-02-19": 1656.92,
+      "2021-03-10": 1549.12
+     }
+    },
+    "2022": {
+     "days": 365,
+     "first": "2022-01-01",
+     "last": "2022-12-31",
+     "net_usd": 45127.64,
+     "mwh": 46460.956696151334,
+     "profit_per_mwh": 0.9713024893821268,
+     "sharpe_annualised": 1.3479271956636212,
+     "max_drawdown_usd": 28073.87,
+     "return_on_bankroll_annualised": 0.09025528579609397,
+     "return_over_max_drawdown": 1.6074604376811974,
+     "worst_day": {
+      "date": "2022-12-24",
+      "usd": -12821.2
+     },
+     "months_positive": 10,
+     "months": 12,
+     "net_usd_at_0_50_stress": 26743.04,
+     "net_usd_without_best_5_days": 18998.95,
+     "best_5_days": {
+      "2022-12-25": 7915.98,
+      "2022-12-26": 4971.17,
+      "2022-12-29": 4888.71,
+      "2022-12-28": 4683.76,
+      "2022-06-19": 3669.06
+     }
+    },
+    "2023": {
+     "days": 365,
+     "first": "2023-01-01",
+     "last": "2023-12-31",
+     "net_usd": 21424.78,
+     "mwh": 50127.27384319488,
+     "profit_per_mwh": 0.4274077006823346,
+     "sharpe_annualised": 1.7343558812849655,
+     "max_drawdown_usd": 16804.92,
+     "return_on_bankroll_annualised": 0.042849565709587326,
+     "return_over_max_drawdown": 1.2749111763384577,
+     "worst_day": {
+      "date": "2023-01-11",
+      "usd": -3936.38
+     },
+     "months_positive": 7,
+     "months": 12,
+     "net_usd_at_0_50_stress": 3860.19,
+     "net_usd_without_best_5_days": 10884.02,
+     "best_5_days": {
+      "2023-02-01": 2755.25,
+      "2023-08-19": 2139.97,
+      "2023-02-02": 1976.34,
+      "2023-01-19": 1865.75,
+      "2023-07-28": 1803.45
+     }
+    }
+   },
+   "positive_years": 2,
+   "bar": {
+    "positive_total": true,
+    "positive_years_at_least_2_of_3": true,
+    "sharpe_above_0_42": true,
+    "positive_at_0_50_stress": true
+   },
+   "selection_note": null,
+   "passes_bar": true,
+   "rank": 9
+  },
+  {
+   "strategy": "A_spike_gbm",
+   "what": "Sell supply everywhere except hours a gradient-boosting model flags as likely real-time spikes.",
+   "status": "complete",
+   "total": {
+    "days": 1095,
+    "first": "2021-01-01",
+    "last": "2023-12-31",
+    "net_usd": 50195.32,
+    "mwh": 201778.0,
+    "profit_per_mwh": 0.24876505664641346,
+    "sharpe_annualised": 0.7286509166113186,
+    "max_drawdown_usd": 60197.43,
+    "return_on_bankroll_annualised": 0.03346354373333335,
+    "return_over_max_drawdown": 0.27794828995700277,
+    "worst_day": {
+     "date": "2022-01-04",
+     "usd": -9080.54
+    },
+    "months_positive": 20,
+    "months": 36,
+    "net_usd_at_0_50_stress": -27211.54,
+    "net_usd_without_best_5_days": 32267.58,
+    "best_5_days": {
+     "2022-06-19": 3846.11,
+     "2021-01-31": 3728.38,
+     "2023-08-19": 3690.63,
+     "2021-08-22": 3563.74,
+     "2022-01-09": 3098.88
+    },
+    "mean_daily_net_interval_95": [
+     -43.93154891324197,
+     134.54831710045664
+    ]
+   },
+   "years": {
+    "2021": {
+     "days": 365,
+     "first": "2021-01-01",
+     "last": "2021-12-31",
+     "net_usd": -16822.38,
+     "mwh": 87239.0,
+     "profit_per_mwh": -0.19283099645800614,
+     "sharpe_annualised": -0.5967954054998872,
+     "max_drawdown_usd": 44996.52,
+     "return_on_bankroll_annualised": -0.033644766599999966,
+     "return_over_max_drawdown": -0.37385965845998115,
+     "worst_day": {
+      "date": "2021-01-29",
+      "usd": -7707.85
+     },
+     "months_positive": 4,
+     "months": 12,
+     "net_usd_at_0_50_stress": -52180.35,
+     "net_usd_without_best_5_days": -32918.37,
+     "best_5_days": {
+      "2021-01-31": 3728.38,
+      "2021-08-22": 3563.74,
+      "2021-12-23": 3017.99,
+      "2021-02-05": 2996.6,
+      "2021-10-19": 2789.28
+     }
+    },
+    "2022": {
+     "days": 365,
+     "first": "2022-01-01",
+     "last": "2022-12-31",
+     "net_usd": 46475.94,
+     "mwh": 42261.0,
+     "profit_per_mwh": 1.0997358723172663,
+     "sharpe_annualised": 2.148393665146986,
+     "max_drawdown_usd": 22301.61,
+     "return_on_bankroll_annualised": 0.09295187540000001,
+     "return_over_max_drawdown": 2.0839723376559673,
+     "worst_day": {
+      "date": "2022-01-04",
+      "usd": -9080.54
+     },
+     "months_positive": 9,
+     "months": 12,
+     "net_usd_at_0_50_stress": 29753.26,
+     "net_usd_without_best_5_days": 31112.67,
+     "best_5_days": {
+      "2022-06-19": 3846.11,
+      "2022-01-09": 3098.88,
+      "2022-12-29": 2999.04,
+      "2022-06-20": 2762.52,
+      "2022-04-28": 2656.71
+     }
+    },
+    "2023": {
+     "days": 365,
+     "first": "2023-01-01",
+     "last": "2023-12-31",
+     "net_usd": 20541.76,
+     "mwh": 72278.0,
+     "profit_per_mwh": 0.28420489222169953,
+     "sharpe_annualised": 1.1543778888661134,
+     "max_drawdown_usd": 27564.98,
+     "return_on_bankroll_annualised": 0.041083522399999996,
+     "return_over_max_drawdown": 0.7452122224525624,
+     "worst_day": {
+      "date": "2023-11-10",
+      "usd": -3652.47
+     },
+     "months_positive": 7,
+     "months": 12,
+     "net_usd_at_0_50_stress": -4784.45,
+     "net_usd_without_best_5_days": 5972.57,
+     "best_5_days": {
+      "2023-08-19": 3690.63,
+      "2023-08-18": 3032.63,
+      "2023-07-28": 2808.8,
+      "2023-09-08": 2541.83,
+      "2023-02-01": 2495.29
+     }
+    }
+   },
+   "positive_years": 2,
+   "bar": {
+    "positive_total": true,
+    "positive_years_at_least_2_of_3": true,
+    "sharpe_above_0_42": true,
+    "positive_at_0_50_stress": false
+   },
+   "selection_note": null,
+   "passes_bar": false,
+   "rank": 10
+  },
+  {
+   "strategy": "A_spike_tail_S100_gbm",
+   "what": "As A spike flag, but the model looks only for extreme spikes (real time 100 USD/MWh or more above day ahead).",
+   "status": "complete",
+   "total": {
+    "days": 1095,
+    "first": "2021-01-01",
+    "last": "2023-12-31",
+    "net_usd": 18453.67,
+    "mwh": 277550.0,
+    "profit_per_mwh": 0.06648772689605488,
+    "sharpe_annualised": 0.09985356054751955,
+    "max_drawdown_usd": 155725.74,
+    "return_on_bankroll_annualised": 0.012302445733333374,
+    "return_over_max_drawdown": 0.039500361422703946,
+    "worst_day": {
+     "date": "2022-12-24",
+     "usd": -38707.76
+    },
+    "months_positive": 18,
+    "months": 36,
+    "net_usd_at_0_50_stress": -88208.44,
+    "net_usd_without_best_5_days": -44893.25,
+    "best_5_days": {
+     "2022-12-27": 16032.05,
+     "2022-12-26": 12535.69,
+     "2022-12-25": 12442.03,
+     "2022-12-28": 11456.85,
+     "2022-01-14": 10880.3
+    },
+    "mean_daily_net_interval_95": [
+     -179.46944260730575,
+     213.1374209634704
+    ]
+   },
+   "years": {
+    "2021": {
+     "days": 365,
+     "first": "2021-01-01",
+     "last": "2021-12-31",
+     "net_usd": -2378.04,
+     "mwh": 95626.0,
+     "profit_per_mwh": -0.024868155104260364,
+     "sharpe_annualised": -0.06444641982463666,
+     "max_drawdown_usd": 66623.33,
+     "return_on_bankroll_annualised": -0.0047560843999999635,
+     "return_over_max_drawdown": -0.03569383695660999,
+     "worst_day": {
+      "date": "2021-01-29",
+      "usd": -9351.06
+     },
+     "months_positive": 3,
+     "months": 12,
+     "net_usd_at_0_50_stress": -41135.26,
+     "net_usd_without_best_5_days": -35587.47,
+     "best_5_days": {
+      "2021-02-19": 10812.9,
+      "2021-02-10": 8839.75,
+      "2021-02-18": 5780.72,
+      "2021-08-08": 3980.34,
+      "2021-08-22": 3795.72
+     }
+    },
+    "2022": {
+     "days": 365,
+     "first": "2022-01-01",
+     "last": "2022-12-31",
+     "net_usd": -28960.29,
+     "mwh": 91804.0,
+     "profit_per_mwh": -0.3154577926887715,
+     "sharpe_annualised": -0.30271168169272206,
+     "max_drawdown_usd": 96235.01,
+     "return_on_bankroll_annualised": -0.057920574399999966,
+     "return_over_max_drawdown": -0.30093295408606163,
+     "worst_day": {
+      "date": "2022-12-24",
+      "usd": -38707.76
+     },
+     "months_positive": 7,
+     "months": 12,
+     "net_usd_at_0_50_stress": -65287.13,
+     "net_usd_without_best_5_days": -92307.2,
+     "best_5_days": {
+      "2022-12-27": 16032.05,
+      "2022-12-26": 12535.69,
+      "2022-12-25": 12442.03,
+      "2022-12-28": 11456.85,
+      "2022-01-14": 10880.3
+     }
+    },
+    "2023": {
+     "days": 365,
+     "first": "2023-01-01",
+     "last": "2023-12-31",
+     "net_usd": 49792.0,
+     "mwh": 90120.0,
+     "profit_per_mwh": 0.5525077452285841,
+     "sharpe_annualised": 1.6762248472539578,
+     "max_drawdown_usd": 39421.94,
+     "return_on_bankroll_annualised": 0.099583996,
+     "return_over_max_drawdown": 1.2630530623751597,
+     "worst_day": {
+      "date": "2023-08-11",
+      "usd": -8420.74
+     },
+     "months_positive": 8,
+     "months": 12,
+     "net_usd_at_0_50_stress": 18213.95,
+     "net_usd_without_best_5_days": 23041.04,
+     "best_5_days": {
+      "2023-09-08": 6252.64,
+      "2023-07-28": 5639.12,
+      "2023-02-03": 5629.78,
+      "2023-02-01": 4846.87,
+      "2023-08-19": 4382.55
+     }
+    }
+   },
+   "positive_years": 1,
+   "bar": {
+    "positive_total": true,
+    "positive_years_at_least_2_of_3": false,
+    "sharpe_above_0_42": false,
+    "positive_at_0_50_stress": false
+   },
+   "selection_note": null,
+   "passes_bar": false,
+   "rank": 11
+  },
+  {
+   "strategy": "A_spike_deep_rolling_cut",
+   "what": "Sell supply everywhere except hours whose deep spike score is in the top k of the last 30 days (coordinator's rule).",
+   "status": "complete",
+   "total": {
+    "days": 1095,
+    "first": "2021-01-01",
+    "last": "2023-12-31",
+    "net_usd": -25415.81,
+    "mwh": 239327.0,
+    "profit_per_mwh": -0.1061969995027723,
+    "sharpe_annualised": -0.14060518898210922,
+    "max_drawdown_usd": 169905.29,
+    "return_on_bankroll_annualised": -0.016943872866666643,
+    "return_over_max_drawdown": -0.049862700554410264,
+    "worst_day": {
+     "date": "2022-12-24",
+     "usd": -43258.87
+    },
+    "months_positive": 16,
+    "months": 36,
+    "net_usd_at_0_50_stress": -117795.85,
+    "net_usd_without_best_5_days": -88924.46,
+    "best_5_days": {
+     "2022-12-27": 18457.5,
+     "2022-12-26": 13523.65,
+     "2022-12-28": 11119.17,
+     "2021-02-19": 10634.1,
+     "2022-12-25": 9774.23
+    },
+    "mean_daily_net_interval_95": [
+     -212.0593888333333,
+     159.0772617100457
+    ]
+   },
+   "years": {
+    "2021": {
+     "days": 365,
+     "first": "2021-01-01",
+     "last": "2021-12-31",
+     "net_usd": 12369.5,
+     "mwh": 86605.0,
+     "profit_per_mwh": 0.14282658622481392,
+     "sharpe_annualised": 0.3995905878153537,
+     "max_drawdown_usd": 48231.47,
+     "return_on_bankroll_annualised": 0.02473899300000005,
+     "return_over_max_drawdown": 0.2564610959126566,
+     "worst_day": {
+      "date": "2021-06-28",
+      "usd": -5761.12
+     },
+     "months_positive": 4,
+     "months": 12,
+     "net_usd_at_0_50_stress": -22731.51,
+     "net_usd_without_best_5_days": -20072.63,
+     "best_5_days": {
+      "2021-02-19": 10634.1,
+      "2021-02-10": 8807.16,
+      "2021-02-18": 6750.85,
+      "2021-02-14": 3176.09,
+      "2021-02-11": 3073.93
+     }
+    },
+    "2022": {
+     "days": 365,
+     "first": "2022-01-01",
+     "last": "2022-12-31",
+     "net_usd": -59902.0,
+     "mwh": 83118.0,
+     "profit_per_mwh": -0.7206862219976412,
+     "sharpe_annualised": -0.6117183390565515,
+     "max_drawdown_usd": 125740.86,
+     "return_on_bankroll_annualised": -0.11980399479999995,
+     "return_over_max_drawdown": -0.47639246357110526,
+     "worst_day": {
+      "date": "2022-12-24",
+      "usd": -43258.87
+     },
+     "months_positive": 5,
+     "months": 12,
+     "net_usd_at_0_50_stress": -92791.79,
+     "net_usd_without_best_5_days": -121882.5,
+     "best_5_days": {
+      "2022-12-27": 18457.5,
+      "2022-12-26": 13523.65,
+      "2022-12-28": 11119.17,
+      "2022-12-25": 9774.23,
+      "2022-01-19": 9105.95
+     }
+    },
+    "2023": {
+     "days": 365,
+     "first": "2023-01-01",
+     "last": "2023-12-31",
+     "net_usd": 22116.69,
+     "mwh": 69604.0,
+     "profit_per_mwh": 0.31775029596000226,
+     "sharpe_annualised": 1.1772432795218797,
+     "max_drawdown_usd": 25951.72,
+     "return_on_bankroll_annualised": 0.04423338320000001,
+     "return_over_max_drawdown": 0.8522245262271487,
+     "worst_day": {
+      "date": "2023-01-11",
+      "usd": -5550.9
+     },
+     "months_positive": 7,
+     "months": 12,
+     "net_usd_at_0_50_stress": -2272.55,
+     "net_usd_without_best_5_days": 3034.52,
+     "best_5_days": {
+      "2023-02-01": 4991.0,
+      "2023-08-19": 4051.94,
+      "2023-01-19": 4017.39,
+      "2023-08-18": 3070.04,
+      "2023-07-28": 2951.8
+     }
+    }
+   },
+   "positive_years": 2,
+   "bar": {
+    "positive_total": false,
+    "positive_years_at_least_2_of_3": true,
+    "sharpe_above_0_42": false,
+    "positive_at_0_50_stress": false
+   },
+   "selection_note": null,
+   "passes_bar": false,
+   "rank": 12
+  },
+  {
+   "strategy": "D_deep",
+   "what": "As D, with the deep model.",
+   "status": "incomplete: only 2023 available",
+   "total": {
+    "days": 365,
+    "first": "2023-01-01",
+    "last": "2023-12-31",
+    "net_usd": -40504.83,
+    "mwh": 89276.0,
+    "profit_per_mwh": -0.45370343205340746,
+    "sharpe_annualised": -1.090589960128511,
+    "max_drawdown_usd": 59871.26,
+    "return_on_bankroll_annualised": -0.0810096552,
+    "return_over_max_drawdown": -0.6765320271173831,
+    "worst_day": {
+     "date": "2023-09-06",
+     "usd": -15396.83
+    },
+    "months_positive": 5,
+    "months": 12,
+    "net_usd_at_0_50_stress": -60388.09,
+    "net_usd_without_best_5_days": -78572.28,
+    "best_5_days": {
+     "2023-01-11": 15291.39,
+     "2023-02-05": 8916.33,
+     "2023-09-08": 6897.76,
+     "2023-07-28": 4130.17,
+     "2023-02-28": 2831.79
+    },
+    "mean_daily_net_interval_95": [
+     -338.9897925753423,
+     90.00286290410955
+    ]
+   },
+   "years": {
+    "2023": {
+     "days": 365,
+     "first": "2023-01-01",
+     "last": "2023-12-31",
+     "net_usd": -40504.83,
+     "mwh": 89276.0,
+     "profit_per_mwh": -0.45370343205340746,
+     "sharpe_annualised": -1.090589960128511,
+     "max_drawdown_usd": 59871.26,
+     "return_on_bankroll_annualised": -0.0810096552,
+     "return_over_max_drawdown": -0.6765320271173831,
+     "worst_day": {
+      "date": "2023-09-06",
+      "usd": -15396.83
+     },
+     "months_positive": 5,
+     "months": 12,
+     "net_usd_at_0_50_stress": -60388.09,
+     "net_usd_without_best_5_days": -78572.28,
+     "best_5_days": {
+      "2023-01-11": 15291.39,
+      "2023-02-05": 8916.33,
+      "2023-09-08": 6897.76,
+      "2023-07-28": 4130.17,
+      "2023-02-28": 2831.79
+     }
+    }
+   },
+   "positive_years": 0,
+   "bar": {
+    "positive_total": false,
+    "positive_years_at_least_2_of_3": false,
+    "sharpe_above_0_42": false,
+    "positive_at_0_50_stress": false
+   },
+   "selection_note": "deep configuration c2 and spike threshold S = 25 were chosen on 2022 and kept for every year, so 2021 and 2022 are not out of sample in their configuration choice",
+   "passes_bar": false,
+   "rank": 13
+  },
+  {
+   "strategy": "A_spike_deep",
+   "what": "As A spike flag, with the deep model's spike probability.",
+   "status": "complete",
+   "total": {
+    "days": 1095,
+    "first": "2021-01-01",
+    "last": "2023-12-31",
+    "net_usd": -41943.26,
+    "mwh": 159543.0,
+    "profit_per_mwh": -0.26289629566950584,
+    "sharpe_annualised": -0.6216738435897311,
+    "max_drawdown_usd": 88247.6,
+    "return_on_bankroll_annualised": -0.02796217579999999,
+    "return_over_max_drawdown": -0.15843023684872332,
+    "worst_day": {
+     "date": "2022-01-16",
+     "usd": -21130.72
+    },
+    "months_positive": 20,
+    "months": 36,
+    "net_usd_at_0_50_stress": -103321.92,
+    "net_usd_without_best_5_days": -63274.95,
+    "best_5_days": {
+     "2021-02-10": 5465.73,
+     "2021-02-19": 5430.19,
+     "2023-08-19": 3830.98,
+     "2021-02-18": 3378.96,
+     "2022-01-14": 3225.82
+    },
+    "mean_daily_net_interval_95": [
+     -119.37054193835611,
+     40.576850598173486
+    ]
+   },
+   "years": {
+    "2021": {
+     "days": 365,
+     "first": "2021-01-01",
+     "last": "2021-12-31",
+     "net_usd": -9241.24,
+     "mwh": 74298.0,
+     "profit_per_mwh": -0.12438074510753964,
+     "sharpe_annualised": -0.40648854982301635,
+     "max_drawdown_usd": 39056.59,
+     "return_on_bankroll_annualised": -0.018482481199999973,
+     "return_over_max_drawdown": -0.23661156440622969,
+     "worst_day": {
+      "date": "2021-06-28",
+      "usd": -5479.83
+     },
+     "months_positive": 6,
+     "months": 12,
+     "net_usd_at_0_50_stress": -39354.22,
+     "net_usd_without_best_5_days": -28315.27,
+     "best_5_days": {
+      "2021-02-10": 5465.73,
+      "2021-02-19": 5430.19,
+      "2021-02-18": 3378.96,
+      "2021-11-15": 2418.94,
+      "2021-10-19": 2380.21
+     }
+    },
+    "2022": {
+     "days": 365,
+     "first": "2022-01-01",
+     "last": "2022-12-31",
+     "net_usd": -31639.16,
+     "mwh": 30813.0,
+     "profit_per_mwh": -1.0268119267841493,
+     "sharpe_annualised": -1.1000761779945027,
+     "max_drawdown_usd": 53860.01,
+     "return_on_bankroll_annualised": -0.06327831179999999,
+     "return_over_max_drawdown": -0.5874331976038041,
+     "worst_day": {
+      "date": "2022-01-16",
+      "usd": -21130.72
+     },
+     "months_positive": 7,
+     "months": 12,
+     "net_usd_at_0_50_stress": -43831.86,
+     "net_usd_without_best_5_days": -45289.16,
+     "best_5_days": {
+      "2022-01-14": 3225.82,
+      "2022-01-31": 3069.74,
+      "2022-04-10": 2705.7,
+      "2022-01-18": 2634.4,
+      "2022-02-12": 2014.34
+     }
+    },
+    "2023": {
+     "days": 365,
+     "first": "2023-01-01",
+     "last": "2023-12-31",
+     "net_usd": -1062.87,
+     "mwh": 54432.0,
+     "profit_per_mwh": -0.019526513815402647,
+     "sharpe_annualised": -0.08041699935757197,
+     "max_drawdown_usd": 24432.13,
+     "return_on_bankroll_annualised": -0.0021257343999999978,
+     "return_over_max_drawdown": -0.043502847168918043,
+     "worst_day": {
+      "date": "2023-10-10",
+      "usd": -4558.81
+     },
+     "months_positive": 7,
+     "months": 12,
+     "net_usd_at_0_50_stress": -20135.84,
+     "net_usd_without_best_5_days": -12112.39,
+     "best_5_days": {
+      "2023-08-19": 3830.98,
+      "2023-08-18": 2198.19,
+      "2023-07-28": 1960.47,
+      "2023-11-01": 1574.0,
+      "2023-05-07": 1485.88
+     }
+    }
+   },
+   "positive_years": 0,
+   "bar": {
+    "positive_total": false,
+    "positive_years_at_least_2_of_3": false,
+    "sharpe_above_0_42": false,
+    "positive_at_0_50_stress": false
+   },
+   "selection_note": "deep configuration c2 and spike threshold S = 25 were chosen on 2022 and kept for every year, so 2021 and 2022 are not out of sample in their configuration choice",
+   "passes_bar": false,
+   "rank": 14
+  },
+  {
+   "strategy": "zone_subset_supply",
+   "what": "Sell supply every hour, but only in up to six zones that earned without their worst hours and had the mildest worst day in earlier years.",
+   "status": "complete",
+   "total": {
+    "days": 1095,
+    "first": "2021-01-01",
+    "last": "2023-12-31",
+    "net_usd": -52979.2,
+    "mwh": 157680.0,
+    "profit_per_mwh": -0.33599185692541855,
+    "sharpe_annualised": -0.3003670503985844,
+    "max_drawdown_usd": 164178.11,
+    "return_on_bankroll_annualised": -0.03531946399999999,
+    "return_over_max_drawdown": -0.10756447503951011,
+    "worst_day": {
+     "date": "2022-12-24",
+     "usd": -75290.25
+    },
+    "months_positive": 17,
+    "months": 36,
+    "net_usd_at_0_50_stress": -113496.78,
+    "net_usd_without_best_5_days": -106126.61,
+    "best_5_days": {
+     "2022-12-27": 12521.69,
+     "2022-12-26": 12284.7,
+     "2022-12-25": 11988.81,
+     "2022-01-14": 8691.27,
+     "2023-07-28": 7660.94
+    },
+    "mean_daily_net_interval_95": [
+     -242.40984499086753,
+     112.6740493287671
+    ]
+   },
+   "years": {
+    "2021": {
+     "days": 365,
+     "first": "2021-01-01",
+     "last": "2021-12-31",
+     "net_usd": 9665.06,
+     "mwh": 52560.0,
+     "profit_per_mwh": 0.18388618721461208,
+     "sharpe_annualised": 0.4789750600539841,
+     "max_drawdown_usd": 30617.16,
+     "return_on_bankroll_annualised": 0.019330116000000022,
+     "return_over_max_drawdown": 0.31567456185401327,
+     "worst_day": {
+      "date": "2021-06-28",
+      "usd": -3931.23
+     },
+     "months_positive": 4,
+     "months": 12,
+     "net_usd_at_0_50_stress": -11637.51,
+     "net_usd_without_best_5_days": -10824.35,
+     "best_5_days": {
+      "2021-02-10": 6618.15,
+      "2021-02-19": 5920.05,
+      "2021-02-18": 3618.24,
+      "2021-07-06": 2251.7,
+      "2021-12-21": 2081.25
+     }
+    },
+    "2022": {
+     "days": 365,
+     "first": "2022-01-01",
+     "last": "2022-12-31",
+     "net_usd": -89968.55,
+     "mwh": 52560.0,
+     "profit_per_mwh": -1.711730365296803,
+     "sharpe_annualised": -0.9346858295260408,
+     "max_drawdown_usd": 141619.51,
+     "return_on_bankroll_annualised": -0.17993709599999996,
+     "return_over_max_drawdown": -0.635283551007572,
+     "worst_day": {
+      "date": "2022-12-24",
+      "usd": -75290.25
+     },
+     "months_positive": 6,
+     "months": 12,
+     "net_usd_at_0_50_stress": -110766.54,
+     "net_usd_without_best_5_days": -142674.12,
+     "best_5_days": {
+      "2022-12-27": 12521.69,
+      "2022-12-26": 12284.7,
+      "2022-12-25": 11988.81,
+      "2022-01-14": 8691.27,
+      "2022-12-28": 7219.1
+     }
+    },
+    "2023": {
+     "days": 365,
+     "first": "2023-01-01",
+     "last": "2023-12-31",
+     "net_usd": 27324.29,
+     "mwh": 52560.0,
+     "profit_per_mwh": 0.5198686073059362,
+     "sharpe_annualised": 1.036553057593612,
+     "max_drawdown_usd": 37844.76,
+     "return_on_bankroll_annualised": 0.054648588000000005,
+     "return_over_max_drawdown": 0.7220100454604598,
+     "worst_day": {
+      "date": "2023-09-05",
+      "usd": -11337.0
+     },
+     "months_positive": 7,
+     "months": 12,
+     "net_usd_at_0_50_stress": 8907.27,
+     "net_usd_without_best_5_days": -305.03,
+     "best_5_days": {
+      "2023-07-28": 7660.94,
+      "2023-02-03": 6484.79,
+      "2023-02-04": 5613.64,
+      "2023-09-08": 4004.12,
+      "2023-02-01": 3865.85
+     }
+    }
+   },
+   "positive_years": 2,
+   "bar": {
+    "positive_total": false,
+    "positive_years_at_least_2_of_3": true,
+    "sharpe_above_0_42": false,
+    "positive_at_0_50_stress": false
+   },
+   "selection_note": null,
+   "passes_bar": false,
+   "rank": 15
+  },
+  {
+   "strategy": "baseline",
+   "what": "In each zone-hour, take the side that won on average over the past 365 days.",
+   "status": "complete",
+   "total": {
+    "days": 1095,
+    "first": "2021-01-01",
+    "last": "2023-12-31",
+    "net_usd": -68814.24,
+    "mwh": 289080.0,
+    "profit_per_mwh": -0.23804566555970655,
+    "sharpe_annualised": -0.8052198935753536,
+    "max_drawdown_usd": 124750.42,
+    "return_on_bankroll_annualised": -0.04587616066666665,
+    "return_over_max_drawdown": -0.183871765593871,
+    "worst_day": {
+     "date": "2022-12-27",
+     "usd": -12921.64
+    },
+    "months_positive": 12,
+    "months": 36,
+    "net_usd_at_0_50_stress": -181310.94,
+    "net_usd_without_best_5_days": -126617.99,
+    "best_5_days": {
+     "2022-12-23": 13872.06,
+     "2023-01-11": 12489.71,
+     "2022-03-29": 11932.86,
+     "2022-01-30": 10501.08,
+     "2022-08-08": 9008.04
+    },
+    "mean_daily_net_interval_95": [
+     -162.0641276621004,
+     34.48269369406396
+    ]
+   },
+   "years": {
+    "2021": {
+     "days": 365,
+     "first": "2021-01-01",
+     "last": "2021-12-31",
+     "net_usd": 12664.73,
+     "mwh": 96360.0,
+     "profit_per_mwh": 0.13143144458281467,
+     "sharpe_annualised": 0.8022315277220894,
+     "max_drawdown_usd": 16180.66,
+     "return_on_bankroll_annualised": 0.025329468000000046,
+     "return_over_max_drawdown": 0.7827081170810843,
+     "worst_day": {
+      "date": "2021-03-16",
+      "usd": -3283.62
+     },
+     "months_positive": 4,
+     "months": 12,
+     "net_usd_at_0_50_stress": -26568.73,
+     "net_usd_without_best_5_days": -7115.19,
+     "best_5_days": {
+      "2021-01-29": 5322.06,
+      "2021-07-07": 4396.75,
+      "2021-03-07": 4143.07,
+      "2021-02-22": 3011.32,
+      "2021-08-12": 2906.73
+     }
+    },
+    "2022": {
+     "days": 365,
+     "first": "2022-01-01",
+     "last": "2022-12-31",
+     "net_usd": -8642.75,
+     "mwh": 96360.0,
+     "profit_per_mwh": -0.08969226857617234,
+     "sharpe_annualised": -0.21552786793923923,
+     "max_drawdown_usd": 51163.74,
+     "return_on_bankroll_annualised": -0.01728549399999997,
+     "return_over_max_drawdown": -0.1689232807098226,
+     "worst_day": {
+      "date": "2022-12-27",
+      "usd": -12921.64
+     },
+     "months_positive": 7,
+     "months": 12,
+     "net_usd_at_0_50_stress": -46960.31,
+     "net_usd_without_best_5_days": -61553.19,
+     "best_5_days": {
+      "2022-12-23": 13872.06,
+      "2022-03-29": 11932.86,
+      "2022-01-30": 10501.08,
+      "2022-08-08": 9008.04,
+      "2022-08-09": 7596.4
+     }
+    },
+    "2023": {
+     "days": 365,
+     "first": "2023-01-01",
+     "last": "2023-12-31",
+     "net_usd": -72836.23,
+     "mwh": 96360.0,
+     "profit_per_mwh": -0.7558761726857618,
+     "sharpe_annualised": -3.0486600373856017,
+     "max_drawdown_usd": 79739.99,
+     "return_on_bankroll_annualised": -0.145672456,
+     "return_over_max_drawdown": -0.9134215934907601,
+     "worst_day": {
+      "date": "2023-09-05",
+      "usd": -11411.94
+     },
+     "months_positive": 1,
+     "months": 12,
+     "net_usd_at_0_50_stress": -107781.9,
+     "net_usd_without_best_5_days": -96157.02,
+     "best_5_days": {
+      "2023-01-11": 12489.71,
+      "2023-09-07": 2959.08,
+      "2023-10-10": 2953.85,
+      "2023-02-05": 2661.5,
+      "2023-08-19": 2256.65
+     }
+    }
+   },
+   "positive_years": 1,
+   "bar": {
+    "positive_total": false,
+    "positive_years_at_least_2_of_3": false,
+    "sharpe_above_0_42": false,
+    "positive_at_0_50_stress": false
+   },
+   "selection_note": null,
+   "passes_bar": false,
+   "rank": 16
+  },
+  {
+   "strategy": "A_regression_v1_deep",
+   "what": "As A regression, with the deep model's forecast.",
+   "status": "complete",
+   "total": {
+    "days": 1095,
+    "first": "2021-01-01",
+    "last": "2023-12-31",
+    "net_usd": -69568.11,
+    "mwh": 140791.0,
+    "profit_per_mwh": -0.49412327279442547,
+    "sharpe_annualised": -0.32651720212197244,
+    "max_drawdown_usd": 154102.87,
+    "return_on_bankroll_annualised": -0.046378739799999985,
+    "return_over_max_drawdown": -0.1504798073255328,
+    "worst_day": {
+     "date": "2022-12-24",
+     "usd": -93250.54
+    },
+    "months_positive": 19,
+    "months": 36,
+    "net_usd_at_0_50_stress": -89515.44,
+    "net_usd_without_best_5_days": -121974.55,
+    "best_5_days": {
+     "2022-01-19": 11592.01,
+     "2022-01-14": 11547.91,
+     "2022-12-27": 10355.31,
+     "2022-01-26": 9744.91,
+     "2022-01-31": 9166.3
+    },
+    "mean_daily_net_interval_95": [
+     -303.18587986986273,
+     120.2628241347032
+    ]
+   },
+   "years": {
+    "2021": {
+     "days": 365,
+     "first": "2021-01-01",
+     "last": "2021-12-31",
+     "net_usd": 9335.18,
+     "mwh": 51546.0,
+     "profit_per_mwh": 0.18110394210996,
+     "sharpe_annualised": 0.40825978329470664,
+     "max_drawdown_usd": 32295.06,
+     "return_on_bankroll_annualised": 0.018670367600000015,
+     "return_over_max_drawdown": 0.2890591658989952,
+     "worst_day": {
+      "date": "2021-07-07",
+      "usd": -5058.68
+     },
+     "months_positive": 4,
+     "months": 12,
+     "net_usd_at_0_50_stress": 2428.71,
+     "net_usd_without_best_5_days": -10380.91,
+     "best_5_days": {
+      "2021-02-10": 5994.6,
+      "2021-02-19": 4615.2,
+      "2021-08-22": 3463.56,
+      "2021-02-18": 3083.41,
+      "2021-08-09": 2559.32
+     }
+    },
+    "2022": {
+     "days": 365,
+     "first": "2022-01-01",
+     "last": "2022-12-31",
+     "net_usd": -91648.74,
+     "mwh": 46445.0,
+     "profit_per_mwh": -1.9732747012595546,
+     "sharpe_annualised": -0.7761252675954212,
+     "max_drawdown_usd": 128936.81,
+     "return_on_bankroll_annualised": -0.18329748699999998,
+     "return_over_max_drawdown": -0.7108035512418422,
+     "worst_day": {
+      "date": "2022-12-24",
+      "usd": -93250.54
+     },
+     "months_positive": 7,
+     "months": 12,
+     "net_usd_at_0_50_stress": -88195.52,
+     "net_usd_without_best_5_days": -144055.18,
+     "best_5_days": {
+      "2022-01-19": 11592.01,
+      "2022-01-14": 11547.91,
+      "2022-12-27": 10355.31,
+      "2022-01-26": 9744.91,
+      "2022-01-31": 9166.3
+     }
+    },
+    "2023": {
+     "days": 365,
+     "first": "2023-01-01",
+     "last": "2023-12-31",
+     "net_usd": 12745.45,
+     "mwh": 42800.0,
+     "profit_per_mwh": 0.29779088785046737,
+     "sharpe_annualised": 0.4912459430091834,
+     "max_drawdown_usd": 43513.02,
+     "return_on_bankroll_annualised": 0.0254909,
+     "return_over_max_drawdown": 0.2929111469170951,
+     "worst_day": {
+      "date": "2023-09-05",
+      "usd": -14090.67
+     },
+     "months_positive": 8,
+     "months": 12,
+     "net_usd_at_0_50_stress": -3748.63,
+     "net_usd_without_best_5_days": -6923.84,
+     "best_5_days": {
+      "2023-09-08": 5965.95,
+      "2023-08-19": 3652.58,
+      "2023-07-28": 3630.28,
+      "2023-12-07": 3586.55,
+      "2023-08-18": 2833.93
+     }
+    }
+   },
+   "positive_years": 2,
+   "bar": {
+    "positive_total": false,
+    "positive_years_at_least_2_of_3": true,
+    "sharpe_above_0_42": false,
+    "positive_at_0_50_stress": false
+   },
+   "selection_note": "deep configuration c2 and spike threshold S = 25 were chosen on 2022 and kept for every year, so 2021 and 2022 are not out of sample in their configuration choice",
+   "passes_bar": false,
+   "rank": 17
+  },
+  {
+   "strategy": "A_hourly_mean",
+   "what": "Sell supply only in zone-hours whose past-365-day average gap paid more than the cost; no model.",
+   "status": "complete",
+   "total": {
+    "days": 1095,
+    "first": "2021-01-01",
+    "last": "2023-12-31",
+    "net_usd": -77647.78,
+    "mwh": 128004.0,
+    "profit_per_mwh": -0.606604343614262,
+    "sharpe_annualised": -0.5153674321577459,
+    "max_drawdown_usd": 138070.71,
+    "return_on_bankroll_annualised": -0.051765188266666644,
+    "return_over_max_drawdown": -0.1874589795024296,
+    "worst_day": {
+     "date": "2022-12-24",
+     "usd": -67628.58
+    },
+    "months_positive": 16,
+    "months": 36,
+    "net_usd_at_0_50_stress": -92759.54,
+    "net_usd_without_best_5_days": -107266.2,
+    "best_5_days": {
+     "2023-07-28": 6472.5,
+     "2022-01-14": 6189.84,
+     "2021-02-19": 5939.64,
+     "2022-01-19": 5790.9,
+     "2022-01-26": 5225.54
+    },
+    "mean_daily_net_interval_95": [
+     -255.24450415296798,
+     73.74917056164385
+    ]
+   },
+   "years": {
+    "2021": {
+     "days": 365,
+     "first": "2021-01-01",
+     "last": "2021-12-31",
+     "net_usd": 7484.46,
+     "mwh": 47261.0,
+     "profit_per_mwh": 0.15836447176318758,
+     "sharpe_annualised": 0.37582147752958395,
+     "max_drawdown_usd": 33972.63,
+     "return_on_bankroll_annualised": 0.014968926600000007,
+     "return_over_max_drawdown": 0.22030862586102942,
+     "worst_day": {
+      "date": "2021-03-16",
+      "usd": -3776.71
+     },
+     "months_positive": 3,
+     "months": 12,
+     "net_usd_at_0_50_stress": -2626.09,
+     "net_usd_without_best_5_days": -9827.06,
+     "best_5_days": {
+      "2021-02-19": 5939.64,
+      "2021-02-18": 4073.54,
+      "2021-02-10": 2926.14,
+      "2021-01-31": 2221.24,
+      "2021-02-14": 2150.96
+     }
+    },
+    "2022": {
+     "days": 365,
+     "first": "2022-01-01",
+     "last": "2022-12-31",
+     "net_usd": -87770.27,
+     "mwh": 32107.0,
+     "profit_per_mwh": -2.7336801974647273,
+     "sharpe_annualised": -1.0859827696903344,
+     "max_drawdown_usd": 108281.92,
+     "return_on_bankroll_annualised": -0.17554054019999998,
+     "return_over_max_drawdown": -0.8105718212155429,
+     "worst_day": {
+      "date": "2022-12-24",
+      "usd": -67628.58
+     },
+     "months_positive": 6,
+     "months": 12,
+     "net_usd_at_0_50_stress": -80501.75,
+     "net_usd_without_best_5_days": -113853.64,
+     "best_5_days": {
+      "2022-01-14": 6189.84,
+      "2022-01-19": 5790.9,
+      "2022-01-26": 5225.54,
+      "2022-12-25": 4869.82,
+      "2022-12-26": 4007.27
+     }
+    },
+    "2023": {
+     "days": 365,
+     "first": "2023-01-01",
+     "last": "2023-12-31",
+     "net_usd": 2638.02,
+     "mwh": 48636.0,
+     "profit_per_mwh": 0.0542401595525949,
+     "sharpe_annualised": 0.10460178921503366,
+     "max_drawdown_usd": 45299.68,
+     "return_on_bankroll_annualised": 0.005276048799999989,
+     "return_over_max_drawdown": 0.058234949188556144,
+     "worst_day": {
+      "date": "2023-09-05",
+      "usd": -15063.21
+     },
+     "months_positive": 7,
+     "months": 12,
+     "net_usd_at_0_50_stress": -9631.7,
+     "net_usd_without_best_5_days": -17857.08,
+     "best_5_days": {
+      "2023-07-28": 6472.5,
+      "2023-02-04": 4354.54,
+      "2023-09-08": 3457.87,
+      "2023-08-19": 3227.13,
+      "2023-02-01": 2983.07
+     }
+    }
+   },
+   "positive_years": 2,
+   "bar": {
+    "positive_total": false,
+    "positive_years_at_least_2_of_3": true,
+    "sharpe_above_0_42": false,
+    "positive_at_0_50_stress": false
+   },
+   "selection_note": null,
+   "passes_bar": false,
+   "rank": 18
+  },
+  {
+   "strategy": "always_supply",
+   "what": "Sell virtual supply in every zone and hour.",
+   "status": "complete",
+   "total": {
+    "days": 1095,
+    "first": "2021-01-01",
+    "last": "2023-12-31",
+    "net_usd": -135130.46,
+    "mwh": 289080.0,
+    "profit_per_mwh": -0.4674500345925003,
+    "sharpe_annualised": -0.39518768186976233,
+    "max_drawdown_usd": 344444.8,
+    "return_on_bankroll_annualised": -0.09008697066666663,
+    "return_over_max_drawdown": -0.13077127480187214,
+    "worst_day": {
+     "date": "2022-12-24",
+     "usd": -148089.52
+    },
+    "months_positive": 18,
+    "months": 36,
+    "net_usd_at_0_50_stress": -246079.36,
+    "net_usd_without_best_5_days": -216720.82,
+    "best_5_days": {
+     "2022-12-27": 21483.81,
+     "2022-12-26": 19128.51,
+     "2023-07-28": 14409.54,
+     "2022-12-28": 13966.38,
+     "2022-01-14": 12602.11
+    },
+    "mean_daily_net_interval_95": [
+     -514.9533601095889,
+     194.46051431735162
+    ]
+   },
+   "years": {
+    "2021": {
+     "days": 365,
+     "first": "2021-01-01",
+     "last": "2021-12-31",
+     "net_usd": -5014.8,
+     "mwh": 96360.0,
+     "profit_per_mwh": -0.05204236197592358,
+     "sharpe_annualised": -0.13130836379261204,
+     "max_drawdown_usd": 73582.82,
+     "return_on_bankroll_annualised": -0.010029603999999985,
+     "return_over_max_drawdown": -0.06815180722299485,
+     "worst_day": {
+      "date": "2021-01-29",
+      "usd": -9351.06
+     },
+     "months_positive": 3,
+     "months": 12,
+     "net_usd_at_0_50_stress": -44069.51,
+     "net_usd_without_best_5_days": -40153.48,
+     "best_5_days": {
+      "2021-02-19": 10812.9,
+      "2021-02-10": 9460.1,
+      "2021-02-18": 6888.69,
+      "2021-08-08": 4145.45,
+      "2021-08-22": 3831.54
+     }
+    },
+    "2022": {
+     "days": 365,
+     "first": "2022-01-01",
+     "last": "2022-12-31",
+     "net_usd": -198269.24,
+     "mwh": 96360.0,
+     "profit_per_mwh": -2.057588605230386,
+     "sharpe_annualised": -1.0588857696275655,
+     "max_drawdown_usd": 277994.59,
+     "return_on_bankroll_annualised": -0.3965384759999999,
+     "return_over_max_drawdown": -0.713212586502368,
+     "worst_day": {
+      "date": "2022-12-24",
+      "usd": -148089.52
+     },
+     "months_positive": 7,
+     "months": 12,
+     "net_usd_at_0_50_stress": -236398.89,
+     "net_usd_without_best_5_days": -277429.28,
+     "best_5_days": {
+      "2022-12-27": 21483.81,
+      "2022-12-26": 19128.51,
+      "2022-12-28": 13966.38,
+      "2022-01-14": 12602.11,
+      "2022-01-19": 11979.21
+     }
+    },
+    "2023": {
+     "days": 365,
+     "first": "2023-01-01",
+     "last": "2023-12-31",
+     "net_usd": 68153.58,
+     "mwh": 96360.0,
+     "profit_per_mwh": 0.7072808634288087,
+     "sharpe_annualised": 1.3845640192086395,
+     "max_drawdown_usd": 67173.44,
+     "return_on_bankroll_annualised": 0.136307168,
+     "return_over_max_drawdown": 1.0145912371640264,
+     "worst_day": {
+      "date": "2023-09-05",
+      "usd": -20681.35
+     },
+     "months_positive": 8,
+     "months": 12,
+     "net_usd_at_0_50_stress": 34389.04,
+     "net_usd_without_best_5_days": 17254.14,
+     "best_5_days": {
+      "2023-07-28": 14409.54,
+      "2023-02-04": 12399.42,
+      "2023-02-03": 10664.13,
+      "2023-09-08": 6897.76,
+      "2023-02-01": 6528.62
+     }
+    }
+   },
+   "positive_years": 1,
+   "bar": {
+    "positive_total": false,
+    "positive_years_at_least_2_of_3": false,
+    "sharpe_above_0_42": false,
+    "positive_at_0_50_stress": false
+   },
+   "selection_note": null,
+   "passes_bar": false,
+   "rank": 19
+  }
+ ],
+ "tries": {
+  "strategies_in_this_list": 19,
+  "configurations_compared_per_choice": {
+   "regression (A v1, B, C, D)": 8,
+   "spike S x p*": 6,
+   "tail spike p*": 2,
+   "storm cut (filter; flip)": 4,
+   "deep rolling k": 6,
+   "C pairs": 55,
+   "zone subset": "rule, no grid",
+   "risk sizing": "rule, no grid"
+  },
+  "earlier_versions": "idea A v1 (regression rule) is in the list; the v1 and v2 rehearsals scored 2023 only"
+ }
+}

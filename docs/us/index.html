@@ -185,6 +185,37 @@ table.gen th{white-space:normal}
 @media (max-width:760px){.tl-list{columns:1}}
 input[type=range]{width:100%;accent-color:var(--accent);margin:6px 0 2px}
 .appx-link{display:inline-block;margin-top:14px;font-size:14.5px}
+/* side navigation and section bands */
+:root{--b1:#cfdcec;--b2:#d6e8dc;--b3:#e6dcef;--b4:#f1e3c2;--b5:#d3e7e4;--b6:#efd6d6;--b7:#e2e0dc;--b8:#dad7d0}
+section[data-band]{position:relative;scroll-margin-top:64px}
+section[data-band]::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--band)}
+#sidenav{z-index:20;font-family:var(--sans)}
+#sidenav ol{list-style:none;margin:0;padding:0}
+#sidenav a{display:flex;align-items:center;gap:8px;color:var(--soft);font-weight:500;font-size:13px;text-decoration:none;padding:5px 8px;border-radius:4px;border-left:4px solid var(--band)}
+#sidenav a:hover{background:var(--panel);color:var(--ink)}
+#sidenav a[aria-current="true"]{background:var(--band);color:var(--ink);font-weight:600}
+@media (min-width:1260px){
+  body{padding-left:196px}
+  #sidenav{position:fixed;top:96px;left:max(12px,calc(50% - 98px - 480px - 196px));width:178px}
+  #sidenav ol{display:flex;flex-direction:column;gap:3px}
+  #sidenav .navh{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin:0 0 6px 8px}
+}
+@media (max-width:1259px){
+  #sidenav{position:sticky;top:0;background:rgba(250,249,247,.96);border-bottom:1px solid var(--rule);backdrop-filter:blur(4px)}
+  #sidenav .navh{display:none}
+  #sidenav ol{display:flex;gap:4px;overflow-x:auto;padding:6px 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  #sidenav ol::-webkit-scrollbar{display:none}
+  #sidenav a{white-space:nowrap;border-left:0;border-bottom:3px solid var(--band);border-radius:3px 3px 0 0;font-size:12.5px;padding:4px 8px}
+}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;margin-top:10px}
+.scard{background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:12px 14px;scroll-margin-top:70px}
+.scard:target{outline:2px solid var(--accent);outline-offset:2px}
+.scard h3{font-size:17px;margin-bottom:4px}
+.scard .tagl{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.scard dl{margin:6px 0 0;font-size:14px;line-height:1.45}
+.scard dt{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-top:6px}
+.scard dd{margin:0}
+.chart a text{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px;cursor:pointer}
 /* appendix */
 details.appx{margin-top:10px;border:1px solid var(--rule2);border-radius:6px;background:var(--card)}
 details.appx>summary{cursor:pointer;padding:16px 20px;font-family:var(--serif);font-size:22px;font-weight:600;list-style:none}
@@ -217,11 +248,22 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
 </style>
 </head>
 <body>
+<nav id="sidenav" aria-label="Sections"><p class="navh">On this page</p><ol>
+  <li><a href="#bankroll" style="--band:var(--b1)">Results so far</a></li>
+  <li><a href="#primer" style="--band:var(--b2)">The bet</a></li>
+  <li><a href="#strategies" style="--band:var(--b3)">The strategies</a></li>
+  <li><a href="#where" style="--band:var(--b4)">Where the money came from</a></li>
+  <li><a href="#clean" style="--band:var(--b5)">Luck and leaks</a></li>
+  <li><a href="#rules" style="--band:var(--b6)">How the test is kept clean</a></li>
+  <li><a href="#heldout" style="--band:var(--b7)">Held-out run</a></li>
+  <li><a href="#glossary" style="--band:var(--b2)">Terms</a></li>
+  <li><a href="#appendix" style="--band:var(--b8)">Audit appendix</a></li>
+</ol></nav>
 
 <header><div class="wrap">
   <div class="eyebrow">Study &middot; held-out run pending</div>
   <h1>Can a model trade New York's <span style="white-space:nowrap">day-ahead</span> to <span style="white-space:nowrap">real-time</span> gap after costs?</h1>
-  <p class="dek">This study bets on the gap between New York's day-ahead and real-time power prices with virtual positions, using only what is public at the 05:00 bidding deadline and paying every fee; it has scored <span data-k="nRowsAll">43</span> strategies so far (<span data-k="nRows1">33</span> in version 1, <span data-k="nRows2">10</span> in version 2). On the build years, <span data-k="nCand1">6</span> version 1 and <span data-k="nCand2">6</span> version 2 strategies pass a bar fixed before any model ran; January 2024 to September 2026 stays sealed for one held-out run that has not happened yet, and every rule change and audit finding is dated in public.</p>
+  <p class="dek">This study bets on the gap between New York's day-ahead and real-time power prices with virtual positions, using only what is public at the 05:00 bidding deadline and paying every fee; it has scored <span data-k="nRowsAll">43</span> strategies so far (<span data-k="nRows1">33</span> in version 1, <span data-k="nRows2">10</span> in version 2). On the build years, <span data-k="nCand1">6</span> version 1 and <span data-k="nCand2">6</span> version 2 strategies pass a bar fixed before any model ran; January 2024 to September 2026 stays sealed for one held-out run (a single test on years no model has seen) that has not happened yet, and every rule change and audit finding is dated in public.</p>
   
   <div class="byline"><span>Bolgaç Gülen &middot; October 2026</span><span>&middot;</span>
     <a href="https://github.com/bolgacg/tavle/blob/master/research/us/OBJECTIVES.md">the objectives file</a><span>&middot;</span>
@@ -232,46 +274,70 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
 
 <noscript><div class="wrap"><p class="err">The charts on this page are drawn by a script from the JSON files linked under each chart. With scripts off, the files and the audit appendix still hold every number.</p></div></noscript>
 
-<section id="bankroll" style="padding-top:28px"><div class="wrap">
+<section id="bankroll" data-band style="--band:var(--b1);padding-top:28px"><div class="wrap">
   <div class="card">
     <div class="vt" role="group" aria-label="Study version"><button data-v="v1" aria-pressed="true">Version 1 &middot; 2021 to 2023</button><button data-v="v2" aria-pressed="false">Version 2 &middot; 2013 to 2023</button></div>
     <p class="hint"><b>Click a version</b> to switch every chart on the page. <b>Hover or tap</b> a chart to read one day.</p>
     <h2 class="ctitle" id="t-bank">Loading the build-year results</h2>
-    <p class="csub">A 500,000 USD bankroll per strategy, after all fees; each strategy is sized so its worst build-year drop is 100,000 USD. "Pass the bar" means meeting the profit, steadiness and cost tests fixed before any model ran.</p>
+    <p class="csub">Each line starts with 500,000 USD and pays every fee. Fixed-size bets, profits not reinvested, so lines rise in a straight-ish line rather than compounding.</p>
+    <p class="hint"><b>Click a name</b> for how that strategy works; <b>hover a name</b> to pick out its line in both panels.</p>
     <div class="lg" id="lg-bank" aria-hidden="true"></div>
     <div class="chart" id="ch-bank"></div>
-    <p class="csub" style="margin:10px 0 2px">Below its own peak, percent</p>
+    <p class="csub" style="margin:10px 0 2px">How far each line sat below its own previous high, percent</p>
     <div class="chart" id="ch-under"></div>
     <p class="note" id="uw-note" style="margin-top:2px"></p>
     <div class="readout" id="ro-bank" aria-live="polite"></div>
     <div class="three">
       <p><b>what you see</b>Each line is one strategy's 500,000 USD bankroll, day by day after all fees; the lower panel shows how far it sat below its own previous high.</p>
-      <p><b>how to read</b>The three steadiest candidates by Sharpe ratio are named in strong colour, the other candidates are pale, red is always taking virtual supply and grey the baseline; the dashed line is the start.</p>
+      <p><b>how to read</b>The three steadiest candidates by Sharpe ratio (average daily profit divided by its day-to-day swings, scaled to a year) are named in strong colour, the other candidates are pale, red is always selling, grey is the habit rule; the dashed line is the start.</p>
       <p><b>take-away</b><span id="k-bank">Each candidate ends above both plain rules, but only on years the models were built on; the hatched area is the held-out test, still to run.</span></p>
     </div>
     <p class="note" id="n-bank"></p>
-    <p class="note">Names: A sits out spike-risk hours, B reads weather forecasts, C buys one zone and sells another, D reads planned outages; boosting and deep are the two model types; ideas 1 to 14 and V1 to V12 are listed in the <a href="#appendix">appendix</a>.</p>
+    <p class="note">Each strategy's fixed size (its sizing view) is the one at which its worst build-year fall from a high, its drawdown, is 100,000 USD. "Pass the bar" means the tests in <a href="#primer">The bet</a>. Names: A sits out spike-risk hours, B reads weather forecasts, C buys one zone and sells another, D reads planned outages; boosting and deep are the two model types; ideas 1 to 14 and V1 to V12 are listed in the <a href="#appendix">appendix</a>.</p>
     <div class="cfoot">Data: <a href="data/equity_v1.json">equity_v1.json</a> &middot; <a href="data/equity_v2.json">equity_v2.json</a> (daily, every row, flags and sizing) &middot; <a href="data/drawdown.json">drawdown.json</a> (the same falls in USD at 1&nbsp;MW). Drawn in the page from these files. Detail: <a href="#a-results">every result</a>.</div>
   </div>
   <a class="appx-link" href="#appendix">Open the audit appendix: the objectives verbatim, every dated addendum, every result, every audit</a>
 </div></section>
 
-<section id="primer"><div class="wrap">
+<section id="primer" data-band style="--band:var(--b2)"><div class="wrap">
   <div class="sec-label">The bet</div>
   <h2>A virtual position bets on the gap between two prices for the same hour</h2>
   <p class="why">Every strategy on this page is a rule for when to take this one kind of position, on which side and in which zone.</p>
   <ol class="primer">
-    <li>NYISO, which runs New York's grid, prices each hour twice: a <b>day-ahead</b> price set the day before, and a <b>real-time</b> price set as the hour happens. Prices are in US dollars per megawatt-hour (MWh).</li>
-    <li><b>Virtual supply</b> sells 1&nbsp;MW day-ahead and buys it back at the real-time price, so it earns the gap between them; <b>virtual load</b> takes the other side. No power moves.</li>
-    <li>Bids close at <b>05:00 New York time the day before delivery</b>, so every input must be public by then.</li>
-    <li>NYISO charges 0.1333 USD per MWh (2024), more than the 0.06 USD all virtual traders in New York earned per MWh that year before fees, so losing is the expected result.</li>
-    <li>A <b>candidate</b> passes the bar fixed before any model ran (10 percent a year on the bankroll, profit in two of three years, Sharpe above 0.42, positive at 0.50 USD per MWh of cost) and is not flagged fragile.</li>
+    <li>NYISO, the company that runs New York's grid, sells power for each hour twice: a <b>day-ahead</b> price is set the day before, and a <b>real-time</b> price is set as the hour happens. Prices are in US dollars per megawatt-hour (MWh), roughly what 800 American homes use in an hour.</li>
+    <li><b>Virtual supply</b> means selling power day-ahead and buying it back in real time: a short position, betting the price falls. <b>Virtual load</b> is the reverse, buying day-ahead and selling in real time: a long position, betting the price rises. No power moves.</li>
+    <li>A worked example: if New York City's 17:00 hour clears day-ahead at 50 USD and real-time at 40, virtual supply earns 10 USD per MWh, less NYISO's fee of about 0.13 to 0.19; had real-time spiked to 300, it would lose 250.</li>
+    <li>Bids close at <b>05:00 New York time the day before delivery</b>, so every input a model reads must be public by then. The fee alone (0.1333 USD per MWh in 2024) was more than the 0.06 that all virtual traders in New York earned per MWh that year before fees, so losing is the expected result.</li>
+    <li>A strategy is a <b>candidate</b> for the held-out run when it passes the bar fixed before any model ran: at its sizing view it earns at least 10 percent a year on the bankroll, about the long-run average return of the S&amp;P 500; it makes money in at least two of three years; its Sharpe ratio (average daily profit divided by its day-to-day swings, scaled to a year) is above 0.42, the S&amp;P 500's long-run Sharpe; and it still makes money at a cost of 0.50 USD per MWh.</li>
+    <li>It must also not be <b>flagged fragile</b>. A strategy is fragile if its three-year total turns negative once its best ten days of a year are removed; if nudging one setting one step flips its total to a loss; or if trading the same number of random days in the same months beats it more than one time in five. An audit can also flag it.</li>
   </ol>
 </div></section>
 
-<section id="where"><div class="wrap">
+<section id="strategies" data-band style="--band:var(--b3)"><div class="wrap">
+  <div class="sec-label">The strategies</div>
+  <h2>Each named line is one rule for when to sell, when to buy and when to stay out</h2>
+  <p class="why">The charts name strategies by short labels; each card below says what the rule bets, what it reads at 05:00, and how its model was trained, starting from the two rules that use no model at all.</p>
+  <div class="cards">
+    <article class="scard" id="s-always"><div class="tagl">no model</div><h3>Always supply</h3><dl><dt>What it bets</dt><dd>Sells 1&nbsp;MW day-ahead in every zone and every hour and buys it back in real time: a permanent short position.</dd><dt>What it reads at 05:00</dt><dd>Nothing.</dd><dt>How it was trained</dt><dd>Not trained; it is the simplest possible bet, and every strategy should beat it.</dd></dl></article>
+    <article class="scard" id="s-habit"><div class="tagl">no model</div><h3>Habit rule</h3><dl><dt>What it bets</dt><dd>In each zone and hour of the day, takes the side that won on average over the past year (short if real time usually came in below day-ahead, long if above).</dd><dt>What it reads at 05:00</dt><dd>The average gap for that zone and hour over the previous 365 days.</dd><dt>How it was trained</dt><dd>Not trained; a rolling average, the second plain rule every model must beat.</dd></dl></article>
+    <article class="scard" id="s-A_regression_v1"><div class="tagl">gradient boosting</div><h3>A, first rule</h3><dl><dt>What it bets</dt><dd>Sells (short) only in the zone-hours where the forecast says real time will come in below day-ahead by more than the fee; otherwise stays out.</dd><dt>What it reads at 05:00</dt><dd>Today's day-ahead prices, real-time prices for hours already finished, recent gaps and spikes, NYISO's load forecast, and the calendar.</dd><dt>How it was trained</dt><dd>Gradient boosting (many small decision trees), refit on the 1st of every month on all data up to two days before (walk-forward), settings chosen on the year before.</dd></dl></article>
+    <article class="scard" id="s-B_gbm"><div class="tagl">gradient boosting</div><h3>B, gradient boosting</h3><dl><dt>What it bets</dt><dd>Short where the forecast gap is below minus the fee, long where it is above plus the fee, otherwise out.</dd><dt>What it reads at 05:00</dt><dd>The same as A, plus GFS weather forecasts issued two days before each delivery hour, at points across New York.</dd><dt>How it was trained</dt><dd>Gradient boosting, walk-forward with monthly refits, from May 2021 when the weather archive starts.</dd></dl></article>
+    <article class="scard" id="s-B_deep"><div class="tagl">neural network</div><h3>B, deep model</h3><dl><dt>What it bets</dt><dd>The same bet as B with gradient boosting.</dd><dt>What it reads at 05:00</dt><dd>The same inputs as B.</dd><dt>How it was trained</dt><dd>A PyTorch neural network, the average of three random starts, refit monthly; its settings were chosen on 2022.</dd></dl></article>
+    <article class="scard" id="s-C_gbm"><div class="tagl">gradient boosting</div><h3>C, gradient boosting</h3><dl><dt>What it bets</dt><dd>Buys one zone and sells another (long one, short the other) in five zone pairs, when the forecast price difference beats twice the fee; a move in the overall price level cancels out.</dd><dt>What it reads at 05:00</dt><dd>The same inputs as A, for both zones of each pair.</dd><dt>How it was trained</dt><dd>Gradient boosting, walk-forward with monthly refits; the five pairs are chosen on the year before.</dd></dl></article>
+    <article class="scard" id="s-C_deep"><div class="tagl">neural network</div><h3>C, deep model</h3><dl><dt>What it bets</dt><dd>The same zone-pair bet as C with gradient boosting.</dd><dt>What it reads at 05:00</dt><dd>The same inputs as C.</dd><dt>How it was trained</dt><dd>A PyTorch neural network, the average of three random starts, refit monthly.</dd></dl></article>
+    <article class="scard" id="s-idea14"><div class="tagl">neural network</div><h3>Idea 14, learned mix</h3><dl><dt>What it bets</dt><dd>Each day splits one unit of risk between the four strategies above (B and C, each with both models), already sized to the same risk.</dd><dt>What it reads at 05:00</dt><dd>Day-level inputs: weather forecasts, every zone's load forecast, outage counts and recent prices.</dd><dt>How it was trained</dt><dd>A small neural network trained on how the four did on earlier days, pulled towards equal weights; registered after the build-year results were seen, so it counts for less.</dd></dl></article>
+    <article class="scard" id="s-V1_C"><div class="tagl">both model types</div><h3>C refit (version 2, V1)</h3><dl><dt>What it bets</dt><dd>The zone-pair bet of C.</dd><dt>What it reads at 05:00</dt><dd>The same inputs as C.</dd><dt>How it was trained</dt><dd>Retrained every quarter on the previous three years and scored on the next quarter, 2013 to 2023; about 76 percent of its profit is a fixed zone-pair spread.</dd></dl></article>
+    <article class="scard" id="s-V11"><div class="tagl">both model types</div><h3>C, mix of four windows (V11)</h3><dl><dt>What it bets</dt><dd>The zone-pair bet of C, using the average of the last four quarterly models.</dd><dt>What it reads at 05:00</dt><dd>The same inputs as C.</dd><dt>How it was trained</dt><dd>Each quarterly model trained on the previous three years; averaging smooths out one bad fit.</dd></dl></article>
+    <article class="scard" id="s-V2"><div class="tagl">gradient boosting</div><h3>Limit bids (V2)</h3><dl><dt>What it bets</dt><dd>Each bid carries a price limit, so it counts only when day-ahead clears at or past it; the side comes from a gradient boosting forecast.</dd><dt>What it reads at 05:00</dt><dd>The same inputs as A.</dd><dt>How it was trained</dt><dd>Quarterly refits on the previous three years; the audit found the limits add nothing, so this is the boosting direction bet.</dd></dl></article>
+    <article class="scard" id="s-V3"><div class="tagl">gradient boosting</div><h3>Tail sizing (V3)</h3><dl><dt>What it bets</dt><dd>The same side as V2, but sized up to 3&nbsp;MW by expected profit against the size of a bad-day loss.</dd><dt>What it reads at 05:00</dt><dd>The same inputs as A.</dd><dt>How it was trained</dt><dd>Quarterly refits; the audit found it sits near 3&nbsp;MW almost always, so its lead over V2 is size, not skill.</dd></dl></article>
+  </div>
+  <p class="note">Walk-forward means each month (or quarter) is predicted by a model trained only on earlier data, so no month helps predict itself. Every other strategy, failures included, is in the <a href="#a-results">table of every result</a>.</p>
+</div></section>
+
+<section id="where" data-band style="--band:var(--b4)"><div class="wrap">
   <div class="sec-label">Where the money came from</div>
   <h2>Most of the profit sits in a few months, and one storm decides the plain bet</h2>
+  <p class="note" style="margin:-4px 0 10px">Winter Storm Elliott is the flash freeze of 23 and 24 December 2022, when real-time prices in New York ran far above day-ahead.</p>
   <p class="why">A result that rests on one month or one storm can vanish in the held-out years, so these three charts show when each candidate earned.</p>
 
   <div class="card">
@@ -318,7 +384,7 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
   </div>
 </div></section>
 
-<section id="clean"><div class="wrap">
+<section id="clean" data-band style="--band:var(--b5)"><div class="wrap">
   <div class="sec-label">Luck, leaks and noise</div>
   <h2>No input arrives late, but part of the profit is a fixed stance rather than timing</h2>
   <p class="why">A backtest can look good because it peeked at later data, because one random start got lucky, or because a steady habit earns regardless of the model; each chart below tests one of these.</p>
@@ -340,7 +406,7 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
   <div class="card">
     <div class="vt" role="group" aria-label="Study version"><button data-v="v1" aria-pressed="true">Version 1</button><button data-v="v2" aria-pressed="false">Version 2</button></div>
     <h3 class="ctitle" id="t-placebo">Loading</h3>
-    <p class="csub">Three-year build-year profit in USD at 1&nbsp;MW: the real rule, and the same rule fed shuffled dates (mean of 20 shuffles) or inputs one day late</p>
+    <p class="csub">A placebo feeds a rule the wrong dates, so any profit it keeps cannot come from timing. Three-year build-year profit in USD at 1&nbsp;MW: the real rule, and the same rule fed shuffled dates (mean of 20 shuffles) or inputs one day late</p>
     <div class="chart" id="ch-placebo"></div>
     <div class="three">
       <p><b>what you see</b>For each candidate, the real rule's profit (filled dot) beside the same rule fed the wrong dates (hollow marks).</p>
@@ -363,7 +429,7 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
   </div>
 </div></section>
 
-<section id="rules"><div class="wrap">
+<section id="rules" data-band style="--band:var(--b6)"><div class="wrap">
   <div class="sec-label">How the test is kept clean</div>
   <h2>The rules were fixed before the held-out years were opened, and every change is dated in public</h2>
   <p class="why">A plan only means something if it existed before the results, so this section shows when each rule was written and what the checks found, our own errors included.</p>
@@ -401,30 +467,34 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
   </ul>
 </div></section>
 
-<section id="heldout"><div class="wrap">
+<section id="heldout" data-band style="--band:var(--b7)"><div class="wrap">
   <div class="sec-label">Held-out run</div>
   <h2 id="t-heldout">The held-out results go here after the single run</h2>
   <div class="slot">
     <h3>January 2024 to September 2026 <span class="pending" id="ho-badge">held-out run pending</span></h3>
-    <p style="font-size:14.5px;color:var(--soft)">Every candidate and both plain rules run once on years no model has seen. The cells and the hatched chart areas fill in when the chart data is rebuilt with the held-out run.</p>
+    <p style="font-size:14.5px;color:var(--soft)">Every candidate and both plain rules (always supply and the habit rule) run once on years no model has seen. The cells and the hatched chart areas fill in when the chart data is rebuilt with the held-out run.</p>
     <div class="tscroll"><table class="gen" id="tb-heldout"></table></div>
     <p class="note">Return a year is on the 500,000 USD bankroll at the sizing view. The one-word verdict per idea (pays, doesn't pay, inconclusive or not run) comes from the scoring script with its bootstrap interval and Holm correction, as fixed in objectives 5 and 6. The build-year bar chose who enters the held-out run; the held-out verdict is that test.</p>
   </div>
 </div></section>
 
-<section id="glossary"><div class="wrap">
+<section id="glossary" data-band style="--band:var(--b2)"><div class="wrap">
   <div class="sec-label">Terms</div>
   <h2>Terms used on this page</h2>
   <div class="gloss">
     <div><b>gap</b> real-time price minus day-ahead price for one zone and hour (the DART spread)</div>
-    <div><b>virtual supply, virtual load</b> sell or buy 1&nbsp;MW day-ahead and reverse it at real time (INCs and DECs)</div>
+    <div><b>virtual supply</b> selling power day-ahead and buying it back in real time: a short position, betting the price falls (traders say INC)</div>
+    <div><b>virtual load</b> buying day-ahead and selling in real time: a long position, betting the price rises (a DEC)</div>
     <div><b>load zone</b> one of NYISO's 11 pricing regions, A (West) to K (Long Island)</div>
     <div><b>build years</b> the years models were tuned and scored on: 2021 to 2023, or 2013 to 2023 in version 2</div>
     <div><b>held-out run</b> one run on January 2024 to September 2026 after the code is frozen</div>
     <div><b>walk-forward</b> each month or quarter scored by a model trained only on earlier data</div>
     <div><b>sizing view</b> the size at which a strategy's worst build-year drop is 100,000 USD, at most 5&nbsp;MW</div>
-    <div><b>Sharpe ratio</b> average daily profit over its daily spread, scaled to a year</div>
+    <div><b>Sharpe ratio</b> average daily profit divided by its day-to-day swings, scaled to a year; the S&amp;P 500's long-run value is about 0.42</div>
     <div><b>fragile</b> negative without its best ten days, flips at a nearby setting, beaten by random days, or failed an audit</div>
+    <div><b>habit rule</b> no model: every zone and hour takes the side that won on average over the past year</div>
+    <div><b>drawdown</b> the fall from a running high to the next low</div>
+    <div><b>NYISO</b> the New York Independent System Operator, which runs the state's grid and its power markets</div>
     <div><b>placebo</b> the same rule fed the wrong dates; it should earn much less</div>
     <div><b>gradient boosting, deep model</b> a tree-based learner and a PyTorch neural network</div>
     <div><b>Holm correction</b> raises the bar when several ideas are tested at once</div>
@@ -433,7 +503,7 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
   </div>
 </div></section>
 
-<section id="appendix"><div class="wrap">
+<section id="appendix" data-band style="--band:var(--b8)"><div class="wrap">
   <div class="sec-label">Audit appendix</div>
   <details class="appx" id="appx">
     <summary>Open the audit appendix<small>The objectives verbatim, every dated addendum, every result row, the robustness checks, the audit summaries, related work, the plan page as first published, and sources. Nothing here was shortened or reworded.</small></summary>
@@ -1145,7 +1215,7 @@ Design
   // ---------- names ----------
   var NAMES = {
     always_supply: ['Always supply', 'Always supply'],
-    baseline_usual_side: ['Baseline', "Baseline, each zone-hour's usual side"],
+    baseline_usual_side: ['Habit rule', 'Habit rule (no model)'],
     A_hourly_mean: ['A hourly mean', 'A, simple hourly average'],
     idea1_storm_filter: ['Idea 1', 'Idea 1, storm-day filter'],
     idea2_storm_flip: ['Idea 2', 'Idea 2, storm-day flip'],
@@ -1184,12 +1254,22 @@ Design
     V1_C_deep: ['C deep refit', 'C deep, refit on 2013 to 2023 (V1)'],
     V1_C_gbm: ['C boosting refit', 'C gradient boosting, refit on 2013 to 2023 (V1)'],
     V1_always_supply: ['Always supply', 'Always supply'],
-    V1_baseline: ['Baseline', "Baseline, each zone-hour's usual side"],
+    V1_baseline: ['Habit rule', 'Habit rule (no model)'],
     V2_limit_gbm: ['Limit bids (V2)', 'V2, limit-price bids (boosting direction)'],
     V3_tail_gbm: ['Tail sizing (V3)', 'V3, tail-risk sizing (about 3 MW)']
   };
   function sn(n) { return (NAMES[n] || [n])[0]; }
   function ln(n) { return (NAMES[n] || [n, n])[1]; }
+  var CARD = { always_supply: 's-always', V1_always_supply: 's-always', baseline_usual_side: 's-habit', V1_baseline: 's-habit',
+    A_regression_v1: 's-A_regression_v1', B_gbm: 's-B_gbm', B_deep: 's-B_deep', C_gbm: 's-C_gbm', C_deep: 's-C_deep',
+    idea14_learned_allocator_candidates: 's-idea14', V1_C_deep: 's-V1_C', V1_C_gbm: 's-V1_C', V11_C_deep_ens4: 's-V11', V11_C_gbm_ens4: 's-V11',
+    V2_limit_gbm: 's-V2', V3_tail_gbm: 's-V3' };
+  function linkWrap(parent, name) {
+    if (!CARD[name]) return parent;
+    var a = document.createElementNS(NS, 'a'); a.setAttribute('href', '#' + CARD[name]); a.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '#' + CARD[name]);
+    parent.appendChild(a); return a;
+  }
+  function cardLink(name, text) { return CARD[name] ? '<a href="#' + CARD[name] + '">' + text + '</a>' : text; }
 
   // ---------- helpers ----------
   function $(s) { return document.querySelector(s); }
@@ -1313,22 +1393,31 @@ Design
       paths[r.name] = el('path', { d: d, fill: 'none', stroke: rowColor(r), 'stroke-width': isMinor(r) ? 1 : 2, 'stroke-dasharray': rowDash(r), 'stroke-linejoin': 'round', opacity: 0.95 });
       s.appendChild(paths[r.name]);
     });
+    order.forEach(function (r) {
+      var hit = el('path', { d: paths[r.name].getAttribute('d'), fill: 'none', stroke: 'transparent', 'stroke-width': 9 });
+      hit.addEventListener('mouseenter', function () { focus(r.name); }); hit.addEventListener('mouseleave', function () { focus(null); });
+      s.appendChild(hit);
+    });
     // end labels
     var items = rows.filter(function (r) { return !isMinor(r); }).map(function (r) { return { r: r, y: Y(last(r.bankroll_usd_sizing_view)) + 4 }; });
     deoverlap(items, fs + 5, mT, H - mB - 6);
     var xl = X(tL) + 6;
     items.forEach(function (it) {
-      var t = txt(s, xl, it.y, bankLab(it.r), { fs: fs, fill: rowColor(it.r), weight: 500, cls: 'halo' });
-      t.style.cursor = 'default';
+      var t = txt(linkWrap(s, it.r.name), xl, it.y, bankLab(it.r), { fs: fs, fill: rowColor(it.r), weight: 500, cls: 'halo' });
       t.addEventListener('mouseenter', function () { focus(it.r.name); });
       t.addEventListener('mouseleave', function () { focus(null); });
     });
-    function focus(n) { for (var k in paths) paths[k].setAttribute('opacity', !n || k === n ? 0.95 : 0.15); for (var k2 in upaths) upaths[k2].setAttribute('opacity', !n || k2 === n ? 0.9 : 0.12); }
-    var lgH = [['three steadiest candidates, by Sharpe ratio (named)', STRONG[0]], ['other candidates', '#a9b7c6'], ['always supply (sell every hour)', C.neg], ['baseline', C.grey]]
-      .map(function (k) { return '<span><svg width="18" height="8"><line x1="0" y1="4" x2="18" y2="4" stroke="' + k[1] + '" stroke-width="2.5"/></svg>' + k[0] + '</span>'; }).join('');
+    function focus(n) {
+      for (var k in paths) { paths[k].setAttribute('opacity', !n || k === n ? 0.95 : 0.15); if (n === k) paths[k].setAttribute('stroke-width', 2.6); else paths[k].setAttribute('stroke-width', isMinorN(k) ? 1 : 2); }
+      for (var k2 in upaths) { upaths[k2].setAttribute('opacity', !n ? upaths[k2].getAttribute('data-o') : k2 === n ? 1 : 0.1); upaths[k2].setAttribute('stroke-width', k2 === n ? 2.2 : upaths[k2].getAttribute('data-w')); if (k2 === n) upaths[k2].parentNode.appendChild(upaths[k2]); }
+    }
+    function isMinorN(k) { return rows.some(function (r) { return r.name === k && isMinor(r); }); }
+    var lgH = [['three steadiest candidates (Sharpe: profit per unit of day-to-day swing)', STRONG[0]], ['other candidates that passed', '#a9b7c6'], ['always supply: sell every hour, no model', C.neg], ['habit rule: repeat last year\'s usual side, no model', C.grey]]
+      .map(function (k, i) { var sw = i === 0 ? STRONG.map(function (c, j) { return '<line x1="' + (j * 9) + '" y1="4" x2="' + (j * 9 + 7) + '" y2="4" stroke="' + c + '" stroke-width="2.5"/>'; }).join('') : '<line x1="0" y1="4" x2="25" y2="4" stroke="' + k[1] + '" stroke-width="2.5"/>'; return '<span><svg width="25" height="8">' + sw + '</svg>' + k[0] + '</span>'; }).join('');
     $('#lg-bank').innerHTML = lgH;
     var ell = Date.UTC(2022, 11, 23);
-    if (ell > t0 && ell < tL) txt(s, X(ell) - 5, mT + 40, 'Winter Storm Elliott', { fs: 10.5, fill: '#7a5208', anchor: 'end', weight: 600, cls: 'halo' });
+    if (ell > t0 && ell < tL) ln_(s, X(ell) - 4, mT + 36, X(ell) - 1, mT + 52, '#7a5208', 1);
+    if (ell > t0 && ell < tL) txt(s, X(ell) - 5, mT + 33, narrow ? 'Elliott freeze, Dec 2022' : 'Winter Storm Elliott, Dec 2022 freeze', { fs: 10.5, fill: '#7a5208', anchor: 'end', weight: 600, cls: 'halo' });
     var cross = el('line', { y1: mT - 8, y2: H - mB, stroke: C.ink, 'stroke-width': 1, opacity: 0 }); s.appendChild(cross);
     box.innerHTML = ''; box.appendChild(s);
 
@@ -1350,23 +1439,19 @@ Design
     });
     yearTicks(us, X, t0, tE, UH - uB + 14, narrow, null, null);
     var upaths = {};
-    var candN = rows.filter(function (r) { return !r.reference; });
-    var area = 'M' + X(ms(dates[0])).toFixed(1) + ' ' + UY(0).toFixed(1), worstDay = new Array(dates.length);
-    for (var i = 0; i < dates.length; i++) {
-      var mn = 0; candN.forEach(function (r) { if (uw[r.name][i] < mn) mn = uw[r.name][i]; });
-      worstDay[i] = mn; area += 'L' + X(ms(dates[i])).toFixed(1) + ' ' + UY(mn).toFixed(1);
-    }
-    area += 'L' + X(tL).toFixed(1) + ' ' + UY(0).toFixed(1) + 'Z';
-    us.appendChild(el('path', { d: area, fill: '#c7d3e0', stroke: C.acc, 'stroke-width': 0.8, opacity: 0.9 }));
-    rows.filter(function (r) { return r.reference; }).forEach(function (r) {
-      var u = uw[r.name], d = '';
+    order.forEach(function (r) {
+      var u = uw[r.name], d = '', minor = isMinor(r);
       for (var i = 0; i < u.length; i++) d += (i ? 'L' : 'M') + X(ms(dates[i])).toFixed(1) + ' ' + UY(u[i]).toFixed(1);
-      upaths[r.name] = el('path', { d: d, fill: 'none', stroke: rowColor(r), 'stroke-width': 1.5, opacity: 0.95 });
+      var o = minor ? 0.55 : 0.9, sw = minor ? 0.9 : 1.4;
+      upaths[r.name] = el('path', { d: d, fill: 'none', stroke: rowColor(r), 'stroke-width': sw, 'stroke-dasharray': rowDash(r), opacity: o, 'data-o': o, 'data-w': sw });
       us.appendChild(upaths[r.name]);
     });
-    var uitems = [{ t: 'deepest of the candidates', c: C.acc, y: UY(last(worstDay)) + 4 }].concat(rows.filter(function (r) { return r.reference; }).map(function (r) { return { t: sn(r.name), c: rowColor(r), y: UY(last(uw[r.name])) + 4 }; }));
-    deoverlap(uitems, 12, uT + 8, UH - uB - 2);
-    uitems.forEach(function (it) { txt(us, X(tL) + 6, it.y, it.t, { fs: 10.5, fill: it.c, weight: 500, cls: 'halo' }); });
+    var uitems = rows.filter(function (r) { return !isMinor(r); }).map(function (r) { return { r: r, y: UY(last(uw[r.name])) + 4 }; });
+    deoverlap(uitems, 11, uT + 6, UH - uB - 2);
+    uitems.forEach(function (it) {
+      var t = txt(linkWrap(us, it.r.name), X(tL) + 6, it.y, sn(it.r.name), { fs: 10, fill: rowColor(it.r), weight: 500, cls: 'halo' });
+      t.addEventListener('mouseenter', function () { focus(it.r.name); }); t.addEventListener('mouseleave', function () { focus(null); });
+    });
     // label the deepest point of always supply and of the deepest candidate
     var sup = rows.filter(function (r) { return r.reference && r.name.indexOf('supply') >= 0; })[0];
     var cands = rows.filter(function (r) { return !r.reference; });
@@ -1375,8 +1460,7 @@ Design
       var u = uw[r.name], m = Math.min.apply(null, u), i = u.indexOf(m);
       return { r: r, m: m, i: i, x: X(ms(dates[i])), y: UY(m), t: sn(r.name) + ' ' + m.toFixed(1).replace('-', '−') + '%, ' + dlab(dates[i]) };
     }).sort(function (a, b) { return a.x - b.x; });
-    marks.forEach(function (k) { us.appendChild(el('circle', { cx: k.x, cy: k.y, r: 3.5, fill: rowColor(k.r), stroke: '#fff', 'stroke-width': 1.5 })); });
-    setText('uw-note', 'Deepest falls (dots): ' + marks.map(function (k) { return k.t; }).join('; ') + '.');
+    setText('uw-note', 'Deepest falls: ' + marks.map(function (k) { return k.t; }).join('; ') + '.');
     var ucross = el('line', { y1: uT, y2: UH - uB, stroke: C.ink, 'stroke-width': 1, opacity: 0 }); us.appendChild(ucross);
     ubox.innerHTML = ''; ubox.appendChild(us);
 
@@ -1401,7 +1485,7 @@ Design
     var refs = rows.filter(function (r) { return r.reference; });
     var title;
     if (!hasHO(V)) {
-      title = cap(words(nC)) + ' of ' + eq(V).rows.length + ' strategies pass the bar on ' + dates[0].slice(0, 4) + ' to ' + last(dates).slice(0, 4) + ', the years they were built on; the held-out years are still sealed';
+      title = cap(words(nC)) + ' of ' + eq(V).rows.length + ' strategies pass the bar on ' + dates[0].slice(0, 4) + ' to ' + last(dates).slice(0, 4) + ', the years they were built on; the deciding test has not run';
     } else {
       title = 'Bankroll through the held-out run: ' + cands.map(function (r) { return sn(r.name) + ' ' + fmtM(last(r.bankroll_usd_sizing_view)); }).join(', ');
     }
@@ -1447,7 +1531,7 @@ Design
       var mc = document.createElement('div'); mc.className = 'mc';
       var tot = Y.rows[r.name].reduce(function (a, b) { return a + b; }, 0);
       var steadyR = Y.rows[r.name].every(function (v) { return v > 0; });
-      mc.innerHTML = '<div class="mn" style="color:' + (r.reference ? rowColor(r) : C.ink) + '">' + ln(r.name) + (steadyR ? ' <span style="font:500 10.5px var(--mono);color:#2f7d54;border:1px solid #9cc5ae;border-radius:3px;padding:0 4px">profit every year</span>' : '') + '<small>average ' + sgn(r.sizing_return_pct, 1) + '% of the bankroll a year</small></div>';
+      mc.innerHTML = '<div class="mn" style="color:' + (r.reference ? rowColor(r) : C.ink) + '">' + cardLink(r.name, ln(r.name)) + (steadyR ? ' <span style="font:500 10.5px var(--mono);color:#2f7d54;border:1px solid #9cc5ae;border-radius:3px;padding:0 4px">profit every year</span>' : '') + '<small>average ' + sgn(r.sizing_return_pct, 1) + '% of the bankroll a year</small></div>';
       var w = box.clientWidth < 460 ? box.clientWidth : 230, h = 132, mT = 14, mB = 30, mL = 4, mR = 4;
       var Yp = function (v) { return mT + (mx - v) / (mx + nmx) * (h - mT - mB); };
       var s = svg(w, h, ln(r.name) + ': yearly profit as a percent of the bankroll');
@@ -1649,8 +1733,8 @@ Design
       var p = P[r.name], R0 = p.real_total, sh = p.permuted_mean_total, late = p.one_day_late_total;
       var y = mT + j * rowH + (narrow ? 36 : rowH / 2 + 4);
       if (j) ln_(s, 0, mT + j * rowH, w, mT + j * rowH, '#f0eee9', 1);
-      if (narrow) txt(s, 10, y - 18, sn(r.name), { fs: 12, fill: C.ink, weight: 600, cls: 'halo' });
-      else txt(s, mL - 12, y + 4, sn(r.name), { anchor: 'end', fs: 12.5, fill: C.ink, weight: 600 });
+      if (narrow) txt(linkWrap(s, r.name), 10, y - 18, sn(r.name), { fs: 12, fill: C.ink, weight: 600, cls: 'halo' });
+      else txt(linkWrap(s, r.name), mL - 12, y + 4, sn(r.name), { anchor: 'end', fs: 12.5, fill: C.ink, weight: 600 });
       if (sh != null) {
         ln_(s, X(sh), y, X(R0), y, C.acc, 2.5);
         var gain = R0 - sh, mid = (X(sh) + X(R0)) / 2, gw = Math.abs(X(R0) - X(sh));
@@ -1921,6 +2005,18 @@ Design
     });
   });
 
+  (function () {
+    var links = [].slice.call(document.querySelectorAll('#sidenav a')), map = {};
+    links.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
+    var secs = Object.keys(map).map(function (id) { return document.getElementById(id); }).filter(Boolean);
+    function upd() {
+      var y = window.scrollY + 90, cur = secs[0];
+      secs.forEach(function (sec) { if (sec.getBoundingClientRect().top + window.scrollY <= y) cur = sec; });
+      links.forEach(function (a) { a.setAttribute('aria-current', map[cur.id] === a ? 'true' : 'false'); });
+      var act = map[cur.id]; if (act && window.innerWidth < 1260) { var ol = act.parentNode.parentNode; var l = act.offsetLeft - 20; if (l < ol.scrollLeft || l > ol.scrollLeft + ol.clientWidth - 80) ol.scrollLeft = l; }
+    }
+    window.addEventListener('scroll', upd, { passive: true }); upd();
+  })();
   Promise.all(FILES.map(function (f) {
     return fetch('data/' + f + '.json').then(function (r) { if (!r.ok) throw new Error(f + ' ' + r.status); return r.json(); }).then(function (j) { D[f] = j; });
   })).then(function () {

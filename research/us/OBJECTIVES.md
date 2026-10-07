@@ -84,3 +84,8 @@ Robustness checks run on the strongest rows before the list is approved, all on 
 
 7 Oct 2026, idea 14, registered after the full 2021 to 2023 table and disclosed as such (no held-out data read):
 14. Learned allocator over the four candidates: for each delivery day, a small, heavily regularised deep gate reads the day-level inputs (the same feature matrix as ideas 3 to 5) and splits one unit of risk between C deep, B gradient boosting, C gradient boosting and B deep, each already sized to the same risk budget. Trained only on earlier days' realised profits of the four, with a penalty pulling the weights toward equal (idea 13), so with no signal it falls back to idea 13. Same walk-forward, bar, placebos and fragility checks; it counts as a try, and because it was added after the results were seen, a pass here weighs less than a pass on the earlier list.
+
+7 Oct 2026, Bo's selection rule, fixed before any v2 result and before the held-out run (applies to v1 and v2):
+- Candidates for the held-out run are, automatically, every strategy that passes the bar at the sizing view and is not flagged fragile (including flags from audits). Every other strategy runs as a comparison. The list is published in the repository before the held-out run starts.
+- The held-out run is the last job: it starts only after every v2 strategy, the weather-based ones included, has finished on 2010 to 2023.
+- Weather inputs are archived forecasts only (GFS previous runs from 2021; GEFS reforecasts before), each stamped with the time it was issued; observed weather and reanalysis are never inputs, and a test fails the build if any weather row is not a forecast issued before 05:00 on D.

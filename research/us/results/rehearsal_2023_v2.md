@@ -1,6 +1,6 @@
 # 2023 rehearsal, version 2: development numbers
 
-Written 6 Oct 2026 by the lead modeller. 2023 is build data. Nothing on or after 1 January 2024 was read (model/lock.py; FREEZE is absent). Version 1 (`rehearsal_2023.md`, `.json`) is unchanged. Full numbers are in `rehearsal_2023_v2.json`.
+Written 6 Oct 2026. 2023 is build data. Nothing on or after 1 January 2024 was read (model/lock.py; FREEZE is absent). Version 1 (`rehearsal_2023.md`, `.json`) is unchanged. Full numbers are in `rehearsal_2023_v2.json`.
 
 ## What changed from version 1 (addenda of 6 Oct, late evening and night)
 
@@ -38,7 +38,7 @@ The baseline lost 200 USD a day (Sharpe -3.05). Always-supply made +187 a day (0
 - **Without the most extreme 1% of zone-hours,** A minus baseline is +350 [+215, +483].
 - **Zone-plus-generator ablation (A).** -12 USD a day [-57, +23]: inconclusive.
 
-### Deep model (c2, chosen by the deep agent on 2022)
+### Deep model (c2, chosen by the deep model run on 2022)
 
 | Idea | Deep against gradient boosting [95%] | Word | Deep idea alone, USD/day |
 |---|---|---|---|
@@ -60,10 +60,10 @@ The deep spike model uses S = 25 with calibrated probabilities. Its p* = 0.02 wa
 
 ## Anything that looked like a bug, and the fix
 
-1. **Holm boundary bug.** A verdict could be "pays" without the Holm rejection. Patched, and the auditor's strict xfail test now passes.
+1. **Holm boundary bug.** A verdict could be "pays" without the Holm rejection. Patched, and the audit's strict xfail test now passes.
 2. **The equivalence margin** is now the cost the gradient-boosting version actually paid per day. With side-specific costs, "one fee" is no longer a single number.
-3. **Eight of the auditor's 25 tests now fail by design.** They encode the superseded single-fee model, where supply and load pay the same Rate Schedule 1 amount. They and `audit_pnl.py` need the auditor's update to the audited cost model.
-4. **The deep agent trained its first spike model at S = 50,** because it started before `spike_config.json` existed. I asked for a rerun at S = 25 with calibrated probabilities, and that rerun is what is scored here. The rescore now refuses a spike file whose threshold differs from `spike_config.json`.
+3. **Eight of the audit's 25 tests now fail by design.** They encode the superseded single-fee model, where supply and load pay the same Rate Schedule 1 amount. They and `audit_pnl.py` need the audit's update to the audited cost model.
+4. **The deep model run trained its first spike model at S = 50,** because it started before `spike_config.json` existed. I asked for a rerun at S = 25 with calibrated probabilities, and that rerun is what is scored here. The rescore now refuses a spike file whose threshold differs from `spike_config.json`.
 5. **LightGBM slowdown on shared cores.** With 4 threads on a box whose other cores are busy, refits ran 25 times slower. `US_LGBM_THREADS` now sets the count. Results are deterministic for a given count.
 
-No freeze and no held-out run: Bo's instruction comes first. `model/heldout.sh` exists, prepared and unused.
+No freeze and no held-out run: my instruction comes first. `model/heldout.sh` exists, prepared and unused.

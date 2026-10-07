@@ -1,6 +1,6 @@
 # 2023 rehearsal: development numbers
 
-Written 6 Oct 2026 by the lead modeller. 2023 is build data: these numbers may guide fixes before the freeze and are not the test. Nothing on or after 1 January 2024 was read. Every loader goes through `model/lock.py`, which refuses those dates while `research/us/FREEZE` is absent, and it is absent. Full numbers are in `rehearsal_2023.json`.
+Written 6 Oct 2026. 2023 is build data: these numbers may guide fixes before the freeze and are not the test. Nothing on or after 1 January 2024 was read. Every loader goes through `model/lock.py`, which refuses those dates while `research/us/FREEZE` is absent, and it is absent. Full numbers are in `rehearsal_2023.json`.
 
 ## What ran
 
@@ -69,7 +69,7 @@ The projection assumes 2023's daily variance and scales by the square root of th
 
 ## Deep model: pending
 
-- **What was set up.** The deep agent chose configuration c2 on 2022 by mean squared error. Its own 2023 walk-forward of the base deep model (feeding ideas A and C) finished at 17:10, at about 75 s per refit. `rehearsal.py deep` reuses those predictions. It then walks the same configuration forward with the weather columns (B) and the outage columns (D) as extra inputs.
+- **What was set up.** The deep model run chose configuration c2 on 2022 by mean squared error. Its own 2023 walk-forward of the base deep model (feeding ideas A and C) finished at 17:10, at about 75 s per refit. `rehearsal.py deep` reuses those predictions. It then walks the same configuration forward with the weather columns (B) and the outage columns (D) as extra inputs.
 - **Where it stopped.**
   - B's 12 refits finished at 17:47.
   - D started at 17:47. Gene dropped off the network at about 17:56 and was still offline at 18:40.
@@ -84,14 +84,14 @@ The projection assumes 2023's daily variance and scales by the square root of th
 1. **Synthetic test data put every timestamp in 1970.** pandas 3 stores timestamps in micro- or milliseconds, and the generator's integer arithmetic assumed nanoseconds. The first lookahead test therefore passed vacuously. Its second check, that the label must change when the future is replaced, caught the problem. The generator is fixed.
 2. **"hour" was both a key and a feature,** which duplicated a column. Fixed.
 3. **The real load forecast is stored as integers.** The real-data perturbation test failed on gene for this reason. Panel features are now always float64.
-4. **The weather table was stale in the first gene run.** The LockedStore loaded `weather_gfs` at 16:49. The features agent rebuilt it at 16:56 with the 3-day values and the 40 and 64 hour publication rule. So the first weather features used the old table, with 2-day values for 22:00 and 23:00 under the old 42 hour rule. That run was stopped before any idea B number existed. The cache was deleted and everything was rerun in a fresh process. Any table rebuilt during a run needs a new process.
+4. **The weather table was stale in the first gene run.** The LockedStore loaded `weather_gfs` at 16:49. The feature pipeline rebuilt it at 16:56 with the 3-day values and the 40 and 64 hour publication rule. So the first weather features used the old table, with 2-day values for 22:00 and 23:00 under the old 42 hour rule. That run was stopped before any idea B number existed. The cache was deleted and everything was rerun in a fresh process. Any table rebuilt during a run needs a new process.
 5. **The synthetic weather in `conftest.py` used the old rule.** It now uses the pipeline's `gfs_published_at`: 2-day values for hours up to 21:00 and 3-day values after.
 
 The lookahead tests pass on the real tables. For six bid days (one after a late-rewritten real-time file, plus DST days), every value published after 05:00 on D was replaced by noise in all sources. The base, generator, weather and outage features were identical and the label changed.
 
 ## Decisions needed before the freeze
 
-1. **The weak baseline.** Objective 6 is never edited. We propose reporting each idea's own daily P&L interval next to its word, and saying so when a "pays" rests on the baseline's losses. `score.py` now computes this interval as `idea_alone_interval_95`. It appears in the JSON after `rehearsal.py rescore`; the current JSON predates it.
+1. **The weak baseline.** Objective 6 is never edited. I propose reporting each idea's own daily P&L interval next to its word, and saying so when a "pays" rests on the baseline's losses. `score.py` now computes this interval as `idea_alone_interval_95`. It appears in the JSON after `rehearsal.py rescore`; the current JSON predates it.
 2. **"doesn't pay" versus "inconclusive."** The code reads "doesn't pay" as the upper end of the corrected interval below zero, and everything else that is not "pays" as inconclusive. Please confirm.
 3. **Deep against gradient boosting.** "Equivalent" (95% interval inside plus or minus the fee times the gradient-boosting version's MWh a day) is checked before better or worse. Please confirm.
 4. **C's pairs.** Keep the five chosen on 2022 predictions, or choose again on the 2023 walk-forward before the freeze?

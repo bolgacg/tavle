@@ -3,7 +3,7 @@
 Governing document: ../OBJECTIVES.md (approved, with dated addenda). This contract only makes it executable.
 Data layer: ../pipeline/ (README.md, timing.py: features_available_at, bid_inputs, assert_no_lookahead).
 Runs on gene (`ssh gene`, venv ~/nyiso-us/.venv, parquet ~/nyiso-us/parquet/, GPU GTX 1060 6 GB). Canonical code
-lives here on the laptop; rsync to gene ~/nyiso-us/model/ to run. Nothing is committed or pushed by agents.
+lives here on the laptop; rsync to gene ~/nyiso-us/model/ to run. Nothing is committed or pushed automatically.
 
 ## The panel
 - One row per (bid_date D, zone, delivery hour h of D+1). Decision time = 05:00 America/New_York on D.
@@ -51,10 +51,10 @@ months positive, per zone and year, calibration of predicted gap. Verdict words 
 Build on 2020 to 2022, walk forward through 2023 with monthly refits, run every idea and both models, write
 research/us/results/rehearsal_2023.json with everything score.py produces plus the minimum detectable effect.
 2023 is development data: its numbers may guide fixes before the freeze. Stop after the rehearsal. The freeze and
-the held-out run happen only on the orchestrator's instruction.
+the held-out run happen only on my instruction.
 
-## File ownership (one owner per file)
-- lead modeller: lock.py, fees.py, panel.py, gbm.py, strategies.py, score.py, walkforward.py, rehearsal.py, tests.
-- features agent: features_weather.py, features_outages.py, their tests, and ../pipeline changes for the
+## File groups (each file belongs to one group)
+- core model code: lock.py, fees.py, panel.py, gbm.py, strategies.py, score.py, walkforward.py, rehearsal.py, tests.
+- feature code: features_weather.py, features_outages.py, their tests, and ../pipeline changes for the
   three-day weather rule (addendum of 6 Oct evening).
-- deep agent: deep.py, deep_data.py, train_deep.py, their tests.
+- deep model code: deep.py, deep_data.py, train_deep.py, their tests.

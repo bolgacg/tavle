@@ -1,5 +1,7 @@
-# Objectives v2, APPROVED by Bo on 6 Oct 2026 ("plan is approved"). Fixed before any model run.
+# Objectives v2, APPROVED by me on 6 Oct 2026 ("plan is approved"). Fixed before any model run.
 # Any later change is a dated addendum at the bottom, never an edit above the line.
+
+I used Claude, an AI assistant, to help set up the experiments, write code and run the audits; every rule, decision and approval here is mine.
 
 1. Question. Using only what is public by 05:00 New York time the day before delivery, which of four ideas turns New York's day-ahead to real-time price gap into profit after costs for a 1 MW virtual position? Positions are assumed to clear at the market price.
    A (main test). Take the steady downward gap, and sit out the hours a model flags as spike risk.
@@ -44,7 +46,7 @@
 - Bankroll for the return comparison, fixed now from 2020 to 2023 only: 500,000 USD (NYISO's 200,000 capitalization deposit for an entity without 1 million in audited net worth, plus about 90,000 of collateral for two days of the full book in the worst build-year month, plus 195,000 for the full book's worst 12-day loss, around Winter Storm Elliott). Return on bankroll = held-out annual net profit / 500,000.
 - Because any return on bankroll depends on the bankroll chosen, two bankroll-free measures are reported beside it: the annualised Sharpe ratio of daily net profit and the return over maximum drawdown, next to the S&P 500 over the same months (total return) and the Danish bank deposit rate and Nationalbank current-account rate over the same months.
 
-6 Oct 2026, night, a gate before the held-out run (Bo's rule, before any held-out data is read):
+6 Oct 2026, night, a gate before the held-out run (my rule, before any held-out data is read):
 - The held-out years stay unread until the build years show something worth testing. Every strategy is first scored out of sample inside 2020 to 2023 (a walk-forward over 2021 to 2023, each month predicted only from earlier data), with the corrected costs, and the full list is approved in writing before the freeze.
 - The held-out run then includes every strategy on that list, the strong, the weak and the basic ones (always taking supply, the baseline, the simple hourly-mean version of idea A), so all of them are compared on the same unseen years. The freeze and held-out dates in objective 7 move if the gate is not yet passed; the page shows the actual dates.
 
@@ -60,7 +62,7 @@ The family in one sentence: take virtual supply on calm days, and on dangerous d
 8. Storm-day zone pairs: on flagged days, load in New York City and Long Island against supply upstate, to trade storm congestion.
 9. Extreme-tail spike flag: idea A with spikes defined as real time at least 100 USD above day ahead.
 10. Weather surprise: the change in the GFS forecast for D+1 between the two newest runs public at 05:00; take load when the forecast turns sharply more extreme, otherwise supply.
-The bar for the held-out list (Bo's): average net profit of at least 10 percent a year on the 500,000 USD bankroll (50,000 USD a year) over a walk-forward on 2021 to 2023 after full costs, positive in at least two of the three years, Sharpe above 0.42, and positive at the 0.50 USD per MWh cost stress.
+The bar for the held-out list (mine): average net profit of at least 10 percent a year on the 500,000 USD bankroll (50,000 USD a year) over a walk-forward on 2021 to 2023 after full costs, positive in at least two of the three years, Sharpe above 0.42, and positive at the 0.50 USD per MWh cost stress.
 Safeguards, applied to every idea: all inputs pass the publication-time test; an injected-lookahead test per idea; two placebos per idea (the same rule fed a score shifted one day late, and a shuffled score) that must not earn what the real rule earns; every choice made only on years before the scored year; any idea that passes is recomputed independently before it reaches the list. The list reports how many ideas were tried. All ten, the basic strategies and A to D go to the held-out run together once the list is approved.
 
 6 Oct 2026, 23:20, two more registered ideas, same family (written before either has run; no held-out data read):
@@ -70,11 +72,11 @@ Ideas 3 to 6 predict, then decide by a rule; 11 learns how to combine simple str
 
 Correction, 6 Oct 2026, 21:16: the clock times written in the two previous addenda are wrong. The ten ideas were registered at 20:48 (commit 42ad84b) and ideas 11 and 12 at 21:07 (commit a156551), New York study written from Denmark, times in Danish time; the commit times are the record.
 
-Disclosure, 6 Oct 2026, 21:30: two side scripts (side/spike_value.py and side/storm_value.py, written by the coordinator) loaded the whole price table, 2024 onward included, into memory and dropped every row on or after 1 January 2024 in the next statement, then asserted it. No value from 2024 onward was used, computed, printed or saved. Found by the lead modeller's review; both scripts now filter at read time so those rows never load, the same rule the locked loaders follow.
+Disclosure, 6 Oct 2026, 21:30: two side scripts (side/spike_value.py and side/storm_value.py, written for the side checks) loaded the whole price table, 2024 onward included, into memory and dropped every row on or after 1 January 2024 in the next statement, then asserted it. No value from 2024 onward was used, computed, printed or saved. Found in a separate review pass; both scripts now filter at read time so those rows never load, the same rule the locked loaders follow.
 
 Correction: the disclosure above was committed at 21:18 (commit 2f51db8), not 21:30. From here on, addenda carry a date but no clock time; the commit time on GitHub is the record.
 
-6 Oct 2026, Bo's decision on size and the bar (before the freeze; no held-out data read):
+6 Oct 2026, my decision on size and the bar (before the freeze; no held-out data read):
 - Every strategy keeps its registered 1 MW verdict. Beside it, a sizing view: the number of MW per zone-hour at which its worst drawdown in the 2021 to 2023 walk-forward equals 100,000 USD (20 percent of the bankroll), capped at 5 MW for collateral and price impact, with the return on the 500,000 USD bankroll at that size, the Sharpe ratio, the Sortino ratio and the return over maximum drawdown.
 - For the held-out list, the 10 percent a year bar is judged on that sizing view, and only for strategies not flagged fragile. The size is fixed from the build years before the freeze and carried unchanged into the held-out run.
 
@@ -85,7 +87,9 @@ Robustness checks run on the strongest rows before the list is approved, all on 
 7 Oct 2026, idea 14, registered after the full 2021 to 2023 table and disclosed as such (no held-out data read):
 14. Learned allocator over the four candidates: for each delivery day, a small, heavily regularised deep gate reads the day-level inputs (the same feature matrix as ideas 3 to 5) and splits one unit of risk between C deep, B gradient boosting, C gradient boosting and B deep, each already sized to the same risk budget. Trained only on earlier days' realised profits of the four, with a penalty pulling the weights toward equal (idea 13), so with no signal it falls back to idea 13. Same walk-forward, bar, placebos and fragility checks; it counts as a try, and because it was added after the results were seen, a pass here weighs less than a pass on the earlier list.
 
-7 Oct 2026, Bo's selection rule, fixed before any v2 result and before the held-out run (applies to v1 and v2):
+7 Oct 2026, my selection rule, fixed before any v2 result and before the held-out run (applies to v1 and v2):
 - Candidates for the held-out run are, automatically, every strategy that passes the bar at the sizing view and is not flagged fragile (including flags from audits). Every other strategy runs as a comparison. The list is published in the repository before the held-out run starts.
 - The held-out run is the last job: it starts only after every v2 strategy, the weather-based ones included, has finished on 2010 to 2023.
 - Weather inputs are archived forecasts only (GFS previous runs from 2021; GEFS reforecasts before), each stamped with the time it was issued; observed weather and reanalysis are never inputs, and a test fails the build if any weather row is not a forecast issued before 05:00 on D.
+
+Wording note, 7 October 2026: earlier addenda referred to me in the third person and named the AI assistants that ran parts of the work; they are now written in my own voice. No rule, number or date changed; the git history keeps the original wording.

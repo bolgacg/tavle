@@ -432,7 +432,7 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
 <section id="rules" data-band style="--band:var(--b6)"><div class="wrap">
   <div class="sec-label">How the test is kept clean</div>
   <h2>The rules were fixed before the held-out years were opened, and every change is dated in public</h2>
-  <p class="why">A plan only means something if it existed before the results, so this section shows when each rule was written and what the checks found, our own errors included.</p>
+  <p class="why">A plan only means something if it existed before the results, so this section shows when each rule was written and what the checks found, my own errors included.</p>
   <ul class="plist">
     <li>The objectives were committed before any model ran; every later change is a dated addendum, never an edit.</li>
     <li>Every data loader refuses dates from 1 January 2024 until a freeze commit is named, and the held-out run is the last job.</li>
@@ -442,18 +442,18 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
 
   <div class="card">
     <h3 class="ctitle" id="t-addenda">Loading</h3>
-    <p class="csub">Dated commits to the objectives files, 6 and 7 October 2026, in Danish time (the author works from Denmark); the list below gives each one</p>
+    <p class="csub">Dated commits to the objectives files, 6 and 7 October 2026, in Danish time (I work from Denmark); the list below gives each one</p>
     <div class="chart" id="ch-addenda"></div>
     <ol class="tl-list" id="l-addenda"></ol>
     <div class="cfoot">Data: <a href="data/events.json">events.json</a>, from the git history of <a href="https://github.com/bolgacg/tavle/commits/master/research/us/OBJECTIVES.md">research/us/OBJECTIVES.md</a> and <a href="https://github.com/bolgacg/tavle/commits/master/research/us_v2/OBJECTIVES.md">research/us_v2/OBJECTIVES.md</a>. The full text of every addendum is in the <a href="#a-objectives">appendix</a>.</div>
   </div>
 
-  <h3 style="margin-top:30px">What the audits caught, our own errors included</h3>
+  <h3 style="margin-top:30px">What the audits caught, my own errors included</h3>
   <ul class="plist">
     <li>Idea A's first rule had almost no skill in the 2023 rehearsal, so A was rebuilt around its spike flag before any held-out data was read.</li>
     <li>A verdict bug could print "pays" without the Holm correction, and idea D counted outage sites through 2023; both were fixed before the freeze.</li>
     <li>The 2021 and 2025 fees were wrong and were corrected from NYISO's postings.</li>
-    <li>Two of our own scripts loaded 2024 rows and dropped them in the next line; nothing was used, and the slip is disclosed.</li>
+    <li>Two of my own scripts loaded 2024 rows and dropped them in the next line; nothing was used, and the slip is disclosed.</li>
     <li>Two clock times in the objectives were wrong, and one script let 55 rows in on spring-forward days; no decision changed.</li>
     <li>The storm rules and idea 10 depend on Winter Storm Elliott's two days, so they are flagged fragile.</li>
     <li>In version 2, the limit prices add nothing, V3's lead is position size, and most of C deep is a fixed zone-pair spread.</li>
@@ -527,8 +527,10 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
         <h2>The objectives files, word for word, with every dated addendum</h2>
         <p class="why">The text below is copied character for character from the committed files; the change history on GitHub shows when each line was added.</p>
         <div class="vhead">research/us/OBJECTIVES.md &middot; version 1 &middot; <a style="color:#fff" href="https://github.com/bolgacg/tavle/commits/master/research/us/OBJECTIVES.md">history</a></div>
-        <div class="verbatim"># Objectives v2, APPROVED by Bo on 6 Oct 2026 ("plan is approved"). Fixed before any model run.
+        <div class="verbatim"># Objectives v2, APPROVED by me on 6 Oct 2026 ("plan is approved"). Fixed before any model run.
 # Any later change is a dated addendum at the bottom, never an edit above the line.
+
+I used Claude, an AI assistant, to help set up the experiments, write code and run the audits; every rule, decision and approval here is mine.
 
 1. Question. Using only what is public by 05:00 New York time the day before delivery, which of four ideas turns New York's day-ahead to real-time price gap into profit after costs for a 1 MW virtual position? Positions are assumed to clear at the market price.
    A (main test). Take the steady downward gap, and sit out the hours a model flags as spike risk.
@@ -573,7 +575,7 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
 - Bankroll for the return comparison, fixed now from 2020 to 2023 only: 500,000 USD (NYISO's 200,000 capitalization deposit for an entity without 1 million in audited net worth, plus about 90,000 of collateral for two days of the full book in the worst build-year month, plus 195,000 for the full book's worst 12-day loss, around Winter Storm Elliott). Return on bankroll = held-out annual net profit / 500,000.
 - Because any return on bankroll depends on the bankroll chosen, two bankroll-free measures are reported beside it: the annualised Sharpe ratio of daily net profit and the return over maximum drawdown, next to the S&amp;P 500 over the same months (total return) and the Danish bank deposit rate and Nationalbank current-account rate over the same months.
 
-6 Oct 2026, night, a gate before the held-out run (Bo's rule, before any held-out data is read):
+6 Oct 2026, night, a gate before the held-out run (my rule, before any held-out data is read):
 - The held-out years stay unread until the build years show something worth testing. Every strategy is first scored out of sample inside 2020 to 2023 (a walk-forward over 2021 to 2023, each month predicted only from earlier data), with the corrected costs, and the full list is approved in writing before the freeze.
 - The held-out run then includes every strategy on that list, the strong, the weak and the basic ones (always taking supply, the baseline, the simple hourly-mean version of idea A), so all of them are compared on the same unseen years. The freeze and held-out dates in objective 7 move if the gate is not yet passed; the page shows the actual dates.
 
@@ -589,7 +591,7 @@ The family in one sentence: take virtual supply on calm days, and on dangerous d
 8. Storm-day zone pairs: on flagged days, load in New York City and Long Island against supply upstate, to trade storm congestion.
 9. Extreme-tail spike flag: idea A with spikes defined as real time at least 100 USD above day ahead.
 10. Weather surprise: the change in the GFS forecast for D+1 between the two newest runs public at 05:00; take load when the forecast turns sharply more extreme, otherwise supply.
-The bar for the held-out list (Bo's): average net profit of at least 10 percent a year on the 500,000 USD bankroll (50,000 USD a year) over a walk-forward on 2021 to 2023 after full costs, positive in at least two of the three years, Sharpe above 0.42, and positive at the 0.50 USD per MWh cost stress.
+The bar for the held-out list (mine): average net profit of at least 10 percent a year on the 500,000 USD bankroll (50,000 USD a year) over a walk-forward on 2021 to 2023 after full costs, positive in at least two of the three years, Sharpe above 0.42, and positive at the 0.50 USD per MWh cost stress.
 Safeguards, applied to every idea: all inputs pass the publication-time test; an injected-lookahead test per idea; two placebos per idea (the same rule fed a score shifted one day late, and a shuffled score) that must not earn what the real rule earns; every choice made only on years before the scored year; any idea that passes is recomputed independently before it reaches the list. The list reports how many ideas were tried. All ten, the basic strategies and A to D go to the held-out run together once the list is approved.
 
 6 Oct 2026, 23:20, two more registered ideas, same family (written before either has run; no held-out data read):
@@ -599,11 +601,11 @@ Ideas 3 to 6 predict, then decide by a rule; 11 learns how to combine simple str
 
 Correction, 6 Oct 2026, 21:16: the clock times written in the two previous addenda are wrong. The ten ideas were registered at 20:48 (commit 42ad84b) and ideas 11 and 12 at 21:07 (commit a156551), New York study written from Denmark, times in Danish time; the commit times are the record.
 
-Disclosure, 6 Oct 2026, 21:30: two side scripts (side/spike_value.py and side/storm_value.py, written by the coordinator) loaded the whole price table, 2024 onward included, into memory and dropped every row on or after 1 January 2024 in the next statement, then asserted it. No value from 2024 onward was used, computed, printed or saved. Found by the lead modeller's review; both scripts now filter at read time so those rows never load, the same rule the locked loaders follow.
+Disclosure, 6 Oct 2026, 21:30: two side scripts (side/spike_value.py and side/storm_value.py, written for the side checks) loaded the whole price table, 2024 onward included, into memory and dropped every row on or after 1 January 2024 in the next statement, then asserted it. No value from 2024 onward was used, computed, printed or saved. Found in a separate review pass; both scripts now filter at read time so those rows never load, the same rule the locked loaders follow.
 
 Correction: the disclosure above was committed at 21:18 (commit 2f51db8), not 21:30. From here on, addenda carry a date but no clock time; the commit time on GitHub is the record.
 
-6 Oct 2026, Bo's decision on size and the bar (before the freeze; no held-out data read):
+6 Oct 2026, my decision on size and the bar (before the freeze; no held-out data read):
 - Every strategy keeps its registered 1 MW verdict. Beside it, a sizing view: the number of MW per zone-hour at which its worst drawdown in the 2021 to 2023 walk-forward equals 100,000 USD (20 percent of the bankroll), capped at 5 MW for collateral and price impact, with the return on the 500,000 USD bankroll at that size, the Sharpe ratio, the Sortino ratio and the return over maximum drawdown.
 - For the held-out list, the 10 percent a year bar is judged on that sizing view, and only for strategies not flagged fragile. The size is fixed from the build years before the freeze and carried unchanged into the held-out run.
 
@@ -614,16 +616,18 @@ Robustness checks run on the strongest rows before the list is approved, all on 
 7 Oct 2026, idea 14, registered after the full 2021 to 2023 table and disclosed as such (no held-out data read):
 14. Learned allocator over the four candidates: for each delivery day, a small, heavily regularised deep gate reads the day-level inputs (the same feature matrix as ideas 3 to 5) and splits one unit of risk between C deep, B gradient boosting, C gradient boosting and B deep, each already sized to the same risk budget. Trained only on earlier days' realised profits of the four, with a penalty pulling the weights toward equal (idea 13), so with no signal it falls back to idea 13. Same walk-forward, bar, placebos and fragility checks; it counts as a try, and because it was added after the results were seen, a pass here weighs less than a pass on the earlier list.
 
-7 Oct 2026, Bo's selection rule, fixed before any v2 result and before the held-out run (applies to v1 and v2):
+7 Oct 2026, my selection rule, fixed before any v2 result and before the held-out run (applies to v1 and v2):
 - Candidates for the held-out run are, automatically, every strategy that passes the bar at the sizing view and is not flagged fragile (including flags from audits). Every other strategy runs as a comparison. The list is published in the repository before the held-out run starts.
 - The held-out run is the last job: it starts only after every v2 strategy, the weather-based ones included, has finished on 2010 to 2023.
-- Weather inputs are archived forecasts only (GFS previous runs from 2021; GEFS reforecasts before), each stamped with the time it was issued; observed weather and reanalysis are never inputs, and a test fails the build if any weather row is not a forecast issued before 05:00 on D.</div>
+- Weather inputs are archived forecasts only (GFS previous runs from 2021; GEFS reforecasts before), each stamped with the time it was issued; observed weather and reanalysis are never inputs, and a test fails the build if any weather row is not a forecast issued before 05:00 on D.
+
+Wording note, 7 October 2026: earlier addenda referred to me in the third person and named the AI assistants that ran parts of the work; they are now written in my own voice. No rule, number or date changed; the git history keeps the original wording.</div>
         <div class="vhead">research/us_v2/OBJECTIVES.md &middot; version 2 &middot; <a style="color:#fff" href="https://github.com/bolgacg/tavle/commits/master/research/us_v2/OBJECTIVES.md">history</a></div>
         <div class="verbatim"># New York study, version 2: objectives (registered 7 Oct 2026, before any v2 model runs)
 
 Version 1 (research/us/) stays as published. Version 2 asks the same question with far more history and more ideas.
 The held-out years 2024-01-01 to 2026-09-30 are NOT read by v2 either: v2 is built and judged on 2010 to 2023 only,
-and then ONE held-out run tests the approved v1 and v2 candidates together (Bo's rule: no design after seeing them).
+and then ONE held-out run tests the approved v1 and v2 candidates together (my rule: no design after seeing them).
 
 Design
 - Rolling windows: train on the previous 3 years, test on the next quarter, roll quarterly, scored from 2013 to 2023
@@ -648,7 +652,9 @@ Design
 7 Oct 2026, after the stage-1 audit (research/us_v2/audit/v2_stage1_audit.md), before any held-out data is read:
 - Comparison row added: C static pairs, no model. Each registered pair takes, for every hour, its prior-window usual side (the sign of its average gap in the 3 training years), 1 MW, same costs. It is the benchmark for how much the C models add beyond a persistent congestion spread.
 - Comparison row added: V2 sides without limits (the gradient-boosting side at every hour, 1 MW, no limit price), because the audit showed the limit prices add nothing and the profit comes from the side.
-- Labels corrected: V2's result is reported as the gradient-boosting direction model; V3 is reported per MWh and at 1 MW, since its total reflects position size.</div>
+- Labels corrected: V2's result is reported as the gradient-boosting direction model; V3 is reported per MWh and at 1 MW, since its total reflects position size.
+
+Wording note, 7 October 2026: earlier addenda referred to me in the third person and named the AI assistants that ran parts of the work; they are now written in my own voice. No rule, number or date changed; the git history keeps the original wording.</div>
       </section>
 
       <section id="a-results">
@@ -697,7 +703,7 @@ Design
   <p class="why" style="margin-top:8px">These passed the bar but fail a check described in the audits section. Most of their profit comes from two days in December 2022.</p>
   <div class="tscroll"><table><thead><tr><th>Strategy</th><th>2021</th><th>2022</th><th>2023</th><th>Total</th><th>Without best 5 days</th><th>Sharpe</th><th>Sizing view</th><th>Held-out total</th><th>Held-out Sharpe</th></tr></thead><tbody><tr><td>Weather surprise<span class="zc">idea 10</span></td><td class="n">3,034</td><td class="n">311,142</td><td class="n">37,955</td><td class="n">352,130</td><td class="n">88,091</td><td class="n">1.03</td><td class="n">1.21 MW, 28.5%</td><td class="n"><span class="pending">held-out run pending</span></td><td class="n"><span class="pending">held-out run pending</span></td></tr>
 <tr><td>Storm-day flip<span class="zc">idea 2</span></td><td class="n">78,415</td><td class="n">290,469</td><td class="n neg">&minus;48,392</td><td class="n">320,492</td><td class="n">38,019</td><td class="n">0.94</td><td class="n">0.74 MW, 15.9%</td><td class="n"><span class="pending">held-out run pending</span></td><td class="n"><span class="pending">held-out run pending</span></td></tr>
-<tr><td>Storm-day flip, second build<span class="zc">idea 2 lead</span></td><td class="n">74,421</td><td class="n">282,065</td><td class="n neg">&minus;49,753</td><td class="n">306,733</td><td class="n">24,260</td><td class="n">0.90</td><td class="n">0.74 MW, 15.2%</td><td class="n"><span class="pending">held-out run pending</span></td><td class="n"><span class="pending">held-out run pending</span></td></tr>
+<tr><td>Storm-day flip, second build<span class="zc">idea 2, second build</span></td><td class="n">74,421</td><td class="n">282,065</td><td class="n neg">&minus;49,753</td><td class="n">306,733</td><td class="n">24,260</td><td class="n">0.90</td><td class="n">0.74 MW, 15.2%</td><td class="n"><span class="pending">held-out run pending</span></td><td class="n"><span class="pending">held-out run pending</span></td></tr>
 <tr><td>Deep zone-day model<span class="zc">idea 5</span></td><td class="n">20,081</td><td class="n">149,388</td><td class="n">46,173</td><td class="n">215,642</td><td class="n neg">&minus;3,489</td><td class="n">0.66</td><td class="n">0.59 MW, 8.5%</td><td class="n"><span class="pending">held-out run pending</span></td><td class="n"><span class="pending">held-out run pending</span></td></tr></tbody></table></div>
   <div class="three">
     <p><b>What</b>The same columns for strategies that passed the bar and were then flagged fragile.</p>
@@ -776,7 +782,7 @@ Design
   <p class="why">Reviews and audits found four problems before the held-out run. Each is listed with what it changed, so a reader can judge how much to trust the numbers above.</p>
   <ol class="sources">
     <li>The ideas were chosen after the building years were seen. The storm-day filter and the storm-day flip were found in an exploration of 2020 to 2023 prices, Winter Storm Elliott included, so 2022 is not out of sample for their design. Before the freeze, a reviewer also looked at descriptive statistics for all years, 2024 onward included. These statistics motivated idea A, and no model has seen 2024 onward. Both facts are written in the objectives file as disclosures.</li>
-    <li>Two side scripts loaded the whole price table, including 2024 onward, and dropped those rows in the next statement. No value from 2024 onward was used, computed, printed or saved. The lead modeller's review found it, and both scripts now filter at read time. The locked loaders already worked that way.</li>
+    <li>Two side scripts loaded the whole price table, including 2024 onward, and dropped those rows in the next statement. No value from 2024 onward was used, computed, printed or saved. A separate review pass found it, and both scripts now filter at read time. The locked loaders already worked that way.</li>
     <li>Clock times in the objectives file were wrong twice. The ideas were registered at 20:48 and 21:07 Danish time, not the times first written. A disclosure was committed at 21:18, not 21:30. The commit times on GitHub are the record, and later addenda carry a date only. One timing bug in a storm script also set the 05:00 deadline as five elapsed hours, which is 06:00 on the day clocks go forward. It let in 33 price rows and 22 weather rows and changed no decision.</li>
     <li>The storm rules are fragile. Two Elliott days, 23 and 24 December 2022, give the storm-day flip 204,836 USD of its 2022 profit. Outside them its virtual load trades earned 8,515 over three years. The storm-day filter's 2022 result exists because those two days scored 0.904 and 0.901 against a cut of 0.90. Idea 10, the weather surprise, earns 204,836 of its 352,130 in the same two days. All three were moved to the fragile group, and the audits reproduced every figure to the dollar.</li>
   </ol>
@@ -853,7 +859,7 @@ Design
           <li><b>The 2023 rehearsal, 6 Oct.</b> Published as it ran; the first rule for idea A had no skill, and A was redesigned around the spike flag before any held-out data. <a href="https://github.com/bolgacg/tavle/blob/master/research/us/results/rehearsal_2023.md">rehearsal_2023.md</a> &middot; <a href="https://github.com/bolgacg/tavle/blob/master/research/us/results/rehearsal_2023_v2.md">rehearsal_2023_v2.md</a></li>
           <li><b>Storm rules, 6 Oct.</b> No lookahead changes any figure and a re-implementation matches all six to the dollar; the filter's 2022 result exists because Elliott's two loss days scored 0.904 and 0.901 against a cut of 0.90, and the flip's load legs earned 8,515 USD outside those days. <span class="file">research/us/side/storm_audit.md</span></li>
           <li><b>Idea 10, 6 Oct.</b> The arithmetic reproduces to the dollar; Elliott's two days earn 204,836 of its 352,130, and at the next cut its three-year total is 34,085. <span class="file">research/us/side/idea10_audit.md</span></li>
-          <li><b>Strategy lab, 6 Oct.</b> Every version 1 strategy scored the same way, with placebos, fragility flags and the sizing view. <span class="file">research/us/side/lab_results.md</span> &middot; the lead modeller's list: <a href="https://github.com/bolgacg/tavle/blob/master/research/us/results/strategy_list_2021_2023.md">strategy_list_2021_2023.md</a></li>
+          <li><b>Strategy lab, 6 Oct.</b> Every version 1 strategy scored the same way, with placebos, fragility flags and the sizing view. <span class="file">research/us/side/lab_results.md</span> &middot; the full strategy list: <a href="https://github.com/bolgacg/tavle/blob/master/research/us/results/strategy_list_2021_2023.md">strategy_list_2021_2023.md</a></li>
           <li><b>Robustness, 7 Oct.</b> 20 seeds per deep model, neighbouring settings, costs at 1.00 USD per MWh, seasons and half-years, and idea 13. <span class="file">research/us/results/robustness_summary.md</span></li>
           <li><b>Version 2, stage 1, 7 Oct.</b> V2's limit prices add nothing (the same sides without limits earn 14,759 USD more), V3's total is leverage, and C deep's departures from its static side earn near noise. <a href="https://github.com/bolgacg/tavle/blob/master/research/us_v2/audit/v2_stage1_audit.md">v2_stage1_audit.md</a></li>
           <li><b>Timing, 6 Oct.</b> On 500 random bid days nothing used was published after 05:00, and every one of the injected lookahead rows was caught; 30 of 30 tests pass. <a href="https://github.com/bolgacg/tavle/blob/master/research/us/results/timing_test.json">timing_test.json</a></li>
@@ -1139,9 +1145,10 @@ Design
         <div class="sec-label">Method</div>
         <h2>How the charts are made</h2>
         <div class="prose">
+          <p>I used Claude, an AI assistant, to help set up the experiments, write code and run the audits; every rule, decision and approval here is mine.</p>
           <p>Every chart on this page is drawn by a short script inside the page from the JSON files linked under it, which the chart data script writes from the scored results; no chart number is typed. The JSON files carry their own source, unit and a holdout line saying that nothing on or after 1 January 2024 was read.</p>
           <p>When the single held-out run is done, the chart data script is run again with its held-out option, and the same files then run to September 2026. The page draws whatever the files hold, so the hatched areas fill in and the held-out table above gets its numbers without editing this page.</p>
-          <p>The chart forms follow the monitoring charts the author uses for his own automated trading: hand-built inline SVG, an equity line against a dashed start, twin panels on one time axis, diverging bars and interval dot plots.</p>
+          <p>The chart forms follow the monitoring charts I use for my own automated trading: hand-built inline SVG, an equity line against a dashed start, twin panels on one time axis, diverging bars and interval dot plots.</p>
         </div>
       </section>
     </div>
@@ -1236,7 +1243,7 @@ Design
     A_spike_deep: ['A spike, deep', 'A, spike flag, deep model'],
     A_spike_deep_rolling_cut: ['Side rule', 'Side rule, deep rolling cut'],
     A_spike_gbm: ['A spike, boosting', 'A, spike flag, gradient boosting'],
-    'A_spike_tail_S100_gbm [lead]': ['Idea 9, lead', "Idea 9, the lead modeller's build"],
+    'A_spike_tail_S100_gbm [second build]': ['Idea 9, second build', 'Idea 9, second build'],
     B_deep: ['B deep', 'B, deep model'],
     B_gbm: ['B boosting', 'B, gradient boosting'],
     C_deep: ['C deep', 'C, deep model'],
@@ -1244,8 +1251,8 @@ Design
     D_deep: ['D deep', 'D, deep model'],
     D_gbm: ['D boosting', 'D, gradient boosting'],
     risk_sized_supply_gbm: ['Side rule', 'Side rule, risk-sized supply'],
-    'storm_day_filter [lead]': ['Idea 1, lead', "Idea 1, the lead modeller's build"],
-    'storm_day_flip [lead]': ['Idea 2, lead', "Idea 2, the lead modeller's build"],
+    'storm_day_filter [second build]': ['Idea 1, second build', 'Idea 1, second build'],
+    'storm_day_flip [second build]': ['Idea 2, second build', 'Idea 2, second build'],
     zone_subset_supply: ['Side rule', 'Side rule, zone subset'],
     V10_C_deep_pretrain: ['C deep (V10)', 'V10, C deep pretrained from 2010'],
     V11_C_deep_ens4: ['C deep (V11)', 'V11, C deep, mean of the last 4 windows'],

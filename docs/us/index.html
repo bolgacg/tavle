@@ -245,6 +245,17 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
 @media (max-width:640px){.oldwrap{padding-left:10px}}
 .file{font-family:var(--mono);font-size:.88em;color:var(--soft)}
 .err{font-size:13px;color:var(--neg);padding:10px 0}
+/* what the strategies are made of */
+:root{--b9:#f6d3c2}
+.fm-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}
+.fm-tabs[hidden]{display:none}
+.fm-tabs button{font:500 13px var(--sans);min-height:36px;border:1px solid var(--rule2);background:var(--card);color:var(--ink);border-radius:6px;padding:6px 12px;cursor:pointer}
+.fm-tabs button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.fm-ctl{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:12.5px;color:var(--soft);min-height:4px;margin-bottom:4px}
+.fm-ctl button{font:500 13px var(--sans);min-height:36px;border:1px solid var(--accent);background:var(--card);color:var(--accent);border-radius:6px;padding:6px 12px;cursor:pointer}
+.fm-ctl button[hidden]{display:none}
+#ch-strips svg g:hover rect.fm-hit{fill:#f6f4f0}
+.fm-row{cursor:default}
 </style>
 </head>
 <body>
@@ -252,6 +263,7 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
   <li><a href="#bankroll" style="--band:var(--b1)">Results so far</a></li>
   <li><a href="#primer" style="--band:var(--b2)">The bet</a></li>
   <li><a href="#strategies" style="--band:var(--b3)">The strategies</a></li>
+  <li><a href="#made" style="--band:var(--b9)">What they are made of</a></li>
   <li><a href="#where" style="--band:var(--b4)">Where the money came from</a></li>
   <li><a href="#clean" style="--band:var(--b5)">Luck and leaks</a></li>
   <li><a href="#rules" style="--band:var(--b6)">How the test is kept clean</a></li>
@@ -332,6 +344,57 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
     <article class="scard" id="s-V3"><div class="tagl">gradient boosting</div><h3>Tail sizing (V3)</h3><dl><dt>What it bets</dt><dd>The same side as V2, but sized up to 3&nbsp;MW by expected profit against the size of a bad-day loss.</dd><dt>What it reads at 05:00</dt><dd>The same inputs as A.</dd><dt>How it was trained</dt><dd>Quarterly refits; the audit found it sits near 3&nbsp;MW almost always, so its lead over V2 is size, not skill.</dd></dl></article>
   </div>
   <p class="note">Walk-forward means each month (or quarter) is predicted by a model trained only on earlier data, so no month helps predict itself. Every other strategy, failures included, is in the <a href="#a-results">table of every result</a>.</p>
+</div></section>
+
+<section id="made" data-band style="--band:var(--b9)"><div class="wrap">
+  <div class="sec-label">What the strategies are made of</div>
+  <h2>The best strategies predict the size of the gap and may buy or sell; the worst only ever sell</h2>
+  <p class="why">Each strategy is a bundle of choices: a model, a way of training it, the inputs it reads, what it predicts and a rule for taking positions. Here I line up every scored strategy by those choices, to see which ones the best share and which combinations I have not tried. This is association among my own strategies, not cause: many of them share a model, a zone or a storm.</p>
+  <div class="vt" role="group" aria-label="Study version"><button data-v="v1" aria-pressed="true">Version 1 &middot; 2021 to 2023</button><button data-v="v2" aria-pressed="false">Version 2 &middot; 2013 to 2023</button></div>
+  <p class="hint">The two versions score different years, so I never mix their Sharpe ratios on one axis. <b>Click a version</b> to switch.</p>
+
+  <div class="card" id="fm-strips-card">
+    <h3 class="ctitle" id="t-strips">Loading</h3>
+    <p class="csub">One strip per design choice. Every dot is one strategy, placed by its Sharpe ratio (profit per unit of day-to-day swing): further right is better.</p>
+    <div class="lg fm-lg"><span><svg width="34" height="14"><line x1="4" y1="1" x2="4" y2="13" stroke="#6b7580" stroke-width="3"/><rect x="4" y="3" width="24" height="8" fill="#2f7d54"/><line x1="28" y1="1" x2="28" y2="13" stroke="#1a1d21" stroke-width="3"/></svg>green: the choice goes with a higher median Sharpe, red: lower. Each bar runs from the median without it (grey tick) to the median with it (black tick); faint dots are single strategies; dashed: the pass line, Sharpe 0.42.</span></div>
+    <div class="chart" id="ch-strips"></div>
+    <div class="readout" id="ro-strips" aria-live="polite">Hover or tap a strip to read it.</div>
+    <div class="three">
+      <p><b>what you see</b>Each strip is one design choice, sorted from the choice that goes with the biggest gain at the top to the biggest loss at the bottom.</p>
+      <p><b>how to read</b>A long green bar means the strategies with that choice have a clearly higher median Sharpe; the number beside it is the difference. Each strategy appears once in every strip: on the upper line if it has the choice, on the lower line if not.</p>
+      <p><b>take-away</b><span id="k-strips"></span></p>
+    </div>
+    <p class="note" id="n-strips"></p>
+  </div>
+
+  <div class="card" id="fm-matrix-card">
+    <h3 class="ctitle" id="t-matrix">Loading</h3>
+    <p class="csub">Rows are strategies, best Sharpe first, the top ten in bold; a filled dot means the strategy has that choice. Key choices are the ones that set the top ten apart; the other tab shows all of them.</p>
+    <p class="hint"><b>Hover a row</b> to pick out its line in the bankroll chart; <b>click an underlined name</b> for its card; <b>click a column head</b> to sort.</p>
+    <div class="fm-tabs" id="fm-tabs" role="group" aria-label="Group of choices"></div>
+    <div class="fm-ctl"><button type="button" id="fm-reset" hidden>Show all, best first</button><span id="fm-state"></span></div>
+    <div class="chart" id="ch-matrix"></div>
+    <div class="readout" id="ro-matrix" aria-live="polite"></div>
+    <div class="three">
+      <p><b>what you see</b>Every scored strategy as one row, sorted by Sharpe, with the choices that best separate the top ten from the rest as dots (all 31 choices under the other tab); the bottom line counts how many of the top ten have each choice.</p>
+      <p><b>how to read</b>Read down a column: one that fills up near the top and empties near the bottom is a choice the best strategies share. In version 2, grey rows marked running are registered and still training.</p>
+      <p><b>take-away</b><span id="k-matrix"></span></p>
+    </div>
+    <p class="note" id="n-matrix"></p>
+  </div>
+
+  <div class="card" id="fm-pairs-card">
+    <h3 class="ctitle" id="t-pairs">Loading</h3>
+    <p class="csub">Model type against position rule (how a forecast becomes a bet: sell only, take either side, buy one zone and sell another, and so on). Each square gives the best Sharpe among the strategies with both, and how many there are.</p>
+    <div class="lg"><span><svg width="70" height="12"><rect x="0" y="1" width="14" height="10" rx="2" fill="#e6b9b9"/><rect x="18" y="1" width="14" height="10" rx="2" fill="#94a5b9"/><rect x="36" y="1" width="14" height="10" rx="2" fill="#3e5f80"/></svg>red: best is below the pass line (0.42); blue: above it, darker is higher</span><span><svg width="16" height="12"><rect x="1" y="1" width="14" height="10" rx="2" fill="none" stroke="#c8860d" stroke-width="2"/></svg>the best pairing</span><span><svg width="16" height="12"><rect x="1" y="1" width="14" height="10" rx="2" fill="#94a5b9" stroke="#1a1d21" stroke-opacity=".5" stroke-dasharray="3 3"/></svg>one strategy only: a single result, not a pattern</span><span><svg width="16" height="12"><rect x="1" y="1" width="14" height="10" rx="2" fill="#fffdf7" stroke="#d8d3ca"/><line x1="4" y1="11" x2="12" y2="1" stroke="#e2ddd3" stroke-width="2"/></svg>never tried</span></div>
+    <div class="chart" id="ch-pairs"></div>
+    <div class="three">
+      <p><b>what you see</b>Every pairing of a model type and a position rule; hatched squares are pairings no strategy in this version has tried.</p>
+      <p><b>how to read</b>Blue squares beat the pass line and darker is better; red squares do not. A strategy with two position rules counts in both columns. A position rule is how the forecast becomes a bet: sell only, take either side, or buy one zone and sell another (zone pairs).</p>
+      <p><b>take-away</b><span id="k-pairs"></span></p>
+    </div>
+  </div>
+  <div class="cfoot">Data: <a href="data/feature_matrix.json">feature_matrix.json</a> (every row with its choices, the file and line of code each choice comes from, its Sharpe and its period, plus the with and without summary). Build years only; nothing on or after 1 January 2024 was read. Drawn in the page from this file.</div>
 </div></section>
 
 <section id="where" data-band style="--band:var(--b4)"><div class="wrap">
@@ -1217,7 +1280,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
   var C = { ink: '#1a1d21', soft: '#5b6470', faint: '#8b95a1', rule: '#e2e0dc', rule2: '#c9c5be',
     acc: '#2c4a6b', pos: '#2f7d54', neg: '#b03a3a', amber: '#c8860d', grey: '#8b95a1', v2: '#7a4f9a' };
   var D = {}, V = 'v1', monthSel = { v1: null, v2: null }, hoverIdx = null;
-  var FILES = ['equity_v1', 'equity_v2', 'drawdown', 'monthly', 'placebo', 'seeds', 'years', 'events'];
+  var FILES = ['equity_v1', 'equity_v2', 'drawdown', 'monthly', 'placebo', 'seeds', 'years', 'events', 'feature_matrix'];
 
   // ---------- names ----------
   var NAMES = {
@@ -1472,6 +1535,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     ubox.innerHTML = ''; ubox.appendChild(us);
 
     bankGeo = { X: X, t0: t0, dates: dates, rows: rows, uw: uw };
+    bankFocus = focus; bankDrawn = {}; rows.forEach(function (r) { bankDrawn[r.name] = 1; });
     function onMove(ev, sv) {
       var r = sv.getBoundingClientRect(), x = (ev.clientX - r.left) * (w / r.width);
       var t = t0 + (x - mL) / P * (tE - t0), i = Math.round((t - t0) / DAY);
@@ -1964,6 +2028,310 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     t.innerHTML = h + '</tbody>';
   }
 
+  // ---------- what the strategies are made of ----------
+  var FG = [
+    ['model', 'Model', [['m_none', 'no model', 'use no model at all', 'No model and no rule: the same position every hour.'], ['m_rule', 'fixed rule', 'follow a fixed rule', 'A hand-written rule, such as sitting out forecast storm days; nothing is trained.'], ['m_gbm', 'boosted trees', 'use boosted trees', 'Gradient boosting: many small decision trees, each correcting the last.'], ['m_deep', 'neural net', 'use a neural network', 'A neural network, usually a GRU that reads the last week hour by hour.']]],
+    ['train', 'Training', [['t_wf_monthly', 'monthly refit', 'refit every month', 'Refit on the 1st of each month on all data up to two days before.'], ['t_roll3y_q', '3-year window', 'train on a 3-year window', 'Refit each quarter on the previous three years only.'], ['t_window_ens', 'mix of windows', 'average several windows', 'Average the models of the last few training windows.'], ['t_pretrain_ft', 'pretrained', 'pretrain from 2010', 'Pretrain on 2010 onward, then fine-tune on the window.'], ['t_recency', 'recency weight', 'weight recent days more', 'Recent days count more in training.'], ['t_regime', 'rule-change flags', 'mark market rule changes', 'Dated flags for changes in the market rules.']]],
+    ['inputs', 'Inputs', [['i_px_hist', 'past prices', 'read past prices', 'Day-ahead and real-time price history for the zone.'], ['i_px_parts', 'price parts', 'read the price parts', 'The energy, congestion and loss parts of each price.'], ['i_gen', 'power-plant prices', 'read power-plant prices', 'Prices at individual generator points.'], ['i_border', 'neighbour-grid prices', 'read neighbour-grid prices', 'Prices at the borders with neighbouring grids.'], ['i_loadfc', 'load forecast', 'read the load forecast', 'NYISO\'s own forecast of demand.'], ['i_wx', 'weather forecast', 'read weather forecasts', 'Archived weather forecasts, as they were issued before 05:00.'], ['i_outage', 'planned outages', 'read planned outages', 'Scheduled outages of lines and plants.'], ['i_cal', 'calendar', 'read the calendar', 'Hour, weekday, month and holidays.'], ['i_resid', 'past errors', 'learn from past errors', 'The errors of a first model, fed to a second.']]],
+    ['target', 'Predicts', [['y_gap', 'size of the gap', 'predict the size of the gap', 'The model predicts real time minus day-ahead, in USD per MWh.'], ['y_spike', 'spike or not', 'only flag spikes', 'The model only says whether a price spike is coming.'], ['y_zoneday', 'zone-day profit', 'predict a zone\'s daily profit', 'The model predicts a whole zone-day\'s profit.'], ['y_profit', 'profit itself', 'learn profit directly', 'The model is trained on profit itself, not on a price.'], ['y_quant', 'range of the gap', 'predict a range for the gap', 'The model predicts a range (quantiles) for the gap.']]],
+    ['position', 'Position', [['p_supply_only', 'sells only', 'sell only', 'Only ever takes the short side (virtual supply).'], ['p_both', 'buys or sells', 'take either side', 'Takes the short or the long side, whichever the forecast favours.'], ['p_pairs', 'zone pairs', 'trade zone pairs', 'Buys one zone and sells another, so a move in the overall price cancels.'], ['p_limit', 'price limits', 'bid with price limits', 'Each bid carries a price limit.'], ['p_risk', 'sized by risk', 'size by risk', 'Bets more where the expected profit is large against the bad-day loss.'], ['p_sitout_days', 'sits out days', 'sit out whole days', 'Stays out of whole days flagged as risky.'], ['p_alloc', 'splits risk', 'split risk between strategies', 'Splits one unit of risk between several strategies each day.']]]
+  ];
+  var FCOL = [], FDEF = {};
+  FG.forEach(function (g, gi) { g[2].forEach(function (c) { FCOL.push(c[0]); FDEF[c[0]] = { g: gi, lab: c[1], ph: c[2], def: c[3] }; }); });
+  var FNAMES = {
+    side_past_spike_rate_filter: ['Spike-rate rule', 'Side rule, past spike-rate filter'],
+    A_spike_deep_rolling_cut: ['A spike, deep cut', 'Side rule, deep rolling cut'],
+    risk_sized_supply_gbm: ['Risk-sized supply', 'Side rule, risk-sized supply'],
+    zone_subset_supply: ['Zone subset', 'Side rule, zone subset'],
+    V4_B_reforecast: ['B reforecast (V4)', 'V4, B with weather reforecasts, trades 2013 to 2019 only'],
+    V5_border_inputs: ['Border inputs (V5)', 'V5, boosting with border prices'],
+    V6_NYC: ['NYC only (V6)', 'V6, New York City zone only'],
+    V6_LI: ['Long Island (V6)', 'V6, Long Island zone only'],
+    V7_flags: ['Rule flags (V7)', 'V7, boosting with market rule-change flags'],
+    V7_recency: ['Recency (V7)', 'V7, boosting with recent days weighted more'],
+    V8_error_mining: ['Error mining (V8)', 'V8, a second model on the first one\'s errors'],
+    V9_decompose: ['Price parts (V9)', 'V9, one model per price part, summed'],
+    V12_alloc: ['Allocator (V12)', 'V12, a learned split of risk over the version 2 strategies'],
+    V13_C_deep_all: ['C all inputs (V13)', 'V13, C deep model with every input'],
+    V13_A_deep_all: ['A all inputs (V13)', 'V13, A deep model with every input'],
+    V14a_window_ens: ['V14a windows', 'V14a, five training windows averaged'],
+    V14b_quantile_size: ['V14b range sizing', 'V14b, sized by the predicted range'],
+    V14c_conformal_skip: ['V14c skip unsure', 'V14c, skips pair-hours where the forecast is unsure'],
+    V14d_seed_ens: ['V14d ten seeds', 'V14d, ten random starts averaged'],
+    V14e_mlp_multi: ['V14e plain net', 'V14e, a plain neural network on every zone at once'],
+    V14f_global_zone: ['V14f one net', 'V14f, one network for all zones, trained on profit']
+  };
+  function fkey(n) { return n.replace('[lead]', '[second build]'); }
+  function fsn(n) { return FNAMES[n] ? FNAMES[n][0] : sn(fkey(n)); }
+  function fln(n) { return FNAMES[n] ? FNAMES[n][1] : ln(fkey(n)); }
+  function fhas(r, c) { var v = r[c]; return !!v && v !== '?'; }
+  function fmed(a) { if (!a.length) return null; var s = a.slice().sort(function (x, y) { return x - y; }), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }
+  function f2(v) { return (v < 0 ? '−' : '') + Math.abs(v).toFixed(2); }
+  function fsg(v) { return (v < 0 ? '−' : '+') + Math.abs(v).toFixed(2); }
+  var FM = { sort: null, filter: false, tab: 'key', colRects: {}, rowsEls: {} };
+  var bankFocus = null, bankDrawn = {};
+  var BAR = 0.42, ACC = '#2c4a6b', OPEN = '#9aa5b1';
+  function fRows() { return D.feature_matrix.rows.filter(function (r) { return String(r.study).indexOf(V) === 0 && r.sharpe != null; }); }
+  function fPend() { return D.feature_matrix.rows.filter(function (r) { return r.sharpe == null && String(r.study).indexOf(V) === 0; }); }
+  function fStats(rows) {
+    return FCOL.map(function (c) {
+      var w = rows.filter(function (r) { return fhas(r, c); }).map(function (r) { return r.sharpe; });
+      var o = rows.filter(function (r) { return !fhas(r, c); }).map(function (r) { return r.sharpe; });
+      var mw = fmed(w), mo = fmed(o);
+      return { c: c, w: w, o: o, mw: mw, mo: mo, d: mw != null && mo != null ? mw - mo : null, ok: w.length >= 5 && o.length >= 5 };
+    });
+  }
+  function tintCol(c, on) { var r = FM.colRects[c]; if (r) r.setAttribute('fill', on ? '#e3ebf4' : 'transparent'); }
+
+  function drawStrips() {
+    var box = $('#ch-strips'), rows = fRows(), st = fStats(rows), w = W(box), narrow = w < 560;
+    var labW = narrow ? 104 : 176, dW = narrow ? 0 : 0, mR = 4;
+    var lo = Math.min(0, Math.min.apply(null, rows.map(function (r) { return r.sharpe; }))), hi = Math.max.apply(null, rows.map(function (r) { return r.sharpe; }));
+    lo = Math.floor((lo - 0.1) * 2) / 2; hi = Math.ceil((hi + 0.1) * 2) / 2;
+    var x0 = labW, x1 = w - dW - mR - 18, X = function (v) { return x0 + (v - lo) / (hi - lo) * (x1 - x0); };
+    // only strips with at least five strategies on each side; the rest are named in the note
+    var lay = [], y = 36, few = [], none = [];
+    FG.forEach(function (g, gi) {
+      var ss = st.filter(function (s) { return FDEF[s.c].g === gi; });
+      ss.forEach(function (s) { if (!s.w.length || !s.o.length) none.push(FDEF[s.c].lab); else if (!s.ok) few.push(FDEF[s.c].lab + ' (' + s.w.length + ' with, ' + s.o.length + ' without)'); });
+    });
+    st.filter(function (s) { return s.ok; }).sort(function (a, b) { return b.d - a.d; }).forEach(function (s) { lay.push({ s: s, y: y + 19 }); y += 38; });
+    var H = y + 24;
+    var sv = svg(w, H, 'Sharpe ratio of strategies with and without each design choice');
+    var ticks = []; for (var t = Math.ceil(lo); t <= hi + 1e-9; t += (narrow ? 1 : 0.5)) ticks.push(+t.toFixed(2));
+    ticks.forEach(function (t) {
+      ln_(sv, X(t), 30, X(t), H - 18, t === 0 ? C.rule2 : C.rule, 1);
+      txt(sv, X(t), H - 4, t === 0 ? '0' : f2(t), { anchor: 'middle', fs: 10.5, cls: 'm', fill: C.faint });
+    });
+    ln_(sv, X(BAR), 22, X(BAR), H - 18, C.amber, 1.2, '4 3');
+    txt(sv, X(BAR), 14, narrow ? 'pass 0.42' : 'pass line, Sharpe 0.42', { fs: 10.5, fill: '#8a5d09', anchor: 'middle' });
+    if (!narrow) txt(sv, x1, 28, 'Sharpe ratio: further right is better', { anchor: 'end', fs: 10.5, fill: C.faint });
+        lay.forEach(function (it) {
+      if (it.head) { txt(sv, 0, it.y + 4, it.head.toUpperCase(), { fs: 10.5, fill: C.acc, weight: 600, cls: 'm' }); return; }
+      var s = it.s, cy = it.y, g = el('g', { 'data-c': s.c });
+      g.appendChild(el('rect', { x: 0, y: cy - 18, width: w, height: 36, fill: 'transparent', 'class': 'fm-hit' }));
+      txt(g, 0, cy - 2, FDEF[s.c].lab, { fs: narrow ? 12 : 13, fill: C.ink, weight: 600 });
+      txt(g, 0, cy + 12, ['model', 'training', 'input', 'prediction', 'position'][FDEF[s.c].g] + ', ' + s.w.length + ' with', { fs: 10.5, fill: C.faint });
+      if (!narrow) { txt(g, x0 - 6, cy - 5, 'with', { anchor: 'end', fs: 9.5, fill: ACC }); txt(g, x0 - 6, cy + 11, 'without', { anchor: 'end', fs: 9.5, fill: C.faint }); }
+      var yW = cy - 8, yO = cy + 8;
+      [[s.o, yO, false], [s.w, yW, true]].forEach(function (L) {
+        var xs = L[0].map(X).sort(function (a, b) { return a - b; }), prev = -99, alt = 0;
+        xs.forEach(function (xx) {
+          var dy = 0; if (xx - prev < 4) { alt++; dy = (alt % 2 ? -2 : 2); } else alt = 0; prev = xx;
+          g.appendChild(L[2] ? el('circle', { cx: xx, cy: L[1] + dy, r: narrow ? 2.6 : 3.2, fill: ACC, opacity: 0.24 }) : el('circle', { cx: xx, cy: L[1] + dy, r: narrow ? 2.4 : 3, fill: 'none', stroke: '#c9cfd6', 'stroke-width': 1 }));
+        });
+      });
+      var col = s.d >= 0 ? C.pos : C.neg;
+      g.appendChild(el('rect', { x: Math.min(X(s.mw), X(s.mo)), y: cy - 4, width: Math.max(2, Math.abs(X(s.mw) - X(s.mo))), height: 8, fill: col, rx: 1.5 }));
+      ln_(g, X(s.mw), yW - 6, X(s.mw), cy + 2, C.ink, 3);
+      ln_(g, X(s.mo), cy - 2, X(s.mo), yO + 6, '#6b7580', 3);
+      txt(g, Math.max(X(s.mw), X(s.mo)) + 11, cy + 5, fsg(s.d), { fs: narrow ? 12 : 13.5, weight: 600, cls: 'm halo', fill: col });
+      var say = function () {
+        var d = FDEF[s.c];
+        setText('ro-strips', d.lab + ': ' + d.def + ' Median Sharpe ' + f2(s.mw) + ' for the ' + s.w.length + ' with it, ' + f2(s.mo) + ' for the ' + s.o.length + ' without.');
+        tintCol(s.c, true);
+      };
+      g.addEventListener('mouseenter', say); g.addEventListener('click', say);
+      g.addEventListener('mouseleave', function () { tintCol(s.c, false); });
+      sv.appendChild(g);
+    });
+    box.innerHTML = ''; box.appendChild(sv);
+    var rel = st.filter(function (s) { return s.ok; }).sort(function (a, b) { return b.d - a.d; });
+    var top = rel[0], bot = last(rel), vn = V === 'v1' ? 'version 1' : 'version 2';
+    var bots = rel.filter(function (s) { return Math.abs(s.d - bot.d) < 0.005; }).map(function (s) { return FDEF[s.c].ph; });
+    setText('t-strips', cap(vn) + ': strategies that ' + FDEF[top.c].ph + ' do best, and those that ' + bots.join(' or ') + ' do worst');
+    setText('k-strips', 'Across the ' + rows.length + ' scored strategies of ' + vn + ', the ' + top.w.length + ' that ' + FDEF[top.c].ph + ' have a median Sharpe ' + f2(top.d) + ' above the rest, and the ' + bot.w.length + ' that ' + FDEF[bot.c].ph + ' sit ' + f2(-bot.d) + ' below.');
+    setText('n-strips', 'A strip is drawn only when at least five strategies sit on each side. Too few to say in ' + vn + ': ' + (few.length ? few.join(', ') : 'none') + '. Every strategy or none has: ' + (none.length ? none.join(', ') : 'none') + '. The strategies share zones, days and often a model, so they are not independent tests; read the strips as association, not cause. The pass line is the Sharpe a strategy needs for the held-out run, the long-run Sharpe of the S&P 500.');
+  }
+
+  function drawMatrix() {
+    var box = $('#ch-matrix'), scored = fRows(), pend = fPend(), w = W(box), narrow = w < 640;
+    var top10 = scored.slice().sort(function (a, b) { return b.sharpe - a.sharpe; }).slice(0, 10).map(function (r) { return r.name; });
+    var tops = scored.filter(function (r) { return top10.indexOf(r.name) >= 0; }), rest = scored.filter(function (r) { return top10.indexOf(r.name) < 0; });
+    var full = FCOL.map(function (c) { var n = tops.filter(function (r) { return fhas(r, c); }).length, nr = rest.filter(function (r) { return fhas(r, c); }).length;
+      return { c: c, n: n, nr: nr, lift: n / tops.length - (rest.length ? nr / rest.length : 0) }; });
+    var shared = full.filter(function (f) { return f.n >= Math.ceil(tops.length * 0.6) && f.lift >= 0.25; }).sort(function (a, b) { return b.lift - a.lift; });
+    var missing = full.filter(function (f) { return f.n === 0 && f.nr >= 3; }).sort(function (a, b) { return b.nr - a.nr; });
+    var STORY = {}; shared.forEach(function (f) { STORY[f.c] = 1; }); missing.forEach(function (f) { STORY[f.c] = 1; });
+    var KEY = shared.slice(0, narrow ? 2 : 4).map(function (f) { return f.c; }).concat(missing.slice(0, 1).map(function (f) { return f.c; }));
+    if (KEY.length < 3) full.slice().sort(function (a, b) { return Math.abs(b.lift) - Math.abs(a.lift); }).forEach(function (f) { if (KEY.length < 3 && KEY.indexOf(f.c) < 0) KEY.push(f.c); });
+    KEY.sort(function (a, b) { return FCOL.indexOf(a) - FCOL.indexOf(b); });
+    if (narrow && FM.tab === 'all') FM.tab = 'key';
+    if (!narrow && typeof FM.tab === 'number') FM.tab = 'all';
+    var keyMode = FM.tab === 'key';
+    var tabs = $('#fm-tabs'); tabs.innerHTML = '';
+    var tabList = [['key', 'Key choices']].concat(narrow ? FG.map(function (g, gi) { return [gi, g[1]]; }) : [['all', 'All ' + FCOL.length + ' choices']]);
+    tabList.forEach(function (tb) { var b = document.createElement('button'); b.type = 'button'; b.textContent = tb[1]; b.setAttribute('aria-pressed', tb[0] === FM.tab ? 'true' : 'false'); b.addEventListener('click', function () { FM.tab = tb[0]; drawMatrix(); }); tabs.appendChild(b); });
+    var groups = keyMode ? [{ gi: -1, name: '', cols: KEY }] : FG.map(function (g, gi) { return { gi: gi, name: g[1], cols: g[2].map(function (c) { return c[0]; }) }; })
+      .filter(function (g) { return FM.tab === 'all' || g.gi === FM.tab; });
+    // rows in order
+    var rows = scored.slice();
+    if (FM.sort && FM.filter) rows = rows.filter(function (r) { return fhas(r, FM.sort); });
+    rows.sort(function (a, b) { return FM.sort ? ((fhas(b, FM.sort) ? 1 : 0) - (fhas(a, FM.sort) ? 1 : 0)) || (b.sharpe - a.sharpe) : b.sharpe - a.sharpe; });
+    var pRows = FM.sort && FM.filter ? pend.filter(function (r) { return fhas(r, FM.sort); }) : pend;
+    var all = rows.concat(pRows);
+    var labW = narrow ? 96 : 196, barW = narrow ? 80 : 124, gGap = narrow ? 0 : 10, nCols = 0;
+    groups.forEach(function (g) { nCols += g.cols.length; });
+    var avail = w - labW - barW - 10 - gGap * (groups.length - 1);
+    var cW = Math.min(keyMode ? 88 : narrow ? 40 : 24, Math.floor(avail / nCols));
+    var rH = 18, hdrH = keyMode && !narrow ? 64 : narrow ? 120 : 128, mT = hdrH, sumH = 26;
+    var nP = pRows.length, H = mT + all.length * rH + (nP ? 10 : 0) + sumH + 26;
+    var sv = svg(w, H, 'Every scored strategy by its design choices, sorted by Sharpe ratio');
+    hatch(sv, 'hp', '#ecd9ae');
+    // x positions of columns
+    var cx = {}, xc = labW + barW + 10;
+    groups.forEach(function (g, k) {
+      var gx0 = xc;
+      g.cols.forEach(function (c) { cx[c] = xc + cW / 2; xc += cW; });
+      if (!narrow && !keyMode) { txt(sv, gx0, 12, g.name.toUpperCase(), { fs: 10, fill: C.acc, weight: 600, cls: 'm' }); ln_(sv, gx0, 17, xc - 2, 17, C.acc, 1); }
+      xc += gGap;
+    });
+    // column hit areas, tint rects and rotated labels
+    FM.colRects = {};
+    var bodyY0 = mT - 2, bodyY1 = H - 4;
+    FCOL.forEach(function (c) {
+      if (cx[c] == null) return;
+      var r = el('rect', { x: cx[c] - cW / 2, y: 20, width: cW, height: bodyY1 - 20, fill: FM.sort === c ? '#e3ebf4' : 'transparent' }); sv.appendChild(r); FM.colRects[c] = r;
+      if (STORY[c] && !keyMode) sv.appendChild(el('rect', { x: cx[c] - cW / 2 + 1, y: mT - 4, width: cW - 2, height: bodyY1 - mT + 4, fill: '#fdf1d8', rx: 3 }));
+      var a = el('g', { style: 'cursor:pointer', tabindex: 0, role: 'button', 'aria-label': 'Sort by ' + FDEF[c].lab });
+      a.appendChild(el('rect', { x: cx[c] - cW / 2, y: 20, width: cW, height: mT - 22, fill: 'transparent' }));
+      var t = txt(a, 0, 0, FDEF[c].lab, { fs: narrow ? 11 : 11.5, fill: FM.sort === c || STORY[c] ? C.ink : C.soft, weight: FM.sort === c || STORY[c] ? 600 : 400 });
+      if (keyMode && !narrow) {
+        var kfs = narrow ? 11 : 12, lines = [], cur = '';
+        FDEF[c].lab.split(' ').forEach(function (wd) { var tr = cur ? cur + ' ' + wd : wd; if (cur && tw(tr, kfs, 600) > cW - 4) { lines.push(cur); cur = wd; } else cur = tr; });
+        lines.push(cur); a.removeChild(t);
+        lines.forEach(function (ln2, i) { txt(a, cx[c], mT - 9 - (lines.length - 1 - i) * (kfs + 2), ln2, { anchor: 'middle', fs: kfs, fill: C.ink, weight: 600 }); });
+        txt(a, cx[c], mT - 9 - lines.length * (kfs + 2) - 2, FG[FDEF[c].g][1].toUpperCase(), { anchor: 'middle', fs: 9, fill: C.acc, cls: 'm' });
+      } else t.setAttribute('transform', 'translate(' + (cx[c] + 4) + ',' + (mT - 8) + ') rotate(-90)');
+      a.appendChild(el('title', {}, FDEF[c].def + ' Click to sort by it, click again to keep only these.'));
+      var go = function () { if (FM.sort === c && !FM.filter) FM.filter = true; else if (FM.sort === c && FM.filter) { FM.sort = null; FM.filter = false; } else { FM.sort = c; FM.filter = false; } drawMatrix(); };
+      a.addEventListener('click', go); a.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+      sv.appendChild(a);
+    });
+    // bar scale
+    var vals = scored.map(function (r) { return r.sharpe; }), blo = Math.min(0, Math.min.apply(null, vals)), bhi = Math.max.apply(null, vals);
+    var numW = narrow ? 42 : 46, bx0 = labW + 2, bx1 = labW + barW - numW, BX = function (v) { return bx0 + (v - blo) / (bhi - blo) * (bx1 - bx0); };
+    txt(sv, labW + barW - 4, mT - 8, 'Sharpe', { anchor: 'end', fs: 10.5, fill: C.faint });
+    ln_(sv, BX(0), mT - 4, BX(0), mT + rows.length * rH, C.rule2, 1);
+    ln_(sv, BX(BAR), mT - 22, BX(BAR), mT + rows.length * rH, C.amber, 1.2, '3 3');
+    txt(sv, BX(BAR) + 3, mT - 24, narrow ? 'pass' : 'pass line, 0.42', { fs: 10, fill: '#8a5d09' });
+    FM.rowsEls = {};
+    var rowGs = [];
+    all.forEach(function (r, i) {
+      var isP = r.sharpe == null, y = mT + i * rH + (isP ? 10 : 0), cy = y + rH / 2;
+      var g = el('g', { 'class': 'fm-row', opacity: isP ? 0.6 : 1 });
+      var isTop = !isP && top10.indexOf(r.name) >= 0;
+      g.appendChild(el('rect', { x: 0, y: y + 1, width: isP ? w : labW + barW, height: rH - 2, fill: isTop ? '#e6edf5' : (isP ? 'url(#hp)' : 'transparent'), rx: 2 }));
+      var lab = narrow ? fsn(r.name) : fln(r.name), key = fkey(r.name), card = CARD[key];
+      var tparent = card ? linkWrap(g, key) : g;
+      var t = txt(tparent, 4, cy + 4, lab, { fs: narrow ? 10.5 : 11.5, fill: isP ? C.soft : C.ink, weight: isTop ? 600 : 400 });
+      while (tw(t.textContent, narrow ? 10.5 : 11.5, isTop ? 600 : 400) > labW - 8 && t.textContent.length > 4) t.textContent = t.textContent.slice(0, -2) + '.';
+      g.appendChild(el('title', {}, fln(r.name) + (isP ? ': registered, still running' : ': Sharpe ' + f2(r.sharpe)) + (r.note ? '. ' + r.note : '')));
+      if (isP) {
+        var px = labW + 4;
+        g.appendChild(el('rect', { x: px, y: cy - 6, width: 50, height: 12, rx: 2, fill: '#fbf3e2', stroke: '#d9b46a', 'stroke-dasharray': '2 2' }));
+        txt(g, px + 25, cy + 3.5, 'running', { anchor: 'middle', fs: 9.5, fill: '#8a5d09', cls: 'm' });
+      } else {
+        var xa = BX(Math.min(0, r.sharpe)), xb = BX(Math.max(0, r.sharpe));
+        g.appendChild(el('rect', { x: xa, y: cy - 4.5, width: Math.max(1, xb - xa), height: 9, fill: r.sharpe < 0 ? '#c98b8b' : (isTop ? ACC : '#8ea3ba') }));
+        txt(g, labW + barW - 4, cy + 4, f2(r.sharpe) + (r.name === 'V4_B_reforecast' ? '*' : ''), { anchor: 'end', fs: narrow ? 10 : 10.5, cls: 'm', fill: r.sharpe < 0 ? C.neg : C.ink });
+      }
+      FCOL.forEach(function (c) {
+        if (cx[c] == null) return;
+        var v = r[c];
+        if (v === '?') txt(g, cx[c], cy + 3.5, '?', { anchor: 'middle', fs: 10, fill: C.faint });
+        else if (v) g.appendChild(el('circle', { cx: cx[c], cy: cy, r: keyMode ? 5.5 : narrow ? 4.2 : 4.4, fill: isP ? '#8b95a1' : ACC }));
+        else g.appendChild(el('circle', { cx: cx[c], cy: cy, r: keyMode ? 4 : 2.6, fill: 'none', stroke: '#d3d0ca', 'stroke-width': 1 }));
+      });
+      var enter = function () {
+        rowGs.forEach(function (o) { o.setAttribute('opacity', o === g ? 1 : 0.28); });
+        var drawn = !isP && bankDrawn[key];
+        if (bankFocus) bankFocus(drawn ? key : null);
+        var has = FCOL.filter(function (c) { return fhas(r, c); }).map(function (c) { return FDEF[c].lab; });
+        setText('ro-matrix', fln(r.name) + (isP ? ', still running' : ', Sharpe ' + f2(r.sharpe)) + ': ' + has.join(', ') + '. ' + (isP ? '' : drawn ? 'Its line is picked out in the bankroll chart at the top.' : 'Not drawn in the bankroll chart, which shows only the candidates and the two plain rules.'));
+      };
+      g.addEventListener('mouseenter', enter); g.addEventListener('touchstart', enter, { passive: true });
+      g.addEventListener('mouseleave', function () { rowGs.forEach(function (o) { o.setAttribute('opacity', o.getAttribute('data-o')); }); if (bankFocus) bankFocus(null); });
+      g.setAttribute('data-o', isP ? 0.6 : 1);
+      rowGs.push(g); sv.appendChild(g);
+      if (!FM.sort && i === tops.length - 1 && rows.length > tops.length) { ln_(sv, 0, y + rH, w, y + rH, C.acc, 1.2, '4 3'); txt(sv, w - 2, y + rH - 4, 'top ten above this line', { anchor: 'end', fs: 10, fill: C.acc, cls: 'halo' }); }
+    });
+    // summary row: how many of the top ten have each choice
+    var sy = mT + all.length * rH + (nP ? 10 : 0) + 6;
+    ln_(sv, 0, sy, w, sy, C.ink, 1);
+    txt(sv, 4, sy + 16, narrow ? 'top ' + tops.length + ' with it' : 'how many of the top ' + tops.length + ' have it', { fs: 11, fill: C.ink, weight: 600 });
+    txt(sv, 4, sy + 34, narrow ? 'other ' + rest.length + ' with it' : 'how many of the other ' + rest.length + ' have it', { fs: 11, fill: C.soft });
+    FCOL.forEach(function (c) {
+      if (cx[c] == null) return;
+      var n = tops.filter(function (r) { return fhas(r, c); }).length;
+      txt(sv, cx[c], sy + 16, String(n), { anchor: 'middle', fs: n >= 10 ? 9.5 : 11, cls: 'm', weight: 600, fill: C.ink });
+      var nr2 = rest.filter(function (r) { return fhas(r, c); }).length;
+      txt(sv, cx[c], sy + 34, String(nr2), { anchor: 'middle', fs: 11, cls: 'm', fill: C.soft });
+    });
+    box.innerHTML = ''; box.appendChild(sv);
+    // controls and words
+    $('#fm-reset').hidden = !FM.sort;
+    setText('fm-state', FM.sort ? (FM.filter ? 'Showing only strategies that have ' + FDEF[FM.sort].lab + '.' : 'Sorted by ' + FDEF[FM.sort].lab + ', then Sharpe.') : '');
+    var vn = V === 'v1' ? 'version 1' : 'version 2';
+    var lab = function (f) { return FDEF[f.c].lab; };
+    var f0 = shared[0];
+    setText('t-matrix', cap(vn) + ': ' + (f0 ? Math.round(100 * f0.n / tops.length) + '% of the top ten ' + FDEF[f0.c].ph + ', against ' + Math.round(100 * f0.nr / rest.length) + '% of the rest' : 'the top ten share no single choice') + (missing.length ? '; none of the top ten ' + FDEF[missing[0].c].ph : ''));
+    setText('k-matrix', (shared.length ? 'In ' + vn + ', ' + list(shared.slice(0, 3).map(function (f) { return lab(f) + ' (' + f.n + ' of the top ten, ' + f.nr + ' of the other ' + rest.length + ')'; })) + ' set the best apart. ' : '') + (missing.length ? 'None of the top ten has ' + list(missing.map(function (f) { return lab(f) + ' (' + f.nr + ' tried)'; })) + '.' : ''));
+    setText('n-matrix', (V === 'v1' ? 'Version 1 is 2021 to 2023 (B rows from May 2021), refit monthly; idea 14 has no row in the source files, so it is not here. ' : 'Version 2 is 2013 to 2023, refit each quarter on the previous three years; * V4 trades 2013 to 2019 only, because the weather reforecast ends in 2019, so its 2.83 says nothing about the years after. V3 holds about 3 MW, so compare its Sharpe, not its profit. V6 trades one zone. ') +
+      'Weather counts as read when the strategy uses an archived forecast; "?" means not yet fixed. ' + (pend.length ? words(pend.length).replace(/^./, function (m) { return m.toUpperCase(); }) + ' registered strategies (V12 to V14) are still running and are shown in grey without a Sharpe.' : 'Nine registered version 2 strategies (V12 to V14) are still running; switch to version 2 to see them in grey.'));
+  }
+
+  function drawPairs() {
+    var box = $('#ch-pairs'), scored = fRows(), pend = fPend(), w = W(box), narrow = w < 560;
+    var M = FG[0][2], P = FG[4][2];
+    var labW = narrow ? 72 : 112, cW = Math.min(108, Math.floor((w - labW) / P.length)), cH = narrow ? 40 : 46, mT = narrow ? 36 : 30;
+    var H = mT + M.length * cH + 4, sv = svg(w, H, 'Model type against position rule: how many strategies tried each pairing');
+    hatch(sv, 'hq', '#e2ddd3');
+    var best = -9, worst = 9;
+    var cell = {};
+    M.forEach(function (m) { P.forEach(function (p) {
+      var rs = scored.filter(function (r) { return fhas(r, m[0]) && fhas(r, p[0]); }), ps = pend.filter(function (r) { return fhas(r, m[0]) && fhas(r, p[0]); });
+      var b = rs.length ? Math.max.apply(null, rs.map(function (r) { return r.sharpe; })) : null;
+      if (b != null) { best = Math.max(best, b); worst = Math.min(worst, b); }
+      cell[m[0] + p[0]] = { n: rs.length, b: b, p: ps.length, names: rs.map(function (r) { return fsn(r.name); }) };
+    }); });
+    P.forEach(function (p, j) {
+      var x = labW + j * cW + cW / 2, words2 = p[1].split(' ');
+      if (narrow && words2.length > 1) { txt(sv, x, mT - 18, words2.slice(0, -1).join(' '), { anchor: 'middle', fs: 10, fill: C.soft }); txt(sv, x, mT - 6, last(words2), { anchor: 'middle', fs: 10, fill: C.soft }); }
+      else txt(sv, x, mT - 8, p[1], { anchor: 'middle', fs: narrow ? 10.5 : 11.5, fill: C.soft });
+    });
+    var nUn = 0, unList = [];
+    M.forEach(function (m, i) {
+      var y = mT + i * cH;
+      txt(sv, 0, y + cH / 2 + 4, m[1], { fs: narrow ? 11 : 12.5, fill: C.ink, weight: 500 });
+      P.forEach(function (p, j) {
+        var x = labW + j * cW, k = cell[m[0] + p[0]], g = el('g', {});
+        if (k.n) {
+          var above = k.b >= BAR, t = above ? (best > BAR ? (k.b - BAR) / (best - BAR) : 1) : (BAR > worst ? (BAR - k.b) / (BAR - worst) : 1), base = above ? [44, 74, 107] : [176, 58, 58];
+          var col = 'rgb(' + base.map(function (b) { return Math.round(255 + (b - 255) * (above ? 0.15 + 0.8 * t : 0.12 + 0.45 * t)); }).join(',') + ')';
+          t = above ? t : 0;
+          g.appendChild(el('rect', { x: x + 1.5, y: y + 1.5, width: cW - 3, height: cH - 3, rx: 3, fill: col, stroke: k.n === 1 ? '#1a1d21' : null, 'stroke-dasharray': k.n === 1 ? '3 3' : null, 'stroke-opacity': 0.5 }));
+          var dark = t > 0.5;
+          if (k.b === best) g.appendChild(el('rect', { x: x - 0.5, y: y - 0.5, width: cW + 1, height: cH + 1, rx: 4, fill: 'none', stroke: C.amber, 'stroke-width': 2.5 }));
+          txt(g, x + cW / 2, y + cH / 2 - 3, narrow ? f2(k.b) : 'best ' + f2(k.b), { anchor: 'middle', fs: narrow ? 10.5 : 14, weight: 600, cls: 'm', fill: dark ? '#fff' : C.ink });
+          txt(g, x + cW / 2, y + cH / 2 + 11, k.n + (narrow ? '' : k.n === 1 ? ' strategy' : ' strategies') + (k.p ? (narrow ? '+' : ', +' + k.p + ' running') : ''), { anchor: 'middle', fs: 10, fill: dark ? '#e6edf5' : C.soft });
+          g.appendChild(el('title', {}, m[1] + ' with ' + p[1] + ': ' + k.names.join(', ')));
+        } else {
+          g.appendChild(el('rect', { x: x + 1.5, y: y + 1.5, width: cW - 3, height: cH - 3, rx: 3, fill: k.p ? '#fbf3e2' : 'url(#hq)', stroke: k.p ? '#d9b46a' : '#d8d3ca', 'stroke-dasharray': k.p ? '3 2' : null }));
+          txt(g, x + cW / 2, y + cH / 2 + 4, k.p ? 'running' : (narrow ? 'none' : 'not tried'), { anchor: 'middle', fs: narrow ? 9.5 : 10.5, fill: k.p ? '#8a5d09' : C.faint });
+          if (!k.p) { nUn++; if (m[0] !== 'm_none') unList.push(m[1] + ' with ' + p[1]); }
+        }
+        sv.appendChild(g);
+      });
+    });
+    box.innerHTML = ''; box.appendChild(sv);
+    var vn = V === 'v1' ? 'version 1' : 'version 2';
+    var bestCell = null; M.forEach(function (m) { P.forEach(function (p) { var k = cell[m[0] + p[0]]; if (k.n && (!bestCell || k.b > bestCell.b)) bestCell = { b: k.b, n: k.n, t: m[1] + ' with ' + p[1] }; }); });
+    var nnUn = unList.filter(function (u) { return u.indexOf('neural net') === 0 || u.indexOf('boosted trees') === 0; });
+    setText('t-pairs', cap(vn) + ': ' + nUn + ' of the ' + (M.length * P.length) + ' pairings of a model type and a position rule have never been tried');
+    setText('k-pairs', 'The best pairing so far is ' + bestCell.t + ' (Sharpe ' + f2(bestCell.b) + ', from ' + words(bestCell.n) + (bestCell.n === 1 ? ' strategy' : ' strategies') + ', so a small sample). Untried with a trained model: ' + (nnUn.length ? list(nnUn) : 'none') + '. Four combinations the matrix showed as untried are now registered as V15, to run before the held-out test.');
+  }
+
   // ---------- counts in the text ----------
   function counts() {
     var n1 = D.equity_v1.rows.length, n2 = D.equity_v2.rows.length;
@@ -1979,7 +2347,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
 
   // ---------- wiring ----------
   function drawVersioned() {
-    var jobs = [drawBank, drawYears, drawMonthChips, drawMonth, drawPlacebo];
+    var jobs = [drawBank, drawYears, drawMonthChips, drawMonth, drawPlacebo, drawStrips, drawMatrix, drawPairs];
     jobs.forEach(function (f) { try { f(); } catch (err) { console.error(err); } });
   }
   function drawStatic() {
@@ -1993,6 +2361,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
       drawVersioned();
     });
   });
+  $('#fm-reset').addEventListener('click', function () { FM.sort = null; FM.filter = false; try { drawMatrix(); } catch (e) { console.error(e); } });
   $('#clock').addEventListener('input', function () { try { drawClock(); } catch (e) { console.error(e); } });
   var lastW = 0, rt;
   window.addEventListener('resize', function () {

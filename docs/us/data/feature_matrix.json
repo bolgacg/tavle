@@ -1,0 +1,4676 @@
+{
+ "written": "2026-10-07",
+ "holdout": "nothing on or after 2024-01-01 read; all inputs are build-year result files",
+ "sources": {
+  "v1": [
+   "research/us/side/lab_results.json",
+   "research/us/results/strategy_list_2021_2023.json"
+  ],
+  "v2": "gene:~/nyiso-us/results/v2/v2_resultsinterim.json (written 2026-10-07 17:36)"
+ },
+ "columns": {
+  "model": {
+   "m_none": "none",
+   "m_rule": "rule",
+   "m_gbm": "GBM",
+   "m_deep": "deep"
+  },
+  "train": {
+   "t_wf_monthly": "WF mo",
+   "t_roll3y_q": "roll 3y q",
+   "t_window_ens": "win ens",
+   "t_pretrain_ft": "pre+FT",
+   "t_recency": "recency",
+   "t_regime": "regime"
+  },
+  "inputs": {
+   "i_px_hist": "px hist",
+   "i_px_parts": "px parts",
+   "i_gen": "gen pts",
+   "i_border": "border",
+   "i_loadfc": "load fc",
+   "i_wx": "weather",
+   "i_outage": "outages",
+   "i_cal": "calendar",
+   "i_resid": "residuals"
+  },
+  "target": {
+   "y_gap": "gap reg",
+   "y_spike": "spike cls",
+   "y_zoneday": "zone-day profit",
+   "y_profit": "profit loss",
+   "y_quant": "quantiles"
+  },
+  "position": {
+   "p_supply_only": "supply only",
+   "p_both": "both sides",
+   "p_pairs": "zone pairs",
+   "p_limit": "limit px",
+   "p_risk": "risk sized",
+   "p_sitout_days": "sit-out days",
+   "p_alloc": "allocator"
+  }
+ },
+ "rows": [
+  {
+   "name": "B_gbm",
+   "study": "v1",
+   "src": "us/model/evaluate.py, strategies.py:109-116, features_weather.py",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 1,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": "GFS",
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": 1.96,
+   "net_per_year": 194649.0,
+   "total": 583946.0,
+   "wo_best5": 329676.0,
+   "PASS": true,
+   "sharpe_strategy_list": 2.08
+  },
+  {
+   "name": "B_deep",
+   "study": "v1",
+   "src": "us/model/train_deep.py:390-394, deep.py:171-201",
+   "arch": "GRU (h64, 168 h) + MLP head, 24x11 multi-output, shared net, no zone embedding; 3 seeds",
+   "ens": "3 seeds",
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 0,
+   "m_deep": 1,
+   "t_wf_monthly": 1,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 1,
+   "i_border": 1,
+   "i_loadfc": 1,
+   "i_wx": "GFS",
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": 1.18,
+   "net_per_year": 103484.0,
+   "total": 310453.0,
+   "wo_best5": 70950.0,
+   "PASS": true,
+   "sharpe_strategy_list": 1.25
+  },
+  {
+   "name": "C_gbm",
+   "study": "v1",
+   "src": "us/model/strategies.py:127-163",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 1,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 0,
+   "p_pairs": 1,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": 1.67,
+   "net_per_year": 56630.0,
+   "total": 169889.0,
+   "wo_best5": 107596.0,
+   "PASS": true,
+   "sharpe_strategy_list": 1.66
+  },
+  {
+   "name": "C_deep",
+   "study": "v1",
+   "src": "us/model/train_deep.py, strategies.py:127-149",
+   "arch": "GRU (h64, 168 h) + MLP head, 24x11 multi-output, shared net, no zone embedding; 3 seeds",
+   "ens": "3 seeds",
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 0,
+   "m_deep": 1,
+   "t_wf_monthly": 1,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 1,
+   "i_border": 1,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 0,
+   "p_pairs": 1,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": 2.15,
+   "net_per_year": 55136.0,
+   "total": 165407.0,
+   "wo_best5": 122663.0,
+   "PASS": true,
+   "sharpe_strategy_list": 2.14
+  },
+  {
+   "name": "D_gbm",
+   "study": "v1",
+   "src": "us/model/features_outages.py, evaluate.py:98-114",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 1,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 1,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": 0.84,
+   "net_per_year": 49106.0,
+   "total": 147317.0,
+   "wo_best5": 36893.0,
+   "PASS": false,
+   "sharpe_strategy_list": 0.84
+  },
+  {
+   "name": "D_deep",
+   "study": "v1",
+   "src": "us/model/train_deep.py:396-413",
+   "arch": "GRU (h64, 168 h) + MLP head, 24x11 multi-output, shared net, no zone embedding; 3 seeds",
+   "ens": "3 seeds",
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 0,
+   "m_deep": 1,
+   "t_wf_monthly": 1,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 1,
+   "i_border": 1,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 1,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": -0.3,
+   "net_per_year": -15974.0,
+   "total": -47922.0,
+   "wo_best5": -98397.0,
+   "PASS": false,
+   "sharpe_strategy_list": -0.3
+  },
+  {
+   "name": "A_regression_v1",
+   "study": "v1",
+   "src": "us/model/strategies.py:103-106",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 1,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 1,
+   "p_both": 0,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": 0.72,
+   "net_per_year": 32409.0,
+   "total": 97227.0,
+   "wo_best5": 41713.0,
+   "PASS": false,
+   "sharpe_strategy_list": 0.72
+  },
+  {
+   "name": "A_regression_v1_deep",
+   "study": "v1",
+   "src": "us/model/evaluate.py:327-329",
+   "arch": "GRU (h64, 168 h) + MLP head, 24x11 multi-output, shared net, no zone embedding; 3 seeds",
+   "ens": "3 seeds",
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 0,
+   "m_deep": 1,
+   "t_wf_monthly": 1,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 1,
+   "i_border": 1,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 1,
+   "p_both": 0,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": -0.33,
+   "net_per_year": -23190.0,
+   "total": -69568.0,
+   "wo_best5": -121975.0,
+   "PASS": false,
+   "sharpe_strategy_list": -0.33
+  },
+  {
+   "name": "A_spike_gbm",
+   "study": "v1",
+   "src": "us/model/gbm.py:96-124, strategies.py:87-92",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 1,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 1,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 1,
+   "p_both": 0,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": 0.73,
+   "net_per_year": 16732.0,
+   "total": 50195.0,
+   "wo_best5": 32268.0,
+   "PASS": false,
+   "sharpe_strategy_list": 0.73
+  },
+  {
+   "name": "A_spike_deep",
+   "study": "v1",
+   "src": "us/model/deep.py:506-615",
+   "arch": "GRU (h64, 168 h) + MLP head, 24x11 multi-output, shared net, no zone embedding; 3 seeds; spike head + gap auxiliary",
+   "ens": "3 seeds",
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 0,
+   "m_deep": 1,
+   "t_wf_monthly": 1,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 1,
+   "i_border": 1,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 1,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 1,
+   "p_both": 0,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": -0.62,
+   "net_per_year": -13981.0,
+   "total": -41943.0,
+   "wo_best5": -63275.0,
+   "PASS": false,
+   "sharpe_strategy_list": -0.62
+  },
+  {
+   "name": "A_spike_deep_rolling_cut",
+   "study": "v1",
+   "src": "us/model/evaluate.py:360-395",
+   "arch": "GRU (h64, 168 h) + MLP head, 24x11 multi-output, shared net, no zone embedding; 3 seeds; spike head",
+   "ens": "3 seeds",
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 0,
+   "m_deep": 1,
+   "t_wf_monthly": 1,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 1,
+   "i_border": 1,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 1,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 1,
+   "p_both": 0,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": -0.14,
+   "net_per_year": -8472.0,
+   "total": -25416.0,
+   "wo_best5": -88924.0,
+   "PASS": false,
+   "sharpe_strategy_list": -0.14
+  },
+  {
+   "name": "A_spike_tail_S100_gbm [lead]",
+   "study": "v1",
+   "src": "us/model/evaluate.py:406-419",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 1,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 1,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 1,
+   "p_both": 0,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": 0.1,
+   "net_per_year": 6151.0,
+   "total": 18454.0,
+   "wo_best5": -44893.0,
+   "PASS": false,
+   "sharpe_strategy_list": 0.1
+  },
+  {
+   "name": "idea9_tail_spike_S100",
+   "study": "v1",
+   "src": "us/side/lab.py:581-590",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 1,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 1,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 1,
+   "p_both": 0,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": 0.34,
+   "net_per_year": 15930.0,
+   "total": 47791.0,
+   "wo_best5": 4862.0,
+   "PASS": false,
+   "sharpe_strategy_list": null
+  },
+  {
+   "name": "risk_sized_supply_gbm",
+   "study": "v1",
+   "src": "us/model/evaluate.py:360-381,566-571",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 1,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 1,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 1,
+   "p_both": 0,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 1,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": 0.89,
+   "net_per_year": 19481.0,
+   "total": 58443.0,
+   "wo_best5": 32314.0,
+   "PASS": false,
+   "sharpe_strategy_list": 0.89
+  },
+  {
+   "name": "zone_subset_supply",
+   "study": "v1",
+   "src": "us/model/evaluate.py:384-403",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 1,
+   "m_gbm": 0,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 0,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 0,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 0,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 1,
+   "p_both": 0,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": -0.3,
+   "net_per_year": -17660.0,
+   "total": -52979.0,
+   "wo_best5": -106127.0,
+   "PASS": false,
+   "sharpe_strategy_list": -0.3
+  },
+  {
+   "name": "storm_day_filter [lead]",
+   "study": "v1",
+   "src": "us/model/evaluate.py:309-357",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 1,
+   "m_gbm": 0,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 0,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": "GFS",
+   "i_outage": 0,
+   "i_cal": 0,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 1,
+   "p_both": 0,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 1,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": 0.85,
+   "net_per_year": 33399.0,
+   "total": 100196.0,
+   "wo_best5": 37328.0,
+   "PASS": false,
+   "sharpe_strategy_list": 1.77
+  },
+  {
+   "name": "storm_day_flip [lead]",
+   "study": "v1",
+   "src": "us/model/evaluate.py:339-343",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 1,
+   "m_gbm": 0,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 0,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": "GFS",
+   "i_outage": 0,
+   "i_cal": 0,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": 0.9,
+   "net_per_year": 102244.0,
+   "total": 306733.0,
+   "wo_best5": 24260.0,
+   "PASS": true,
+   "sharpe_strategy_list": 0.9
+  },
+  {
+   "name": "baseline_usual_side",
+   "study": "v1",
+   "src": "us/side/lab.py:424-471",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 1,
+   "m_gbm": 0,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 0,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 0,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 0,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": -0.81,
+   "net_per_year": -22941.0,
+   "total": -68824.0,
+   "wo_best5": -126628.0,
+   "PASS": false,
+   "sharpe_strategy_list": -0.81
+  },
+  {
+   "name": "always_supply",
+   "study": "v1",
+   "src": "us/side/lab.py:466,478",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 1,
+   "m_rule": 0,
+   "m_gbm": 0,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 0,
+   "i_px_parts": 0,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 0,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 0,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 1,
+   "p_both": 0,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": -0.4,
+   "net_per_year": -45043.0,
+   "total": -135130.0,
+   "wo_best5": -216721.0,
+   "PASS": false,
+   "sharpe_strategy_list": -0.4
+  },
+  {
+   "name": "A_hourly_mean",
+   "study": "v1",
+   "src": "us/side/lab.py:473-475",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 1,
+   "m_gbm": 0,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 0,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 0,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 0,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 1,
+   "p_both": 0,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": -0.52,
+   "net_per_year": -25883.0,
+   "total": -77648.0,
+   "wo_best5": -107266.0,
+   "PASS": false,
+   "sharpe_strategy_list": -0.52
+  },
+  {
+   "name": "idea1_storm_filter",
+   "study": "v1",
+   "src": "us/side/lab.py:374-400,490-492",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 1,
+   "m_gbm": 0,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 0,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": "GFS",
+   "i_outage": 0,
+   "i_cal": 0,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 1,
+   "p_both": 0,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 1,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": 0.91,
+   "net_per_year": 35714.0,
+   "total": 107141.0,
+   "wo_best5": 44273.0,
+   "PASS": false,
+   "sharpe_strategy_list": null
+  },
+  {
+   "name": "idea2_storm_flip",
+   "study": "v1",
+   "src": "us/side/lab.py:493-495",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 1,
+   "m_gbm": 0,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 0,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": "GFS",
+   "i_outage": 0,
+   "i_cal": 0,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": 0.94,
+   "net_per_year": 106831.0,
+   "total": 320492.0,
+   "wo_best5": 38019.0,
+   "PASS": true,
+   "sharpe_strategy_list": null
+  },
+  {
+   "name": "idea8_storm_zone_pairs",
+   "study": "v1",
+   "src": "us/side/lab.py:500-533",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 1,
+   "m_gbm": 0,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 0,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": "GFS",
+   "i_outage": 0,
+   "i_cal": 0,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 0,
+   "p_pairs": 1,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": -0.09,
+   "net_per_year": -9376.0,
+   "total": -28128.0,
+   "wo_best5": -93352.0,
+   "PASS": false,
+   "sharpe_strategy_list": null
+  },
+  {
+   "name": "idea10_weather_surprise",
+   "study": "v1",
+   "src": "us/side/lab.py:402-421,535-543",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 1,
+   "m_gbm": 0,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 0,
+   "i_px_parts": 0,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 0,
+   "i_wx": "GFS",
+   "i_outage": 0,
+   "i_cal": 0,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": 1.03,
+   "net_per_year": 117377.0,
+   "total": 352130.0,
+   "wo_best5": 88091.0,
+   "PASS": true,
+   "sharpe_strategy_list": null
+  },
+  {
+   "name": "side_past_spike_rate_filter",
+   "study": "v1",
+   "src": "us/side/lab.py:1417-1470",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 1,
+   "m_gbm": 0,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 0,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 0,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 0,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 1,
+   "p_both": 0,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": -0.33,
+   "net_per_year": -30413.0,
+   "total": -91237.0,
+   "wo_best5": -163955.0,
+   "PASS": false,
+   "sharpe_strategy_list": null
+  },
+  {
+   "name": "idea7_gbm_storm_filter",
+   "study": "v1",
+   "src": "us/side/lab.py:1137-1275",
+   "arch": null,
+   "ens": null,
+   "note": "day-level tail-loss classifier (always-supply book below training p10)",
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 1,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": "GFS",
+   "i_outage": 1,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 1,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 1,
+   "p_both": 0,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 1,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": 0.8,
+   "net_per_year": 36259.0,
+   "total": 108777.0,
+   "wo_best5": 48148.0,
+   "PASS": false,
+   "sharpe_strategy_list": null
+  },
+  {
+   "name": "idea3_deep_storm_filter",
+   "study": "v1",
+   "src": "us/model/deep_day.py:196-268",
+   "arch": "MLP set encoders (weather pts, zone load, zone prices) + 64 trunk, zone head with one-hot; 5 seeds",
+   "ens": "5 seeds",
+   "note": "day-level tail-loss classifier",
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 0,
+   "m_deep": 1,
+   "t_wf_monthly": 1,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": "GFS",
+   "i_outage": 1,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 1,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 1,
+   "p_both": 0,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 1,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": -0.6,
+   "net_per_year": -67219.0,
+   "total": -201657.0,
+   "wo_best5": -280817.0,
+   "PASS": false,
+   "sharpe_strategy_list": null
+  },
+  {
+   "name": "idea4_deep_storm_three_way",
+   "study": "v1",
+   "src": "us/side/lab.py:563-577",
+   "arch": "MLP set encoders (weather pts, zone load, zone prices) + 64 trunk, zone head with one-hot; 5 seeds",
+   "ens": "5 seeds",
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 0,
+   "m_deep": 1,
+   "t_wf_monthly": 1,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": "GFS",
+   "i_outage": 1,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 1,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 1,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": -0.6,
+   "net_per_year": -66940.0,
+   "total": -200822.0,
+   "wo_best5": -287211.0,
+   "PASS": false,
+   "sharpe_strategy_list": null
+  },
+  {
+   "name": "idea5_deep_zone_day",
+   "study": "v1",
+   "src": "us/model/deep_day.py:296-297, lab.py:1300-1313",
+   "arch": "MLP set encoders (weather pts, zone load, zone prices) + 64 trunk, zone head with one-hot; 5 seeds",
+   "ens": "5 seeds",
+   "note": "per-zone sit-out, not whole day",
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 0,
+   "m_deep": 1,
+   "t_wf_monthly": 1,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": "GFS",
+   "i_outage": 1,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 0,
+   "y_zoneday": 1,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 1,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": 0.66,
+   "net_per_year": 71881.0,
+   "total": 215642.0,
+   "wo_best5": -3489.0,
+   "PASS": true,
+   "sharpe_strategy_list": null
+  },
+  {
+   "name": "idea6_deep_two_gates",
+   "study": "v1",
+   "src": "us/side/lab.py:1315-1349",
+   "arch": "MLP set encoders (weather pts, zone load, zone prices) + 64 trunk, zone head with one-hot; 5 seeds (day gate) + GRU spike net",
+   "ens": "5 seeds (gate); spike net seeds ?",
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 0,
+   "m_deep": 1,
+   "t_wf_monthly": 1,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 1,
+   "i_border": 1,
+   "i_loadfc": 1,
+   "i_wx": "GFS",
+   "i_outage": 1,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 1,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 1,
+   "p_both": 0,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 1,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": -0.81,
+   "net_per_year": -18962.0,
+   "total": -56888.0,
+   "wo_best5": -79002.0,
+   "PASS": false,
+   "sharpe_strategy_list": null
+  },
+  {
+   "name": "idea11_learned_allocator",
+   "study": "v1",
+   "src": "us/model/deep_policy.py:1-45",
+   "arch": "MLP set-pooling encoders + 64 trunk, zone head with learned 4-d zone embedding; 5 seeds x 3 lambdas",
+   "ens": "5 seeds x 3 lambdas",
+   "note": "gate over 4 experts: supply, sit out, load, storm pair",
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 0,
+   "m_deep": 1,
+   "t_wf_monthly": 1,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": "GFS",
+   "i_outage": 1,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 1,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 1,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 1,
+   "p_alloc": 1,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": 0.7,
+   "net_per_year": 56772.0,
+   "total": 170316.0,
+   "wo_best5": -12425.0,
+   "PASS": false,
+   "sharpe_strategy_list": null
+  },
+  {
+   "name": "idea12_policy_network",
+   "study": "v1",
+   "src": "us/model/deep_policy.py:20-24",
+   "arch": "MLP set-pooling encoders + 64 trunk, zone head with learned 4-d zone embedding; 5 seeds x 3 lambdas",
+   "ens": "5 seeds x 3 lambdas",
+   "note": "continuous position in [-1,1] per zone-day",
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 0,
+   "m_deep": 1,
+   "t_wf_monthly": 1,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": "GFS",
+   "i_outage": 1,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 1,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2021-2023 (B rows from 2021-05-01)",
+   "sharpe": 0.67,
+   "net_per_year": 55409.0,
+   "total": 166228.0,
+   "wo_best5": -19658.0,
+   "PASS": false,
+   "sharpe_strategy_list": null
+  },
+  {
+   "name": "V1_baseline",
+   "study": "v2",
+   "src": "us_v2/model/strategies_v2.py:76-82",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 1,
+   "m_gbm": 0,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 0,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 0,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 0,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 0.58,
+   "net_per_year": 18572.0,
+   "total": 204294.0,
+   "wo_best5": 119196.0,
+   "PASS": false,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 0.99,
+   "sharpe_2020_2023": -0.42
+  },
+  {
+   "name": "V1_always_supply",
+   "study": "v2",
+   "src": "us_v2/model/strategies_v2.py:82-83",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 1,
+   "m_rule": 0,
+   "m_gbm": 0,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 0,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 0,
+   "i_px_parts": 0,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 0,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 0,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 1,
+   "p_both": 0,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 0.27,
+   "net_per_year": 22488.0,
+   "total": 247363.0,
+   "wo_best5": 65940.0,
+   "PASS": false,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 0.82,
+   "sharpe_2020_2023": -0.4
+  },
+  {
+   "name": "V1_A_spike_gbm",
+   "study": "v2",
+   "src": "us_v2/model/strategies_v2.py:87-96",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 1,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 1,
+   "p_both": 0,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 0.74,
+   "net_per_year": 23749.0,
+   "total": 261243.0,
+   "wo_best5": 225188.0,
+   "PASS": false,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 1.42,
+   "sharpe_2020_2023": -0.64
+  },
+  {
+   "name": "V1_C_gbm",
+   "study": "v2",
+   "src": "us_v2/model/strategies_v2.py:100-146,326",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 0,
+   "p_pairs": 1,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 1.29,
+   "net_per_year": 33469.0,
+   "total": 368164.0,
+   "wo_best5": 313749.0,
+   "PASS": false,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 1.11,
+   "sharpe_2020_2023": 1.68
+  },
+  {
+   "name": "V1_C_deep",
+   "study": "v2",
+   "src": "us_v2/model/deep_rolling.py:30,126-138",
+   "arch": "GRU c1 (h64, 168 h) + MLP head, 24x11 multi-output, shared net, no zone embedding; 5 seeds",
+   "ens": "5 seeds",
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 0,
+   "m_deep": 1,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 1,
+   "i_border": 1,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 0,
+   "p_pairs": 1,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 2.25,
+   "net_per_year": 60783.0,
+   "total": 668609.0,
+   "wo_best5": 596499.0,
+   "PASS": true,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 2.91,
+   "sharpe_2020_2023": 1.15
+  },
+  {
+   "name": "V2_limit_gbm",
+   "study": "v2",
+   "src": "us_v2/model/strategies_v2.py:158-197",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 1,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 2.41,
+   "net_per_year": 107141.0,
+   "total": 1178549.0,
+   "wo_best5": 1032758.0,
+   "PASS": true,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 2.66,
+   "sharpe_2020_2023": 1.96
+  },
+  {
+   "name": "V3_tail_gbm",
+   "study": "v2",
+   "src": "us_v2/model/strategies_v2.py:201-215",
+   "arch": null,
+   "ens": "mean + q10/q50/q90 models",
+   "note": "size up to 3 MW: about 2.4x the MWh of other rows",
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 1,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 1,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 1.9,
+   "net_per_year": 355225.0,
+   "total": 3907473.0,
+   "wo_best5": 3166317.0,
+   "PASS": true,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 2.38,
+   "sharpe_2020_2023": 1.54
+  },
+  {
+   "name": "V4_B_reforecast",
+   "study": "v2",
+   "src": "us_v2/ideas/v4_reforecast.py:28-37, run_ideas.py:122-123",
+   "arch": null,
+   "ens": null,
+   "note": "traded 2013 to 2019 only (reforecast ends 2019); zero 2020 to 2023 days kept in the Sharpe",
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": "GEFS",
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2019 traded, scored 2013-2023",
+   "sharpe": 2.83,
+   "net_per_year": 101426.0,
+   "total": 1115684.0,
+   "wo_best5": 997769.0,
+   "PASS": false,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 3.57,
+   "sharpe_2020_2023": null
+  },
+  {
+   "name": "V5_border_inputs",
+   "study": "v2",
+   "src": "us_v2/ideas/v5_border.py",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 1,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 1.96,
+   "net_per_year": 114546.0,
+   "total": 1260003.0,
+   "wo_best5": 1023111.0,
+   "PASS": true,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 2.61,
+   "sharpe_2020_2023": 1.49
+  },
+  {
+   "name": "V6_LI",
+   "study": "v2",
+   "src": "us_v2/ideas/v6_specialists.py",
+   "arch": null,
+   "ens": null,
+   "note": "one zone only (LONGIL), about 24 MWh a day",
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 1.26,
+   "net_per_year": 11706.0,
+   "total": 128768.0,
+   "wo_best5": 97050.0,
+   "PASS": false,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 1.03,
+   "sharpe_2020_2023": 1.6
+  },
+  {
+   "name": "V6_NYC",
+   "study": "v2",
+   "src": "us_v2/ideas/v6_specialists.py",
+   "arch": null,
+   "ens": null,
+   "note": "one zone only (N.Y.C.), about 24 MWh a day",
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 1.59,
+   "net_per_year": 9275.0,
+   "total": 102025.0,
+   "wo_best5": 87483.0,
+   "PASS": false,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 2.2,
+   "sharpe_2020_2023": 0.55
+  },
+  {
+   "name": "V7_flags",
+   "study": "v2",
+   "src": "us_v2/ideas/v7_regimes.py, v7_regimes.csv",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 1,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 1.88,
+   "net_per_year": 118833.0,
+   "total": 1307159.0,
+   "wo_best5": 1060221.0,
+   "PASS": true,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 2.57,
+   "sharpe_2020_2023": 1.41
+  },
+  {
+   "name": "V7_recency",
+   "study": "v2",
+   "src": "us_v2/ideas/v7_regimes.py:391, run_ideas.py:355-362",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 1,
+   "t_regime": 1,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 1.88,
+   "net_per_year": 119540.0,
+   "total": 1314936.0,
+   "wo_best5": 1067657.0,
+   "PASS": true,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 2.5,
+   "sharpe_2020_2023": 1.51
+  },
+  {
+   "name": "V8_error_mining",
+   "study": "v2",
+   "src": "us_v2/ideas/v8_error_mining.py",
+   "arch": null,
+   "ens": "base GBM + residual stage",
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 1,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 2.08,
+   "net_per_year": 131918.0,
+   "total": 1451096.0,
+   "wo_best5": 1197233.0,
+   "PASS": true,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 2.83,
+   "sharpe_2020_2023": 1.54
+  },
+  {
+   "name": "V9_decompose",
+   "study": "v2",
+   "src": "us_v2/ideas/v9_decompose.py:127-131",
+   "arch": null,
+   "ens": "3 models (energy, congestion, loss gaps) summed",
+   "note": "gap regression split by price part",
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 1.77,
+   "net_per_year": 109847.0,
+   "total": 1208319.0,
+   "wo_best5": 966230.0,
+   "PASS": true,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 2.72,
+   "sharpe_2020_2023": 1.08
+  },
+  {
+   "name": "V10_C_deep_pretrain",
+   "study": "v2",
+   "src": "us_v2/model/deep_rolling.py:51-95,139-170",
+   "arch": "GRU c1 (h64, 168 h) + MLP head, 24x11 multi-output, shared net, no zone embedding; 5 seeds",
+   "ens": "5 seeds",
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 0,
+   "m_deep": 1,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 1,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 1,
+   "i_border": 1,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 0,
+   "p_pairs": 1,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 1.78,
+   "net_per_year": 49038.0,
+   "total": 539422.0,
+   "wo_best5": 468898.0,
+   "PASS": false,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 2.43,
+   "sharpe_2020_2023": 0.89
+  },
+  {
+   "name": "V11_C_deep_ens4",
+   "study": "v2",
+   "src": "us_v2/model/deep_rolling.py:133-135",
+   "arch": "GRU c1 (h64, 168 h) + MLP head, 24x11 multi-output, shared net, no zone embedding; 5 seeds",
+   "ens": "4 windows x 5 seeds",
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 0,
+   "m_deep": 1,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 1,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 1,
+   "i_border": 1,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 0,
+   "p_pairs": 1,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 2.1,
+   "net_per_year": 58391.0,
+   "total": 642305.0,
+   "wo_best5": 569130.0,
+   "PASS": true,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 2.81,
+   "sharpe_2020_2023": 1.0
+  },
+  {
+   "name": "V11_C_gbm_ens4",
+   "study": "v2",
+   "src": "us_v2/model/gbm_rolling.py:410-412",
+   "arch": null,
+   "ens": "4 windows",
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 1,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 0,
+   "p_pairs": 1,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 1.45,
+   "net_per_year": 38426.0,
+   "total": 422684.0,
+   "wo_best5": 361009.0,
+   "PASS": false,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 1.17,
+   "sharpe_2020_2023": 1.98
+  },
+  {
+   "name": "V12_alloc",
+   "study": "v2 pending",
+   "src": "us_v2/model/alloc_v12.py",
+   "arch": "GateNet (deep_alloc14) over day features; 5 seeds x 3 kappa",
+   "ens": "allocator over v2 books",
+   "note": null,
+   "pending": "no pos/V12_alloc.parquet yet",
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 0,
+   "m_deep": 1,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": "?",
+   "i_outage": 1,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 1,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 0,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 1,
+   "p_sitout_days": 0,
+   "p_alloc": 1,
+   "period": "2013-2023",
+   "sharpe": null,
+   "net_per_year": null,
+   "total": null,
+   "wo_best5": null,
+   "PASS": null,
+   "sharpe_strategy_list": null
+  },
+  {
+   "name": "V13_C_deep_all",
+   "study": "v2 pending",
+   "src": "us_v2/model/v13_model.py, v13_data.py:3-17, v13_rolling.py",
+   "arch": "GRU / causal TCN / 2-layer 4-head attention (chosen per quarter), per-group encoders, 24x11x4 multi-task head; 5 seeds",
+   "ens": "5 seeds",
+   "note": null,
+   "pending": "v13.done absent",
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 0,
+   "m_deep": 1,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 1,
+   "i_border": 1,
+   "i_loadfc": 1,
+   "i_wx": "GEFS+GFS",
+   "i_outage": 1,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 1,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 0,
+   "p_pairs": 1,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": null,
+   "net_per_year": null,
+   "total": null,
+   "wo_best5": null,
+   "PASS": null,
+   "sharpe_strategy_list": null
+  },
+  {
+   "name": "V13_A_deep_all",
+   "study": "v2 pending",
+   "src": "us_v2/model/v13_rolling.py:194-198",
+   "arch": "GRU / causal TCN / 2-layer 4-head attention (chosen per quarter), per-group encoders, 24x11x4 multi-task head; 5 seeds",
+   "ens": "5 seeds",
+   "note": null,
+   "pending": "v13.done absent",
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 0,
+   "m_deep": 1,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 1,
+   "i_border": 1,
+   "i_loadfc": 1,
+   "i_wx": "GEFS+GFS",
+   "i_outage": 1,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 1,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 1,
+   "p_both": 0,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": null,
+   "net_per_year": null,
+   "total": null,
+   "wo_best5": null,
+   "PASS": null,
+   "sharpe_strategy_list": null
+  },
+  {
+   "name": "V14a_window_ens",
+   "study": "v2 pending",
+   "src": "us_v2/model/v14_gbm.py, v14_gru.py, v14_core.py:37",
+   "arch": "GRU c1 (seed 0) + GBM",
+   "ens": "5 windows (1,2,3,5 y, expanding) x {GRU, GBM}",
+   "note": null,
+   "pending": "v14.done absent",
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 1,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 0,
+   "t_window_ens": 1,
+   "t_pretrain_ft": 0,
+   "t_recency": 1,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 1,
+   "i_border": 1,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 0,
+   "p_pairs": 1,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": null,
+   "net_per_year": null,
+   "total": null,
+   "wo_best5": null,
+   "PASS": null,
+   "sharpe_strategy_list": null
+  },
+  {
+   "name": "V14b_quantile_size",
+   "study": "v2 pending",
+   "src": "us_v2/model/v14_gru.py:181-217, v14_positions.py:322-376",
+   "arch": "GRU with 24x11x5 pinball head; 3 seeds; plus GBM quantiles",
+   "ens": "3 seeds",
+   "note": null,
+   "pending": "v14.done absent",
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 1,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 1,
+   "i_border": 1,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 1,
+   "p_supply_only": 0,
+   "p_both": 0,
+   "p_pairs": 1,
+   "p_limit": 0,
+   "p_risk": 1,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": null,
+   "net_per_year": null,
+   "total": null,
+   "wo_best5": null,
+   "PASS": null,
+   "sharpe_strategy_list": null
+  },
+  {
+   "name": "V14c_conformal_skip",
+   "study": "v2 pending",
+   "src": "us_v2/model/v14_positions.py:331-387",
+   "arch": "reuses V1_C_deep GRU or GBM",
+   "ens": "5 seeds (GRU)",
+   "note": "skips pair-hours whose conformal interval crosses break-even",
+   "pending": "v14.done absent",
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 1,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 1,
+   "i_border": 1,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 0,
+   "p_pairs": 1,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": null,
+   "net_per_year": null,
+   "total": null,
+   "wo_best5": null,
+   "PASS": null,
+   "sharpe_strategy_list": null
+  },
+  {
+   "name": "V14d_seed_ens",
+   "study": "v2 pending",
+   "src": "us_v2/model/v14_gru.py:344-348",
+   "arch": "GRU c1 (h64, 168 h) + MLP head, 24x11 multi-output, shared net, no zone embedding; 10 seeds + GBM",
+   "ens": "10 GRU seeds + GBM",
+   "note": null,
+   "pending": "v14.done absent",
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 1,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 1,
+   "i_border": 1,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 0,
+   "p_pairs": 1,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": null,
+   "net_per_year": null,
+   "total": null,
+   "wo_best5": null,
+   "PASS": null,
+   "sharpe_strategy_list": null
+  },
+  {
+   "name": "V14e_mlp_multi",
+   "study": "v2 pending",
+   "src": "us_v2/model/v14_mlp.py:40-98, v14_core.py:76-80",
+   "arch": "MLP (256,128) on day matrix, 24x11 multi-output; 5 seeds",
+   "ens": "5 seeds",
+   "note": null,
+   "pending": "v14.done absent",
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 0,
+   "m_deep": 1,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 1,
+   "i_loadfc": 1,
+   "i_wx": "GEFS+GFS",
+   "i_outage": 1,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 0,
+   "p_pairs": 1,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": null,
+   "net_per_year": null,
+   "total": null,
+   "wo_best5": null,
+   "PASS": null,
+   "sharpe_strategy_list": null
+  },
+  {
+   "name": "V14f_global_zone",
+   "study": "v2 pending",
+   "src": "us_v2/model/v14_mlp.py:102-164",
+   "arch": "global row MLP (128,64), learned zone (8-d) + hour embedding; 5 seeds",
+   "ens": "5 seeds",
+   "note": "profit-shaped option: MSE + wrong-side hinge",
+   "pending": "v14.done absent",
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 0,
+   "m_deep": 1,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 1,
+   "i_loadfc": 1,
+   "i_wx": "GEFS",
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 1,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 0,
+   "p_pairs": 1,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": null,
+   "net_per_year": null,
+   "total": null,
+   "wo_best5": null,
+   "PASS": null,
+   "sharpe_strategy_list": null
+  }
+ ],
+ "meta": {
+  "with_without": [
+   {
+    "col": "m_none",
+    "all_with": [
+     2,
+     -0.06,
+     [
+      -0.4,
+      0.27
+     ]
+    ],
+    "all_without": [
+     48,
+     0.88,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "v1_with": [
+     1,
+     -0.4,
+     [
+      -0.4,
+      -0.4
+     ]
+    ],
+    "v1_without": [
+     31,
+     0.41,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v2_with": [
+     1,
+     0.27,
+     [
+      0.27,
+      0.27
+     ]
+    ],
+    "v2_without": [
+     17,
+     1.75,
+     [
+      0.58,
+      2.83
+     ]
+    ]
+   },
+   {
+    "col": "m_rule",
+    "all_with": [
+     11,
+     0.29,
+     [
+      -0.81,
+      1.03
+     ]
+    ],
+    "all_without": [
+     39,
+     1.0,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "v1_with": [
+     10,
+     0.26,
+     [
+      -0.81,
+      1.03
+     ]
+    ],
+    "v1_without": [
+     22,
+     0.44,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v2_with": [
+     1,
+     0.58,
+     [
+      0.58,
+      0.58
+     ]
+    ],
+    "v2_without": [
+     17,
+     1.73,
+     [
+      0.27,
+      2.83
+     ]
+    ]
+   },
+   {
+    "col": "m_gbm",
+    "all_with": [
+     22,
+     1.41,
+     [
+      0.1,
+      2.83
+     ]
+    ],
+    "all_without": [
+     28,
+     0.4,
+     [
+      -0.81,
+      2.25
+     ]
+    ],
+    "v1_with": [
+     9,
+     0.89,
+     [
+      0.1,
+      1.96
+     ]
+    ],
+    "v1_without": [
+     23,
+     0.18,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v2_with": [
+     13,
+     1.77,
+     [
+      0.74,
+      2.83
+     ]
+    ],
+    "v2_without": [
+     5,
+     1.4,
+     [
+      0.27,
+      2.25
+     ]
+    ]
+   },
+   {
+    "col": "m_deep",
+    "all_with": [
+     15,
+     0.54,
+     [
+      -0.81,
+      2.25
+     ]
+    ],
+    "all_without": [
+     35,
+     0.97,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "v1_with": [
+     12,
+     0.16,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v1_without": [
+     20,
+     0.51,
+     [
+      -0.81,
+      1.96
+     ]
+    ],
+    "v2_with": [
+     3,
+     2.04,
+     [
+      1.78,
+      2.25
+     ]
+    ],
+    "v2_without": [
+     15,
+     1.59,
+     [
+      0.27,
+      2.83
+     ]
+    ]
+   },
+   {
+    "col": "t_wf_monthly",
+    "all_with": [
+     21,
+     0.48,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "all_without": [
+     29,
+     1.11,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "v1_with": [
+     21,
+     0.48,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v1_without": [
+     11,
+     0.2,
+     [
+      -0.81,
+      1.03
+     ]
+    ],
+    "v2_with": [
+     0,
+     null,
+     null
+    ],
+    "v2_without": [
+     18,
+     1.67,
+     [
+      0.27,
+      2.83
+     ]
+    ]
+   },
+   {
+    "col": "t_roll3y_q",
+    "all_with": [
+     16,
+     1.82,
+     [
+      0.74,
+      2.83
+     ]
+    ],
+    "all_without": [
+     34,
+     0.38,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v1_with": [
+     0,
+     null,
+     null
+    ],
+    "v1_without": [
+     32,
+     0.38,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v2_with": [
+     16,
+     1.82,
+     [
+      0.74,
+      2.83
+     ]
+    ],
+    "v2_without": [
+     2,
+     0.42,
+     [
+      0.27,
+      0.58
+     ]
+    ]
+   },
+   {
+    "col": "t_window_ens",
+    "all_with": [
+     2,
+     1.78,
+     [
+      1.45,
+      2.1
+     ]
+    ],
+    "all_without": [
+     48,
+     0.81,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "v1_with": [
+     0,
+     null,
+     null
+    ],
+    "v1_without": [
+     32,
+     0.38,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v2_with": [
+     2,
+     1.78,
+     [
+      1.45,
+      2.1
+     ]
+    ],
+    "v2_without": [
+     16,
+     1.65,
+     [
+      0.27,
+      2.83
+     ]
+    ]
+   },
+   {
+    "col": "t_pretrain_ft",
+    "all_with": [
+     1,
+     1.78,
+     [
+      1.78,
+      1.78
+     ]
+    ],
+    "all_without": [
+     49,
+     0.83,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "v1_with": [
+     0,
+     null,
+     null
+    ],
+    "v1_without": [
+     32,
+     0.38,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v2_with": [
+     1,
+     1.78,
+     [
+      1.78,
+      1.78
+     ]
+    ],
+    "v2_without": [
+     17,
+     1.66,
+     [
+      0.27,
+      2.83
+     ]
+    ]
+   },
+   {
+    "col": "t_recency",
+    "all_with": [
+     1,
+     1.88,
+     [
+      1.88,
+      1.88
+     ]
+    ],
+    "all_without": [
+     49,
+     0.82,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "v1_with": [
+     0,
+     null,
+     null
+    ],
+    "v1_without": [
+     32,
+     0.38,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v2_with": [
+     1,
+     1.88,
+     [
+      1.88,
+      1.88
+     ]
+    ],
+    "v2_without": [
+     17,
+     1.66,
+     [
+      0.27,
+      2.83
+     ]
+    ]
+   },
+   {
+    "col": "t_regime",
+    "all_with": [
+     2,
+     1.88,
+     [
+      1.88,
+      1.88
+     ]
+    ],
+    "all_without": [
+     48,
+     0.8,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "v1_with": [
+     0,
+     null,
+     null
+    ],
+    "v1_without": [
+     32,
+     0.38,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v2_with": [
+     2,
+     1.88,
+     [
+      1.88,
+      1.88
+     ]
+    ],
+    "v2_without": [
+     16,
+     1.64,
+     [
+      0.27,
+      2.83
+     ]
+    ]
+   },
+   {
+    "col": "i_px_hist",
+    "all_with": [
+     47,
+     0.88,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "all_without": [
+     3,
+     0.3,
+     [
+      -0.4,
+      1.03
+     ]
+    ],
+    "v1_with": [
+     30,
+     0.39,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v1_without": [
+     2,
+     0.32,
+     [
+      -0.4,
+      1.03
+     ]
+    ],
+    "v2_with": [
+     17,
+     1.75,
+     [
+      0.58,
+      2.83
+     ]
+    ],
+    "v2_without": [
+     1,
+     0.27,
+     [
+      0.27,
+      0.27
+     ]
+    ]
+   },
+   {
+    "col": "i_px_parts",
+    "all_with": [
+     37,
+     1.06,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "all_without": [
+     13,
+     0.23,
+     [
+      -0.81,
+      1.03
+     ]
+    ],
+    "v1_with": [
+     21,
+     0.48,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v1_without": [
+     11,
+     0.2,
+     [
+      -0.81,
+      1.03
+     ]
+    ],
+    "v2_with": [
+     16,
+     1.82,
+     [
+      0.74,
+      2.83
+     ]
+    ],
+    "v2_without": [
+     2,
+     0.42,
+     [
+      0.27,
+      0.58
+     ]
+    ]
+   },
+   {
+    "col": "i_gen",
+    "all_with": [
+     10,
+     0.73,
+     [
+      -0.81,
+      2.25
+     ]
+    ],
+    "all_without": [
+     40,
+     0.87,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "v1_with": [
+     7,
+     0.16,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v1_without": [
+     25,
+     0.44,
+     [
+      -0.81,
+      1.96
+     ]
+    ],
+    "v2_with": [
+     3,
+     2.04,
+     [
+      1.78,
+      2.25
+     ]
+    ],
+    "v2_without": [
+     15,
+     1.59,
+     [
+      0.27,
+      2.83
+     ]
+    ]
+   },
+   {
+    "col": "i_border",
+    "all_with": [
+     11,
+     0.84,
+     [
+      -0.81,
+      2.25
+     ]
+    ],
+    "all_without": [
+     39,
+     0.85,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "v1_with": [
+     7,
+     0.16,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v1_without": [
+     25,
+     0.44,
+     [
+      -0.81,
+      1.96
+     ]
+    ],
+    "v2_with": [
+     4,
+     2.02,
+     [
+      1.78,
+      2.25
+     ]
+    ],
+    "v2_without": [
+     14,
+     1.57,
+     [
+      0.27,
+      2.83
+     ]
+    ]
+   },
+   {
+    "col": "i_loadfc",
+    "all_with": [
+     42,
+     1.02,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "all_without": [
+     8,
+     -0.06,
+     [
+      -0.81,
+      1.03
+     ]
+    ],
+    "v1_with": [
+     26,
+     0.52,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v1_without": [
+     6,
+     -0.22,
+     [
+      -0.81,
+      1.03
+     ]
+    ],
+    "v2_with": [
+     16,
+     1.82,
+     [
+      0.74,
+      2.83
+     ]
+    ],
+    "v2_without": [
+     2,
+     0.42,
+     [
+      0.27,
+      0.58
+     ]
+    ]
+   },
+   {
+    "col": "i_wx",
+    "all_with": [
+     16,
+     0.71,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "all_without": [
+     34,
+     0.91,
+     [
+      -0.81,
+      2.41
+     ]
+    ],
+    "v1_with": [
+     15,
+     0.57,
+     [
+      -0.81,
+      1.96
+     ]
+    ],
+    "v1_without": [
+     17,
+     0.22,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v2_with": [
+     1,
+     2.83,
+     [
+      2.83,
+      2.83
+     ]
+    ],
+    "v2_without": [
+     17,
+     1.6,
+     [
+      0.27,
+      2.41
+     ]
+    ]
+   },
+   {
+    "col": "i_outage",
+    "all_with": [
+     9,
+     0.15,
+     [
+      -0.81,
+      0.84
+     ]
+    ],
+    "all_without": [
+     41,
+     1.0,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "v1_with": [
+     9,
+     0.15,
+     [
+      -0.81,
+      0.84
+     ]
+    ],
+    "v1_without": [
+     23,
+     0.47,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v2_with": [
+     0,
+     null,
+     null
+    ],
+    "v2_without": [
+     18,
+     1.67,
+     [
+      0.27,
+      2.83
+     ]
+    ]
+   },
+   {
+    "col": "i_cal",
+    "all_with": [
+     37,
+     1.06,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "all_without": [
+     13,
+     0.23,
+     [
+      -0.81,
+      1.03
+     ]
+    ],
+    "v1_with": [
+     21,
+     0.48,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v1_without": [
+     11,
+     0.2,
+     [
+      -0.81,
+      1.03
+     ]
+    ],
+    "v2_with": [
+     16,
+     1.82,
+     [
+      0.74,
+      2.83
+     ]
+    ],
+    "v2_without": [
+     2,
+     0.42,
+     [
+      0.27,
+      0.58
+     ]
+    ]
+   },
+   {
+    "col": "i_resid",
+    "all_with": [
+     1,
+     2.08,
+     [
+      2.08,
+      2.08
+     ]
+    ],
+    "all_without": [
+     49,
+     0.82,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "v1_with": [
+     0,
+     null,
+     null
+    ],
+    "v1_without": [
+     32,
+     0.38,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v2_with": [
+     1,
+     2.08,
+     [
+      2.08,
+      2.08
+     ]
+    ],
+    "v2_without": [
+     17,
+     1.64,
+     [
+      0.27,
+      2.83
+     ]
+    ]
+   },
+   {
+    "col": "y_gap",
+    "all_with": [
+     23,
+     1.58,
+     [
+      -0.33,
+      2.83
+     ]
+    ],
+    "all_without": [
+     27,
+     0.22,
+     [
+      -0.81,
+      1.03
+     ]
+    ],
+    "v1_with": [
+     8,
+     0.99,
+     [
+      -0.33,
+      2.15
+     ]
+    ],
+    "v1_without": [
+     24,
+     0.18,
+     [
+      -0.81,
+      1.03
+     ]
+    ],
+    "v2_with": [
+     15,
+     1.9,
+     [
+      1.26,
+      2.83
+     ]
+    ],
+    "v2_without": [
+     3,
+     0.53,
+     [
+      0.27,
+      0.74
+     ]
+    ]
+   },
+   {
+    "col": "y_spike",
+    "all_with": [
+     11,
+     0.08,
+     [
+      -0.81,
+      0.89
+     ]
+    ],
+    "all_without": [
+     39,
+     1.06,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "v1_with": [
+     10,
+     0.01,
+     [
+      -0.81,
+      0.89
+     ]
+    ],
+    "v1_without": [
+     22,
+     0.55,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v2_with": [
+     1,
+     0.74,
+     [
+      0.74,
+      0.74
+     ]
+    ],
+    "v2_without": [
+     17,
+     1.72,
+     [
+      0.27,
+      2.83
+     ]
+    ]
+   },
+   {
+    "col": "y_zoneday",
+    "all_with": [
+     1,
+     0.66,
+     [
+      0.66,
+      0.66
+     ]
+    ],
+    "all_without": [
+     49,
+     0.85,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "v1_with": [
+     1,
+     0.66,
+     [
+      0.66,
+      0.66
+     ]
+    ],
+    "v1_without": [
+     31,
+     0.37,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v2_with": [
+     0,
+     null,
+     null
+    ],
+    "v2_without": [
+     18,
+     1.67,
+     [
+      0.27,
+      2.83
+     ]
+    ]
+   },
+   {
+    "col": "y_profit",
+    "all_with": [
+     2,
+     0.68,
+     [
+      0.67,
+      0.7
+     ]
+    ],
+    "all_without": [
+     48,
+     0.85,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "v1_with": [
+     2,
+     0.68,
+     [
+      0.67,
+      0.7
+     ]
+    ],
+    "v1_without": [
+     30,
+     0.36,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v2_with": [
+     0,
+     null,
+     null
+    ],
+    "v2_without": [
+     18,
+     1.67,
+     [
+      0.27,
+      2.83
+     ]
+    ]
+   },
+   {
+    "col": "y_quant",
+    "all_with": [
+     1,
+     1.9,
+     [
+      1.9,
+      1.9
+     ]
+    ],
+    "all_without": [
+     49,
+     0.82,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "v1_with": [
+     0,
+     null,
+     null
+    ],
+    "v1_without": [
+     32,
+     0.38,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v2_with": [
+     1,
+     1.9,
+     [
+      1.9,
+      1.9
+     ]
+    ],
+    "v2_without": [
+     17,
+     1.65,
+     [
+      0.27,
+      2.83
+     ]
+    ]
+   },
+   {
+    "col": "p_supply_only",
+    "all_with": [
+     19,
+     0.12,
+     [
+      -0.81,
+      0.91
+     ]
+    ],
+    "all_without": [
+     31,
+     1.29,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "v1_with": [
+     17,
+     0.08,
+     [
+      -0.81,
+      0.91
+     ]
+    ],
+    "v1_without": [
+     15,
+     0.73,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v2_with": [
+     2,
+     0.5,
+     [
+      0.27,
+      0.74
+     ]
+    ],
+    "v2_without": [
+     16,
+     1.81,
+     [
+      0.58,
+      2.83
+     ]
+    ]
+   },
+   {
+    "col": "p_both",
+    "all_with": [
+     23,
+     1.19,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "all_without": [
+     27,
+     0.55,
+     [
+      -0.81,
+      2.25
+     ]
+    ],
+    "v1_with": [
+     12,
+     0.6,
+     [
+      -0.81,
+      1.96
+     ]
+    ],
+    "v1_without": [
+     20,
+     0.25,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v2_with": [
+     11,
+     1.83,
+     [
+      0.58,
+      2.83
+     ]
+    ],
+    "v2_without": [
+     7,
+     1.41,
+     [
+      0.27,
+      2.25
+     ]
+    ]
+   },
+   {
+    "col": "p_pairs",
+    "all_with": [
+     9,
+     1.48,
+     [
+      -0.09,
+      2.25
+     ]
+    ],
+    "all_without": [
+     41,
+     0.71,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "v1_with": [
+     4,
+     1.11,
+     [
+      -0.09,
+      2.15
+     ]
+    ],
+    "v1_without": [
+     28,
+     0.28,
+     [
+      -0.81,
+      1.96
+     ]
+    ],
+    "v2_with": [
+     5,
+     1.77,
+     [
+      1.29,
+      2.25
+     ]
+    ],
+    "v2_without": [
+     13,
+     1.63,
+     [
+      0.27,
+      2.83
+     ]
+    ]
+   },
+   {
+    "col": "p_limit",
+    "all_with": [
+     1,
+     2.41,
+     [
+      2.41,
+      2.41
+     ]
+    ],
+    "all_without": [
+     49,
+     0.81,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "v1_with": [
+     0,
+     null,
+     null
+    ],
+    "v1_without": [
+     32,
+     0.38,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v2_with": [
+     1,
+     2.41,
+     [
+      2.41,
+      2.41
+     ]
+    ],
+    "v2_without": [
+     17,
+     1.62,
+     [
+      0.27,
+      2.83
+     ]
+    ]
+   },
+   {
+    "col": "p_risk",
+    "all_with": [
+     2,
+     1.4,
+     [
+      0.89,
+      1.9
+     ]
+    ],
+    "all_without": [
+     48,
+     0.82,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "v1_with": [
+     1,
+     0.89,
+     [
+      0.89,
+      0.89
+     ]
+    ],
+    "v1_without": [
+     31,
+     0.36,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v2_with": [
+     1,
+     1.9,
+     [
+      1.9,
+      1.9
+     ]
+    ],
+    "v2_without": [
+     17,
+     1.65,
+     [
+      0.27,
+      2.83
+     ]
+    ]
+   },
+   {
+    "col": "p_sitout_days",
+    "all_with": [
+     8,
+     0.24,
+     [
+      -0.81,
+      0.91
+     ]
+    ],
+    "all_without": [
+     42,
+     0.96,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "v1_with": [
+     8,
+     0.24,
+     [
+      -0.81,
+      0.91
+     ]
+    ],
+    "v1_without": [
+     24,
+     0.43,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v2_with": [
+     0,
+     null,
+     null
+    ],
+    "v2_without": [
+     18,
+     1.67,
+     [
+      0.27,
+      2.83
+     ]
+    ]
+   },
+   {
+    "col": "p_alloc",
+    "all_with": [
+     1,
+     0.7,
+     [
+      0.7,
+      0.7
+     ]
+    ],
+    "all_without": [
+     49,
+     0.85,
+     [
+      -0.81,
+      2.83
+     ]
+    ],
+    "v1_with": [
+     1,
+     0.7,
+     [
+      0.7,
+      0.7
+     ]
+    ],
+    "v1_without": [
+     31,
+     0.37,
+     [
+      -0.81,
+      2.15
+     ]
+    ],
+    "v2_with": [
+     0,
+     null,
+     null
+    ],
+    "v2_without": [
+     18,
+     1.67,
+     [
+      0.27,
+      2.83
+     ]
+    ]
+   }
+  ],
+  "ridge_alpha": 28.072162039411786,
+  "ridge_coef_standardised": [
+   [
+    "i_outage_b",
+    -0.147
+   ],
+   [
+    "y_gap_b",
+    0.131
+   ],
+   [
+    "y_spike_b",
+    -0.121
+   ],
+   [
+    "i_wx_b",
+    0.118
+   ],
+   [
+    "m_gbm_b",
+    0.116
+   ],
+   [
+    "study_v2",
+    0.115
+   ],
+   [
+    "p_supply_only_b",
+    -0.113
+   ],
+   [
+    "i_loadfc_b",
+    0.112
+   ],
+   [
+    "t_roll3y_q_b",
+    0.095
+   ],
+   [
+    "p_pairs_b",
+    0.088
+   ],
+   [
+    "m_deep_b",
+    -0.075
+   ],
+   [
+    "p_limit_b",
+    0.063
+   ],
+   [
+    "i_px_parts_b",
+    0.053
+   ],
+   [
+    "i_cal_b",
+    0.053
+   ],
+   [
+    "p_risk_b",
+    0.05
+   ],
+   [
+    "t_wf_monthly_b",
+    -0.043
+   ],
+   [
+    "p_both_b",
+    0.041
+   ],
+   [
+    "i_px_hist_b",
+    -0.04
+   ],
+   [
+    "m_rule_b",
+    -0.039
+   ],
+   [
+    "m_none_b",
+    -0.036
+   ],
+   [
+    "i_resid_b",
+    0.033
+   ],
+   [
+    "t_pretrain_ft_b",
+    0.027
+   ],
+   [
+    "y_zoneday_b",
+    0.024
+   ],
+   [
+    "y_profit_b",
+    0.023
+   ],
+   [
+    "t_regime_b",
+    0.018
+   ],
+   [
+    "t_window_ens_b",
+    0.013
+   ],
+   [
+    "i_border_b",
+    0.011
+   ],
+   [
+    "i_gen_b",
+    -0.007
+   ],
+   [
+    "t_recency_b",
+    0.007
+   ],
+   [
+    "y_quant_b",
+    -0.006
+   ],
+   [
+    "p_sitout_days_b",
+    -0.004
+   ],
+   [
+    "p_alloc_b",
+    -0.004
+   ]
+  ],
+  "ridge_top5_loo_count": {
+   "i_outage_b": 50,
+   "y_gap_b": 49,
+   "study_v2": 20,
+   "y_spike_b": 42,
+   "i_loadfc_b": 8,
+   "m_gbm_b": 34,
+   "i_wx_b": 39,
+   "p_supply_only_b": 7,
+   "p_pairs_b": 1
+  },
+  "tree_text": "|--- y_gap_b <= 0.50\n|   |--- m_gbm_b <= 0.50\n|   |   |--- y_spike_b <= 0.50\n|   |   |   |--- value: [0.32]\n|   |   |--- y_spike_b >  0.50\n|   |   |   |--- value: [-0.55]\n|   |--- m_gbm_b >  0.50\n|   |   |--- value: [0.60]\n|--- y_gap_b >  0.50\n|   |--- study_v2 <= 0.50\n|   |   |--- m_deep_b <= 0.50\n|   |   |   |--- value: [1.30]\n|   |   |--- m_deep_b >  0.50\n|   |   |   |--- value: [0.67]\n|   |--- study_v2 >  0.50\n|   |   |--- p_both_b <= 0.50\n|   |   |   |--- value: [1.77]\n|   |   |--- p_both_b >  0.50\n|   |   |   |--- value: [1.96]\n",
+  "tree_importance": [
+   [
+    "y_gap_b",
+    0.714
+   ],
+   [
+    "study_v2",
+    0.134
+   ],
+   [
+    "y_spike_b",
+    0.09
+   ],
+   [
+    "m_gbm_b",
+    0.035
+   ],
+   [
+    "m_deep_b",
+    0.024
+   ],
+   [
+    "p_both_b",
+    0.003
+   ]
+  ],
+  "top5": [
+   "V4_B_reforecast",
+   "V2_limit_gbm",
+   "V1_C_deep",
+   "C_deep",
+   "V11_C_deep_ens4"
+  ],
+  "top5_lack": [
+   [
+    "m_none",
+    2,
+    -0.06,
+    0.27
+   ],
+   [
+    "m_rule",
+    11,
+    0.29,
+    1.03
+   ],
+   [
+    "t_pretrain_ft",
+    1,
+    1.78,
+    1.78
+   ],
+   [
+    "t_recency",
+    1,
+    1.88,
+    1.88
+   ],
+   [
+    "t_regime",
+    2,
+    1.88,
+    1.88
+   ],
+   [
+    "i_outage",
+    9,
+    0.15,
+    0.84
+   ],
+   [
+    "i_resid",
+    1,
+    2.08,
+    2.08
+   ],
+   [
+    "y_spike",
+    11,
+    0.08,
+    0.89
+   ],
+   [
+    "y_zoneday",
+    1,
+    0.66,
+    0.66
+   ],
+   [
+    "y_profit",
+    2,
+    0.68,
+    0.7
+   ],
+   [
+    "y_quant",
+    1,
+    1.9,
+    1.9
+   ],
+   [
+    "p_supply_only",
+    19,
+    0.12,
+    0.91
+   ],
+   [
+    "p_risk",
+    2,
+    1.4,
+    1.9
+   ],
+   [
+    "p_sitout_days",
+    8,
+    0.24,
+    0.91
+   ],
+   [
+    "p_alloc",
+    1,
+    0.7,
+    0.7
+   ]
+  ]
+ }
+}

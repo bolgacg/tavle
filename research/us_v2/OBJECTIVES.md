@@ -31,3 +31,12 @@ Design
 
 7 Oct 2026, V13, registered before it runs (no held-out data read):
 V13. All-inputs deep model: one deep network fed every input public by 05:00 on D (zone and generator-point prices and their energy, congestion and loss parts, border prices, the operator's load forecasts, outage counts, archived weather forecasts where they exist, calendar), trained in the same rolling windows, predicting each zone's next-day gap; positions as in C and A. A fixed menu of at most three architectures (recurrent, temporal convolution, small attention), chosen on earlier windows only; strong regularisation and input dropout. Feature-group ablations (each input group removed in turn) show what each source adds. It is one idea in the count; the ablations are diagnostics, not extra strategies.
+
+7 Oct 2026, V14 family, six deep-learning setups approved by Bo, registered before any runs (research: research/us_v2/dl_setups_research.md; no held-out data read):
+V14a. Window ensemble: models trained on 1, 2, 3 and 5-year windows and an expanding window, recency-weighted, predictions averaged.
+V14b. Quantile heads (GRU and gradient boosting) used to size positions: smaller when the predicted range is wide.
+V14c. Conformal wrapper: calibrated intervals from earlier windows; skip an hour when its interval includes the fee-adjusted break-even.
+V14d. Seed ensemble of the GRU plus gradient boosting, averaged.
+V14e. One multi-output network for all 24 hours and 11 zones (the electricity-price benchmark design).
+V14f. One global model with learned zone embeddings; if time allows, an N-BEATSx/NHiTS variant or a profit-trained loss with a tail penalty, chosen on earlier windows only.
+Each is one idea in the count, same rolling windows, rules, placebos and fragility checks. The held-out run waits until all of them have finished.

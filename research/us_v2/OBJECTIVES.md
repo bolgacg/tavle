@@ -2,7 +2,7 @@
 
 Version 1 (research/us/) stays as published. Version 2 asks the same question with far more history and more ideas.
 The held-out years 2024-01-01 to 2026-09-30 are NOT read by v2 either: v2 is built and judged on 2010 to 2023 only,
-and then ONE held-out run tests the approved v1 and v2 candidates together (my rule: no design after seeing them).
+and then ONE held-out run tests the approved v1 and v2 candidates together (Bo's rule: no design after seeing them).
 
 Design
 - Rolling windows: train on the previous 3 years, test on the next quarter, roll quarterly, scored from 2013 to 2023
@@ -32,7 +32,7 @@ Design
 7 Oct 2026, V13, registered before it runs (no held-out data read):
 V13. All-inputs deep model: one deep network fed every input public by 05:00 on D (zone and generator-point prices and their energy, congestion and loss parts, border prices, the operator's load forecasts, outage counts, archived weather forecasts where they exist, calendar), trained in the same rolling windows, predicting each zone's next-day gap; positions as in C and A. A fixed menu of at most three architectures (recurrent, temporal convolution, small attention), chosen on earlier windows only; strong regularisation and input dropout. Feature-group ablations (each input group removed in turn) show what each source adds. It is one idea in the count; the ablations are diagnostics, not extra strategies.
 
-7 Oct 2026, V14 family, six deep-learning setups approved by me, registered before any runs (research: research/us_v2/dl_setups_research.md; no held-out data read):
+7 Oct 2026, V14 family, six deep-learning setups approved by Bo, registered before any runs (research: research/us_v2/dl_setups_research.md; no held-out data read):
 V14a. Window ensemble: models trained on 1, 2, 3 and 5-year windows and an expanding window, recency-weighted, predictions averaged.
 V14b. Quantile heads (GRU and gradient boosting) used to size positions: smaller when the predicted range is wide.
 V14c. Conformal wrapper: calibrated intervals from earlier windows; skip an hour when its interval includes the fee-adjusted break-even.
@@ -41,4 +41,9 @@ V14e. One multi-output network for all 24 hours and 11 zones (the electricity-pr
 V14f. One global model with learned zone embeddings; if time allows, an N-BEATSx/NHiTS variant or a profit-trained loss with a tail penalty, chosen on earlier windows only.
 Each is one idea in the count, same rolling windows, rules, placebos and fragility checks. The held-out run waits until all of them have finished.
 
-Wording note, 7 October 2026: earlier addenda referred to me in the third person and named the AI assistants that ran parts of the work; they are now written in my own voice. No rule, number or date changed; the git history keeps the original wording.
+7 Oct 2026, V15, four combinations the feature matrix showed were untried (research/us_v2/feature_matrix.md), registered before they run; no held-out data read:
+V15a. The limit-price rule (V2) applied to the V4 weather, V5 border and V8 error-mining models.
+V15b. The V13 all-inputs deep model traded on both sides and with limit prices, not only pairs and supply-only.
+V15c. One gradient-boosting model with weather and border inputs together; weather from the GEFS reforecast to 2019 and the GFS archive from 2021, never observed weather.
+V15d. The zone-pair rule driven by the V4 weather model.
+One idea in the count; same rolling windows, rules, placebos and fragility checks; the held-out run waits for it.

@@ -47,3 +47,6 @@ V15b. The V13 all-inputs deep model traded on both sides and with limit prices, 
 V15c. One gradient-boosting model with weather and border inputs together; weather from the GEFS reforecast to 2019 and the GFS archive from 2021, never observed weather.
 V15d. The zone-pair rule driven by the V4 weather model.
 One idea in the count; same rolling windows, rules, placebos and fragility checks; the held-out run waits for it.
+
+7 Oct 2026, V16, the last addition before the held-out run; no held-out data read:
+V16. Idea V4 (weather forecasts against the operator's load forecast) with a consistent forecast source: the GEFS reforecast to 2019 joined to the archived live GEFS forecasts (the same GEFS version 12 model) from 23 September 2020, control member, 00 UTC run, same leads and points; January to September 2020 has no forecast and is not traded. Same rolling windows and rules. The live GEFS archive for 2024 to 2026 is downloaded for the held-out run but sealed: only file counts are read before the run. After V16 the list of ideas is closed.

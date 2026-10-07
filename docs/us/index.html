@@ -238,6 +238,7 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
     <p class="hint"><b>Click a version</b> to switch every chart on the page. <b>Hover or tap</b> a chart to read one day.</p>
     <h2 class="ctitle" id="t-bank">Loading the build-year results</h2>
     <p class="csub">A 500,000 USD bankroll per strategy, after all fees; each strategy is sized so its worst build-year drop is 100,000 USD. "Pass the bar" means meeting the profit, steadiness and cost tests fixed before any model ran.</p>
+    <div class="lg" id="lg-bank" aria-hidden="true"></div>
     <div class="chart" id="ch-bank"></div>
     <p class="csub" style="margin:10px 0 2px">Below its own peak, percent</p>
     <div class="chart" id="ch-under"></div>
@@ -245,7 +246,7 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
     <div class="readout" id="ro-bank" aria-live="polite"></div>
     <div class="three">
       <p><b>what you see</b>Each line is one strategy's 500,000 USD bankroll, day by day after all fees; the lower panel shows how far it sat below its own previous high.</p>
-      <p><b>how to read</b>Blue lines are the candidates for the held-out run, red is always taking virtual supply, grey is the baseline; the dashed line is the start.</p>
+      <p><b>how to read</b>The three steadiest candidates by Sharpe ratio are named in strong colour, the other candidates are pale, red is always taking virtual supply and grey the baseline; the dashed line is the start.</p>
       <p><b>take-away</b><span id="k-bank">Each candidate ends above both plain rules, but only on years the models were built on; the hatched area is the held-out test, still to run.</span></p>
     </div>
     <p class="note" id="n-bank"></p>
@@ -339,11 +340,11 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
   <div class="card">
     <div class="vt" role="group" aria-label="Study version"><button data-v="v1" aria-pressed="true">Version 1</button><button data-v="v2" aria-pressed="false">Version 2</button></div>
     <h3 class="ctitle" id="t-placebo">Loading</h3>
-    <p class="csub">A placebo feeds the same rule the wrong dates. Bar: share of the real build-year profit still earned when the dates are shuffled (mean of 20 shuffles); beside it, the share kept by two other placebos: inputs one day late, and random days in the same months</p>
+    <p class="csub">Three-year build-year profit in USD at 1&nbsp;MW: the real rule, and the same rule fed shuffled dates (mean of 20 shuffles) or inputs one day late</p>
     <div class="chart" id="ch-placebo"></div>
     <div class="three">
-      <p><b>what you see</b>For each candidate, how much of its profit survives when its rule is fed shuffled dates.</p>
-      <p><b>how to read</b>A short blue bar means the timing did the work; a long grey bar near 100 means any dates earn the same, so the model adds little.</p>
+      <p><b>what you see</b>For each candidate, the real rule's profit (filled dot) beside the same rule fed the wrong dates (hollow marks).</p>
+      <p><b>how to read</b>A long line means the right dates earn much more, so the model's timing is real; dots close together mean any dates earn the same.</p>
       <p><b>take-away</b><span id="k-placebo"></span></p>
     </div>
     <div class="cfoot">Data: <a href="data/placebo.json">placebo.json</a> (every row, with per-year values). Placebos were registered with the ideas, before they ran.</div>
@@ -1248,7 +1249,20 @@ Design
     var r = rows.filter(function (r) { return r.reference; }).sort(function (a, b) { return a.name.indexOf('supply') >= 0 ? -1 : 1; });
     return c.concat(r);
   }
-  function rowColor(r) { return r.reference ? (r.name.indexOf('supply') >= 0 ? C.neg : C.grey) : C.acc; }
+  var TOP3 = {}, STRONG = ['#1f5f99', '#0f7f74', '#7a4f9a'];
+  function sharpe(r) {
+    var c = r.cum_net_usd_1mw, n = c.length, m = 0, d = new Array(n);
+    for (var i = 0; i < n; i++) { d[i] = i ? c[i] - c[i - 1] : c[0]; m += d[i]; }
+    m /= n; var v = 0; for (var j = 0; j < n; j++) v += (d[j] - m) * (d[j] - m);
+    return m / Math.sqrt(v / (n - 1)) * Math.sqrt(365);
+  }
+  function setTop3(v) {
+    TOP3 = {};
+    eq(v).rows.filter(function (r) { return r.candidate_by_rule; }).map(function (r) { return { r: r, s: sharpe(r) }; })
+      .sort(function (a, b) { return b.s - a.s; }).slice(0, 3).forEach(function (x, i) { TOP3[x.r.name] = { c: STRONG[i], s: x.s }; });
+  }
+  function isMinor(r) { return !r.reference && !TOP3[r.name]; }
+  function rowColor(r) { return r.reference ? (r.name.indexOf('supply') >= 0 ? C.neg : C.grey) : TOP3[r.name] ? TOP3[r.name].c : '#a9b7c6'; }
   function rowDash(r) { return r.name.indexOf('idea14') === 0 ? '5 3' : null; }
   function words(n) { return ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'][n] || String(n); }
   function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
@@ -1259,11 +1273,13 @@ Design
   // ---------- 1+2: bankroll and underwater, twin panels on one time axis ----------
   var bankGeo = null;
   function drawBank() {
+    setTop3(V);
     var box = $('#ch-bank'), ubox = $('#ch-under'), e = eq(V), dates = e.dates, rows = topRows(V);
     var w = W(box), narrow = w < 560, fs = narrow ? 10.5 : 11.5;
     var t0 = ms(dates[0]), tL = ms(last(dates)), tE = Math.max(ms(END), tL);
     var mL = narrow ? 38 : 48, mT = 26, H = narrow ? 260 : 330, mB = 24;
-    var Lw = Math.max.apply(null, rows.map(function (r) { return tw(sn(r.name) + ' ' + fmtM(last(r.bankroll_usd_sizing_view)), fs, 500); }));
+    var bankLab = function (r) { return (r.name.indexOf('idea14') === 0 ? 'Idea 14 (added late)' : sn(r.name)) + (TOP3[r.name] ? (narrow ? ' ' : ', Sharpe ') + TOP3[r.name].s.toFixed(1) : ''); };
+    var Lw = Math.max.apply(null, rows.filter(function (r) { return !isMinor(r); }).map(function (r) { return tw(bankLab(r), fs, 500); }));
     var f = (tL - t0) / (tE - t0);
     var g = Math.max(6, (Lw + 10 - (w - mL) * (1 - f)) / f);
     var P = w - mL - g, X = function (t) { return mL + (t - t0) / (tE - t0) * P; };
@@ -1290,30 +1306,29 @@ Design
     txt(s, mL + 4, Y(BANK) + (Y(BANK) > H - mB - 14 ? -5 : 13), 'start, 500,000', { fs: 10.5, fill: C.ink, cls: 'halo' });
     // lines
     var paths = {};
-    var order = rows.slice().reverse();
+    var order = rows.slice().reverse().sort(function (a, b) { return (isMinor(b) ? 1 : 0) - (isMinor(a) ? 1 : 0); });
     order.forEach(function (r) {
       var b = r.bankroll_usd_sizing_view, d = '';
       for (var i = 0; i < b.length; i++) d += (i ? 'L' : 'M') + X(ms(dates[i])).toFixed(1) + ' ' + Y(b[i]).toFixed(1);
-      paths[r.name] = el('path', { d: d, fill: 'none', stroke: rowColor(r), 'stroke-width': r.reference ? 1.7 : 1.6, 'stroke-dasharray': rowDash(r), 'stroke-linejoin': 'round', opacity: 0.95 });
+      paths[r.name] = el('path', { d: d, fill: 'none', stroke: rowColor(r), 'stroke-width': isMinor(r) ? 1 : 2, 'stroke-dasharray': rowDash(r), 'stroke-linejoin': 'round', opacity: 0.95 });
       s.appendChild(paths[r.name]);
     });
     // end labels
-    var items = rows.map(function (r) { return { r: r, y: Y(last(r.bankroll_usd_sizing_view)) + 4 }; });
+    var items = rows.filter(function (r) { return !isMinor(r); }).map(function (r) { return { r: r, y: Y(last(r.bankroll_usd_sizing_view)) + 4 }; });
     deoverlap(items, fs + 5, mT, H - mB - 6);
     var xl = X(tL) + 6;
     items.forEach(function (it) {
-      var t = txt(s, xl, it.y, (it.r.name.indexOf('idea14') === 0 ? 'Idea 14 (added late)' : sn(it.r.name)) + ' ' + fmtM(last(it.r.bankroll_usd_sizing_view)), { fs: fs, fill: rowColor(it.r), weight: 500, cls: 'halo' });
+      var t = txt(s, xl, it.y, bankLab(it.r), { fs: fs, fill: rowColor(it.r), weight: 500, cls: 'halo' });
       t.style.cursor = 'default';
       t.addEventListener('mouseenter', function () { focus(it.r.name); });
       t.addEventListener('mouseleave', function () { focus(null); });
     });
     function focus(n) { for (var k in paths) paths[k].setAttribute('opacity', !n || k === n ? 0.95 : 0.15); for (var k2 in upaths) upaths[k2].setAttribute('opacity', !n || k2 === n ? 0.9 : 0.12); }
-    var lgx = mL + 6, lgy = mT + 4;
-    [['candidates for the held-out run', C.acc, null], ['always supply (sell every hour)', C.neg, null], ['baseline', C.grey, null]].forEach(function (k, i) {
-      var yy = lgy + i * 13; ln_(s, lgx, yy - 4, lgx + 16, yy - 4, k[1], 2.2); txt(s, lgx + 21, yy, k[0], { fs: 10.5, fill: C.ink, cls: 'halo' });
-    });
+    var lgH = [['three steadiest candidates, by Sharpe ratio (named)', STRONG[0]], ['other candidates', '#a9b7c6'], ['always supply (sell every hour)', C.neg], ['baseline', C.grey]]
+      .map(function (k) { return '<span><svg width="18" height="8"><line x1="0" y1="4" x2="18" y2="4" stroke="' + k[1] + '" stroke-width="2.5"/></svg>' + k[0] + '</span>'; }).join('');
+    $('#lg-bank').innerHTML = lgH;
     var ell = Date.UTC(2022, 11, 23);
-    if (ell > t0 && ell < tL) txt(s, X(ell) - 5, mT + 58, 'Winter Storm Elliott', { fs: 10.5, fill: '#7a5208', anchor: 'end', weight: 600, cls: 'halo' });
+    if (ell > t0 && ell < tL) txt(s, X(ell) - 5, mT + 40, 'Winter Storm Elliott', { fs: 10.5, fill: '#7a5208', anchor: 'end', weight: 600, cls: 'halo' });
     var cross = el('line', { y1: mT - 8, y2: H - mB, stroke: C.ink, 'stroke-width': 1, opacity: 0 }); s.appendChild(cross);
     box.innerHTML = ''; box.appendChild(s);
 
@@ -1378,7 +1393,8 @@ Design
       sv.addEventListener('pointermove', function (ev) { onMove(ev, sv); });
       sv.addEventListener('pointerdown', function (ev) { onMove(ev, sv); });
     });
-    readBank(dates.length - 1);
+    $('#ro-bank').textContent = 'Hover or tap the chart to read any day.';
+    [s, us].forEach(function (sv) { sv.addEventListener('pointerleave', function () { cross.setAttribute('opacity', 0); ucross.setAttribute('opacity', 0); $('#ro-bank').textContent = 'Hover or tap the chart to read any day.'; }); });
 
     // title and notes
     var nC = cands.length, endC = cands.map(function (r) { return last(r.bankroll_usd_sizing_view); });
@@ -1431,7 +1447,7 @@ Design
       var mc = document.createElement('div'); mc.className = 'mc';
       var tot = Y.rows[r.name].reduce(function (a, b) { return a + b; }, 0);
       var steadyR = Y.rows[r.name].every(function (v) { return v > 0; });
-      mc.innerHTML = '<div class="mn" style="color:' + rowColor(r) + '">' + ln(r.name) + (steadyR ? ' <span style="font:500 10.5px var(--mono);color:#2f7d54;border:1px solid #9cc5ae;border-radius:3px;padding:0 4px">profit every year</span>' : '') + '<small>average ' + sgn(r.sizing_return_pct, 1) + '% of the bankroll a year</small></div>';
+      mc.innerHTML = '<div class="mn" style="color:' + (r.reference ? rowColor(r) : C.ink) + '">' + ln(r.name) + (steadyR ? ' <span style="font:500 10.5px var(--mono);color:#2f7d54;border:1px solid #9cc5ae;border-radius:3px;padding:0 4px">profit every year</span>' : '') + '<small>average ' + sgn(r.sizing_return_pct, 1) + '% of the bankroll a year</small></div>';
       var w = box.clientWidth < 460 ? box.clientWidth : 230, h = 132, mT = 14, mB = 30, mL = 4, mR = 4;
       var Yp = function (v) { return mT + (mx - v) / (mx + nmx) * (h - mT - mB); };
       var s = svg(w, h, ln(r.name) + ': yearly profit as a percent of the bankroll');
@@ -1459,12 +1475,21 @@ Design
       if (pend.length) txt(s, mL + (years.length + pend.length / 2) * bw, Yp(mx) + 12, 'not run yet', { anchor: 'middle', fs: 9.5, fill: '#8a5d09', cls: 'halo' });
       mc.appendChild(s); box.appendChild(mc);
     });
+    // annotate the single largest bar
+    var best = null; rows.forEach(function (r, k) { Y.rows[r.name].forEach(function (v, i) { var pv = pctOf(r, i); if (!best || pv > best.v) best = { k: k, i: i, v: pv, r: r }; }); });
+    if (best) {
+      var tot = Y.rows[best.r.name].reduce(function (a, b) { return a + b; }, 0), sh = Math.round(100 * Y.rows[best.r.name][best.i] / tot);
+      var note = document.createElement('p'); note.className = 'mnote';
+      note.style.cssText = 'font-size:12px;color:#7a5208;font-weight:600;margin:2px 0 0';
+      note.textContent = 'Look here: ' + years[best.i] + ' alone is ' + sh + '% of this strategy’s three-year profit' + (years[best.i] === 2022 ? ' (Winter Storm Elliott year)' : '');
+      box.children[best.k].appendChild(note);
+    }
     // title
     var cands = rows.filter(function (r) { return !r.reference; });
     var steady = cands.filter(function (r) { return Y.rows[r.name].every(function (v) { return v > 0; }); });
     var sup = rows.filter(function (r) { return r.reference && r.name.indexOf('supply') >= 0; })[0];
     var supLoss = Y.rows[sup.name].filter(function (v) { return v < 0; }).length;
-    var title = cap(words(steady.length)) + ' of the ' + words(cands.length) + ' candidates (blue names) earn in every build year; always supply loses money in ' + words(supLoss) + ' of ' + words(years.length) + ' years';
+    var title = cap(words(steady.length)) + ' of the ' + words(cands.length) + ' candidates earn in every build year; always supply loses money in ' + words(supLoss) + ' of ' + words(years.length) + ' years';
     setText('t-years', title);
     var others = cands.filter(function (r) { return steady.indexOf(r) < 0; }).map(function (r) {
       var y = Y.rows[r.name], bad = years.filter(function (_, i) { return y[i] <= 0; });
@@ -1600,56 +1625,53 @@ Design
     setText('ro-storm', 'Hover or tap the chart to read a day.');
   }
 
-  // ---------- 6: placebo, one bar per candidate ----------
+  // ---------- 6: placebo, paired dots on one USD axis ----------
   function drawPlacebo() {
     var box = $('#ch-placebo'), P = D.placebo[V], rows = topRows(V).filter(function (r) { return !r.reference; });
-    var w = W(box), narrow = w < 560, mL = narrow ? 10 : 132, mR = narrow ? 10 : 250, rowH = narrow ? 62 : 40, mT = narrow ? 58 : 46, mB = 26;
-    var H = mT + rows.length * rowH + mB, lo = -100, hi = narrow ? 165 : 120;
-    var X = function (v) { return mL + (Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo) * (w - mL - mR); };
-    var s = svg(w, H, 'Profit kept when the dates are shuffled');
-    [-100, -50, 0, 50, 100].forEach(function (t) {
-      ln_(s, X(t), mT - 8, X(t), H - mB, t === 0 ? C.ink : t === 100 ? C.acc : C.rule, t === 0 || t === 100 ? 1.3 : 1, t === 100 ? '4 3' : null);
-      txt(s, X(t), H - mB + 15, (t < 0 ? '−' : '') + Math.abs(t) + '%', { anchor: t === lo ? 'start' : 'middle', fs: 10.5, cls: 'm' });
+    var w = W(box), narrow = w < 560, mL = narrow ? 10 : 120, mR = 18, rowH = narrow ? 66 : 44, mT = narrow ? 44 : 30, mB = 28;
+    var H = mT + rows.length * rowH + mB, vals = [0];
+    rows.forEach(function (r) { var p = P[r.name]; [p.real_total, p.permuted_mean_total, p.one_day_late_total].forEach(function (v) { if (v != null) vals.push(v); }); });
+    var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals), pad = (hi - lo) * 0.06; lo -= pad; hi += pad;
+    var X = function (v) { return mL + (v - lo) / (hi - lo) * (w - mL - mR); };
+    var s = svg(w, H, 'Real profit against placebos');
+    // legend
+    var lx = narrow ? 10 : mL;
+    s.appendChild(el('circle', { cx: lx + 5, cy: 10, r: 5, fill: C.acc })); txt(s, lx + 14, 14, 'real rule', { fs: 10.5, fill: C.ink });
+    s.appendChild(el('circle', { cx: lx + 85, cy: 10, r: 5, fill: '#fff', stroke: C.ink, 'stroke-width': 1.6 })); txt(s, lx + 94, 14, 'dates shuffled', { fs: 10.5, fill: C.ink });
+    s.appendChild(el('rect', { x: lx + 190, y: 5, width: 9, height: 9, fill: '#fff', stroke: C.faint, 'stroke-width': 1.5 })); txt(s, lx + 204, 14, 'inputs one day late', { fs: 10.5, fill: C.ink });
+    niceTicks(lo, hi, narrow ? 3 : 6).forEach(function (t) {
+      ln_(s, X(t), mT - 6, X(t), H - mB, t === 0 ? C.ink : C.rule, t === 0 ? 1.2 : 1);
+      txt(s, X(t), H - mB + 15, t === 0 ? '0' : fmtM(t).replace('-', '−'), { anchor: 'middle', fs: 10.5, cls: 'm' });
     });
-    var lgY = 12;
-    s.appendChild(el('rect', { x: narrow ? 10 : mL, y: lgY - 9, width: 12, height: 10, fill: C.acc })); txt(s, (narrow ? 10 : mL) + 17, lgY, 'profit depends on timing (what a real signal does)', { fs: 10.5, fill: C.ink });
-    var lg2 = (narrow ? 10 : mL) + (narrow ? 0 : 320), lg2y = narrow ? lgY + 15 : lgY;
-    s.appendChild(el('rect', { x: lg2, y: lg2y - 9, width: 12, height: 10, fill: '#9aa3ad' })); txt(s, lg2 + 17, lg2y, 'profit survives wrong dates (a fixed habit)', { fs: 10.5, fill: C.ink });
-    txt(s, X(100), mT - 14, 'real rule = 100%', { anchor: 'middle', fs: 10.5, fill: C.acc, weight: 600 });
-    txt(s, X(0) - 4, mT - 14, 'nothing kept', { anchor: 'end', fs: 10.5, fill: C.ink });
-    var stats = [];
+    txt(s, X(0) + 4, narrow ? mT - 8 : H - mB - 4, 'no profit', { fs: 10, fill: C.soft, cls: 'halo' });
+    var adds = [];
     rows.forEach(function (r, j) {
-      var p = P[r.name], R = p.real_total, f = function (x) { return x == null ? null : 100 * x / R; };
-      var pm = f(p.permuted_mean_total), late = f(p.one_day_late_total), rd = f(p.random_days_median_total);
-      var y = mT + j * rowH + (narrow ? 34 : rowH / 2);
+      var p = P[r.name], R0 = p.real_total, sh = p.permuted_mean_total, late = p.one_day_late_total;
+      var y = mT + j * rowH + (narrow ? 36 : rowH / 2 + 4);
       if (j) ln_(s, 0, mT + j * rowH, w, mT + j * rowH, '#f0eee9', 1);
-      var habit = pm >= 50, col = habit ? '#9aa3ad' : C.acc;
-      if (narrow) txt(s, mL, y - 16, sn(r.name) + ', real profit ' + fmtM(R) + ' USD at 1 MW', { fs: 11.5, fill: C.ink, weight: 600, cls: 'halo' });
-      else txt(s, mL - 10, y + 4, sn(r.name), { anchor: 'end', fs: 12.5, fill: C.ink, weight: 600 });
-      s.appendChild(el('rect', { x: X(0), y: y - 7, width: X(100) - X(0), height: 14, fill: '#f1f0ec' }));
-      var x0 = X(Math.min(0, pm)), x1 = X(Math.max(0, pm));
-      var b = el('rect', { x: x0, y: y - 7, width: Math.max(1.5, x1 - x0), height: 14, fill: col });
-      b.appendChild(el('title', {}, 'dates shuffled: ' + Math.round(pm) + '% kept; one day late: ' + (late == null ? 'n/a' : Math.round(late) + '%') + '; random days: ' + (rd == null ? 'n/a' : Math.round(rd) + '%')));
-      s.appendChild(b);
-      var lab = pm < 0 ? 'loses money (' + '−' + Math.abs(Math.round(pm)) + '%)' : 'keeps ' + Math.round(pm) + '%';
-      var lx = pm >= 0 ? x1 + 5 : X(0) + 5;
-      txt(s, lx, y + 4, lab, { anchor: 'start', fs: 11, fill: habit ? C.soft : C.acc, weight: 600, cls: 'halo' });
-      var pc = function (x) { return x == null ? 'n/a' : (x < -0.5 ? '−' : '') + Math.abs(Math.round(x)) + '%'; };
-      var side = 'other placebos: day late ' + pc(late) + ', random days ' + pc(rd);
-      if (narrow) txt(s, mL, y + 21, side, { fs: 10, fill: C.soft, cls: 'm halo' });
-      else { txt(s, w - mR + 14, y, 'real profit ' + fmtM(R) + ' USD at 1 MW', { fs: 10.5, fill: C.soft, cls: 'm' }); txt(s, w - mR + 14, y + 12, 'day late ' + pc(late) + ', random ' + pc(rd), { fs: 10, fill: C.soft, cls: 'm' }); }
-      stats.push({ r: r, pm: pm, habit: habit });
+      if (narrow) txt(s, 10, y - 18, sn(r.name), { fs: 12, fill: C.ink, weight: 600, cls: 'halo' });
+      else txt(s, mL - 12, y + 4, sn(r.name), { anchor: 'end', fs: 12.5, fill: C.ink, weight: 600 });
+      if (sh != null) {
+        ln_(s, X(sh), y, X(R0), y, C.acc, 2.5);
+        var gain = R0 - sh, mid = (X(sh) + X(R0)) / 2, gw = Math.abs(X(R0) - X(sh));
+        var gt = (gain >= 0 ? 'timing adds ' : 'timing costs ') + fmtM(Math.abs(gain));
+        var gtw = tw(gt, 10.5, 600);
+        var gx = gw > gtw + 8 ? mid : Math.max(X(R0), X(sh)) + 10 + gtw / 2;
+        if (gx + gtw / 2 > w - 2) gx = Math.min(X(R0), X(sh)) - 10 - gtw / 2;
+        txt(s, gx, narrow ? y + 19 : y - 8, gt, { anchor: 'middle', fs: 10.5, fill: gain >= 0 ? C.acc : C.neg, weight: 600, cls: 'halo' });
+        adds.push({ r: r, gain: gain, share: gain / R0 });
+      }
+      if (late != null) { var q = el('rect', { x: X(late) - 4.5, y: y - 4.5, width: 9, height: 9, fill: '#fff', stroke: C.faint, 'stroke-width': 1.5 }); q.appendChild(el('title', {}, 'one day late: ' + fmt(late) + ' USD')); s.appendChild(q); }
+      if (sh != null) { var hc = el('circle', { cx: X(sh), cy: y, r: 5.5, fill: '#fff', stroke: C.ink, 'stroke-width': 1.8 }); hc.appendChild(el('title', {}, 'dates shuffled: ' + fmt(sh) + ' USD')); s.appendChild(hc); }
+      var rc = el('circle', { cx: X(R0), cy: y, r: 6, fill: C.acc }); rc.appendChild(el('title', {}, 'real rule: ' + fmt(R0) + ' USD')); s.appendChild(rc);
     });
     box.innerHTML = ''; box.appendChild(s);
-    var timing = stats.filter(function (x) { return !x.habit; }).map(function (x) { return sn(x.r.name); });
-    var habit = stats.filter(function (x) { return x.habit; }).map(function (x) { return sn(x.r.name); });
-    var title = habit.length
-      ? cap(words(timing.length)) + ' candidates lose most of their profit when the dates are shuffled, as a real signal should; ' + list(habit) + ' keep most of theirs, so it does not come from timing'
-      : 'Shuffling the dates wipes out most of every candidate\'s profit, so the timing of the rules does the work';
+    var title = 'The gap between the dots is what each model’s timing adds';
     setText('t-placebo', title); s.setAttribute('aria-label', title);
-    setText('k-placebo', V === 'v1'
-      ? 'Blue bars are profit that depends on knowing which day it is; grey bars are profit a fixed habit earns on any dates, which for C deep and idea 14 is mostly holding the same zone pairs.'
-      : 'Blue bars are profit that depends on knowing which day it is; grey bars are profit a fixed habit earns on any dates; the audit found about 76 percent of C deep is a fixed zone-pair spread.');
+    var small = adds.filter(function (a) { return a.share < 0.3; }).map(function (a) { return sn(a.r.name); });
+    var big = adds.filter(function (a) { return a.share >= 0.3; }).map(function (a) { return sn(a.r.name); });
+    setText('k-placebo', (big.length ? 'For ' + list(big) + ' most of the profit disappears when the dates are shuffled, so the timing is real. ' : '') +
+      (small.length ? 'For ' + list(small) + ' the shuffled rule earns nearly as much, so the profit comes from a fixed habit, not timing.' : ''));
   }
 
   // ---------- 7: seeds ----------
@@ -1735,6 +1757,10 @@ Design
       }
     });
     ln_(s, X(5), 20, X(5), H - 22, C.neg, 1.6, '5 3');
+    var daRow = 6, yda = mT + daRow * rowH + 18;
+    ln_(s, X(5), yda, X(9.83), yda, '#7a5208', 2);
+    ln_(s, X(5), yda - 4, X(5), yda + 4, '#7a5208', 2); ln_(s, X(9.83), yda - 4, X(9.83), yda + 4, '#7a5208', 2);
+    txt(s, X(9.83) + 10, yda + 4, narrow ? 'about 5 hours blind' : 'about 5 hours in which the bet is fixed but its price is unknown', { fs: 10.5, fill: '#7a5208', weight: 600, cls: 'halo' });
     var lgy = mT + INPUTS.length * rowH + 6, lgx = X(-22); s.appendChild(el('rect', { x: lgx, y: lgy - 9, width: 18, height: 7, rx: 3, fill: C.acc })); txt(s, lgx + 23, lgy - 2, narrow ? 'over a span' : 'published over a span', { fs: 10, fill: C.soft, cls: 'halo' });
     s.appendChild(el('circle', { cx: lgx + 9, cy: lgy + 9, r: 4, fill: C.acc })); txt(s, lgx + 23, lgy + 12, narrow ? 'once' : 'published once', { fs: 10, fill: C.soft, cls: 'halo' });
     txt(s, X(5) + 4, 28, 'bids close 05:00 (clock starts here)', { fs: 10.5, fill: C.neg, weight: 600, cls: 'halo' });

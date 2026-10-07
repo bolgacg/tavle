@@ -23,3 +23,8 @@ Design
   V12. Learned allocator over the v2 survivors (the idea 14 lineage).
 - Weather-based ideas run only on years that have archived forecasts; any idea that cannot be built from public
   data available at 05:00 on D is reported as not run.
+
+7 Oct 2026, after the stage-1 audit (research/us_v2/audit/v2_stage1_audit.md), before any held-out data is read:
+- Comparison row added: C static pairs, no model. Each registered pair takes, for every hour, its prior-window usual side (the sign of its average gap in the 3 training years), 1 MW, same costs. It is the benchmark for how much the C models add beyond a persistent congestion spread.
+- Comparison row added: V2 sides without limits (the gradient-boosting side at every hour, 1 MW, no limit price), because the audit showed the limit prices add nothing and the profit comes from the side.
+- Labels corrected: V2's result is reported as the gradient-boosting direction model; V3 is reported per MWh and at 1 MW, since its total reflects position size.

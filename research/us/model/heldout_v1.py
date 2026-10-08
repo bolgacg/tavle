@@ -9,7 +9,9 @@ Runs only in the dry-run or held-out mode of heldout_mode.py (US_RUN_MODE=dryrun
     heldout  test window 2024-01-01 to 2026-09-30; opens only through the lock on the frozen clone (heldout.sh).
 
     python heldout_v1.py all          every stage below in order (restartable: a finished stage is skipped)
-    python heldout_v1.py <stage>      seed panel gbm dayfeat policy deep deepday export alloc14 lab compare
+    python heldout_v1.py <stage> ...  seed panel gbm dayfeat policy11 policy12 deep_base deep_weather deep_outages
+                                      deep_spike deepday policy_merge export alloc14 lab compare (a stage another
+                                      process is running is waited for, not run twice)
     python heldout_v1.py plan         print the window, the paths and the stages, read nothing
 
 Rules (the build's, unchanged; this file only points the build code at the window and at US_RUN_DIR):
@@ -21,8 +23,8 @@ Rules (the build's, unchanged; this file only points the build code at the windo
     the tail cut) and monthly refits on data up to two days before each month. Build years are read from the
     copied caches only: a missing build-year cache stops the run instead of refitting. In the dry run the
     rehearsal's 2023 choices and predictions are not reused, so the generic year-Y path makes them again.
-  * deep (model/train_deep.py wf, configuration c2, seeds 0 to 2, S from model/spike_config.json), deepday
-    (model/train_deep_day.py walk, 5 seeds), policy (model/deep_policy.py, ideas 11 and 12, every lambda, CPU,
+  * deep (model/train_deep.py wf, configuration c2, seeds 0 to 2, S from model/spike_config.json, GPU), deepday
+    (model/train_deep_day.py walk, 5 seeds, CPU with 2 threads as the build ran it), policy (model/deep_policy.py, ideas 11 and 12, every lambda, CPU,
     one thread), alloc14 (model/deep_alloc14.py, every kappa): monthly refits over the window; each year's
     p*, lambda and kappa chosen on the year before from the combined (build plus window) walk-forward.
   * export: model/evaluate.ledgers_for for every year as side/lead_export.py does (lead positions).
@@ -368,9 +370,10 @@ def stage_deepday():
     import deep_day as DY
     import train_deep_day as TDD
     torch.set_num_threads(2)                               # as the build (train_deep_day.py --threads 2)
-    _wait_gpu()
     df = pd.read_parquet(FEATS)
-    out, recs = TDD.walk(df, (W0, W1), DY.SEEDS, None, log=log)
+    # On the CPU, as the build's run was: its 2023-01 refit's best epochs are reproduced on the CPU only (the GPU
+    # gives other, equally repeatable, epochs), so the registered walk-forward is the CPU one.
+    out, recs = TDD.walk(df, (W0, W1), DY.SEEDS, "cpu", log=log)
     seed_rows = pd.read_parquet(RES / "seed" / "deep_day_wf_before_window.parquet")
     allr = pd.concat([seed_rows, out], ignore_index=True)
     allr["delivery_date"] = pd.to_datetime(allr["delivery_date"])
@@ -1004,15 +1007,44 @@ STAGES = {"seed": seed, "panel": stage_panel, "gbm": stage_gbm, "dayfeat": stage
           "alloc14": stage_alloc14, "lab": stage_lab, "compare": stage_compare}
 
 
+def _alive(pid: int) -> bool:
+    try:
+        os.kill(pid, 0)
+        return True
+    except OSError:
+        return False
+
+
 def run_stage(name: str, force: bool = False):
-    if _done(name).exists() and not force:
-        log(f"{name}: done before, skipped")
-        return
-    log(f"{name}: start ({MODE}, window {W0}..{W1}, run dir {RUN})")
-    t0 = time.time()
-    extra = STAGES[name]()
-    _record(name, time.time() - t0, extra if isinstance(extra, dict) else None)
-    log(f"{name}: done in {time.time() - t0:.0f} s")
+    """Run a stage once; a second process asking for a stage another live process is running waits for it."""
+    DONE.mkdir(parents=True, exist_ok=True)
+    running = DONE / f"{name}.running"
+    while True:
+        if _done(name).exists() and not force:
+            log(f"{name}: done before, skipped")
+            return
+        try:
+            fd = os.open(running, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            os.write(fd, str(os.getpid()).encode())
+            os.close(fd)
+            break
+        except FileExistsError:
+            try:
+                pid = int(running.read_text() or 0)
+            except (OSError, ValueError):
+                pid = 0
+            if pid and _alive(pid):
+                time.sleep(30)
+                continue
+            running.unlink(missing_ok=True)                 # left by a process that died
+    try:
+        log(f"{name}: start ({MODE}, window {W0}..{W1}, run dir {RUN})")
+        t0 = time.time()
+        extra = STAGES[name]()
+        _record(name, time.time() - t0, extra if isinstance(extra, dict) else None)
+        log(f"{name}: done in {time.time() - t0:.0f} s")
+    finally:
+        running.unlink(missing_ok=True)
 
 
 def run_all():
@@ -1041,12 +1073,13 @@ def plan():
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("stage", choices=["all", "plan", *STAGES])
+    ap.add_argument("stage", nargs="+", choices=["all", "plan", *STAGES])
     ap.add_argument("--force", action="store_true", help="rerun a stage that finished before")
     a = ap.parse_args()
-    if a.stage == "plan":
-        plan()
-    elif a.stage == "all":
-        run_all()
-    else:
-        run_stage(a.stage, a.force)
+    for st in a.stage:
+        if st == "plan":
+            plan()
+        elif st == "all":
+            run_all()
+        else:
+            run_stage(st, a.force)

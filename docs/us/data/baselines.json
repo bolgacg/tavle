@@ -1,0 +1,47 @@
+{
+ "written": "2026-10-08",
+ "basis_usd": 500000,
+ "years": "2013 to 2023 (11 calendar years, the version 2 scoring years)",
+ "rule": "A strategy's profits are not reinvested (fixed position size), so the matched baseline is the average yearly return times 500,000 times 11 years, also not reinvested. The compounded value is given beside it.",
+ "sp500": {
+  "source": "Aswath Damodaran, Historical Returns on Stocks, Bonds and Bills (NYU Stern), S&P 500 return including dividends",
+  "url": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/histretSP.html",
+  "annual_total_return_pct": {
+   "2013": 32.15,
+   "2014": 13.52,
+   "2015": 1.38,
+   "2016": 11.77,
+   "2017": 21.61,
+   "2018": -4.23,
+   "2019": 31.21,
+   "2020": 18.02,
+   "2021": 28.47,
+   "2022": -18.04,
+   "2023": 26.06
+  },
+  "average_pct": 14.72,
+  "profit_not_reinvested_usd": 809600,
+  "profit_compounded_usd": 1534648
+ },
+ "deposit": {
+  "source": "Danmarks Nationalbank, Statbank table DNRUIPI: banks' outstanding domestic deposits, households, all currencies, all maturities, annualised agreed rate; monthly values averaged per year",
+  "url": "https://www.statbank.dk/DNRUIPI",
+  "annual_rate_pct": {
+   "2013": 1.027,
+   "2014": 0.947,
+   "2015": 0.613,
+   "2016": 0.475,
+   "2017": 0.387,
+   "2018": 0.323,
+   "2019": 0.262,
+   "2020": 0.117,
+   "2021": -0.099,
+   "2022": -0.004,
+   "2023": 0.967
+  },
+  "average_pct": 0.456,
+  "profit_not_reinvested_usd": 25075,
+  "profit_compounded_usd": 25614,
+  "note": "a Danish krone rate applied to a dollar sum, as a stand-in for what idle cash earned at a bank"
+ }
+}

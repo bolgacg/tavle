@@ -246,7 +246,14 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
 .file{font-family:var(--mono);font-size:.88em;color:var(--soft)}
 .err{font-size:13px;color:var(--neg);padding:10px 0}
 /* what the strategies are made of */
-:root{--b9:#f6d3c2}
+:root{--b9:#f6d3c2;--b10:#dfe6f0}
+.cnum{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--soft);margin:6px 0 2px}
+.cnum b{font-family:var(--mono);font-weight:500;color:var(--ink)}
+#ch-v2rank g.v2r{cursor:pointer}#ch-v2rank g.v2r:hover rect.v2hit{fill:#f1f4f8}#ch-v2rank g.v2r:focus{outline:none}#ch-v2rank g.v2r:focus rect.v2hit{stroke:#2c4a6b}
+#v2-card{margin-top:12px}
+.stl{list-style:none;padding:0;margin:14px 0 0}.stl li{display:grid;grid-template-columns:110px 1fr;gap:4px 14px;padding:8px 0;border-top:1px solid var(--rule);font-size:15px}
+.stl .d{font-family:var(--mono);font-size:12px;color:var(--soft);padding-top:3px}.stl .done .d{color:var(--pos)}.stl .todo .d{color:#8a5d09}
+@media (max-width:640px){.stl li{grid-template-columns:1fr}}
 .fm-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}
 .fm-tabs[hidden]{display:none}
 .fm-tabs button{font:500 13px var(--sans);min-height:36px;border:1px solid var(--rule2);background:var(--card);color:var(--ink);border-radius:6px;padding:6px 12px;cursor:pointer}
@@ -263,6 +270,9 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
   <li><a href="#bankroll" style="--band:var(--b1)">Results so far</a></li>
   <li><a href="#primer" style="--band:var(--b2)">The bet</a></li>
   <li><a href="#strategies" style="--band:var(--b3)">The strategies</a></li>
+  <li><a href="#v2rank" style="--band:var(--b10)">Version 2 results</a></li>
+  <li><a href="#weather" style="--band:var(--b10)">The weather row</a></li>
+  <li><a href="#deep" style="--band:var(--b10)">Deep models</a></li>
   <li><a href="#made" style="--band:var(--b9)">What they are made of</a></li>
   <li><a href="#where" style="--band:var(--b4)">Where the money came from</a></li>
   <li><a href="#clean" style="--band:var(--b5)">Luck and leaks</a></li>
@@ -273,9 +283,10 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
 </ol></nav>
 
 <header><div class="wrap">
-  <div class="eyebrow">Study &middot; held-out run pending</div>
+  <div class="eyebrow">Study &middot; held-out run pending, freeze by 10 October 2026</div>
   <h1>Can a model trade New York's <span style="white-space:nowrap">day-ahead</span> to <span style="white-space:nowrap">real-time</span> gap after costs?</h1>
-  <p class="dek">This study bets on the gap between New York's day-ahead and real-time power prices with virtual positions, using only what is public at the 05:00 bidding deadline and paying every fee; it has scored <span data-k="nRowsAll">43</span> strategies so far (<span data-k="nRows1">33</span> in version 1, <span data-k="nRows2">10</span> in version 2). On the build years, <span data-k="nCand1">6</span> version 1 and <span data-k="nCand2">6</span> version 2 strategies pass a bar fixed before any model ran; January 2024 to September 2026 stays sealed for one held-out run (a single test on years no model has seen) that has not happened yet, and every rule change and audit finding is dated in public.</p>
+  <p class="dek">New York's grid sells each hour of power twice: a day-ahead price is set the day before, and a real-time price as the hour happens. This study bets on the gap between the two with virtual positions, paper trades that buy at one price and sell at the other with no power delivered, using only what is public at the 05:00 bidding deadline and paying every fee.</p>
+  <p class="dek" style="margin-top:10px">I have scored <span data-k="nRowsAll">71</span> strategies on the years I built them on: <span data-k="nRows1">33</span> in version 1 (2021 to 2023) and <span data-k="nRows2">38</span> in version 2 (2013 to 2023), and <span data-k="nCand1L">7</span> and <span data-k="nCand2">26</span> of them pass a bar fixed before any model ran. January 2024 to September 2026 stays sealed for one held-out run, a single test on years no model has seen; it has not happened, so no held-out number appears anywhere on this page.</p>
   
   <div class="byline"><span>Bolgaç Gülen &middot; October 2026</span><span>&middot;</span>
     <a href="https://github.com/bolgacg/tavle/blob/master/research/us/OBJECTIVES.md">the objectives file</a><span>&middot;</span>
@@ -305,7 +316,7 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
       <p><b>take-away</b><span id="k-bank">Each candidate ends above both plain rules, but only on years the models were built on; the hatched area is the held-out test, still to run.</span></p>
     </div>
     <p class="note" id="n-bank"></p>
-    <p class="note">Each strategy's fixed size (its sizing view) is the one at which its worst build-year fall from a high, its drawdown, is 100,000 USD. "Pass the bar" means the tests in <a href="#primer">The bet</a>. Names: A sits out spike-risk hours, B reads weather forecasts, C buys one zone and sells another, D reads planned outages; boosting and deep are the two model types; ideas 1 to 14 and V1 to V12 are listed in the <a href="#appendix">appendix</a>.</p>
+    <p class="note">Each strategy's fixed size (its sizing view) is the one at which its worst build-year fall from a high, its drawdown, is 100,000 USD. "Pass the bar" means the tests in <a href="#primer">The bet</a>. Names: A sits out spike-risk hours, B reads weather forecasts, C buys one zone and sells another, D reads planned outages; boosting and deep are the two model types; ideas 1 to 14 (version 1) and V1 to V16 (version 2, with plain names in <a href="#v2rank">Version 2 results</a>) are listed in the <a href="#appendix">appendix</a>.</p>
     <div class="cfoot">Data: <a href="data/equity_v1.json">equity_v1.json</a> &middot; <a href="data/equity_v2.json">equity_v2.json</a> (daily, every row, flags and sizing) &middot; <a href="data/drawdown.json">drawdown.json</a> (the same falls in USD at 1&nbsp;MW). Drawn in the page from these files. Detail: <a href="#a-results">every result</a>.</div>
   </div>
   <a class="appx-link" href="#appendix">Open the audit appendix: the objectives verbatim, every dated addendum, every result, every audit</a>
@@ -346,6 +357,87 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
   <p class="note">Walk-forward means each month (or quarter) is predicted by a model trained only on earlier data, so no month helps predict itself. Every other strategy, failures included, is in the <a href="#a-results">table of every result</a>.</p>
 </div></section>
 
+<section id="v2rank" data-band style="--band:var(--b10)"><div class="wrap">
+  <div class="sec-label">Version 2 results, 2013 to 2023</div>
+  <h2 id="h-v2rank">Loading the version 2 ranking</h2>
+  <p class="why">Version 2 asks the same question as version 1 on eleven years instead of three, so a strategy that wins here has lived through many more storms and calm years. Every model is retrained each quarter on the three years before it and scored on the next quarter, which no model saw while training.</p>
+  <div class="card" id="v2rank-card">
+    <h3 class="ctitle" id="t-v2rank">Loading</h3>
+    <p class="csub">Profit after every fee, 1&nbsp;MW per position, summed over 2013 to 2023, one bar per strategy, highest first. All strategies run on the same 500,000 USD bankroll, so the dashed lines show what that money would have earned in the S&amp;P 500 or a bank account over the same eleven years.</p>
+    <div class="lg"><span><svg width="34" height="12"><rect x="0" y="1" width="20" height="10" fill="#2c4a6b"/><rect x="20" y="1" width="12" height="10" fill="#b9c8d9"/></svg>candidate for the held-out run</span><span><svg width="34" height="12"><rect x="0" y="1" width="20" height="10" fill="#8b95a1"/><rect x="20" y="1" width="12" height="10" fill="#dcdfe3"/></svg>comparison</span><span><svg width="34" height="12"><rect x="0" y="1" width="20" height="10" fill="#b03a3a"/><rect x="20" y="1" width="12" height="10" fill="#ecc8c8"/></svg>plain rule with no model</span><span>dark part: the total without its five best days; pale part: what those five days added</span></div>
+    <p class="hint"><b>Click any strategy</b> to open its card below the chart; the weather forecast row is open already.</p>
+    <div class="chart" id="ch-v2rank"></div>
+    <article class="scard" id="v2-card" aria-live="polite"></article>
+    <div class="three">
+      <p><b>what you see</b>Each bar is one strategy's eleven-year profit at 1&nbsp;MW. The columns on the right give its Sharpe ratio (average daily profit divided by its day-to-day swings, scaled to a year; the S&amp;P 500's long-run value is 0.42), how many of the 11 years it made money, and what my selection rule makes of it.</p>
+      <p><b>how to read</b>Compare a bar with the S&amp;P 500 line first, then read its Sharpe: a long bar with a low Sharpe made its money with deep falls along the way. A bar whose dark part is much shorter than its pale part depends on a handful of days.</p>
+      <p><b>take-away</b><span id="k-v2rank"></span></p>
+    </div>
+    <p class="note">Status: candidate passes the bar and is not fragile, so it enters the held-out run; fragile passes but leans on a few days or a lucky setting; too few years made money in fewer than 8 of 11; comparison was registered as a yardstick before it was scored. Comparisons run in the held-out test too.</p>
+    <p class="note" id="n-v2rank"></p>
+    <div class="cfoot">Data: <a href="data/equity_v2.json">equity_v2.json</a> (every row, its flags and its daily profit) &middot; <a href="data/years.json">years.json</a> &middot; <a href="data/baselines.json">baselines.json</a> (the S&amp;P 500 and deposit figures with their sources). Scored on the training machine from results/v2/v2_results.json, final scoring of 8 October 2026. Selection: <a href="https://github.com/bolgacg/tavle/blob/master/research/us_v2/HELDOUT-LIST.md">research/us_v2/HELDOUT-LIST.md</a>.</div>
+  </div>
+
+  <h3 style="margin-top:30px">What these numbers do not show</h3>
+  <p class="why" style="margin-top:8px">The totals above are less certain than they look, mainly because much of the best rows’ profit comes from one year, 2022, and because with 38 rows tried some will look good by chance.</p>
+  <ul class="plist neg" id="v2-limits">
+    <li id="lim-2022"></li>
+    <li id="lim-flags"></li>
+  </ul>
+  <p class="note" style="margin-top:14px">Three narrower points, for readers checking single rows:</p>
+  <ul class="plist neg" id="v2-limits-2">
+    <li id="lim-deep"></li>
+    <li id="lim-v13"></li>
+    <li id="lim-alloc"></li>
+  </ul>
+  <p class="why" style="margin-top:14px">Every one of these numbers comes from the years I built the models on. The next sections explain the best row and the deep models; the held-out run further down is the test that counts.</p>
+</div></section>
+
+<section id="weather" data-band style="--band:var(--b10)"><div class="wrap">
+  <div class="sec-label">The weather row</div>
+  <h2 id="h-weather">Loading</h2>
+  <p class="why">The best row in version 2 is an idea that stopped at 2019 for lack of data. I filled the gap after seeing its 2013 to 2019 results, so it counts as the same idea with more data, not a new one.</p>
+  <p class="prose">My version 2 weather idea<span class="zc">V4</span> compares weather forecasts with NYISO's own load forecast. It reads the GEFS reforecast, an archive of the US weather service's forecast model rerun over past years, and that archive ends in 2019. So it traded nothing from 2020 to 2023, and with only seven years traded it could not pass the bar.</p>
+  <p class="prose">I joined the same model's live forecast archive, which starts on 23 September 2020. The joined row covers 2013 to 2023 except January to September 2020, which it does not trade. It reads forecasts issued before the 05:00 bidding deadline only, never the weather that was later observed.</p>
+  <div class="card" id="weather-card">
+    <h3 class="ctitle" id="t-weather">Loading</h3>
+    <p class="csub">Profit per calendar year at 1&nbsp;MW after fees, the joined weather row</p>
+    <div class="lg"><span><svg width="14" height="12"><rect x="1" y="1" width="12" height="10" fill="#9fb3c8"/></svg>2013 to 2019: the reforecast archive, identical to the first weather row</span><span><svg width="14" height="12"><rect x="1" y="1" width="12" height="10" fill="#2c4a6b"/></svg>2020 to 2023: newly covered by the live archive</span></div>
+    <div class="chart" id="ch-weather"></div>
+    <div class="three">
+      <p><b>what you see</b>One bar per year for the joined weather row; the light bars are the years the first weather row already covered, the dark bars the years the live archive added.</p>
+      <p><b>how to read</b>The first weather row stops after 2019. The 2020 bar is small because it only covers 23 September to 31 December.</p>
+      <p><b>take-away</b><span id="k-weather"></span></p>
+    </div>
+    <div class="cfoot">Data: <a href="data/years.json">years.json</a> (rows V4_B_reforecast and V16_B_gefs_joined). Code: <a href="https://github.com/bolgacg/tavle/blob/master/research/us_v2/pipeline/fetch_gefs_live.py">fetch_gefs_live.py</a>, <a href="https://github.com/bolgacg/tavle/blob/master/research/us_v2/pipeline/run_v16.sh">run_v16.sh</a>. Registered as V16 on 7 October 2026, before it ran (<a href="https://github.com/bolgacg/tavle/commit/523af5a">523af5a</a>).</div>
+  </div>
+  <p class="note" id="n-weather"></p>
+</div></section>
+
+<section id="deep" data-band style="--band:var(--b10)"><div class="wrap">
+  <div class="sec-label">Deep models</div>
+  <h2>Why the deep models did not win</h2>
+  <p class="why">I expected the neural networks to win and they did not, so this section says where they fell short and what I think the reasons are.</p>
+  <div class="card" id="deep-card">
+    <h3 class="ctitle" id="t-deep">Loading</h3>
+    <p class="csub">Profit 2013 to 2023 at 1&nbsp;MW after fees, with the Sharpe ratio at the end of each bar, grouped by the kind of bet; in the zone pair group the dashed line marks what the rule with no model made. Trees means gradient boosting, many small decision trees added together; deep means a neural network.</p>
+    <div class="chart" id="ch-deep"></div>
+    <div class="three">
+      <p><b>what you see</b>Two groups of strategies that make the same kind of bet with different models, so each group is a fair comparison inside itself.</p>
+      <p><b>how to read</b>Compare bars within a group only. Zone pairs means buying one zone and selling another in the same hour; picking a side means going short or long in each zone and hour.</p>
+      <p><b>take-away</b><span id="k-deep"></span></p>
+    </div>
+    <div class="cfoot">Data: <a href="data/equity_v2.json">equity_v2.json</a>, fields total_1mw and sharpe_results, from results/v2/v2_results.json.</div>
+  </div>
+  <ul class="plist" id="deep-why">
+    <li id="dw-sharpe"></li>
+    <li id="dw-tab">On data shaped like a table, with a few thousand rows and many mixed inputs, gradient-boosted trees usually beat deep networks; a benchmark of 45 such datasets found the same (<a href="https://arxiv.org/abs/2207.08815">Grinsztajn, Oyallon and Varoquaux, Why do tree-based models still outperform deep learning on typical tabular data?, NeurIPS 2022 Datasets and Benchmarks</a>).</li>
+    <li id="dw-size"></li>
+    <li id="dw-learn"></li>
+    <li id="dw-pool"></li>
+  </ul>
+</div></section>
+
 <section id="made" data-band style="--band:var(--b9)"><div class="wrap">
   <div class="sec-label">What the strategies are made of</div>
   <h2>The best strategies predict the size of the gap and may buy or sell; the worst only ever sell</h2>
@@ -355,13 +447,13 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
 
   <div class="card" id="fm-strips-card">
     <h3 class="ctitle" id="t-strips">Loading</h3>
-    <p class="csub">One strip per design choice. Every dot is one strategy, placed by its Sharpe ratio (profit per unit of day-to-day swing): further right is better.</p>
-    <div class="lg fm-lg"><span><svg width="34" height="14"><line x1="4" y1="1" x2="4" y2="13" stroke="#6b7580" stroke-width="3"/><rect x="4" y="3" width="24" height="8" fill="#2f7d54"/><line x1="28" y1="1" x2="28" y2="13" stroke="#1a1d21" stroke-width="3"/></svg>green: the choice goes with a higher median Sharpe, red: lower. Each bar runs from the median without it (grey tick) to the median with it (black tick); faint dots are single strategies; dashed: the pass line, Sharpe 0.42.</span></div>
+    <p class="csub">One pair of bars per design choice. The Sharpe ratio is average daily profit divided by its day-to-day swings, scaled to a year; the median is the middle strategy of a group, so one lucky strategy cannot drag it.</p>
+    <div class="lg fm-lg"><span><svg width="14" height="12"><rect x="1" y="1" width="12" height="10" fill="#2c4a6b"/></svg>median Sharpe of the strategies with the choice</span><span><svg width="14" height="12"><rect x="1" y="1" width="12" height="10" fill="#aab3bd"/></svg>median Sharpe of those without it</span><span>number at the right: with minus without, green when the choice goes with a higher Sharpe; dashed line: the pass line, Sharpe 0.42</span></div>
     <div class="chart" id="ch-strips"></div>
-    <div class="readout" id="ro-strips" aria-live="polite">Hover or tap a strip to read it.</div>
+    <div class="readout" id="ro-strips" aria-live="polite">Hover or tap a pair of bars to read its definition.</div>
     <div class="three">
-      <p><b>what you see</b>Each strip is one design choice, sorted from the choice that goes with the biggest gain at the top to the biggest loss at the bottom.</p>
-      <p><b>how to read</b>A long green bar means the strategies with that choice have a clearly higher median Sharpe; the number beside it is the difference. Each strategy appears once in every strip: on the upper line if it has the choice, on the lower line if not.</p>
+      <p><b>what you see</b>Each pair of bars is one design choice: the upper bar is the median Sharpe of the strategies that have it, the lower bar of those that do not; sorted from the biggest gain at the top to the biggest loss at the bottom.</p>
+      <p><b>how to read</b>Compare the two bars of a pair: when the dark bar is longer, strategies with that choice did better. The number at the right is the gap between them. Every strategy is counted once in every pair, with or without.</p>
       <p><b>take-away</b><span id="k-strips"></span></p>
     </div>
     <p class="note" id="n-strips"></p>
@@ -377,7 +469,7 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
     <div class="readout" id="ro-matrix" aria-live="polite"></div>
     <div class="three">
       <p><b>what you see</b>Every scored strategy as one row, sorted by Sharpe, with the choices that best separate the top ten from the rest as dots (all 31 choices under the other tab); the bottom line counts how many of the top ten have each choice.</p>
-      <p><b>how to read</b>Read down a column: one that fills up near the top and empties near the bottom is a choice the best strategies share. In version 2, grey rows marked running are registered and still training.</p>
+      <p><b>how to read</b>Read down a column: one that fills up near the top and empties near the bottom is a choice the best strategies share. Every version 2 row is now scored; none is still training.</p>
       <p><b>take-away</b><span id="k-matrix"></span></p>
     </div>
     <p class="note" id="n-matrix"></p>
@@ -533,6 +625,14 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
 <section id="heldout" data-band style="--band:var(--b7)"><div class="wrap">
   <div class="sec-label">Held-out run</div>
   <h2 id="t-heldout">The held-out results go here after the single run</h2>
+  <p class="why">This is the only test on this page that the models could not have been shaped by, so it is run once, with the code frozen first. No held-out number exists yet.</p>
+  <ol class="stl">
+    <li class="done"><span class="d">8 Oct 2026, done</span><span>The held-out lists are published: 7 version 1 and 26 version 2 candidates, chosen mechanically by the rule I fixed on 7 October, with every other row kept as a comparison (<a href="https://github.com/bolgacg/tavle/commit/6f4c85e">6f4c85e</a>; <a href="https://github.com/bolgacg/tavle/blob/master/research/us/HELDOUT-LIST.md">version 1 list</a>, <a href="https://github.com/bolgacg/tavle/blob/master/research/us_v2/HELDOUT-LIST.md">version 2 list</a>).</span></li>
+    <li class="done"><span class="d">8 Oct 2026, done</span><span>The build-year code of both versions is published exactly as it ran, with a sha256 fingerprint of every file, so anyone can check that the held-out run uses the same code (<a href="https://github.com/bolgacg/tavle/commit/aeb7927">aeb7927</a>, <a href="https://github.com/bolgacg/tavle/blob/master/research/us/CODE-MANIFEST.txt">CODE-MANIFEST.txt</a>).</span></li>
+    <li class="todo"><span class="d">now, in progress</span><span>The held-out runners are being built: the same rolling windows continue quarter by quarter (version 2) and month by month (version 1) into 2024, with sizes carried over unchanged.</span></li>
+    <li class="todo"><span class="d">by 10 Oct 2026</span><span>Freeze: one commit names the code and settings, and the sealed run starts from a clean copy of that commit.</span></li>
+    <li class="todo"><span class="d">after the freeze</span><span>The single sealed run on January 2024 to September 2026; its results replace the pending cells below, beside the S&amp;P 500 and bank deposit returns over the same months.</span></li>
+  </ol>
   <div class="slot">
     <h3>January 2024 to September 2026 <span class="pending" id="ho-badge">held-out run pending</span></h3>
     <p style="font-size:14.5px;color:var(--soft)">Every candidate and both plain rules (always supply and the habit rule) run once on years no model has seen. The cells and the hatched chart areas fill in when the chart data is rebuilt with the held-out run.</p>
@@ -908,8 +1008,8 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
   <div class="sec-label">Version 2</div>
   <h2>The same question with 14 years of history</h2>
   <p class="why">The main weakness of this page is how few storms the building years hold, and version 2 is built to answer it.</p>
-  <p class="prose">Version 2 trains each model on the previous three years and tests the next quarter, rolling forward from 2013 to 2023, 44 quarters in all. It reuses the same costs, bar, placebos and fragility flags, and it adds twelve ideas such as price-limited bids, tail-risk sizing and border-region prices. It does not read 2024 onward either: one held-out run tests the approved version 1 and version 2 candidates together.</p>
-  <p class="prose">Version 2 page: bolgacg.github.io/tavle/us-v2 (page to come). The plan is in <a href="https://github.com/bolgacg/tavle/blob/master/research/us_v2/OBJECTIVES.md">research/us_v2/OBJECTIVES.md</a>.</p>
+  <p class="prose">Version 2 trains each model on the previous three years and tests the next quarter, rolling forward from 2013 to 2023, 44 quarters in all. It reuses the same costs, bar, placebos and fragility flags, and it adds sixteen ideas such as bids with price limits, tail-risk sizing and border-region prices. It does not read 2024 onward either: one held-out run tests the approved version 1 and version 2 candidates together.</p>
+  <p class="prose">The version 2 results are on this page (<a href="#v2rank">Version 2 results</a>). The plan is in <a href="https://github.com/bolgacg/tavle/blob/master/research/us_v2/OBJECTIVES.md">research/us_v2/OBJECTIVES.md</a>.</p>
 </div></section>
 
 
@@ -1280,7 +1380,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
   var C = { ink: '#1a1d21', soft: '#5b6470', faint: '#8b95a1', rule: '#e2e0dc', rule2: '#c9c5be',
     acc: '#2c4a6b', pos: '#2f7d54', neg: '#b03a3a', amber: '#c8860d', grey: '#8b95a1', v2: '#7a4f9a' };
   var D = {}, V = 'v1', monthSel = { v1: null, v2: null }, hoverIdx = null;
-  var FILES = ['equity_v1', 'equity_v2', 'drawdown', 'monthly', 'placebo', 'seeds', 'years', 'events', 'feature_matrix'];
+  var FILES = ['equity_v1', 'equity_v2', 'drawdown', 'monthly', 'placebo', 'seeds', 'years', 'events', 'feature_matrix', 'baselines'];
 
   // ---------- names ----------
   var NAMES = {
@@ -1414,7 +1514,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
   function isMinor(r) { return !r.reference && !TOP3[r.name]; }
   function rowColor(r) { return r.reference ? (r.name.indexOf('supply') >= 0 ? C.neg : C.grey) : TOP3[r.name] ? TOP3[r.name].c : '#a9b7c6'; }
   function rowDash(r) { return r.name.indexOf('idea14') === 0 ? '5 3' : null; }
-  function words(n) { return ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'][n] || String(n); }
+  function words(n) { return ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty'][n] || String(n); }
   function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
   function list(a) { return a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + last(a); }
   function setText(id, t) { var e = document.getElementById(id); if (e) e.textContent = t; }
@@ -1982,10 +2082,10 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     return last(r.cum_net_usd_1mw) - r.cum_net_usd_1mw[i];
   }
   function drawHeldout() {
-    var t = $('#tb-heldout'), h = '<thead><tr><th>Strategy</th><th>Build years: return a year at the sizing view</th><th>Held-out: total at 1&nbsp;MW, USD</th><th>Held-out: return a year at the sizing view</th><th>Verdict</th></tr></thead><tbody>';
+    var t = $('#tb-heldout'), h = '<thead><tr><th>Strategy</th><th>Build years, not a result: return a year on the 500,000 bankroll</th><th>Held-out: total at 1&nbsp;MW, USD</th><th>Held-out: return a year at the sizing view</th><th>Verdict</th></tr></thead><tbody>';
     var anyHO = false;
     ['v1', 'v2'].forEach(function (v) {
-      h += '<tr class="grp"><td colspan="5">' + (v === 'v1' ? 'Version 1 candidates, then the plain rules' : 'Version 2 candidates, then the plain rules') + '</td></tr>';
+      h += '<tr class="grp"><td colspan="5">' + (v === 'v1' ? 'Version 1 candidates, then the plain rules (the seventh candidate, idea 13, is a portfolio of these rows)' : 'Version 2 candidates, then the plain rules') + '</td></tr>';
       topRows(v).forEach(function (r) {
         var ho = hoTotal(r, v), yrs = ho == null ? 0 : (ms(last(eq(v).dates)) - ms('2023-12-31')) / (365.25 * DAY);
         if (ho != null) anyHO = true;
@@ -2062,8 +2162,8 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     V14f_global_zone: ['V14f one net', 'V14f, one network for all zones, trained on profit']
   };
   function fkey(n) { return n.replace('[lead]', '[second build]'); }
-  function fsn(n) { return FNAMES[n] ? FNAMES[n][0] : sn(fkey(n)); }
-  function fln(n) { return FNAMES[n] ? FNAMES[n][1] : ln(fkey(n)); }
+  function fsn(n) { return V2N[n] ? V2N[n][0] : FNAMES[n] ? FNAMES[n][0] : sn(fkey(n)); }
+  function fln(n) { return V2N[n] ? V2N[n][0] + ' (' + n + ')' : FNAMES[n] ? FNAMES[n][1] : ln(fkey(n)); }
   function fhas(r, c) { var v = r[c]; return !!v && v !== '?'; }
   function fmed(a) { if (!a.length) return null; var s = a.slice().sort(function (x, y) { return x - y; }), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }
   function f2(v) { return (v < 0 ? '−' : '') + Math.abs(v).toFixed(2); }
@@ -2088,7 +2188,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     var labW = narrow ? 104 : 176, dW = narrow ? 0 : 0, mR = 4;
     var lo = Math.min(0, Math.min.apply(null, rows.map(function (r) { return r.sharpe; }))), hi = Math.max.apply(null, rows.map(function (r) { return r.sharpe; }));
     lo = Math.floor((lo - 0.1) * 2) / 2; hi = Math.ceil((hi + 0.1) * 2) / 2;
-    var x0 = labW, x1 = w - dW - mR - 18, X = function (v) { return x0 + (v - lo) / (hi - lo) * (x1 - x0); };
+    var x0 = labW, x1 = w - dW - mR - (narrow ? 52 : 64), X = function (v) { return x0 + (v - lo) / (hi - lo) * (x1 - x0); };
     // only strips with at least five strategies on each side; the rest are named in the note
     var lay = [], y = 36, few = [], none = [];
     FG.forEach(function (g, gi) {
@@ -2105,27 +2205,21 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     });
     ln_(sv, X(BAR), 22, X(BAR), H - 18, C.amber, 1.2, '4 3');
     txt(sv, X(BAR), 14, narrow ? 'pass 0.42' : 'pass line, Sharpe 0.42', { fs: 10.5, fill: '#8a5d09', anchor: 'middle' });
-    if (!narrow) txt(sv, x1, 28, 'Sharpe ratio: further right is better', { anchor: 'end', fs: 10.5, fill: C.faint });
-        lay.forEach(function (it) {
-      if (it.head) { txt(sv, 0, it.y + 4, it.head.toUpperCase(), { fs: 10.5, fill: C.acc, weight: 600, cls: 'm' }); return; }
+    if (!narrow) txt(sv, x1, 28, 'median Sharpe ratio: further right is better', { anchor: 'end', fs: 10.5, fill: C.faint });
+    txt(sv, w - 2, 28, 'difference', { anchor: 'end', fs: 10.5, fill: C.faint });
+    lay.forEach(function (it) {
       var s = it.s, cy = it.y, g = el('g', { 'data-c': s.c });
       g.appendChild(el('rect', { x: 0, y: cy - 18, width: w, height: 36, fill: 'transparent', 'class': 'fm-hit' }));
       txt(g, 0, cy - 2, FDEF[s.c].lab, { fs: narrow ? 12 : 13, fill: C.ink, weight: 600 });
-      txt(g, 0, cy + 12, ['model', 'training', 'input', 'prediction', 'position'][FDEF[s.c].g] + ', ' + s.w.length + ' with', { fs: 10.5, fill: C.faint });
-      if (!narrow) { txt(g, x0 - 6, cy - 5, 'with', { anchor: 'end', fs: 9.5, fill: ACC }); txt(g, x0 - 6, cy + 11, 'without', { anchor: 'end', fs: 9.5, fill: C.faint }); }
-      var yW = cy - 8, yO = cy + 8;
-      [[s.o, yO, false], [s.w, yW, true]].forEach(function (L) {
-        var xs = L[0].map(X).sort(function (a, b) { return a - b; }), prev = -99, alt = 0;
-        xs.forEach(function (xx) {
-          var dy = 0; if (xx - prev < 4) { alt++; dy = (alt % 2 ? -2 : 2); } else alt = 0; prev = xx;
-          g.appendChild(L[2] ? el('circle', { cx: xx, cy: L[1] + dy, r: narrow ? 2.6 : 3.2, fill: ACC, opacity: 0.24 }) : el('circle', { cx: xx, cy: L[1] + dy, r: narrow ? 2.4 : 3, fill: 'none', stroke: '#c9cfd6', 'stroke-width': 1 }));
-        });
+      txt(g, 0, cy + 12, ['model', 'training', 'input', 'prediction', 'position'][FDEF[s.c].g] + ': ' + s.w.length + ' with, ' + s.o.length + ' without', { fs: 10.5, fill: C.faint });
+      [[s.mw, cy - 13, ACC, 'with'], [s.mo, cy + 2, '#aab3bd', 'without']].forEach(function (B) {
+        var xa = Math.min(X(0), X(B[0])), xb = Math.max(X(0), X(B[0]));
+        g.appendChild(el('rect', { x: xa, y: B[1], width: Math.max(1.5, xb - xa), height: 11, fill: B[2], rx: 1 }));
+        var right = true, lx = xb + 4;
+        txt(g, lx, B[1] + 9.5, (narrow ? '' : B[3] + ' ') + f2(B[0]), { fs: 10.5, cls: 'm halo', fill: B[3] === 'with' ? C.ink : C.soft, anchor: right ? 'start' : 'end' });
       });
       var col = s.d >= 0 ? C.pos : C.neg;
-      g.appendChild(el('rect', { x: Math.min(X(s.mw), X(s.mo)), y: cy - 4, width: Math.max(2, Math.abs(X(s.mw) - X(s.mo))), height: 8, fill: col, rx: 1.5 }));
-      ln_(g, X(s.mw), yW - 6, X(s.mw), cy + 2, C.ink, 3);
-      ln_(g, X(s.mo), cy - 2, X(s.mo), yO + 6, '#6b7580', 3);
-      txt(g, Math.max(X(s.mw), X(s.mo)) + 11, cy + 5, fsg(s.d), { fs: narrow ? 12 : 13.5, weight: 600, cls: 'm halo', fill: col });
+      txt(g, w - 2, cy + 4, fsg(s.d), { fs: narrow ? 12 : 13.5, weight: 600, cls: 'm', fill: col, anchor: 'end' });
       var say = function () {
         var d = FDEF[s.c];
         setText('ro-strips', d.lab + ': ' + d.def + ' Median Sharpe ' + f2(s.mw) + ' for the ' + s.w.length + ' with it, ' + f2(s.mo) + ' for the ' + s.o.length + ' without.');
@@ -2139,9 +2233,10 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     var rel = st.filter(function (s) { return s.ok; }).sort(function (a, b) { return b.d - a.d; });
     var top = rel[0], bot = last(rel), vn = V === 'v1' ? 'version 1' : 'version 2';
     var bots = rel.filter(function (s) { return Math.abs(s.d - bot.d) < 0.005; }).map(function (s) { return FDEF[s.c].ph; });
-    setText('t-strips', cap(vn) + ': strategies that ' + FDEF[top.c].ph + ' do best, and those that ' + bots.join(' or ') + ' do worst');
-    setText('k-strips', 'Across the ' + rows.length + ' scored strategies of ' + vn + ', the ' + top.w.length + ' that ' + FDEF[top.c].ph + ' have a median Sharpe ' + f2(top.d) + ' above the rest, and the ' + bot.w.length + ' that ' + FDEF[bot.c].ph + ' sit ' + f2(-bot.d) + ' below.');
-    setText('n-strips', 'A strip is drawn only when at least five strategies sit on each side. Too few to say in ' + vn + ': ' + (few.length ? few.join(', ') : 'none') + '. Every strategy or none has: ' + (none.length ? none.join(', ') : 'none') + '. The strategies share zones, days and often a model, so they are not independent tests; read the strips as association, not cause. The pass line is the Sharpe a strategy needs for the held-out run, the long-run Sharpe of the S&P 500.');
+    setText('t-strips', cap(vn) + ': strategies that ' + FDEF[top.c].ph + ' have the highest median Sharpe, and those that ' + bots.join(' or ') + ' the lowest');
+    setText('k-strips', 'Across the ' + rows.length + ' scored strategies of ' + vn + ', the ' + top.w.length + ' that ' + FDEF[top.c].ph + ' have a median Sharpe ' + f2(top.d) + ' above the rest, and the ' + bot.w.length + ' that ' + FDEF[bot.c].ph + ' sit ' + f2(-bot.d) + ' below. This is association among my own strategies, not cause.');
+    setText('ro-strips', 'Example, the top pair: ' + FDEF[top.c].lab + '. ' + FDEF[top.c].def + ' The ' + top.w.length + ' strategies with it have a median Sharpe of ' + f2(top.mw) + ', the ' + top.o.length + ' without it ' + f2(top.mo) + '. Hover or tap any pair to read it the same way.');
+    setText('n-strips', 'A pair is drawn only when at least five strategies sit on each side. Too few to say in ' + vn + ': ' + (few.length ? few.join(', ') : 'none') + '. Every strategy or none has: ' + (none.length ? none.join(', ') : 'none') + '. The strategies share zones, days and often a model, so they are not independent tests; read the pairs as association, not cause. The pass line is the Sharpe a strategy needs for the held-out run, the long-run Sharpe of the S&P 500.');
   }
 
   function drawMatrix() {
@@ -2222,7 +2317,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
       var g = el('g', { 'class': 'fm-row', opacity: isP ? 0.6 : 1 });
       var isTop = !isP && top10.indexOf(r.name) >= 0;
       g.appendChild(el('rect', { x: 0, y: y + 1, width: isP ? w : labW + barW, height: rH - 2, fill: isTop ? '#e6edf5' : (isP ? 'url(#hp)' : 'transparent'), rx: 2 }));
-      var lab = narrow ? fsn(r.name) : fln(r.name), key = fkey(r.name), card = CARD[key];
+      var lab = fsn(r.name), key = fkey(r.name), card = CARD[key];
       var tparent = card ? linkWrap(g, key) : g;
       var t = txt(tparent, 4, cy + 4, lab, { fs: narrow ? 10.5 : 11.5, fill: isP ? C.soft : C.ink, weight: isTop ? 600 : 400 });
       while (tw(t.textContent, narrow ? 10.5 : 11.5, isTop ? 600 : 400) > labW - 8 && t.textContent.length > 4) t.textContent = t.textContent.slice(0, -2) + '.';
@@ -2278,7 +2373,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     setText('t-matrix', cap(vn) + ': ' + (f0 ? Math.round(100 * f0.n / tops.length) + '% of the top ten ' + FDEF[f0.c].ph + ', against ' + Math.round(100 * f0.nr / rest.length) + '% of the rest' : 'the top ten share no single choice') + (missing.length ? '; none of the top ten ' + FDEF[missing[0].c].ph : ''));
     setText('k-matrix', (shared.length ? 'In ' + vn + ', ' + list(shared.slice(0, 3).map(function (f) { return lab(f) + ' (' + f.n + ' of the top ten, ' + f.nr + ' of the other ' + rest.length + ')'; })) + ' set the best apart. ' : '') + (missing.length ? 'None of the top ten has ' + list(missing.map(function (f) { return lab(f) + ' (' + f.nr + ' tried)'; })) + '.' : ''));
     setText('n-matrix', (V === 'v1' ? 'Version 1 is 2021 to 2023 (B rows from May 2021), refit monthly; idea 14 has no row in the source files, so it is not here. ' : 'Version 2 is 2013 to 2023, refit each quarter on the previous three years; * V4 trades 2013 to 2019 only, because the weather reforecast ends in 2019, so its 2.83 says nothing about the years after. V3 holds about 3 MW, so compare its Sharpe, not its profit. V6 trades one zone. ') +
-      'Weather counts as read when the strategy uses an archived forecast; "?" means not yet fixed. ' + (pend.length ? words(pend.length).replace(/^./, function (m) { return m.toUpperCase(); }) + ' registered strategies (V12 to V14) are still running and are shown in grey without a Sharpe.' : 'Nine registered version 2 strategies (V12 to V14) are still running; switch to version 2 to see them in grey.'));
+      'Weather counts as read when the strategy uses an archived forecast; "?" means not yet fixed. ' + (pend.length ? words(pend.length).replace(/^./, function (m) { return m.toUpperCase(); }) + ' registered strategies (V12 to V14) are still running and are shown in grey without a Sharpe.' : 'Every version 2 strategy is now scored.'));
   }
 
   function drawPairs() {
@@ -2329,7 +2424,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     var bestCell = null; M.forEach(function (m) { P.forEach(function (p) { var k = cell[m[0] + p[0]]; if (k.n && (!bestCell || k.b > bestCell.b)) bestCell = { b: k.b, n: k.n, t: m[1] + ' with ' + p[1] }; }); });
     var nnUn = unList.filter(function (u) { return u.indexOf('neural net') === 0 || u.indexOf('boosted trees') === 0; });
     setText('t-pairs', cap(vn) + ': ' + nUn + ' of the ' + (M.length * P.length) + ' pairings of a model type and a position rule have never been tried');
-    setText('k-pairs', 'The best pairing so far is ' + bestCell.t + ' (Sharpe ' + f2(bestCell.b) + ', from ' + words(bestCell.n) + (bestCell.n === 1 ? ' strategy' : ' strategies') + ', so a small sample). Untried with a trained model: ' + (nnUn.length ? list(nnUn) : 'none') + '. Four combinations the matrix showed as untried are now registered as V15, to run before the held-out test.');
+    setText('k-pairs', 'The best pairing so far is ' + bestCell.t + ' (Sharpe ' + f2(bestCell.b) + ', from ' + words(bestCell.n) + (bestCell.n === 1 ? ' strategy' : ' strategies') + ', so a small sample). Untried with a trained model: ' + (nnUn.length ? list(nnUn) : 'none') + '. Four combinations this matrix once showed as untried were registered as V15 and are scored in version 2.');
   }
 
   // ---------- counts in the text ----------
@@ -2339,10 +2434,218 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     var un = D.equity_v2.meta.positions_not_yet_scored || [];
     document.querySelectorAll('[data-k]').forEach(function (e) {
       var k = e.getAttribute('data-k');
-      e.textContent = { nRowsAll: n1 + n2, nCand1: c1, nRows1: n1, nCand2: c2, nRows2: n2 }[k];
+      e.textContent = { nRowsAll: n1 + n2, nCand1: c1, nCand1L: c1 + 1, nRows1: n1, nCand2: c2, nRows2: n2 }[k];  // nCand1L: idea 13, a portfolio of rows, is the seventh version 1 candidate
     });
-    setText('k-count', 'Version 1 scored ' + n1 + ' strategy rows, plus idea 13, a portfolio built from those rows, and version 2 has scored ' + n2 + ' with ' + words(un.length) + ' more waiting');
+    setText('k-count', 'Version 1 scored ' + n1 + ' strategy rows, plus idea 13, a portfolio built from those rows, and version 2 scored ' + n2 + ' rows with 87 settings in all');
     setText('k-unscored', un.length ? un.join(', ') : 'none');
+  }
+
+  // ---------- version 2 results: ranking, weather row, deep models ----------
+  var BASE_IN = 'Day-ahead prices, the real-time hours already finished, recent gaps, the energy, congestion and loss parts of each price, NYISO’s load forecast and the calendar.';
+  var ROLL = 'Retrained every quarter on the previous three years and scored on the next quarter, 2013 to 2023; settings chosen on the four scored quarters before.';
+  var WX = ' Plus weather forecasts (temperature, wind and cloud from the US weather service’s GEFS model, control run, issued two days ahead) at points across New York.';
+  var SIDE = 'Short or long in each zone and hour when the forecast gap beats the fee, otherwise out.';
+  var PAIRS = 'Buys one zone and sells another in five zone pairs when the forecast price difference beats twice the fee.';
+  // plain name, code (small, for auditors), model tag, what it bets, what it reads, how it was trained
+  var V2N = {
+    V16_B_gefs_joined: ['Weather forecasts, full archive', 'V16', 'tree model', SIDE, BASE_IN + WX + ' Forecasts come from the GEFS reforecast to 2019 and the archived live GEFS from 23 September 2020; January to September 2020 has no forecast and is not traded.', ROLL + ' Registered on 7 October as the last idea; its 2013 to 2019 days are the first weather row’s, unchanged.'],
+    V4_B_reforecast: ['Weather forecasts, archive to 2019', 'V4', 'tree model', SIDE, BASE_IN + WX + ' Only the GEFS reforecast, which ends in 2019.', ROLL + ' Trades nothing from 2020 to 2023, so it cannot pass the bar for positive years.'],
+    V15a_V4_limit: ['Weather to 2019, with price limits', 'V15a', 'tree model', SIDE + ' Each bid carries a price limit and counts only when day-ahead clears at or past it.', BASE_IN + WX + ' Reforecast archive only, to 2019.', ROLL],
+    V15d_V4_pairs: ['Weather to 2019, zone pairs', 'V15d', 'tree model', PAIRS, BASE_IN + WX + ' Reforecast archive only, to 2019.', ROLL],
+    V15c_wx_border_gbm: ['Weather plus neighbour grid prices', 'V15c', 'tree model', SIDE, BASE_IN + WX + ' Weather from the reforecast to 2019 and the GFS archive from 25 March 2021, none in between; plus prices at the borders with neighbouring grids.', ROLL],
+    V8_error_mining: ['Second model on the first one’s errors', 'V8', 'tree model', SIDE, BASE_IN + ' A second model also reads where the first model’s past errors cluster (zone, hour, weather).', ROLL],
+    V15a_V8_limit: ['Error model, with price limits', 'V15a', 'tree model', SIDE + ' Each bid carries a price limit.', BASE_IN + ' Plus the error model’s inputs.', ROLL],
+    V15a_V5_limit: ['Neighbour grid prices, with price limits', 'V15a', 'tree model', SIDE + ' Each bid carries a price limit.', BASE_IN + ' Plus prices at the borders with neighbouring grids.', ROLL],
+    V5_border_inputs: ['Neighbour grid prices', 'V5', 'tree model', SIDE, BASE_IN + ' Plus prices at the borders with the neighbouring grids (the mid-Atlantic grid, New England, Ontario and Quebec).', ROLL],
+    V7_recency: ['Recent days weighted more', 'V7', 'tree model', SIDE, BASE_IN + ' Plus dated flags for known rule and fleet changes.', ROLL + ' Recent days count more in training.'],
+    V7_flags: ['Market change flags', 'V7', 'tree model', SIDE, BASE_IN + ' Plus dated flags for known market rule and power fleet changes.', ROLL],
+    V9_decompose: ['One model per price part', 'V9', 'tree model', SIDE, BASE_IN, ROLL + ' Three models predict the energy, congestion and loss parts of the gap separately; their sum sets the side.'],
+    V2_limit_gbm: ['Bids with price limits', 'V2', 'tree model', SIDE + ' Each bid carries a limit price per zone and hour and counts only when day-ahead clears at or past it.', BASE_IN, ROLL + ' My audit found the limits add nothing: the profit is the side the trees pick.'],
+    V2_sides_no_limit: ['Same sides, no price limits', 'comparison', 'tree model', SIDE, BASE_IN, ROLL + ' Registered as a comparison after the audit, to show what the limits add.'],
+    V3_tail_gbm: ['Sized by tail risk, about 3 MW', 'V3', 'tree model', SIDE + ' Size up to 3 MW, set by expected profit against the size of a bad loss.', BASE_IN, ROLL + ' Its lead over the others is mostly size: it sits near 3 MW almost always.'],
+    V3_tail_gbm_1MW: ['Tail risk rule at 1 MW', 'comparison', 'tree model', 'The same sides and hours as the tail risk row, at 1 MW.', BASE_IN, ROLL + ' Registered as a comparison, to remove the effect of size.'],
+    V12_alloc: ['Learned mix of strategies', 'V12', 'deep model', 'Each day splits one unit of risk across the version 2 strategies that had passed when it was built.', 'Day-level inputs: weather forecasts, load forecasts, outage counts and recent prices.', ROLL + ' A small neural network; built before the last rows finished, so it mixes the list as it stood then. Its positions are larger than 1 MW.'],
+    V15b_V13_both: ['All inputs deep model, either side', 'V15b', 'deep model', SIDE, 'Every input public by 05:00: zone and power plant prices with their parts, border prices, load forecasts, outage counts, archived weather forecasts where they exist, the calendar.', ROLL + ' Architecture (recurrent, convolution or small attention network) chosen on earlier quarters only.'],
+    V15b_V13_limit: ['All inputs deep model, price limits', 'V15b', 'both model types', SIDE + ' Each bid carries a price limit, shaped by a tree model.', 'The all inputs deep model’s forecast plus the tree model behind the price limits.', ROLL],
+    V13_C_deep_all: ['All inputs deep model, zone pairs', 'V13', 'deep model', PAIRS, 'Every input public by 05:00, as for the all inputs model.', ROLL + ' Architecture chosen on earlier quarters only.'],
+    V13_A_deep_all: ['All inputs deep model, spike flag', 'V13', 'deep model', 'Sells (short) in every zone and hour except those flagged as likely real-time spikes.', 'Every input public by 05:00.', ROLL],
+    V1_C_deep: ['Zone pairs, deep model', 'V1', 'deep model', PAIRS, BASE_IN + ' For both zones of each pair, plus power plant and border prices.', ROLL + ' A recurrent network over the last week, five random starts averaged. About 76 percent of its profit is a fixed pair spread.'],
+    V14f_global_zone: ['Zone pairs, one deep model for all zones', 'V14f', 'deep model', PAIRS, BASE_IN + ' Plus weather forecasts where archived.', ROLL + ' One network for every zone, which learns a short code per zone and hour, so each window gives it all zones’ rows.'],
+    V14e_mlp_multi: ['Zone pairs, one network for all hours', 'V14e', 'deep model', PAIRS, BASE_IN + ' Plus weather forecasts where archived and outage counts.', ROLL + ' One plain network predicts all 24 hours and 11 zones of the next day at once.'],
+    V11_C_deep_ens4: ['Zone pairs, deep, last four windows', 'V11', 'deep model', PAIRS, BASE_IN, ROLL + ' Averages the deep models of the last four quarters.'],
+    V14a_window_ens: ['Zone pairs, five window lengths', 'V14a', 'both model types', PAIRS, BASE_IN, ROLL + ' Averages models trained on 1, 2, 3 and 5 years and on all years so far, recent days weighted more.'],
+    V14d_seed_ens: ['Zone pairs, ten deep starts plus trees', 'V14d', 'both model types', PAIRS, BASE_IN, ROLL + ' Averages ten random starts of the deep model and the tree model.'],
+    V10_C_deep_pretrain: ['Zone pairs, deep, pretrained from 2010', 'V10', 'deep model', PAIRS, BASE_IN, ROLL + ' Pretrained on 2010 onward, then fine tuned on each window. Flagged fragile.'],
+    C_static_pairs: ['Zone pairs, no model', 'comparison', 'no model', 'In each pair and hour, takes the side that won on average over the previous three years, 1 MW.', 'Nothing beyond past prices.', 'Not trained; registered as the benchmark for how much the zone pair models add beyond a fixed spread.'],
+    V11_C_gbm_ens4: ['Zone pairs, trees, last four windows', 'V11', 'tree model', PAIRS, BASE_IN, ROLL + ' Averages the tree models of the last four quarters.'],
+    V1_C_gbm: ['Zone pairs, trees', 'V1', 'tree model', PAIRS, BASE_IN, ROLL],
+    V14c_conformal_skip: ['Zone pairs, skips unsure hours', 'V14c', 'both model types', PAIRS + ' Skips a pair and hour when its calibrated forecast range includes the break-even.', BASE_IN, ROLL],
+    V14b_quantile_size: ['Zone pairs, sized by forecast range', 'V14b', 'both model types', PAIRS + ' Smaller positions when the forecast range is wide.', BASE_IN, ROLL],
+    V6_LI: ['Long Island only', 'V6', 'tree model', SIDE + ' Long Island zone only.', BASE_IN, ROLL],
+    V6_NYC: ['New York City only', 'V6', 'tree model', SIDE + ' New York City zone only.', BASE_IN, ROLL],
+    V1_A_spike_gbm: ['Spike flag, trees', 'V1', 'tree model', 'Sells (short) in every zone and hour except those flagged as likely real-time spikes.', BASE_IN, ROLL],
+    V1_always_supply: ['Always supply', 'plain rule', 'no model', 'Sells 1 MW day-ahead in every zone and hour and buys it back in real time.', 'Nothing.', 'Not trained.'],
+    V1_baseline: ['Habit rule', 'plain rule', 'no model', 'In each zone and hour, takes the side that won on average over the past year.', 'The past year’s average gap.', 'Not trained.']
+  };
+  Object.keys(V2N).forEach(function (n) { NAMES[n] = [V2N[n][0], V2N[n][0]]; });
+  function v2row(n) { return eq('v2').rows.filter(function (r) { return r.name === n; })[0]; }
+  function v2years(n) { var Y = D.years.v2; return { years: Y.years, v: Y.rows[n] || [] }; }
+  var BL = null;
+  function v2status(r) {
+    if (r.reference) return ['plain rule', C.neg];
+    if (r.candidate_by_rule) return ['candidate', C.acc];
+    if (r.registered_comparison) return ['comparison', C.soft];
+    if (r.fragile) return ['fragile', C.neg];
+    if (!r.pass_sizing_view) return r.years_positive < 8 ? ['too few years', C.soft] : ['fails the bar', C.soft];
+    return ['comparison', C.soft];
+  }
+  function v2cols(r) {
+    if (r.reference) return r.name.indexOf('supply') >= 0 ? ['#b03a3a', '#ecc8c8'] : ['#8b95a1', '#dcdfe3'];
+    return r.candidate_by_rule ? ['#2c4a6b', '#b9c8d9'] : ['#8b95a1', '#dcdfe3'];
+  }
+  var v2sel = 'V16_B_gefs_joined';
+  function v2card(n) {
+    var r = v2row(n), m = V2N[n], st = v2status(r), y = v2years(n), card = $('#v2-card');
+    var best = y.years.map(function (yy, i) { return [yy, y.v[i]]; }).sort(function (a, b) { return b[1] - a[1]; })[0];
+    card.innerHTML = '<div class="tagl">' + m[2] + ' &middot; ' + st[0] + '</div><h3>' + m[0] + '<span class="zc">' + n + '</span></h3>' +
+      '<p class="cnum"><span><b>' + fmt(r.total_1mw) + '</b> USD 2013 to 2023 at 1&nbsp;MW</span><span><b>' + fmt(r.total_wo_best5) + '</b> without its five best days</span><span>Sharpe <b>' + r.sharpe_results.toFixed(2) + '</b></span><span><b>' + r.years_positive + '</b> of 11 years positive</span><span>best year ' + best[0] + ', <b>' + fmt(best[1]) + '</b></span></p>' +
+      '<dl><dt>What it bets</dt><dd>' + m[3] + '</dd><dt>What it reads at 05:00</dt><dd>' + m[4] + '</dd><dt>How it was trained</dt><dd>' + m[5] + '</dd>' +
+      (r.fragile_reasons && r.fragile_reasons.length ? '<dt>Why it is flagged fragile</dt><dd>' + cap(r.fragile_reasons.join('; ')) + '.</dd>' : '') + '</dl>';
+  }
+  function drawV2Rank() {
+    var box = $('#ch-v2rank'), w = W(box), narrow = w < 640, rows = eq('v2').rows.slice().sort(function (a, b) { return b.total_1mw - a.total_1mw; });
+    BL = D.baselines;
+    var sp = BL.sp500.profit_not_reinvested_usd, dep = BL.deposit.profit_not_reinvested_usd, CAP = 2000000;
+    var fs = narrow ? 11 : 12;
+    var labW = narrow ? 0 : 236, colW = narrow ? 0 : 214, rowH = narrow ? 40 : 22, mT = narrow ? 50 : 54, mB = 26;
+    var x0 = labW + 4, x1 = w - colW - (narrow ? 96 : 58);
+    var X = function (v) { return x0 + Math.max(0, Math.min(v, CAP)) / CAP * (x1 - x0); };
+    var H = mT + rows.length * rowH + mB, s = svg(w, H, 'Version 2 strategies ranked by profit, 2013 to 2023');
+    // grid and axis
+    [0, 500000, 1000000, 1500000, 2000000].forEach(function (t) {
+      ln_(s, X(t), mT - 6, X(t), H - mB, t ? C.rule : C.rule2, 1);
+      txt(s, X(t), H - mB + 15, t ? fmtM(t) : '0', { anchor: 'middle', fs: 10.5, cls: 'm', fill: C.faint });
+    });
+    // baselines
+    [[sp, 'S&P 500: ' + fmtM(sp), C.amber], [dep, 'bank deposit: ' + fmtM(dep), C.soft]].forEach(function (b, i) {
+      ln_(s, X(b[0]), mT - (i ? 22 : 38), X(b[0]), H - mB, b[2], 1.4, '4 3');
+      txt(s, X(b[0]) + (i ? 3 : 4), mT - (i ? 25 : 41), b[1], { fs: 10.5, fill: i ? C.soft : '#8a5d09', anchor: 'start', cls: 'halo' });
+    });
+    if (!narrow) {
+      var cx = x1 + 58;
+      [['w/o best 5', 0], ['Sharpe', 60], ['years up', 118], ['status', 130]].forEach(function (c) { txt(s, cx + c[1] + (c[1] ? 0 : 0), mT - 10, c[0], { fs: 10, fill: C.faint, anchor: c[1] < 125 ? 'end' : 'start', cls: 'm' }); });
+    }
+    rows.forEach(function (r, i) {
+      var y = mT + i * rowH, cols = v2cols(r), st = v2status(r), m = V2N[r.name] || [r.name, ''];
+      var g = el('g', { 'class': 'v2r', 'data-n': r.name, tabindex: 0, role: 'button', 'aria-label': m[0] });
+      g.appendChild(el('rect', { x: 0, y: y, width: w, height: rowH, fill: r.name === v2sel ? '#e3ebf4' : 'transparent', 'class': 'v2hit' }));
+      var by = narrow ? y + 19 : y + 5, bh = 12;
+      if (narrow) {
+        txt(g, 0, y + 12, m[0], { fs: fs, fill: C.ink, weight: r.candidate_by_rule ? 600 : 400, cls: 'halo' });
+        txt(g, w - 1, y + 12, 'Sharpe ' + r.sharpe_results.toFixed(2) + ', ' + r.years_positive + '/11', { fs: 10.5, fill: r.sharpe_results < 0.42 || r.years_positive < 8 ? C.neg : C.soft, anchor: 'end', cls: 'm' });
+      } else {
+        txt(g, 0, y + 15, m[0], { fs: fs, fill: C.ink, weight: r.candidate_by_rule ? 600 : 400 });
+        var nw = tw(m[0], fs, r.candidate_by_rule ? 600 : 400) + 5;
+        if (nw + m[1].length * 6 < labW) txt(g, nw, y + 15, m[1], { fs: 9.5, fill: C.faint, cls: 'm' });
+      }
+      var tot = r.total_1mw, wo = r.total_wo_best5;
+      g.appendChild(el('rect', { x: X(0), y: by, width: Math.max(1, X(tot) - X(0)), height: bh, fill: cols[1] }));
+      g.appendChild(el('rect', { x: X(0), y: by, width: Math.max(1, X(Math.max(0, wo)) - X(0)), height: bh, fill: cols[0] }));
+      var lab = fmtM(tot);
+      if (tot > CAP) {
+        var bx = X(CAP) - 14;
+        g.appendChild(el('path', { d: 'M' + (bx - 3) + ' ' + (by + bh + 2) + 'L' + (bx + 3) + ' ' + (by - 2) + 'M' + (bx + 3) + ' ' + (by + bh + 2) + 'L' + (bx + 9) + ' ' + (by - 2), stroke: '#fff', 'stroke-width': 3 }));
+        lab = fmtM(tot) + (narrow ? ', larger size' : ', larger size, not comparable');
+      }
+      if (tot > CAP) txt(g, X(CAP) - 20, by + 10, lab, { fs: 10.5, fill: '#fff', cls: 'm', anchor: 'end', weight: 500 });
+      else txt(g, X(tot) + 4, by + 10, lab, { fs: 10.5, fill: C.ink, cls: 'm halo' });
+      if (narrow) txt(g, w - 1, by + 10, st[0], { fs: 10.5, fill: st[1], anchor: 'end' });
+      if (!narrow) {
+        var cx = x1 + 58;
+        txt(g, cx, y + 15, fmtM(wo), { fs: 11, anchor: 'end', cls: 'm', fill: C.soft });
+        txt(g, cx + 60, y + 15, r.sharpe_results.toFixed(2), { fs: 11, anchor: 'end', cls: 'm', fill: r.sharpe_results < 0.42 ? C.neg : C.ink });
+        txt(g, cx + 118, y + 15, r.years_positive + '/11', { fs: 11, anchor: 'end', cls: 'm', fill: r.years_positive < 8 ? C.neg : C.ink });
+        txt(g, cx + 130, y + 15, st[0], { fs: 11, fill: st[1], weight: st[0] === 'candidate' ? 600 : 400 });
+      }
+      var pick = function () { v2sel = r.name; v2card(r.name); s.querySelectorAll('.v2hit').forEach(function (h) { h.setAttribute('fill', h.parentNode.getAttribute('data-n') === v2sel ? '#e3ebf4' : 'transparent'); }); };
+      g.addEventListener('click', pick);
+      g.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); pick(); } });
+      s.appendChild(g);
+    });
+    box.innerHTML = ''; box.appendChild(s);
+    v2card(v2sel);
+    var cand = rows.filter(function (r) { return r.candidate_by_rule; }), top = rows.filter(function (r) { return r.total_1mw <= CAP; })[0];
+    var beat = rows.filter(function (r) { return r.total_1mw > sp && r.total_1mw <= CAP; }), beatT = beat.filter(function (r) { return V2N[r.name][2] === 'tree model'; }).length;
+    setText('h-v2rank', 'On 2013 to 2023, ' + cand.length + ' of ' + rows.length + ' version 2 strategies pass the bar, and the weather forecast model earns most');
+    setText('t-v2rank', narrow ? 'At 1 MW, ' + words(beat.length) + ' strategies beat the S&P 500; the weather row leads' : 'At 1 MW, ' + words(beat.length) + ' strategies beat the S&P 500 on the same 500,000, and the weather forecast row is the best of them');
+    setText('k-v2rank', 'At 1 MW the weather forecast row earned ' + fmt(top.total_1mw) + ' USD over the eleven years, against ' + fmt(sp) + ' for the S&P 500 on the same 500,000 at its average yearly return. Leaving out the two rows that trade more than 1 MW, ' + words(beat.length) + ' rows clear that line, and ' + words(beatT) + ' of them are tree models that pick a side each hour.');
+    setText('n-v2rank', 'Baselines: the S&P 500 line is its average yearly total return over 2013 to 2023 (' + BL.sp500.average_pct.toFixed(2) + ' percent, dividends included) times 500,000 times 11 years, not reinvested, because the strategies keep a fixed size and do not reinvest either; reinvested, the same 500,000 would have gained ' + fmt(BL.sp500.profit_compounded_usd) + '. The deposit line uses Danish household deposit rates over the same years (average ' + BL.deposit.average_pct.toFixed(2) + ' percent). Two bars run past the axis, marked with a break: the learned mix and the tail risk row trade more than 1 MW, so their totals are not comparable with the rest. Pass the bar means at least 10 percent a year on the bankroll at the size whose worst fall is 100,000 USD, profit in at least 8 of 11 years, Sharpe above 0.42 and profit at a cost of 0.50 USD per MWh. Candidate means it passes and is not flagged fragile; comparison rows run beside the candidates in the held-out test.');
+    // limits, computed
+    var t5 = rows.filter(function (r) { return r.total_1mw <= CAP && !r.reference; }).slice(0, 5), y = D.years.v2, i22 = y.years.indexOf(2022), s22 = 0, sT = 0;
+    t5.forEach(function (r) { s22 += y.rows[r.name][i22]; sT += r.total_1mw; });
+    $('#lim-2022').innerHTML = '2022 alone gave ' + Math.round(100 * s22 / sT) + ' percent of the five largest 1&nbsp;MW totals, one year out of eleven; it is the year of Winter Storm Elliott, the December freeze that sent real-time prices far above day-ahead, and a strategy that leans on one year is less certain than its total suggests.';
+    var dp = v2row('V1_C_deep'), sd = v2row('V2_sides_no_limit');
+    $('#lim-deep').innerHTML = 'The deep models (neural networks) still trail the tree models (gradient boosting, many small decision trees added together) that pick a side each hour: the best deep zone pair row made ' + fmt(dp.total_1mw) + ' USD, the plain tree model that picks a side ' + fmt(sd.total_1mw) + ' (see <a href="#deep">Deep models</a>).';
+    var a13 = v2row('V13_A_deep_all'), c13 = v2row('V13_C_deep_all');
+    $('#lim-v13').innerHTML = 'The all inputs deep model did not pass in its spike flag form, which sells everywhere except hours it flags as likely price spikes: at the size where its worst fall is 100,000 USD it returns ' + a13.sizing_return_pct.toFixed(1) + ' percent a year, against the 10 percent the bar needs. Its zone pair form passed but earned ' + fmt(c13.total_1mw) + ' USD, less than the simpler deep model.';
+    var al = v2row('V12_alloc');
+    $('#lim-alloc').innerHTML = 'The learned mix of strategies, a small network that each day splits the risk across the strategies that had passed (' + fmt(al.total_1mw) + ' USD at its own, larger sizes), was built before the price limit reruns and the joined weather row finished, so it mixes the list as it stood then; it goes into the held-out run as it ran.';
+    $('#lim-flags').innerHTML = 'Most top rows have at least one year with a Sharpe ratio above 3, unusually smooth for a trading rule, which my rules treat as a reason for an audit, not a pass; the per-year flags are listed in the results file. Version 2 tried ' + rows.length + ' strategy rows and 87 settings in all, and with that many tries some rows will look good by chance; the held-out run is the check on that.';
+  }
+  function drawWeather() {
+    var box = $('#ch-weather'), w = W(box), narrow = w < 560, y = v2years('V16_B_gefs_joined'), old = v2years('V4_B_reforecast');
+    var mL = narrow ? 34 : 46, mT = 22, H = narrow ? 220 : 250, mB = 26, n = y.years.length;
+    var hi = Math.max.apply(null, y.v) * 1.12, lo = Math.min(0, Math.min.apply(null, y.v));
+    var bw = (w - mL - 8) / n, Y = function (v) { return mT + (1 - (v - lo) / (hi - lo)) * (H - mT - mB); };
+    var s = svg(w, H, 'Profit per year of the joined weather row');
+    niceTicks(lo, hi, 4).forEach(function (t) { ln_(s, mL, Y(t), w - 8, Y(t), t ? C.rule : C.rule2, 1); txt(s, mL - 5, Y(t) + 4, t ? fmtM(t) : '0', { anchor: 'end', fs: 10.5, cls: 'm', fill: C.faint }); });
+    y.years.forEach(function (yy, i) {
+      var v = y.v[i], x = mL + i * bw + bw * 0.15, isNew = yy >= 2020;
+      s.appendChild(el('rect', { x: x, y: Math.min(Y(v), Y(0)), width: bw * 0.7, height: Math.abs(Y(v) - Y(0)), fill: isNew ? '#2c4a6b' : '#9fb3c8' }));
+      txt(s, x + bw * 0.35, Y(v) - 4, fmtM(v), { anchor: 'middle', fs: narrow ? 9.5 : 10.5, cls: 'm', fill: C.ink });
+      txt(s, x + bw * 0.35, H - mB + 15, narrow ? "'" + String(yy).slice(2) : String(yy), { anchor: 'middle', fs: 10.5, cls: 'm', fill: C.faint });
+    });
+    box.innerHTML = ''; box.appendChild(s);
+    var r = v2row('V16_B_gefs_joined'), o = v2row('V4_B_reforecast'), i22 = y.years.indexOf(2022);
+    var added = 0; y.years.forEach(function (yy, i) { if (yy >= 2020) added += y.v[i]; });
+    setText('h-weather', 'Closing a three year gap in the forecast archive made the weather model the best 1 MW row on the build years');
+    setText('t-weather', 'The joined weather row earned ' + fmt(r.total_1mw) + ' USD, ' + fmt(added) + ' of it in the years the live archive added');
+    setText('k-weather', 'With the gap closed the row made money in ' + r.years_positive + ' of 11 years with a Sharpe ratio of ' + r.sharpe_results.toFixed(2) + ', and it passes the bar; the first weather row, with ' + o.years_positive + ' years traded, could not.');
+    setText('n-weather', 'Two cautions. I registered the joined row after seeing the first weather row’s 2013 to 2019 results, so it is the same idea with more data, not a fresh idea, and its 2013 to 2019 days are unchanged. And 2022 alone gave ' + fmt(y.v[i22]) + ' of its ' + fmt(r.total_1mw) + ' USD. The live archive for 2024 onward is downloaded but sealed: only its file counts were read.');
+  }
+  function drawDeep() {
+    var box = $('#ch-deep'), w = W(box), narrow = w < 600;
+    var G = [['Zone pairs: buy one zone, sell another', [['C_static_pairs', 'No model, fixed pair pattern', 'none'], ['V1_C_gbm', 'Trees', 'tree'], ['V1_C_deep', 'Deep', 'deep'], ['V13_C_deep_all', 'Deep, all inputs', 'deep'], ['V14f_global_zone', 'Deep, one model for all zones', 'deep']]],
+      ['Picking a side each hour', [['V2_sides_no_limit', 'Trees', 'tree'], ['V15b_V13_both', 'Deep, all inputs', 'deep']]]];
+    var COL = { none: '#8b95a1', tree: '#0f7f74', deep: '#7a4f9a' };
+    var labW = narrow ? 0 : 210, rowH = narrow ? 34 : 24, mT = 8, lay = [], yy = mT;
+    G.forEach(function (g) { lay.push({ head: g[0], y: yy + 14 }); yy += 24; g[1].forEach(function (it) { lay.push({ it: it, y: yy }); yy += rowH; }); yy += 8; });
+    var H = yy + 6, maxv = 0; G.forEach(function (g) { g[1].forEach(function (it) { maxv = Math.max(maxv, v2row(it[0]).total_1mw); }); });
+    var x0 = labW, x1 = w - (narrow ? 150 : 190), X = function (v) { return x0 + v / maxv * (x1 - x0); };
+    var s = svg(w, H, 'Deep and tree models on the same kind of bet');
+    lay.forEach(function (L) {
+      if (L.head) { txt(s, 0, L.y, L.head, { fs: 12, fill: C.acc, weight: 600 }); return; }
+      var r = v2row(L.it[0]), y = L.y, by = narrow ? y + 15 : y + 5;
+      txt(s, 0, narrow ? y + 11 : y + 15, L.it[1], { fs: narrow ? 11.5 : 12.5, fill: C.ink, weight: 500 });
+      var cw = tw(L.it[1], 12.5, 500) + 5;
+      if (!narrow && cw + V2N[L.it[0]][1].length * 6 < labW) txt(s, cw, y + 15, V2N[L.it[0]][1], { fs: 9.5, fill: C.faint, cls: 'm' });
+      s.appendChild(el('rect', { x: x0, y: by, width: X(r.total_1mw) - x0, height: 13, fill: COL[L.it[2]] }));
+      txt(s, X(r.total_1mw) + 5, by + 11, (narrow ? fmtM(r.total_1mw) : fmt(r.total_1mw)) + ', Sharpe ' + r.sharpe_results.toFixed(2), { fs: 11, cls: 'm halo', fill: C.ink });
+    });
+    var ref = v2row('C_static_pairs').total_1mw, g0 = lay.filter(function (L) { return L.it && G[0][1].indexOf(L.it) >= 0; });
+    var ry0 = g0[0].y + (narrow ? 12 : 2), ry1 = last(g0).y + rowH - 2;
+    var rl = ln_(s, X(ref), ry0, X(ref), ry1, C.ink, 1.2, '4 3'); s.insertBefore(rl, s.firstChild);
+    box.innerHTML = ''; box.appendChild(s);
+    var cs = v2row('C_static_pairs'), cd = v2row('V1_C_deep'), cg = v2row('V1_C_gbm'), ca = v2row('V13_C_deep_all'), gz = v2row('V14f_global_zone'), ts = v2row('V2_sides_no_limit'), da = v2row('V15b_V13_both');
+    setText('t-deep', 'Deep models earn more than trees on zone pairs, but less where the larger totals are, picking a side each hour');
+    setText('k-deep', 'On zone pairs the deep model made ' + fmt(cd.total_1mw) + ' USD against ' + fmt(cg.total_1mw) + ' for trees; picking a side, trees made ' + fmt(ts.total_1mw) + ' against ' + fmt(da.total_1mw) + ' for the deep model, and side picking is where the largest totals are. On Sharpe alone the two model types are close.');
+    $('#dw-size').innerHTML = 'Each window trains on three years, about 1,100 days, and I think a deep network with thousands of weights learns the accidents of so few days along with the pattern. Giving it more inputs made this worse: the all inputs deep model made ' + fmt(ca.total_1mw) + ' USD (Sharpe ' + ca.sharpe_results.toFixed(2) + '), less than the simpler deep model’s ' + fmt(cd.total_1mw) + ' (Sharpe ' + cd.sharpe_results.toFixed(2) + ') on the same days.';
+    var d = cd.total_1mw - cs.total_1mw;
+    var fr = D.feature_matrix.rows.filter(function (r) { return r.study === 'v2'; });
+    var dS = fr.filter(function (r) { return r.m_deep && !r.m_gbm; }).map(function (r) { return r.sharpe; }), tS = fr.filter(function (r) { return r.m_gbm && !r.m_deep; }).map(function (r) { return r.sharpe; });
+    $('#dw-sharpe').innerHTML = 'On the Sharpe ratio alone the deep rows are close to the tree rows: the median of the ' + dS.length + ' deep rows is ' + fmed(dS).toFixed(2) + ', against ' + fmed(tS).toFixed(2) + ' for the ' + tS.length + ' tree rows. My reading is that they earn less mainly because most of them trade zone pairs, which pay less than picking a side.';
+    $('#dw-learn').innerHTML = 'What the deep zone pair model learned is mostly a fixed price gap between two zones. The rule with no model that trades only that pattern made ' + fmt(cs.total_1mw) + ' USD over the same eleven years, so the model added ' + fmt(d) + ', about ' + fmt(d / 11) + ' a year.';
+    $('#dw-pool').innerHTML = 'One result I would follow up is pooling. One deep model that treats every zone and hour as its own training example, with a learned code for each zone and hour, sees about 290,000 examples in a three year window instead of about 1,100 days, and it reached a Sharpe ratio of ' + gz.sharpe_results.toFixed(2) + ', the best of the deep zone pair models, though only a little above the simpler deep model\u2019s ' + cd.sharpe_results.toFixed(2) + '. Pooling further, across neighbouring regions or with longer histories, is the next step I would test.';
   }
 
   // ---------- wiring ----------
@@ -2351,7 +2654,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     jobs.forEach(function (f) { try { f(); } catch (err) { console.error(err); } });
   }
   function drawStatic() {
-    [drawStorm, drawSeeds, drawClock, drawAddenda, drawHeldout, function () { drawAll('v1'); drawAll('v2'); }, counts]
+    [drawV2Rank, drawWeather, drawDeep, drawStorm, drawSeeds, drawClock, drawAddenda, drawHeldout, function () { drawAll('v1'); drawAll('v2'); }, counts]
       .forEach(function (f) { try { f(); } catch (err) { console.error(err); } });
   }
   document.querySelectorAll('.vt button').forEach(function (b) {
@@ -2367,7 +2670,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
   window.addEventListener('resize', function () {
     clearTimeout(rt); rt = setTimeout(function () {
       var w = document.body.clientWidth; if (Math.abs(w - lastW) < 4) return; lastW = w;
-      drawVersioned(); drawStorm(); drawSeeds(); drawClock(); drawAddenda();
+      drawVersioned(); drawV2Rank(); drawWeather(); drawDeep(); drawStorm(); drawSeeds(); drawClock(); drawAddenda();
     }, 120);
   });
   var appx = document.getElementById('appx');
@@ -2398,7 +2701,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
   })).then(function () {
     lastW = document.body.clientWidth;
     drawVersioned(); drawStatic();
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { drawVersioned(); drawStorm(); drawSeeds(); drawClock(); drawAddenda(); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { drawVersioned(); drawV2Rank(); drawWeather(); drawDeep(); drawStorm(); drawSeeds(); drawClock(); drawAddenda(); });
   }).catch(function (err) {
     console.error(err);
     document.querySelectorAll('.chart').forEach(function (c) { c.innerHTML = '<p class="err">The chart data could not be loaded (' + err.message + '). The JSON files are linked under each chart.</p>'; });

@@ -516,7 +516,12 @@ def stage_heldout():
     from data up to two days earlier, with every choice read from frozen_choices.json. The lock refuses
     it unless research/us/FREEZE names a commit, this checkout's model and pipeline equal that commit,
     and US_HOLDOUT_RUN=1 (heldout.sh arranges all three on a clean clone)."""
-    global BUILD, READ_END, SITES_THROUGH, OUT, REH
+    global BUILD, READ_END, SITES_THROUGH, OUT, REH, HOLDOUT, RESULTS
+    import heldout_mode as HM
+    if HM.mode() == "dryrun":                                     # the same path on 2023 (heldout_mode.py)
+        HOLDOUT, RESULTS = HM.window(), HM.run_dir() / "results"
+        if CACHE.resolve() == (Path.home() / "nyiso-us" / "cache").resolve():
+            raise HM.ModeError("set US_CACHE_DIR: the dry run never writes the build cache")
     lock.assert_build_only([HOLDOUT[1]])                          # raises while locked
     ch = json.loads(CHOICES.read_text())
     commit = lock.freeze_hash() or "nofreeze"                     # only a synthetic test lacks FREEZE here

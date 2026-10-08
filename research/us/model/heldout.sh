@@ -5,6 +5,9 @@
 #
 #   research/us/model/heldout.sh            verify, copy, clone, check the lock opens, start the run
 #   research/us/model/heldout.sh --check    the same, but stop before the run starts
+#   research/us/model/heldout.sh --with-v1  also, after rehearsal.py heldout, the version 1 runner over every
+#                                           HELDOUT-LIST row (heldout_v1.py all, US_RUN_MODE=heldout, its own
+#                                           run directory <remote>/v1run); --check --with-v1 also prints its plan
 #
 # Laptop side: bundle origin/master, copy it and FREEZE to gene.
 # Gene side: fetch the bundle into an empty repository, check out the FREEZE commit (detached), put
@@ -16,7 +19,14 @@
 set -euo pipefail
 
 CHECK_ONLY=0
-[[ "${1:-}" == "--check" ]] && CHECK_ONLY=1
+WITH_V1=0
+for a in "$@"; do
+  case "$a" in
+    --check) CHECK_ONLY=1 ;;
+    --with-v1) WITH_V1=1 ;;
+    *) echo "unknown option $a"; exit 1 ;;
+  esac
+done
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(git -C "$HERE" rev-parse --show-toplevel)"
@@ -48,9 +58,9 @@ scp -q "$BUNDLE" "$GENE:$REMOTE/tavle.bundle"
 scp -q "$FREEZE" "$GENE:$REMOTE/FREEZE"
 rm -rf "$WORK"
 
-ssh "$GENE" bash -s -- "$H" "$REMOTE" "$CHECK_ONLY" "$VENV" <<'GENE_SIDE'
+ssh "$GENE" bash -s -- "$H" "$REMOTE" "$CHECK_ONLY" "$VENV" "$WITH_V1" <<'GENE_SIDE'
 set -euo pipefail
-H="$1"; REMOTE="$HOME/$2"; CHECK_ONLY="$3"; PY="${4/#\~/$HOME}"
+H="$1"; REMOTE="$HOME/$2"; CHECK_ONLY="$3"; PY="${4/#\~/$HOME}"; WITH_V1="$5"
 cd "$REMOTE"
 if [[ -d tavle ]]; then echo "STOP: $REMOTE/tavle exists already (an earlier run?); move it aside first"; exit 1; fi
 git init -q tavle
@@ -63,10 +73,23 @@ cp FREEZE tavle/research/us/FREEZE
 cd tavle/research/us/model
 export US_HOLDOUT_RUN=1 US_CACHE_DIR="$REMOTE/cache"
 "$PY" -c 'import lock, sys; ok, why = lock.unlock_status(); print("lock:", why); sys.exit(0 if ok else 1)'
+if [[ "$WITH_V1" == "1" ]]; then
+  US_RUN_MODE=heldout US_RUN_DIR="$REMOTE/v1run" US_CACHE_DIR="$REMOTE/v1run/cache" "$PY" heldout_v1.py plan
+fi
 if [[ "$CHECK_ONLY" == "1" ]]; then echo "check only: lock opens for $H; not running"; exit 0; fi
-nohup "$PY" rehearsal.py heldout > "$REMOTE/heldout.log" 2>&1 < /dev/null &
-echo "started pid $! ; log $REMOTE/heldout.log"
+if [[ "$WITH_V1" == "1" ]]; then
+  nohup bash -c "\"$PY\" rehearsal.py heldout > \"$REMOTE/heldout.log\" 2>&1; \
+    US_RUN_MODE=heldout US_RUN_DIR=\"$REMOTE/v1run\" US_CACHE_DIR=\"$REMOTE/v1run/cache\" \"$PY\" heldout_v1.py all > \"$REMOTE/heldout_v1.log\" 2>&1" \
+    < /dev/null > /dev/null 2>&1 &
+  echo "started pid $! ; logs $REMOTE/heldout.log then $REMOTE/heldout_v1.log"
+else
+  nohup "$PY" rehearsal.py heldout > "$REMOTE/heldout.log" 2>&1 < /dev/null &
+  echo "started pid $! ; log $REMOTE/heldout.log"
+fi
 GENE_SIDE
 
 echo "when the log ends with 'held-out run written', copy the results back:"
 echo "  scp '$GENE:$REMOTE/tavle/research/us/results/heldout_*' '$REPO/research/us/results/'"
+if [[ "$WITH_V1" == "1" ]]; then
+  echo "version 1 rows (when heldout_v1.log ends with 'run written'): $GENE:$REMOTE/v1run/side/"
+fi

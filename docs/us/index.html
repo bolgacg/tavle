@@ -299,7 +299,7 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
 
 <section id="bankroll" data-band style="--band:var(--b1);padding-top:28px"><div class="wrap">
   <div class="card">
-    <div class="vt" role="group" aria-label="Study version"><button data-v="v1" aria-pressed="true">Version 1 &middot; 2021 to 2023</button><button data-v="v2" aria-pressed="false">Version 2 &middot; 2013 to 2023</button></div>
+    <div class="vt" role="group" aria-label="Study version"><button data-v="v2" aria-pressed="true">Version 2 &middot; 2013 to 2023</button><button data-v="v1" aria-pressed="false">Version 1 &middot; 2021 to 2023</button></div>
     <p class="hint"><b>Click a version</b> to switch every chart on the page. <b>Hover or tap</b> a chart to read one day.</p>
     <h2 class="ctitle" id="t-bank">Loading the build-year results</h2>
     <p class="csub">Each line starts with 500,000 USD and pays every fee. Fixed-size bets, profits not reinvested, so lines rise in a straight-ish line rather than compounding.</p>
@@ -441,7 +441,7 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
   <div class="sec-label">What the strategies are made of</div>
   <h2>The best strategies predict the size of the gap and may buy or sell; the worst only ever sell</h2>
   <p class="why">Each strategy is a bundle of choices: a model, a way of training it, the inputs it reads, what it predicts and a rule for taking positions. Here I line up every scored strategy by those choices, to see which ones the best share and which combinations I have not tried. This is association among my own strategies, not cause: many of them share a model, a zone or a storm.</p>
-  <div class="vt" role="group" aria-label="Study version"><button data-v="v1" aria-pressed="true">Version 1 &middot; 2021 to 2023</button><button data-v="v2" aria-pressed="false">Version 2 &middot; 2013 to 2023</button></div>
+  <div class="vt" role="group" aria-label="Study version"><button data-v="v2" aria-pressed="true">Version 2 &middot; 2013 to 2023</button><button data-v="v1" aria-pressed="false">Version 1 &middot; 2021 to 2023</button></div>
   <p class="hint">The two versions score different years, so I never mix their Sharpe ratios on one axis. <b>Click a version</b> to switch.</p>
 
   <div class="card" id="fm-strips-card">
@@ -495,7 +495,7 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
   <p class="why">A result that rests on one month or one storm can vanish in the held-out years, so these three charts show when each candidate earned.</p>
 
   <div class="card">
-    <div class="vt" role="group" aria-label="Study version"><button data-v="v1" aria-pressed="true">Version 1</button><button data-v="v2" aria-pressed="false">Version 2</button></div>
+    <div class="vt" role="group" aria-label="Study version"><button data-v="v2" aria-pressed="true">Version 2</button><button data-v="v1" aria-pressed="false">Version 1</button></div>
     <h3 class="ctitle" id="t-years">Loading</h3>
     <p class="csub">Net profit each calendar year as a percent of the 500,000 USD bankroll, at the sizing view; all panels share one scale, and the faint line marks +100 percent (the bankroll doubled)</p>
     <div class="chart mult" id="ch-years"></div>
@@ -509,7 +509,7 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
   </div>
 
   <div class="card">
-    <div class="vt" role="group" aria-label="Study version"><button data-v="v1" aria-pressed="true">Version 1</button><button data-v="v2" aria-pressed="false">Version 2</button></div>
+    <div class="vt" role="group" aria-label="Study version"><button data-v="v2" aria-pressed="true">Version 2</button><button data-v="v1" aria-pressed="false">Version 1</button></div>
     <p class="hint"><b>Pick a strategy.</b> The grid shows its profit month by month.</p>
     <div class="chips" id="chips-month" role="group" aria-label="Strategy"></div>
     <h3 class="ctitle" id="t-month">Loading</h3>
@@ -558,7 +558,7 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
   </div>
 
   <div class="card">
-    <div class="vt" role="group" aria-label="Study version"><button data-v="v1" aria-pressed="true">Version 1</button><button data-v="v2" aria-pressed="false">Version 2</button></div>
+    <div class="vt" role="group" aria-label="Study version"><button data-v="v2" aria-pressed="true">Version 2</button><button data-v="v1" aria-pressed="false">Version 1</button></div>
     <h3 class="ctitle" id="t-placebo">Loading</h3>
     <p class="csub">A placebo feeds a rule the wrong dates, so any profit it keeps cannot come from timing. Three-year build-year profit in USD at 1&nbsp;MW: the real rule, and the same rule fed shuffled dates (mean of 20 shuffles) or inputs one day late</p>
     <div class="chart" id="ch-placebo"></div>
@@ -1378,7 +1378,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
   var BANK = 500000, END = '2026-09-30', HO = '2024-01-01', DAY = 86400000;
   var C = { ink: '#1a1d21', soft: '#5b6470', faint: '#8b95a1', rule: '#e2e0dc', rule2: '#c9c5be',
     acc: '#2c4a6b', pos: '#2f7d54', neg: '#b03a3a', amber: '#c8860d', grey: '#8b95a1', v2: '#7a4f9a' };
-  var D = {}, V = 'v1', monthSel = { v1: null, v2: null }, hoverIdx = null;
+  var D = {}, V = 'v2', monthSel = { v1: null, v2: null }, hoverIdx = null;
   var FILES = ['equity_v1', 'equity_v2', 'drawdown', 'monthly', 'placebo', 'seeds', 'years', 'events', 'feature_matrix', 'baselines'];
 
   // ---------- names ----------

@@ -688,7 +688,7 @@ def stage_lab():
 
     # idea 13: the build's survivors with the build's weights (MW per position), netted per zone-hour
     i13 = robust["idea13"]
-    w13 = {k: v["weight_mw"] for k, v in i13["components"].items()}
+    w13 = idea13_weights(i13)
     mw13 = np.zeros(F.NH)
     for k, w in w13.items():
         mw13 += w * mws[k]
@@ -724,6 +724,15 @@ def stage_lab():
     return {"rows": len(results), "pending": pending}
 
 
+def idea13_weights(i13: dict) -> dict:
+    """robust/summary.py idea13's weights, unrounded: scale = min(5, 100,000 / the component's three-year max
+    drawdown at 1 MW, which the lab rounds to the dollar), divided by the number of components (the JSON's
+    weight_mw is rounded to 4 decimals)."""
+    comps = i13["components"]
+    LB = lab_module()
+    return {k: min(LB.SIZE_CAP, LB.SIZE_DD / -v["max_drawdown_1MW"]) / len(comps) for k, v in comps.items()}
+
+
 def _combined(daily, results, build_lab, i13):
     """Build-year daily (side/lab_daily.parquet) plus the window, and a results file whose rows keep the build's
     flags and sizing view (the selection was fixed on the build years) with the window's years added."""
@@ -742,6 +751,8 @@ def _combined(daily, results, build_lab, i13):
         b = build_lab.get(k)
         if b is None and k == "idea13_portfolio":
             b = {"years": {y: {"net_usd": v} for y, v in i13["as_built"]["years"].items()},
+                 "three_year": {"net_usd": i13["as_built"]["three_year_net"], "sharpe": i13["as_built"]["sharpe"],
+                                "max_drawdown_usd": i13["as_built"]["max_drawdown"]},
                  "sizing_view": {"scale_for_100k_drawdown": i13["sizing"]["multiplier_for_100k_drawdown_capped_at_5MW_per_zone_hour"],
                                  "return_on_500k_at_that_scale_pct": i13["sizing"]["return_on_500k_pct"]},
                  "bar": {"positive_years": True, "sharpe_3y": True, "stress_total": True}, "FRAGILE": False,
@@ -769,6 +780,8 @@ def _build_years_check(LB, F, strats, mws_window, i13):
     keep = LB.YEARS
     LB.YEARS = years_before
     try:
+        lead = {s.name: s for s in LB.load_lead(F, {})[0]}   # the lead rows' settings are read per scored year
+        strats = [lead.get(s.name, s) for s in strats]
         m = np.isin(F.day_year, years_before)
         out, mws = {}, {}
         for st in strats:
@@ -779,7 +792,7 @@ def _build_years_check(LB, F, strats, mws_window, i13):
                 diff = (d - bd[st.name].reindex(d.index)).abs()
                 out[st.name] = {"max_abs_daily_diff_usd": float(diff.max()),
                                 "net_run": round(float(d.sum()), 2), "net_build": round(float(bd[st.name].reindex(d.index).sum()), 2)}
-        mw13 = sum(v["weight_mw"] * mws[k] for k, v in i13["components"].items())
+        mw13 = sum(w * mws[k] for k, w in idea13_weights(i13).items())
         d13 = pd.Series(F.day_pnl(mw13)[m], index=F.days[m])
         pd.DataFrame({"idea13_portfolio": d13}).rename_axis("delivery_date").to_parquet(SIDE / "idea13_build_daily.parquet")
         out["idea13_portfolio"] = {"net_run_by_year": {str(y): round(float(d13[d13.index.year == y].sum())) for y in years_before},

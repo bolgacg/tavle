@@ -65,7 +65,6 @@ STEPS = {
     "V9_decompose":  ("cpu", ideas("V9_decompose"), {}, []),
     "V7_recency":    ("cpu", ideas("V7_recency"), {}, []),
     "V8_error_mining": ("cpu", ideas("V8_error_mining"), {}, []),
-    "V4_B_reforecast": ("cpu", ideas("V4_B_reforecast"), {}, []),
     "V16_B_gefs_joined": ("cpu", ideas("V16_B_gefs_joined"), {}, []),
     "v14a_gbm":      ("cpu", model("v14_gbm.py", "--threads", "2"), {}, []),
     "v14d_gru":      ("gpu", model("v14_gru.py", "d", "--device", "cuda"), {}, []),
@@ -74,23 +73,27 @@ STEPS = {
     "v13":           ("gpu", model("v13_rolling.py", "rows", "--device", "cuda"), {}, []),
     "v14e_mlp":      ("gpu", model("v14_mlp.py", "e", "--device", "cuda"), {}, []),
     "v14f_mlp":      ("gpu", model("v14_mlp.py", "f", "--device", "cuda"), {}, []),
-    "v15a_V4":       ("cpu", model("v15_limit.py", "V4", "--threads", "2"), {}, ["V4_B_reforecast"]),
     "v15a_V5":       ("cpu", model("v15_limit.py", "V5", "--threads", "2"), {}, ["V5_border_inputs"]),
     "v15a_V8":       ("cpu", model("v15_limit.py", "V8", "--threads", "2"), {}, ["V8_error_mining"]),
-    "v15d_V4_pairs": ("cpu", model("v15_pairs.py"), {}, ["V4_B_reforecast"]),
-    "v15c_wx_border": ("cpu", model("v15_wxbord.py", "--threads", "2"), {}, ["v15a_V4", "v15a_V5"]),
+    "v15c_wx_border": ("cpu", model("v15_wxbord.py", "--threads", "2"), {}, ["v15a_V5"]),
     "strategies":    ("cpu", model("strategies_v2.py"), {}, ["gbm", "deep_c", "deep_v10"]),
     "v15b_V13":      ("cpu", model("v15_v13.py"), {}, ["v13", "gbm"]),
     "v14_positions": ("cpu", model("v14_positions.py"), {},
                       ["gbm", "deep_c", "v14a_gbm", "v14a_gru", "v14b_gru", "v14d_gru", "v14e_mlp", "v14f_mlp"]),
     "v12":           ("gpu", model("alloc_v12.py", "--device", "cuda", "--wait-ideas-hours", "0"),
                       {"OMP_NUM_THREADS": "1"},
-                      ["strategies", "v14_positions", "v15b_V13", "v15c_wx_border", "v15d_V4_pairs", "v13",
+                      ["strategies", "v14_positions", "v15b_V13", "v15c_wx_border", "v13",
                        "V5_border_inputs", "V6_NYC", "V6_LI", "V7_flags", "V7_recency", "V8_error_mining",
-                       "V9_decompose", "V4_B_reforecast", "V16_B_gefs_joined"]),
+                       "V9_decompose", "V16_B_gefs_joined"]),
     "comparisons":   ("cpu", model("strategies_v2.py", "--only", "comparisons"), {}, ["strategies"]),
 }
 SCORE = model("score_v2.py")
+# Not run (agreed with the coordinator, 8 Oct): their forecast source, the GEFS reforecast, ends in 2019 and their own
+# code keeps only deliveries before 2020-01-01; V16_B_gefs_joined (GEFS v12 throughout) supersedes them. V12 reads
+# their build positions (build_pos/, nothing after 2019), as it did in the build.
+NOT_RUN = {"V4_B_reforecast": "not run: forecast source ends in 2019 (superseded by V16)",
+           "V15a_V4_limit": "not run: forecast source ends in 2019 (superseded by V16)",
+           "V15d_V4_pairs": "not run: forecast source ends in 2019 (superseded by V16)"}
 
 
 def log(*a):
@@ -297,6 +300,10 @@ def check():
     out = []
     for n in heldout_rows():
         r = {"row": n}
+        if n in NOT_RUN:
+            r["status"] = NOT_RUN[n]
+            out.append(r)
+            continue
         fb, fr = R.BUILD_RESULTS / "pos" / f"{n}.parquet", R.POS / f"{n}.parquet"
         if not fr.exists():
             r["status"] = "no dry-run positions"

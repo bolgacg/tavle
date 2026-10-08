@@ -175,6 +175,8 @@ def write_md(out: dict, path):
             _f(r["sizing_view"]["scale_for_100k_drawdown"]), "yes" if r["PASS"] else "no",
             {True: "yes", False: "no"}.get(r["FRAGILE"], "n/a"), _f(p.get("shifted_one_day_total")),
             _f(p.get("shuffled_mean_total")), str(r["settings_tried"])]) + " |")
+    if out.get("not_run"):
+        L += ["", "Not run:", ""] + [f"- {n}: {why}" for n, why in out["not_run"].items()]
     labels = [r for r in out["rows"] if r.get("label")]
     if labels:
         L += ["", "Labels (addendum of 7 Oct):", ""] + [f"- {r['name']}: {r['label']}" for r in labels]
@@ -253,6 +255,8 @@ def main():
     if not BUILD:
         carried_sizing(lab, rows, daily)
         out["window"] = [str(FIRST), str(R.LAST_SCORED)]
+        out["not_run"] = {n: "not run: forecast source ends in 2019 (superseded by V16)"
+                          for n in ("V4_B_reforecast", "V15a_V4_limit", "V15d_V4_pairs")}
         out["build_results"] = str(BUILD_JSON)
         if BUILD_DAILY.exists():
             b = ds.dataset(str(BUILD_DAILY), format="parquet").to_table(

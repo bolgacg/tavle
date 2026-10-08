@@ -42,6 +42,8 @@ BUILD_CANDIDATES = (
     "V1_C_deep", "V1_C_gbm", "V1_always_supply", "V1_baseline", "V2_limit_gbm", "V3_tail_gbm", "V4_B_reforecast",
     "V5_border_inputs", "V6_LI", "V6_NYC", "V7_flags", "V7_recency", "V8_error_mining", "V9_decompose")
 
+NOT_RUN_V4 = ("V4_B_reforecast", "V15d_V4_pairs")     # not rerun in run modes: forecast source ends in 2019
+
 
 def load_day_features() -> pd.DataFrame:
     """The day-feature matrix as deep_policy.load_day_features reads it; in a run mode through rolling.read_pre2024
@@ -78,7 +80,10 @@ def candidate_profits(days: pd.DatetimeIndex):
     mi = pd.MultiIndex.from_arrays([px["delivery_hour"], px["zone"]])
     di = days.get_indexer(px["ddate"])
     for j, n in enumerate(names):
-        pos = R.read_pre2024(R.POS / f"{n}.parquet", "delivery_hour")
+        f = R.POS / f"{n}.parquet"
+        if R.MODE != "build" and n in NOT_RUN_V4:          # build positions, nothing after 2019 (heldout_v2.NOT_RUN)
+            f = R.RESULTS / "build_pos" / f"{n}.parquet"
+        pos = R.read_pre2024(f, "delivery_hour")
         pos["delivery_hour"] = pos["delivery_hour"].dt.tz_convert(R.TZ)
         s = pos.groupby(["delivery_hour", "zone"])["mw"].sum()
         have = s.reindex(mi).notna().to_numpy()

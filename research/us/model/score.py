@@ -5,14 +5,15 @@ is (idea daily P&L - baseline daily P&L). Intervals come from a stationary boots
 (Politis and Romano; mean block 7 days, 10,000 replicates, fixed seed); the same resampled days are
 used for every idea, so the ideas are compared on identical draws.
 
-Verdict words (objective 6): pays = lower end of the (corrected) interval above zero.
-Our reading for the other words, to be confirmed before the freeze: doesn't pay = upper end below
-zero; inconclusive = otherwise. Holm (B, C, D): two-sided bootstrap p-values (percentile inversion,
-consistent with the intervals); the hypothesis ranked k-th smallest (k = 1..m) gets the interval at
-level 1 - 0.05 / (m - k + 1); once one is not rejected, every later one is inconclusive.
-Deep against gradient boosting: equivalent if the 95% interval of (deep - gbm) daily P&L lies inside
-+- (fee x the gradient-boosting version's mean MWh per day); otherwise better / worse if the interval
-excludes zero, else inconclusive.
+Verdict words (objective 6 and the addendum of 6 Oct, late evening): pays = lower end of the
+(corrected) interval above zero; doesn't pay = upper end below zero; inconclusive otherwise.
+Holm (B, C, D): two-sided bootstrap p-values (percentile inversion, consistent with the intervals);
+the hypothesis ranked k-th smallest (k = 1..m) gets the interval at level 1 - 0.05 / (m - k + 1).
+A word other than inconclusive needs the Holm step to have rejected that hypothesis.
+Deep against gradient boosting: better if the 95% interval of (deep - gbm) daily P&L is above zero,
+worse if below; equivalent only if it contains zero and lies inside +- the gradient-boosting version's
+mean daily cost (one fee per MWh it traded, at each side's cost); else inconclusive.
+Context figures shown beside the verdicts (own profit per year, risk-adjusted ratios) live in context.py.
 """
 from __future__ import annotations
 
@@ -23,7 +24,6 @@ import lock
 import numpy as np
 import pandas as pd
 
-import fees
 
 N_BOOT = 10_000
 MEAN_BLOCK = 7
@@ -189,7 +189,7 @@ def apply_holm(results: dict[str, dict], idx_level_fn=None) -> None:
         r["holm"] = info
         r["interval_level"] = info["level"]
         r["interval"] = list(interval(r["boot_means"], info["level"]))
-        r["verdict"] = verdict(*r["interval"], reached=info["reached"])
+        r["verdict"] = verdict(*r["interval"]) if info["rejected"] else "inconclusive"   # audit patch
         r["mde_80pct_power"] = mde(r["se_daily_diff"], ALPHA / len(sec))      # worst-case Holm level
 
 
@@ -197,18 +197,25 @@ def deep_vs_gbm(led_deep: pd.DataFrame, led_gbm: pd.DataFrame, days, idx) -> dic
     d = (daily(led_deep, days) - daily(led_gbm, days)).to_numpy()
     bm = boot_means(d, idx)
     lo, hi = interval(bm, 0.95)
-    fee_mean = float(np.mean(fees.fee_for(pd.Series(days))))
-    margin = fee_mean * float(led_gbm["mwh"].sum() / len(days))
-    if -margin <= lo and hi <= margin:
-        word = "equivalent"
-    elif lo > 0:
+    margin = float((led_gbm["gross"] - led_gbm["pnl"]).sum() / len(days))   # the costs it paid: one fee per MWh
+    if lo > 0:
         word = "better"
     elif hi < 0:
         word = "worse"
+    elif -margin <= lo <= 0 <= hi <= margin:
+        word = "equivalent"
     else:
         word = "inconclusive"
     return {"mean_daily_diff": float(d.mean()), "interval_95": [lo, hi], "margin_usd_per_day": margin,
             "verdict": word}
+
+
+def compare(led_x: pd.DataFrame, led_y: pd.DataFrame, days, idx, level: float = 0.95) -> dict:
+    """Daily P&L of x minus y on the same days and resamples: mean and interval (context, no test)."""
+    d = (daily(led_x, days) - daily(led_y, days)).to_numpy()
+    bm = boot_means(d, idx)
+    return {"mean_daily_diff": float(d.mean()), "interval_95": list(interval(bm, level)),
+            "p_two_sided": p_two_sided(bm)}
 
 
 def strip(results):

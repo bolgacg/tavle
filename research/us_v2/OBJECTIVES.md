@@ -50,3 +50,5 @@ One idea in the count; same rolling windows, rules, placebos and fragility check
 
 7 Oct 2026, V16, the last addition before the held-out run; no held-out data read:
 V16. Idea V4 (weather forecasts against the operator's load forecast) with a consistent forecast source: the GEFS reforecast to 2019 joined to the archived live GEFS forecasts (the same GEFS version 12 model) from 23 September 2020, control member, 00 UTC run, same leads and points; January to September 2020 has no forecast and is not traded. Same rolling windows and rules. The live GEFS archive for 2024 to 2026 is downloaded for the held-out run but sealed: only file counts are read before the run. After V16 the list of ideas is closed.
+
+8 Oct 2026, code and held-out list published before the held-out run (no held-out data read): the list is research/us_v2/HELDOUT-LIST.md; the code that produced the 2013 to 2023 results is published byte-identical to what ran, with sha256 in research/us/CODE-MANIFEST.txt; the held-out mode is new code that only continues the rolling windows to 30 September 2026 (details in the version 1 addendum of the same date).

@@ -1,0 +1,949 @@
+{
+ "holdout": {
+  "prices_max": "2023-12-31 23:00:00-05:00",
+  "lf_target_max": "2023-12-31 23:00:00-05:00",
+  "wx_target_max": "2023-12-31 23:00:00-05:00",
+  "end": "2024-01-01 00:00:00-05:00"
+ },
+ "reproduction_inputs": {
+  "days": 1459,
+  "script_vs_mine_same_deadline_rule_days_differ": 0,
+  "script_vs_mine_wallclock_days_differ": 5,
+  "differing_days_wallclock": [
+   "2020-03-08",
+   "2020-11-01",
+   "2021-03-14",
+   "2021-11-07",
+   "2023-03-12"
+  ]
+ },
+ "dst_input_differences": [
+  {
+   "D": "2020-03-08",
+   "script_peak": 17366.0,
+   "script_tmin": null,
+   "script_tmax": null,
+   "script_rt": -0.613,
+   "wall_peak": 17366.0,
+   "wall_tmin": null,
+   "wall_tmax": null,
+   "wall_rt": -1.152
+  },
+  {
+   "D": "2020-11-01",
+   "script_peak": 19392.0,
+   "script_tmin": null,
+   "script_tmax": null,
+   "script_rt": -1.643,
+   "wall_peak": 19392.0,
+   "wall_tmin": null,
+   "wall_tmax": null,
+   "wall_rt": -1.537
+  },
+  {
+   "D": "2021-03-14",
+   "script_peak": 18532.0,
+   "script_tmin": null,
+   "script_tmax": null,
+   "script_rt": -1.857,
+   "wall_peak": 18532.0,
+   "wall_tmin": null,
+   "wall_tmax": null,
+   "wall_rt": -2.91
+  },
+  {
+   "D": "2021-11-07",
+   "script_peak": 18163.0,
+   "script_tmin": 1.1,
+   "script_tmax": 16.7,
+   "script_rt": -4.463,
+   "wall_peak": 18163.0,
+   "wall_tmin": 1.1,
+   "wall_tmax": 16.7,
+   "wall_rt": -6.318
+  },
+  {
+   "D": "2023-03-12",
+   "script_peak": 18442.0,
+   "script_tmin": -2.4,
+   "script_tmax": 7.3,
+   "script_rt": -5.289,
+   "wall_peak": 18442.0,
+   "wall_tmin": -2.4,
+   "wall_tmax": 7.3,
+   "wall_rt": -6.003
+  }
+ ],
+ "dst_storm_effect": [
+  {
+   "D": "2020-03-08",
+   "delivery": "2020-03-09",
+   "storm_script": 0.459,
+   "storm_wallclock": 0.377,
+   "cut_used": null,
+   "decision_flips": null
+  },
+  {
+   "D": "2020-11-01",
+   "delivery": "2020-11-02",
+   "storm_script": 0.5625,
+   "storm_wallclock": 0.5625,
+   "cut_used": null,
+   "decision_flips": null
+  },
+  {
+   "D": "2021-03-14",
+   "delivery": "2021-03-15",
+   "storm_script": 0.4411,
+   "storm_wallclock": 0.4411,
+   "cut_used": 0.8,
+   "decision_flips": false
+  },
+  {
+   "D": "2021-11-07",
+   "delivery": "2021-11-08",
+   "storm_script": 0.8908,
+   "storm_wallclock": 0.8908,
+   "cut_used": 0.8,
+   "decision_flips": false
+  },
+  {
+   "D": "2023-03-12",
+   "delivery": "2023-03-13",
+   "storm_script": 0.7205,
+   "storm_wallclock": 0.7205,
+   "cut_used": 0.8,
+   "decision_flips": false
+  }
+ ],
+ "dst_days_changing_side_2021_2023_incl_knock_on": 0,
+ "conformance_wallclock": {
+  "lf_rows": 35016,
+  "lf_published_after_true_0500": 0,
+  "lf_published_ne_file_written": 0,
+  "lf_file_named_after_D": 0,
+  "lf_vintage_age_days_count": {
+   "0": 1450,
+   "1": 9
+  },
+  "lf_issue_minus_written_date_days": {
+   "1": 35016
+  },
+  "lf_days_missing_target_hours": 0,
+  "lf_bid_days_without_forecast": 0,
+  "lf_lead_days_count": {
+   "1": 34800,
+   "2": 216
+  },
+  "gfs_rows": 510785,
+  "gfs_published_ne_rule": 0,
+  "gfs_published_after_true_0500": 0,
+  "gfs_target_not_D_plus_1": 0,
+  "gfs_rows_by_lead": {
+   "72": 266376,
+   "48": 244409
+  },
+  "gfs_day2_rows_after_21h_used": 22,
+  "gfs_first_bid_day": "2021-03-23",
+  "gfs_bid_days_with_data": 1011,
+  "rt_rows": 59521,
+  "rt_published_after_true_0500": 0,
+  "rt_before_hour_end_plus_15": 0,
+  "rt_revised_rows_used": 0,
+  "rt_not_day_D": 0,
+  "rt_hours_per_day_count": {
+   "3": 3,
+   "4": 1348,
+   "5": 2
+  },
+  "rt_bid_days_without_rt": 106,
+  "rt_bid_days_whose_file_was_rewritten": 106,
+  "rt_used_value_from_file_written_after_deadline_rows": 59521
+ },
+ "conformance_script_deadline": {
+  "lf_rows": 35016,
+  "lf_published_after_true_0500": 0,
+  "lf_published_ne_file_written": 0,
+  "lf_file_named_after_D": 0,
+  "lf_vintage_age_days_count": {
+   "0": 1450,
+   "1": 9
+  },
+  "lf_issue_minus_written_date_days": {
+   "1": 35016
+  },
+  "lf_days_missing_target_hours": 0,
+  "lf_bid_days_without_forecast": 0,
+  "lf_lead_days_count": {
+   "1": 34800,
+   "2": 216
+  },
+  "gfs_rows": 510774,
+  "gfs_published_ne_rule": 0,
+  "gfs_published_after_true_0500": 22,
+  "gfs_target_not_D_plus_1": 0,
+  "gfs_rows_by_lead": {
+   "72": 266376,
+   "48": 244398
+  },
+  "gfs_day2_rows_after_21h_used": 44,
+  "gfs_first_bid_day": "2021-03-23",
+  "gfs_bid_days_with_data": 1011,
+  "rt_rows": 59532,
+  "rt_published_after_true_0500": 33,
+  "rt_before_hour_end_plus_15": 0,
+  "rt_revised_rows_used": 0,
+  "rt_not_day_D": 0,
+  "rt_hours_per_day_count": {
+   "4": 1353
+  },
+  "rt_bid_days_without_rt": 106,
+  "rt_bid_days_whose_file_was_rewritten": 106,
+  "rt_used_value_from_file_written_after_deadline_rows": 59532
+ },
+ "corrected_test_day": {
+  "D": "2022-01-16",
+  "rt_published_at_min": "2022-01-20 15:59:18-05:00",
+  "rt_file_written_at": "2022-01-20 15:59:18-05:00"
+ },
+ "injection": [
+  {
+   "D": "2021-07-27",
+   "case": "isolf file D+1 at its real write time (07:05 on D)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.874,
+   "storm_script_injected": 0.874,
+   "storm_audit_base": 0.874,
+   "storm_audit_injected": 0.874
+  },
+  {
+   "D": "2021-07-27",
+   "case": "isolf file D+1 mislabelled public 04:59 on D",
+   "rule_respected": false,
+   "script_inputs_changed": true,
+   "audit_inputs_changed": true,
+   "storm_script_base": 0.874,
+   "storm_script_injected": 1.0,
+   "storm_audit_base": 0.874,
+   "storm_audit_injected": 1.0
+  },
+  {
+   "D": "2021-07-27",
+   "case": "GFS day2 22:00-23:00 of D+1 set to -60 C, true published_at",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.874,
+   "storm_script_injected": 0.874,
+   "storm_audit_base": 0.874,
+   "storm_audit_injected": 0.874
+  },
+  {
+   "D": "2021-07-27",
+   "case": "same rows mislabelled public 04:00 on D",
+   "rule_respected": false,
+   "script_inputs_changed": true,
+   "audit_inputs_changed": true,
+   "storm_script_base": 0.874,
+   "storm_script_injected": 1.0,
+   "storm_audit_base": 0.874,
+   "storm_audit_injected": 1.0
+  },
+  {
+   "D": "2021-07-27",
+   "case": "GFS for D+2 at -60 C, mislabelled public 00:00 on D (date mapping)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.874,
+   "storm_script_injected": 0.874,
+   "storm_audit_base": 0.874,
+   "storm_audit_injected": 0.874
+  },
+  {
+   "D": "2021-07-27",
+   "case": "RT hour 05:00 of D set to 9999 (public 06:15)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.874,
+   "storm_script_injected": 0.874,
+   "storm_audit_base": 0.874,
+   "storm_audit_injected": 0.874
+  },
+  {
+   "D": "2021-07-27",
+   "case": "RT hour 04:00 of D set to 9999 (public 05:15)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.874,
+   "storm_script_injected": 0.874,
+   "storm_audit_base": 0.874,
+   "storm_audit_injected": 0.874
+  },
+  {
+   "D": "2021-07-27",
+   "case": "RT hour 05:00 of D mislabelled public 04:00",
+   "rule_respected": false,
+   "script_inputs_changed": true,
+   "audit_inputs_changed": true,
+   "storm_script_base": 0.874,
+   "storm_script_injected": 1.0,
+   "storm_audit_base": 0.874,
+   "storm_audit_injected": 1.0
+  },
+  {
+   "D": "2021-07-27",
+   "case": "target day D+1 own DA and RT set to 9999",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.874,
+   "storm_script_injected": 0.874,
+   "storm_audit_base": 0.874,
+   "storm_audit_injected": 0.874
+  },
+  {
+   "D": "2022-03-12",
+   "case": "isolf file D+1 at its real write time (07:05 on D)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.8955,
+   "storm_script_injected": 0.8955,
+   "storm_audit_base": 0.8955,
+   "storm_audit_injected": 0.8955
+  },
+  {
+   "D": "2022-03-12",
+   "case": "isolf file D+1 mislabelled public 04:59 on D",
+   "rule_respected": false,
+   "script_inputs_changed": true,
+   "audit_inputs_changed": true,
+   "storm_script_base": 0.8955,
+   "storm_script_injected": 1.0,
+   "storm_audit_base": 0.8955,
+   "storm_audit_injected": 1.0
+  },
+  {
+   "D": "2022-03-12",
+   "case": "GFS day2 22:00-23:00 of D+1 set to -60 C, true published_at",
+   "rule_respected": true,
+   "script_inputs_changed": true,
+   "audit_inputs_changed": true,
+   "storm_script_base": 0.8955,
+   "storm_script_injected": 1.0,
+   "storm_audit_base": 0.8955,
+   "storm_audit_injected": 1.0
+  },
+  {
+   "D": "2022-03-12",
+   "case": "same rows mislabelled public 04:00 on D",
+   "rule_respected": false,
+   "script_inputs_changed": true,
+   "audit_inputs_changed": true,
+   "storm_script_base": 0.8955,
+   "storm_script_injected": 1.0,
+   "storm_audit_base": 0.8955,
+   "storm_audit_injected": 1.0
+  },
+  {
+   "D": "2022-03-12",
+   "case": "GFS for D+2 at -60 C, mislabelled public 00:00 on D (date mapping)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.8955,
+   "storm_script_injected": 0.8955,
+   "storm_audit_base": 0.8955,
+   "storm_audit_injected": 0.8955
+  },
+  {
+   "D": "2022-03-12",
+   "case": "RT hour 05:00 of D set to 9999 (public 06:15)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.8955,
+   "storm_script_injected": 0.8955,
+   "storm_audit_base": 0.8955,
+   "storm_audit_injected": 0.8955
+  },
+  {
+   "D": "2022-03-12",
+   "case": "RT hour 04:00 of D set to 9999 (public 05:15)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.8955,
+   "storm_script_injected": 0.8955,
+   "storm_audit_base": 0.8955,
+   "storm_audit_injected": 0.8955
+  },
+  {
+   "D": "2022-03-12",
+   "case": "RT hour 05:00 of D mislabelled public 04:00",
+   "rule_respected": false,
+   "script_inputs_changed": true,
+   "audit_inputs_changed": true,
+   "storm_script_base": 0.8955,
+   "storm_script_injected": 1.0,
+   "storm_audit_base": 0.8955,
+   "storm_audit_injected": 1.0
+  },
+  {
+   "D": "2022-03-12",
+   "case": "target day D+1 own DA and RT set to 9999",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.8955,
+   "storm_script_injected": 0.8955,
+   "storm_audit_base": 0.8955,
+   "storm_audit_injected": 0.8955
+  },
+  {
+   "D": "2022-03-13",
+   "case": "isolf file D+1 at its real write time (07:05 on D)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.8338,
+   "storm_script_injected": 0.8338,
+   "storm_audit_base": 0.8338,
+   "storm_audit_injected": 0.8338
+  },
+  {
+   "D": "2022-03-13",
+   "case": "isolf file D+1 mislabelled public 04:59 on D",
+   "rule_respected": false,
+   "script_inputs_changed": true,
+   "audit_inputs_changed": true,
+   "storm_script_base": 0.8338,
+   "storm_script_injected": 1.0,
+   "storm_audit_base": 0.8338,
+   "storm_audit_injected": 1.0
+  },
+  {
+   "D": "2022-03-13",
+   "case": "GFS day2 22:00-23:00 of D+1 set to -60 C, true published_at",
+   "rule_respected": true,
+   "script_inputs_changed": true,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.8338,
+   "storm_script_injected": 1.0,
+   "storm_audit_base": 0.8338,
+   "storm_audit_injected": 0.8338
+  },
+  {
+   "D": "2022-03-13",
+   "case": "same rows mislabelled public 04:00 on D",
+   "rule_respected": false,
+   "script_inputs_changed": true,
+   "audit_inputs_changed": true,
+   "storm_script_base": 0.8338,
+   "storm_script_injected": 1.0,
+   "storm_audit_base": 0.8338,
+   "storm_audit_injected": 1.0
+  },
+  {
+   "D": "2022-03-13",
+   "case": "GFS for D+2 at -60 C, mislabelled public 00:00 on D (date mapping)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.8338,
+   "storm_script_injected": 0.8338,
+   "storm_audit_base": 0.8338,
+   "storm_audit_injected": 0.8338
+  },
+  {
+   "D": "2022-03-13",
+   "case": "RT hour 05:00 of D set to 9999 (public 06:15)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.8338,
+   "storm_script_injected": 0.8338,
+   "storm_audit_base": 0.8338,
+   "storm_audit_injected": 0.8338
+  },
+  {
+   "D": "2022-03-13",
+   "case": "RT hour 04:00 of D set to 9999 (public 05:15)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.8338,
+   "storm_script_injected": 0.8338,
+   "storm_audit_base": 0.8338,
+   "storm_audit_injected": 0.8338
+  },
+  {
+   "D": "2022-03-13",
+   "case": "RT hour 05:00 of D mislabelled public 04:00",
+   "rule_respected": false,
+   "script_inputs_changed": true,
+   "audit_inputs_changed": true,
+   "storm_script_base": 0.8338,
+   "storm_script_injected": 1.0,
+   "storm_audit_base": 0.8338,
+   "storm_audit_injected": 1.0
+  },
+  {
+   "D": "2022-03-13",
+   "case": "target day D+1 own DA and RT set to 9999",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.8338,
+   "storm_script_injected": 0.8338,
+   "storm_audit_base": 0.8338,
+   "storm_audit_injected": 0.8338
+  },
+  {
+   "D": "2022-11-05",
+   "case": "isolf file D+1 at its real write time (07:05 on D)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.6137,
+   "storm_script_injected": 0.6137,
+   "storm_audit_base": 0.6137,
+   "storm_audit_injected": 0.6137
+  },
+  {
+   "D": "2022-11-05",
+   "case": "isolf file D+1 mislabelled public 04:59 on D",
+   "rule_respected": false,
+   "script_inputs_changed": true,
+   "audit_inputs_changed": true,
+   "storm_script_base": 0.6137,
+   "storm_script_injected": 1.0,
+   "storm_audit_base": 0.6137,
+   "storm_audit_injected": 1.0
+  },
+  {
+   "D": "2022-11-05",
+   "case": "GFS day2 22:00-23:00 of D+1 set to -60 C, true published_at",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.6137,
+   "storm_script_injected": 0.6137,
+   "storm_audit_base": 0.6137,
+   "storm_audit_injected": 0.6137
+  },
+  {
+   "D": "2022-11-05",
+   "case": "same rows mislabelled public 04:00 on D",
+   "rule_respected": false,
+   "script_inputs_changed": true,
+   "audit_inputs_changed": true,
+   "storm_script_base": 0.6137,
+   "storm_script_injected": 1.0,
+   "storm_audit_base": 0.6137,
+   "storm_audit_injected": 1.0
+  },
+  {
+   "D": "2022-11-05",
+   "case": "GFS for D+2 at -60 C, mislabelled public 00:00 on D (date mapping)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.6137,
+   "storm_script_injected": 0.6137,
+   "storm_audit_base": 0.6137,
+   "storm_audit_injected": 0.6137
+  },
+  {
+   "D": "2022-11-05",
+   "case": "RT hour 05:00 of D set to 9999 (public 06:15)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.6137,
+   "storm_script_injected": 0.6137,
+   "storm_audit_base": 0.6137,
+   "storm_audit_injected": 0.6137
+  },
+  {
+   "D": "2022-11-05",
+   "case": "RT hour 04:00 of D set to 9999 (public 05:15)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.6137,
+   "storm_script_injected": 0.6137,
+   "storm_audit_base": 0.6137,
+   "storm_audit_injected": 0.6137
+  },
+  {
+   "D": "2022-11-05",
+   "case": "RT hour 05:00 of D mislabelled public 04:00",
+   "rule_respected": false,
+   "script_inputs_changed": true,
+   "audit_inputs_changed": true,
+   "storm_script_base": 0.6137,
+   "storm_script_injected": 1.0,
+   "storm_audit_base": 0.6137,
+   "storm_audit_injected": 1.0
+  },
+  {
+   "D": "2022-11-05",
+   "case": "target day D+1 own DA and RT set to 9999",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.6137,
+   "storm_script_injected": 0.6137,
+   "storm_audit_base": 0.6137,
+   "storm_audit_injected": 0.6137
+  },
+  {
+   "D": "2022-11-06",
+   "case": "isolf file D+1 at its real write time (07:05 on D)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.6575,
+   "storm_script_injected": 0.6575,
+   "storm_audit_base": 0.6575,
+   "storm_audit_injected": 0.6575
+  },
+  {
+   "D": "2022-11-06",
+   "case": "isolf file D+1 mislabelled public 04:59 on D",
+   "rule_respected": false,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": true,
+   "storm_script_base": 0.6575,
+   "storm_script_injected": 0.6575,
+   "storm_audit_base": 0.6575,
+   "storm_audit_injected": 1.0
+  },
+  {
+   "D": "2022-11-06",
+   "case": "GFS day2 22:00-23:00 of D+1 set to -60 C, true published_at",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.6575,
+   "storm_script_injected": 0.6575,
+   "storm_audit_base": 0.6575,
+   "storm_audit_injected": 0.6575
+  },
+  {
+   "D": "2022-11-06",
+   "case": "same rows mislabelled public 04:00 on D",
+   "rule_respected": false,
+   "script_inputs_changed": true,
+   "audit_inputs_changed": true,
+   "storm_script_base": 0.6575,
+   "storm_script_injected": 1.0,
+   "storm_audit_base": 0.6575,
+   "storm_audit_injected": 1.0
+  },
+  {
+   "D": "2022-11-06",
+   "case": "GFS for D+2 at -60 C, mislabelled public 00:00 on D (date mapping)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.6575,
+   "storm_script_injected": 0.6575,
+   "storm_audit_base": 0.6575,
+   "storm_audit_injected": 0.6575
+  },
+  {
+   "D": "2022-11-06",
+   "case": "RT hour 05:00 of D set to 9999 (public 06:15)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.6575,
+   "storm_script_injected": 0.6575,
+   "storm_audit_base": 0.6575,
+   "storm_audit_injected": 0.6575
+  },
+  {
+   "D": "2022-11-06",
+   "case": "RT hour 04:00 of D set to 9999 (public 05:15)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.6575,
+   "storm_script_injected": 0.6575,
+   "storm_audit_base": 0.6575,
+   "storm_audit_injected": 0.6575
+  },
+  {
+   "D": "2022-11-06",
+   "case": "RT hour 05:00 of D mislabelled public 04:00",
+   "rule_respected": false,
+   "script_inputs_changed": true,
+   "audit_inputs_changed": true,
+   "storm_script_base": 0.6575,
+   "storm_script_injected": 1.0,
+   "storm_audit_base": 0.6575,
+   "storm_audit_injected": 1.0
+  },
+  {
+   "D": "2022-11-06",
+   "case": "target day D+1 own DA and RT set to 9999",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.6575,
+   "storm_script_injected": 0.6575,
+   "storm_audit_base": 0.6575,
+   "storm_audit_injected": 0.6575
+  },
+  {
+   "D": "2022-12-23",
+   "case": "isolf file D+1 at its real write time (07:05 on D)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.9014,
+   "storm_script_injected": 0.9014,
+   "storm_audit_base": 0.9014,
+   "storm_audit_injected": 0.9014
+  },
+  {
+   "D": "2022-12-23",
+   "case": "isolf file D+1 mislabelled public 04:59 on D",
+   "rule_respected": false,
+   "script_inputs_changed": true,
+   "audit_inputs_changed": true,
+   "storm_script_base": 0.9014,
+   "storm_script_injected": 1.0,
+   "storm_audit_base": 0.9014,
+   "storm_audit_injected": 1.0
+  },
+  {
+   "D": "2022-12-23",
+   "case": "GFS day2 22:00-23:00 of D+1 set to -60 C, true published_at",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.9014,
+   "storm_script_injected": 0.9014,
+   "storm_audit_base": 0.9014,
+   "storm_audit_injected": 0.9014
+  },
+  {
+   "D": "2022-12-23",
+   "case": "same rows mislabelled public 04:00 on D",
+   "rule_respected": false,
+   "script_inputs_changed": true,
+   "audit_inputs_changed": true,
+   "storm_script_base": 0.9014,
+   "storm_script_injected": 1.0,
+   "storm_audit_base": 0.9014,
+   "storm_audit_injected": 1.0
+  },
+  {
+   "D": "2022-12-23",
+   "case": "GFS for D+2 at -60 C, mislabelled public 00:00 on D (date mapping)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.9014,
+   "storm_script_injected": 0.9014,
+   "storm_audit_base": 0.9014,
+   "storm_audit_injected": 0.9014
+  },
+  {
+   "D": "2022-12-23",
+   "case": "RT hour 05:00 of D set to 9999 (public 06:15)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.9014,
+   "storm_script_injected": 0.9014,
+   "storm_audit_base": 0.9014,
+   "storm_audit_injected": 0.9014
+  },
+  {
+   "D": "2022-12-23",
+   "case": "RT hour 04:00 of D set to 9999 (public 05:15)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.9014,
+   "storm_script_injected": 0.9014,
+   "storm_audit_base": 0.9014,
+   "storm_audit_injected": 0.9014
+  },
+  {
+   "D": "2022-12-23",
+   "case": "RT hour 05:00 of D mislabelled public 04:00",
+   "rule_respected": false,
+   "script_inputs_changed": true,
+   "audit_inputs_changed": true,
+   "storm_script_base": 0.9014,
+   "storm_script_injected": 1.0,
+   "storm_audit_base": 0.9014,
+   "storm_audit_injected": 1.0
+  },
+  {
+   "D": "2022-12-23",
+   "case": "target day D+1 own DA and RT set to 9999",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.9014,
+   "storm_script_injected": 0.9014,
+   "storm_audit_base": 0.9014,
+   "storm_audit_injected": 0.9014
+  },
+  {
+   "D": "2022-01-16",
+   "case": "isolf file D+1 at its real write time (07:05 on D)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.9465,
+   "storm_script_injected": 0.9465,
+   "storm_audit_base": 0.9465,
+   "storm_audit_injected": 0.9465
+  },
+  {
+   "D": "2022-01-16",
+   "case": "isolf file D+1 mislabelled public 04:59 on D",
+   "rule_respected": false,
+   "script_inputs_changed": true,
+   "audit_inputs_changed": true,
+   "storm_script_base": 0.9465,
+   "storm_script_injected": 1.0,
+   "storm_audit_base": 0.9465,
+   "storm_audit_injected": 1.0
+  },
+  {
+   "D": "2022-01-16",
+   "case": "GFS day2 22:00-23:00 of D+1 set to -60 C, true published_at",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.9465,
+   "storm_script_injected": 0.9465,
+   "storm_audit_base": 0.9465,
+   "storm_audit_injected": 0.9465
+  },
+  {
+   "D": "2022-01-16",
+   "case": "same rows mislabelled public 04:00 on D",
+   "rule_respected": false,
+   "script_inputs_changed": true,
+   "audit_inputs_changed": true,
+   "storm_script_base": 0.9465,
+   "storm_script_injected": 1.0,
+   "storm_audit_base": 0.9465,
+   "storm_audit_injected": 1.0
+  },
+  {
+   "D": "2022-01-16",
+   "case": "GFS for D+2 at -60 C, mislabelled public 00:00 on D (date mapping)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.9465,
+   "storm_script_injected": 0.9465,
+   "storm_audit_base": 0.9465,
+   "storm_audit_injected": 0.9465
+  },
+  {
+   "D": "2022-01-16",
+   "case": "RT hour 05:00 of D set to 9999 (public 06:15)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.9465,
+   "storm_script_injected": 0.9465,
+   "storm_audit_base": 0.9465,
+   "storm_audit_injected": 0.9465
+  },
+  {
+   "D": "2022-01-16",
+   "case": "RT hour 04:00 of D set to 9999 (public 05:15)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.9465,
+   "storm_script_injected": 0.9465,
+   "storm_audit_base": 0.9465,
+   "storm_audit_injected": 0.9465
+  },
+  {
+   "D": "2022-01-16",
+   "case": "RT hour 05:00 of D mislabelled public 04:00",
+   "rule_respected": false,
+   "script_inputs_changed": true,
+   "audit_inputs_changed": true,
+   "storm_script_base": 0.9465,
+   "storm_script_injected": 1.0,
+   "storm_audit_base": 0.9465,
+   "storm_audit_injected": 1.0
+  },
+  {
+   "D": "2022-01-16",
+   "case": "target day D+1 own DA and RT set to 9999",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.9465,
+   "storm_script_injected": 0.9465,
+   "storm_audit_base": 0.9465,
+   "storm_audit_injected": 0.9465
+  },
+  {
+   "D": "2022-01-16",
+   "case": "corrected day D: RT hour 00:00 set to 9999 (rewrite after midnight)",
+   "rule_respected": true,
+   "script_inputs_changed": false,
+   "audit_inputs_changed": false,
+   "storm_script_base": 0.9465,
+   "storm_script_injected": 0.9465,
+   "storm_audit_base": 0.9465,
+   "storm_audit_injected": 0.9465
+  },
+  {
+   "D": "2022-01-16",
+   "case": "same, relabelled end of hour + 15 min (ignoring the rewrite)",
+   "rule_respected": false,
+   "script_inputs_changed": true,
+   "audit_inputs_changed": true,
+   "storm_script_base": 0.9465,
+   "storm_script_injected": 1.0,
+   "storm_audit_base": 0.9465,
+   "storm_audit_injected": 1.0
+  }
+ ],
+ "injection_summary": {
+  "cases": 65,
+  "script_unexpected": [
+   [
+    "2022-03-12",
+    "GFS day2 22:00-23:00 of D+1 set to -60 C, true published_at"
+   ],
+   [
+    "2022-03-13",
+    "GFS day2 22:00-23:00 of D+1 set to -60 C, true published_at"
+   ],
+   [
+    "2022-11-06",
+    "isolf file D+1 mislabelled public 04:59 on D"
+   ]
+  ],
+  "audit_unexpected": [
+   [
+    "2022-03-12",
+    "GFS day2 22:00-23:00 of D+1 set to -60 C, true published_at"
+   ]
+  ]
+ }
+}

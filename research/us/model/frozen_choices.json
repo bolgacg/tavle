@@ -1,0 +1,39 @@
+{
+ "source": "results/rehearsal_2023_v2.json",
+ "written": "2026-10-06T23:16:08+02:00",
+ "regression_configs": {
+  "base": {
+   "num_leaves": 15,
+   "min_data_in_leaf": 200,
+   "target_clip": 250.0
+  },
+  "weather": {
+   "num_leaves": 15,
+   "min_data_in_leaf": 2000,
+   "target_clip": 250.0
+  },
+  "outages": {
+   "num_leaves": 15,
+   "min_data_in_leaf": 200,
+   "target_clip": null
+  }
+ },
+ "train_start": {
+  "base": null,
+  "weather": "2021-03-25",
+  "outages": null
+ },
+ "spike": {
+  "S": 25,
+  "p_star": 0.05,
+  "p_star_gen": 0.05
+ },
+ "pairs": [
+  "CAPITL|NORTH",
+  "CAPITL|GENESE",
+  "CAPITL|CENTRL",
+  "CAPITL|MHK VL",
+  "CAPITL|WEST"
+ ],
+ "outage_sites": "features_outages.TOP_SITES (counted on 2020 to 2023 snapshots)"
+}

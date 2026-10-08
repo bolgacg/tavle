@@ -1,0 +1,818 @@
+{
+ "Q1_V2": {
+  "levels_equal_da_d0_times_mult_max_abs_diff": 0.0,
+  "levels_equal_realised_da_share": 0.002204626691279669,
+  "panel_y_da_vs_prices_da_max_abs_diff": 0.0,
+  "positions_identical_share": 1.0,
+  "max_abs_mw": 1.0,
+  "mine": {
+   "years": {
+    "2013": 128839,
+    "2014": 272485,
+    "2015": 63681,
+    "2016": 102728,
+    "2017": 86119,
+    "2018": 104341,
+    "2019": 77815,
+    "2020": 35088,
+    "2021": 106860,
+    "2022": 198527,
+    "2023": 2064
+   },
+   "total": 1178549,
+   "sharpe": 2.41,
+   "mwh_total": 814253,
+   "mwh_per_day": 202.7,
+   "usd_per_mwh": 1.447,
+   "positive_years": 11
+  },
+  "saved_positions": {
+   "years": {
+    "2013": 128839,
+    "2014": 272485,
+    "2015": 63681,
+    "2016": 102728,
+    "2017": 86119,
+    "2018": 104341,
+    "2019": 77815,
+    "2020": 35088,
+    "2021": 106860,
+    "2022": 198527,
+    "2023": 2064
+   },
+   "total": 1178549,
+   "sharpe": 2.41,
+   "mwh_total": 814253,
+   "mwh_per_day": 202.7,
+   "usd_per_mwh": 1.447,
+   "positive_years": 11
+  },
+  "bids_per_day": 251.1,
+  "fill_rate": 0.807,
+  "share_supply_of_fills": 0.613,
+  "limit_multiplier_distribution_supply": {
+   "0.5": 0.579,
+   "0.7": 0.193,
+   "0.85": 0.069,
+   "3.0": 0.044,
+   "2.0": 0.036,
+   "1.0": 0.03,
+   "1.6": 0.019,
+   "1.15": 0.019,
+   "1.3": 0.011
+  },
+  "limit_multiplier_distribution_load": {
+   "3.0": 0.337,
+   "1.6": 0.171,
+   "2.0": 0.126,
+   "0.5": 0.118,
+   "1.3": 0.104,
+   "1.15": 0.062,
+   "0.7": 0.05,
+   "0.85": 0.019,
+   "1.0": 0.012
+  },
+  "model_side_no_limit": {
+   "years": {
+    "2013": 137602,
+    "2014": 243839,
+    "2015": 43830,
+    "2016": 102606,
+    "2017": 68346,
+    "2018": 88641,
+    "2019": 89174,
+    "2020": 35983,
+    "2021": 120567,
+    "2022": 282214,
+    "2023": -19496
+   },
+   "total": 1193308,
+   "sharpe": 2.15,
+   "mwh_total": 1008729,
+   "mwh_per_day": 251.1,
+   "usd_per_mwh": 1.183,
+   "positive_years": 10
+  },
+  "fills_with_widest_limit_(market_like)": {
+   "years": {
+    "2013": 128376,
+    "2014": 193768,
+    "2015": 59743,
+    "2016": 88865,
+    "2017": 69760,
+    "2018": 93104,
+    "2019": 55984,
+    "2020": 26841,
+    "2021": 76767,
+    "2022": 142124,
+    "2023": -11124
+   },
+   "total": 924209,
+   "sharpe": 2.34,
+   "mwh_total": 476482,
+   "mwh_per_day": 118.6,
+   "usd_per_mwh": 1.94,
+   "positive_years": 10
+  },
+  "fills_with_binding_limit": {
+   "years": {
+    "2013": 463,
+    "2014": 78717,
+    "2015": 3937,
+    "2016": 13863,
+    "2017": 16359,
+    "2018": 11237,
+    "2019": 21832,
+    "2020": 8247,
+    "2021": 30093,
+    "2022": 56402,
+    "2023": 13188
+   },
+   "total": 254340,
+   "sharpe": 1.34,
+   "mwh_total": 337771,
+   "mwh_per_day": 84.1,
+   "usd_per_mwh": 0.753,
+   "positive_years": 11
+  },
+  "no_model_rules": {
+   "supply_if_DA>=1.0xD": {
+    "years": {
+     "2013": -62458,
+     "2014": 62646,
+     "2015": 18353,
+     "2016": -25228,
+     "2017": 50057,
+     "2018": -49769,
+     "2019": 30303,
+     "2020": -33532,
+     "2021": -51933,
+     "2022": -316142,
+     "2023": 45960
+    },
+    "total": -331743,
+    "sharpe": -0.42,
+    "mwh_total": 519609,
+    "mwh_per_day": 129.4,
+    "usd_per_mwh": -0.638,
+    "positive_years": 5
+   },
+   "supply_if_DA>=1.15xD": {
+    "years": {
+     "2013": -72900,
+     "2014": 30285,
+     "2015": 8183,
+     "2016": -26392,
+     "2017": 22105,
+     "2018": -60290,
+     "2019": 19515,
+     "2020": -24677,
+     "2021": -31322,
+     "2022": -275705,
+     "2023": 48723
+    },
+    "total": -362477,
+    "sharpe": -0.54,
+    "mwh_total": 223924,
+    "mwh_per_day": 55.7,
+    "usd_per_mwh": -1.619,
+    "positive_years": 5
+   },
+   "supply_if_DA>=1.3xD": {
+    "years": {
+     "2013": -54633,
+     "2014": 43625,
+     "2015": 7011,
+     "2016": -14379,
+     "2017": 16633,
+     "2018": -30053,
+     "2019": 16461,
+     "2020": -10228,
+     "2021": -23418,
+     "2022": -248107,
+     "2023": 37520
+    },
+    "total": -259569,
+    "sharpe": -0.45,
+    "mwh_total": 113196,
+    "mwh_per_day": 28.2,
+    "usd_per_mwh": -2.293,
+    "positive_years": 5
+   },
+   "supply_if_DA>=1.6xD": {
+    "years": {
+     "2013": -17666,
+     "2014": 30054,
+     "2015": 14166,
+     "2016": 1286,
+     "2017": 8471,
+     "2018": -17012,
+     "2019": 8636,
+     "2020": -1125,
+     "2021": -15379,
+     "2022": -169523,
+     "2023": 31665
+    },
+    "total": -126426,
+    "sharpe": -0.3,
+    "mwh_total": 40235,
+    "mwh_per_day": 10.0,
+    "usd_per_mwh": -3.142,
+    "positive_years": 6
+   },
+   "supply_if_DA>=2.0xD": {
+    "years": {
+     "2013": -7673,
+     "2014": 10480,
+     "2015": 20710,
+     "2016": -922,
+     "2017": 9506,
+     "2018": -932,
+     "2019": 3799,
+     "2020": -730,
+     "2021": -6768,
+     "2022": -83246,
+     "2023": 20925
+    },
+    "total": -34853,
+    "sharpe": -0.15,
+    "mwh_total": 15739,
+    "mwh_per_day": 3.9,
+    "usd_per_mwh": -2.214,
+    "positive_years": 5
+   },
+   "load_if_DA<=0.85xD": {
+    "years": {
+     "2013": -34241,
+     "2014": -78236,
+     "2015": 416,
+     "2016": -18991,
+     "2017": 17553,
+     "2018": -9168,
+     "2019": -1888,
+     "2020": -3616,
+     "2021": -18444,
+     "2022": -81316,
+     "2023": -6853
+    },
+    "total": -234784,
+    "sharpe": -1.13,
+    "mwh_total": 200339,
+    "mwh_per_day": 49.9,
+    "usd_per_mwh": -1.172,
+    "positive_years": 2
+   },
+   "load_if_DA<=0.7xD": {
+    "years": {
+     "2013": -3035,
+     "2014": -15123,
+     "2015": 14137,
+     "2016": -5724,
+     "2017": -477,
+     "2018": -2991,
+     "2019": 2457,
+     "2020": 1473,
+     "2021": -3215,
+     "2022": -31523,
+     "2023": 4607
+    },
+    "total": -39414,
+    "sharpe": -0.31,
+    "mwh_total": 64445,
+    "mwh_per_day": 16.0,
+    "usd_per_mwh": -0.612,
+    "positive_years": 4
+   },
+   "load_if_DA<=0.5xD": {
+    "years": {
+     "2013": 4210,
+     "2014": -337,
+     "2015": 8675,
+     "2016": 2584,
+     "2017": 3527,
+     "2018": -1713,
+     "2019": 1879,
+     "2020": 929,
+     "2021": 1206,
+     "2022": -2816,
+     "2023": 4527
+    },
+    "total": 22671,
+    "sharpe": 0.35,
+    "mwh_total": 14769,
+    "mwh_per_day": 3.7,
+    "usd_per_mwh": 1.535,
+    "positive_years": 8
+   },
+   "supply>=1.15xD_load<=0.85xD": {
+    "years": {
+     "2013": -107141,
+     "2014": -47951,
+     "2015": 8599,
+     "2016": -45383,
+     "2017": 39658,
+     "2018": -69459,
+     "2019": 17627,
+     "2020": -28293,
+     "2021": -49766,
+     "2022": -357022,
+     "2023": 41870
+    },
+    "total": -597260,
+    "sharpe": -0.87,
+    "mwh_total": 424263,
+    "mwh_per_day": 105.6,
+    "usd_per_mwh": -1.408,
+    "positive_years": 4
+   },
+   "supply_every_hour_(always_supply)": {
+    "years": {
+     "2013": 45981,
+     "2014": 255361,
+     "2015": 38184,
+     "2016": 31037,
+     "2017": 43751,
+     "2018": -37677,
+     "2019": 33318,
+     "2020": -24584,
+     "2021": -4878,
+     "2022": -197989,
+     "2023": 68582
+    },
+    "total": 251085,
+    "sharpe": 0.28,
+    "mwh_total": 1058749,
+    "mwh_per_day": 263.6,
+    "usd_per_mwh": 0.237,
+    "positive_years": 7
+   },
+   "V2_sides_with_static_limit_1.0xD": {
+    "years": {
+     "2013": -15530,
+     "2014": 58740,
+     "2015": 23277,
+     "2016": 14352,
+     "2017": 62366,
+     "2018": 16572,
+     "2019": 56763,
+     "2020": -1793,
+     "2021": 14616,
+     "2022": -64602,
+     "2023": 6265
+    },
+    "total": 171026,
+    "sharpe": 0.43,
+    "mwh_total": 429036,
+    "mwh_per_day": 106.8,
+    "usd_per_mwh": 0.399,
+    "positive_years": 8
+   }
+  },
+  "mean_realised_DA_minus_D_when_side_supply": -1.51,
+  "mean_realised_DA_minus_D_when_side_load": 2.22,
+  "mean_realised_DA_minus_D_all": -0.01
+ },
+ "Q3_V3": {
+  "max_abs_mw": 3.0,
+  "share_at_cap_3": 0.64,
+  "share_nonzero": 0.955,
+  "mean_abs_mw_when_open": 2.457,
+  "saved": {
+   "years": {
+    "2013": 529051,
+    "2014": 721292,
+    "2015": 78731,
+    "2016": 216365,
+    "2017": 242303,
+    "2018": 387080,
+    "2019": 222663,
+    "2020": 125541,
+    "2021": 305761,
+    "2022": 1008190,
+    "2023": 70495
+   },
+   "total": 3907473,
+   "sharpe": 1.9,
+   "mwh_total": 2488949,
+   "mwh_per_day": 619.6,
+   "usd_per_mwh": 1.57,
+   "positive_years": 11
+  },
+  "same_sides_1MW": {
+   "years": {
+    "2013": 174934,
+    "2014": 256374,
+    "2015": 26910,
+    "2016": 98331,
+    "2017": 78240,
+    "2018": 129288,
+    "2019": 79997,
+    "2020": 43236,
+    "2021": 107028,
+    "2022": 336238,
+    "2023": 26326
+   },
+   "total": 1356902,
+   "sharpe": 1.94,
+   "mwh_total": 1012902,
+   "mwh_per_day": 252.2,
+   "usd_per_mwh": 1.34,
+   "positive_years": 11
+  },
+  "saved_divided_by_3": {
+   "years": {
+    "2013": 176350,
+    "2014": 240431,
+    "2015": 26244,
+    "2016": 72122,
+    "2017": 80768,
+    "2018": 129027,
+    "2019": 74221,
+    "2020": 41847,
+    "2021": 101920,
+    "2022": 336063,
+    "2023": 23498
+   },
+   "total": 1302491,
+   "sharpe": 1.9,
+   "mwh_total": 829649,
+   "mwh_per_day": 206.5,
+   "usd_per_mwh": 1.57,
+   "positive_years": 11
+  }
+ },
+ "Q2_C": {
+  "C_deep_saved": {
+   "years": {
+    "2013": 169476,
+    "2014": 70388,
+    "2015": 89641,
+    "2016": 69078,
+    "2017": 68286,
+    "2018": 45258,
+    "2019": 29478,
+    "2020": 25019,
+    "2021": -3299,
+    "2022": 71607,
+    "2023": 33677
+   },
+   "total": 668609,
+   "sharpe": 2.25,
+   "mwh_total": 836052,
+   "mwh_per_day": 208.1,
+   "usd_per_mwh": 0.8,
+   "positive_years": 10
+  },
+  "static_C_pairs_side_per_pair": {
+   "years": {
+    "2013": 185431,
+    "2014": 94541,
+    "2015": 98673,
+    "2016": 16479,
+    "2017": 53868,
+    "2018": 26242,
+    "2019": 2779,
+    "2020": -22420,
+    "2021": -29560,
+    "2022": -49543,
+    "2023": -17278
+   },
+   "total": 359212,
+   "sharpe": 0.92,
+   "mwh_total": 911522,
+   "mwh_per_day": 226.9,
+   "usd_per_mwh": 0.394,
+   "positive_years": 7
+  },
+  "static_C_pairs_side_per_pair_hour": {
+   "years": {
+    "2013": 141215,
+    "2014": 83885,
+    "2015": 99773,
+    "2016": 20802,
+    "2017": 49235,
+    "2018": 25434,
+    "2019": 12013,
+    "2020": 27232,
+    "2021": 113745,
+    "2022": 722,
+    "2023": -3036
+   },
+   "total": 571020,
+   "sharpe": 1.99,
+   "mwh_total": 902344,
+   "mwh_per_day": 224.6,
+   "usd_per_mwh": 0.633,
+   "positive_years": 10
+  },
+  "static_no_model_pairs_side_per_pair_hour": {
+   "years": {
+    "2013": 112377,
+    "2014": 60192,
+    "2015": 78914,
+    "2016": 21658,
+    "2017": 9767,
+    "2018": 16695,
+    "2019": 20374,
+    "2020": 14051,
+    "2021": 119452,
+    "2022": 30287,
+    "2023": 24153
+   },
+   "total": 507922,
+   "sharpe": 1.9,
+   "mwh_total": 899304,
+   "mwh_per_day": 223.9,
+   "usd_per_mwh": 0.565,
+   "positive_years": 11
+  },
+  "C_hours_with_static_side": {
+   "years": {
+    "2013": 124666,
+    "2014": 81165,
+    "2015": 94145,
+    "2016": 21822,
+    "2017": 53974,
+    "2018": 20926,
+    "2019": 17272,
+    "2020": 29261,
+    "2021": 102225,
+    "2022": 8124,
+    "2023": 1657
+   },
+   "total": 555237,
+   "sharpe": 2.03,
+   "mwh_total": 823855,
+   "mwh_per_day": 205.1,
+   "usd_per_mwh": 0.674,
+   "positive_years": 11
+  },
+  "share_C_zone_hours_same_sign_as_static": 0.82,
+  "C_pnl_where_agrees_with_static": {
+   "years": {
+    "2013": 148252,
+    "2014": 76779,
+    "2015": 93379,
+    "2016": 46201,
+    "2017": 60655,
+    "2018": 33497,
+    "2019": 22602,
+    "2020": 28259,
+    "2021": 50001,
+    "2022": 42581,
+    "2023": 19877
+   },
+   "total": 622081,
+   "sharpe": 2.44,
+   "mwh_total": 693309,
+   "mwh_per_day": 172.6,
+   "usd_per_mwh": 0.897,
+   "positive_years": 11
+  },
+  "C_pnl_where_disagrees_with_static": {
+   "years": {
+    "2013": 21224,
+    "2014": -6390,
+    "2015": -3738,
+    "2016": 22878,
+    "2017": 7631,
+    "2018": 11761,
+    "2019": 6877,
+    "2020": -3239,
+    "2021": -53300,
+    "2022": 29026,
+    "2023": 13801
+   },
+   "total": 46529,
+   "sharpe": 0.36,
+   "mwh_total": 142743,
+   "mwh_per_day": 35.5,
+   "usd_per_mwh": 0.326,
+   "positive_years": 7
+  },
+  "share_zone_hours_same_position_as_day_before": 0.873,
+  "share_open_zone_hours": 0.501,
+  "per_quarter_agreement": [
+   {
+    "q": "2013Q1",
+    "c_open_zone_hours": 11911,
+    "same_sign_as_static": 0.823
+   },
+   {
+    "q": "2013Q2",
+    "c_open_zone_hours": 12282,
+    "same_sign_as_static": 0.893
+   },
+   {
+    "q": "2013Q3",
+    "c_open_zone_hours": 12715,
+    "same_sign_as_static": 0.743
+   },
+   {
+    "q": "2013Q4",
+    "c_open_zone_hours": 12641,
+    "same_sign_as_static": 0.902
+   },
+   {
+    "q": "2014Q1",
+    "c_open_zone_hours": 12595,
+    "same_sign_as_static": 0.809
+   },
+   {
+    "q": "2014Q2",
+    "c_open_zone_hours": 11861,
+    "same_sign_as_static": 0.918
+   },
+   {
+    "q": "2014Q3",
+    "c_open_zone_hours": 11836,
+    "same_sign_as_static": 0.819
+   },
+   {
+    "q": "2014Q4",
+    "c_open_zone_hours": 12096,
+    "same_sign_as_static": 0.976
+   },
+   {
+    "q": "2015Q1",
+    "c_open_zone_hours": 12475,
+    "same_sign_as_static": 0.89
+   },
+   {
+    "q": "2015Q2",
+    "c_open_zone_hours": 11988,
+    "same_sign_as_static": 0.782
+   },
+   {
+    "q": "2015Q3",
+    "c_open_zone_hours": 11729,
+    "same_sign_as_static": 0.749
+   },
+   {
+    "q": "2015Q4",
+    "c_open_zone_hours": 11514,
+    "same_sign_as_static": 0.886
+   },
+   {
+    "q": "2016Q1",
+    "c_open_zone_hours": 12457,
+    "same_sign_as_static": 0.948
+   },
+   {
+    "q": "2016Q2",
+    "c_open_zone_hours": 11772,
+    "same_sign_as_static": 0.942
+   },
+   {
+    "q": "2016Q3",
+    "c_open_zone_hours": 11825,
+    "same_sign_as_static": 0.756
+   },
+   {
+    "q": "2016Q4",
+    "c_open_zone_hours": 12616,
+    "same_sign_as_static": 0.911
+   },
+   {
+    "q": "2017Q1",
+    "c_open_zone_hours": 12471,
+    "same_sign_as_static": 0.975
+   },
+   {
+    "q": "2017Q2",
+    "c_open_zone_hours": 11863,
+    "same_sign_as_static": 0.838
+   },
+   {
+    "q": "2017Q3",
+    "c_open_zone_hours": 11654,
+    "same_sign_as_static": 0.827
+   },
+   {
+    "q": "2017Q4",
+    "c_open_zone_hours": 12202,
+    "same_sign_as_static": 0.69
+   },
+   {
+    "q": "2018Q1",
+    "c_open_zone_hours": 11631,
+    "same_sign_as_static": 0.818
+   },
+   {
+    "q": "2018Q2",
+    "c_open_zone_hours": 12523,
+    "same_sign_as_static": 0.862
+   },
+   {
+    "q": "2018Q3",
+    "c_open_zone_hours": 12288,
+    "same_sign_as_static": 0.754
+   },
+   {
+    "q": "2018Q4",
+    "c_open_zone_hours": 12125,
+    "same_sign_as_static": 0.849
+   },
+   {
+    "q": "2019Q1",
+    "c_open_zone_hours": 11904,
+    "same_sign_as_static": 0.82
+   },
+   {
+    "q": "2019Q2",
+    "c_open_zone_hours": 11922,
+    "same_sign_as_static": 0.947
+   },
+   {
+    "q": "2019Q3",
+    "c_open_zone_hours": 12284,
+    "same_sign_as_static": 0.793
+   },
+   {
+    "q": "2019Q4",
+    "c_open_zone_hours": 12573,
+    "same_sign_as_static": 0.747
+   },
+   {
+    "q": "2020Q1",
+    "c_open_zone_hours": 11767,
+    "same_sign_as_static": 0.912
+   },
+   {
+    "q": "2020Q2",
+    "c_open_zone_hours": 14159,
+    "same_sign_as_static": 0.84
+   },
+   {
+    "q": "2020Q3",
+    "c_open_zone_hours": 12319,
+    "same_sign_as_static": 0.809
+   },
+   {
+    "q": "2020Q4",
+    "c_open_zone_hours": 11491,
+    "same_sign_as_static": 0.803
+   },
+   {
+    "q": "2021Q1",
+    "c_open_zone_hours": 11405,
+    "same_sign_as_static": 0.828
+   },
+   {
+    "q": "2021Q2",
+    "c_open_zone_hours": 11910,
+    "same_sign_as_static": 0.747
+   },
+   {
+    "q": "2021Q3",
+    "c_open_zone_hours": 12590,
+    "same_sign_as_static": 0.84
+   },
+   {
+    "q": "2021Q4",
+    "c_open_zone_hours": 11430,
+    "same_sign_as_static": 0.933
+   },
+   {
+    "q": "2022Q1",
+    "c_open_zone_hours": 11038,
+    "same_sign_as_static": 0.663
+   },
+   {
+    "q": "2022Q2",
+    "c_open_zone_hours": 12283,
+    "same_sign_as_static": 0.828
+   },
+   {
+    "q": "2022Q3",
+    "c_open_zone_hours": 12595,
+    "same_sign_as_static": 0.735
+   },
+   {
+    "q": "2022Q4",
+    "c_open_zone_hours": 12249,
+    "same_sign_as_static": 0.794
+   },
+   {
+    "q": "2023Q1",
+    "c_open_zone_hours": 11929,
+    "same_sign_as_static": 0.567
+   },
+   {
+    "q": "2023Q2",
+    "c_open_zone_hours": 11728,
+    "same_sign_as_static": 0.716
+   },
+   {
+    "q": "2023Q3",
+    "c_open_zone_hours": 11633,
+    "same_sign_as_static": 0.731
+   },
+   {
+    "q": "2023Q4",
+    "c_open_zone_hours": 11026,
+    "same_sign_as_static": 0.648
+   }
+  ]
+ }
+}

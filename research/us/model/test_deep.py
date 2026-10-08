@@ -162,3 +162,78 @@ def test_planted_signal(tmp_path, visible):
         assert r_gap > 0.6, r_gap
     else:
         assert abs(r_gap) < 0.15, r_gap
+
+
+# ----------------------------------------------------------------------------- spike head
+def test_spike_threshold_file(tmp_path):
+    assert deep.spike_threshold(tmp_path / "absent.json") == (50.0, "default 50 (absent.json absent)")
+    (tmp_path / "s.json").write_text('{"S": 75, "note": "chosen on 2020-2022"}')
+    assert deep.spike_threshold(tmp_path / "s.json")[0] == 75.0
+    (tmp_path / "lead.json").write_text('{"S_usd_per_mwh": 25, "S_grid": [25, 50, 100]}')
+    assert deep.spike_threshold(tmp_path / "lead.json") == (25.0, "lead.json: S_usd_per_mwh=25")
+    (tmp_path / "bad.json").write_text('{"cut": 0.3}')
+    with pytest.raises(KeyError):
+        deep.spike_threshold(tmp_path / "bad.json")
+
+
+def test_spike_interface_and_save_load(world, tmp_path):
+    m = deep.DeepSpikeModel({**TINY}, threshold=20.0, seeds=(0, 1), data=world["dd"], device="cpu")
+    m.fit(world["train"])
+    p = m.predict(world["test"])
+    assert p.index.equals(world["test"].index) and ((p > 0) & (p < 1)).all() and p.std() > 0
+    both = m.predict_both(world["test"])
+    assert list(both.columns) == ["p_spike", "p_spike_weighted", "pred_gap"] and np.allclose(both["p_spike"], p)
+    w = m.info["pos_weight"]
+    assert m.info["threshold"] == 20.0 and w > 1
+    assert (both["p_spike"] <= both["p_spike_weighted"] + 1e-12).all()
+    # calibrated: the average probability is near the training spike rate, the weighted one is not
+    rate = m.info["train_spike_rate"]
+    assert 0.4 * rate < p.mean() < 2.5 * rate, (p.mean(), rate)
+    assert both["p_spike_weighted"].mean() > 2 * rate
+    one = deep.DeepSpikeModel({**TINY}, threshold=20.0, seeds=(0,), data=world["dd"], device="cpu")
+    one.fit(world["train"])
+    b1 = one.predict_both(world["test"])
+    q, w1 = b1["p_spike_weighted"].to_numpy(), one.info["pos_weight"]
+    assert np.allclose(b1["p_spike"], q / (q + w1 * (1 - q)))
+    m.save(tmp_path / "s.pt")
+    m2 = deep.DeepSpikeModel.load(tmp_path / "s.pt", data=world["dd"], device="cpu")
+    assert m2.threshold == 20.0 and np.allclose(m2.predict(world["test"]), p, atol=1e-6)
+    bad = world["train"].head(3).copy()
+    bad["delivery_hour"] = pd.Timestamp("2024-01-02 05:00", tz=DD.TZ)
+    bad["bid_date"] = dt.date(2024, 1, 1)
+    with pytest.raises(lock.HoldoutLocked):
+        m.predict(bad)
+
+
+@pytest.mark.parametrize("visible", [True, False], ids=["known_at_05h", "published_after_05h"])
+def test_spike_planted(tmp_path, visible):
+    """Spikes (gap +80) planted in the hours where the day-ahead price of the same hour of D was in its
+    top 15% (known at 05:00 on D): the spike output must find them. Planted instead where D+1's own
+    day-ahead price rose most against D (published after 05:00 on D): it must not."""
+    first, last = dt.date(2023, 4, 1), dt.date(2023, 7, 31)
+    frames = DD.write_synthetic_parquet(tmp_path / "raw", first, last, n_points=6, seed=21)
+    pz = frames["prices_zone"].copy()
+    rng = np.random.default_rng(1)
+    da = pz.set_index(["zone", "delivery_hour"])["da_lbmp"]
+    prev = da.reindex(pd.MultiIndex.from_arrays([pz["zone"], pz["delivery_hour"] - pd.Timedelta(hours=24)])).to_numpy()
+    sig = prev if visible else pz["da_lbmp"].to_numpy() - prev
+    hot = sig > np.nanquantile(sig, 0.85)
+    pz["rt_lbmp"] = np.where(pz["rt_lbmp"].isna(), np.nan, pz["da_lbmp"] + rng.normal(0, 3, len(pz)) + 80 * hot)
+    frames["prices_zone"] = pz
+    _rewrite(tmp_path / "planted", frames)
+    dd = DD.DeepData(last, root=tmp_path / "planted", first_day=first)
+    panel = pd.DataFrame({"zone": pz["zone"].astype(str), "delivery_hour": pz["delivery_hour"],
+                          "gap": pz["rt_lbmp"] - pz["da_lbmp"], "ok": np.isfinite(sig)})
+    panel = panel[panel["gap"].notna() & panel["ok"]].reset_index(drop=True)
+    dday = panel["delivery_hour"].dt.tz_localize(None).dt.normalize()
+    train, test = panel[dday <= pd.Timestamp("2023-06-29")], panel[dday >= pd.Timestamp("2023-07-01")]
+    m = deep.DeepSpikeModel({**TINY, "hidden": 32, "max_epochs": 40, "patience": 8, "min_epochs": 5, "val_days": 14,
+                             "lr": 3e-3, "dropout": 0.1, "weight_decay": 1e-4}, threshold=50.0, seeds=(0,),
+                            data=dd, device="cpu")
+    m.fit(train)
+    a = deep.auc(m.predict(test).to_numpy(), (test["gap"] >= 50).to_numpy(float))
+    print(f"spike planted visible={visible}: AUC = {a:.3f}")
+    if visible:
+        assert a > 0.85, a
+    else:
+        assert abs(a - 0.5) < 0.1, a

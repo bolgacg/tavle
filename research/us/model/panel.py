@@ -38,7 +38,8 @@ if str(PIPELINE_DIR) not in sys.path:
 import timing as T  # noqa: E402
 from common import HOME, PARQUET, TZ, ZONES, decision_time  # noqa: E402
 
-CACHE = HOME / "cache"
+import os  # noqa: E402
+CACHE = Path(os.environ.get("US_CACHE_DIR") or (HOME / "cache"))      # the held-out run uses its own
 BUILD_START = dt.date(2020, 1, 1)
 BUILD_END = dt.date(2023, 12, 31)
 LOOKBACK_DAYS = 370                 # the trailing 365-day mean needs 365 days before 05:00 on D

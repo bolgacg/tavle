@@ -15,7 +15,7 @@ import pandas as pd
 
 HOME = Path.home() / "nyiso-us"
 RAW = HOME / "raw"
-GFS_RAW = RAW / "gfs"
+GFS_RAW = RAW / "gfs_global"
 PARQUET = HOME / "parquet"
 RESULTS = HOME / "results"
 

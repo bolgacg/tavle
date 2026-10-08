@@ -1,7 +1,8 @@
 """P&L audit tests (6 Oct 2026). One concrete test per checklist item (the item number leads each test
 name), run on hand-made rows and on conftest.py's synthetic NYISO tables, plus the second
 implementation (audit_pnl.py) agreeing with the official code on identical synthetic inputs.
-Nothing here reads real data. The one xfail documents a bug in score.apply_holm (see its reason)."""
+Nothing here reads real data. test_5_holm_rejection_and_pays_agree_at_the_boundary was an xfail for a
+score.apply_holm bug, patched on 6 Oct; the A tests exercise the v1 rule, now strategies.idea_A_v1."""
 from __future__ import annotations
 
 import datetime as dt
@@ -46,7 +47,7 @@ def test_1_supply_earns_minus_gap_load_earns_gap_none_zero():
         assert list(led["pos"]) == [-1, 1, 0]
         assert led["pnl"].tolist() == pytest.approx([10 - F23, 7 - F23, 0.0])   # rt - da = gap
         assert led["mwh"].tolist() == [1, 1, 0]
-    a = S.idea_A(p, pr)                                                          # A never buys load
+    a = S.idea_A_v1(p, pr)                                                          # A never buys load
     assert list(a["pos"]) == [-1, 0, 0] and a["pnl"].tolist() == pytest.approx([10 - F23, 0, 0])
 
 
@@ -66,7 +67,7 @@ def test_1_pairs_are_two_legs_load_in_i_supply_in_j():
 
 def test_2_fee_is_the_delivery_years_rate_per_cleared_mwh():
     p, pr = rows([("WEST", "2022-12-31 23:00", -4, -1), ("WEST", "2023-01-01 00:00", -4, -1)], preds=[-5, -5])
-    a = S.idea_A(p, pr)                                    # the second row is bid on 31 Dec 2022: delivery year counts
+    a = S.idea_A_v1(p, pr)                                    # the second row is bid on 31 Dec 2022: delivery year counts
     assert a["pnl"].tolist() == pytest.approx([4 - F22, 4 - F23])
 
 
@@ -83,7 +84,7 @@ def test_2_stress_cost_replaces_the_fee_and_is_charged_per_leg():
 def test_2_fee_only_on_traded_hours():
     p, pr = rows([("WEST", "2023-05-02 10:00", -4, 0), ("WEST", "2023-05-02 11:00", 9, 0),
                   ("WEST", "2023-05-02 12:00", np.nan, 0)], preds=[-1, 0, -1])
-    a = S.idea_A(p, pr)
+    a = S.idea_A_v1(p, pr)
     charged = (a["gross"] - a["pnl"]).to_numpy()
     assert charged.tolist() == pytest.approx([F23, 0, 0])          # untraded and unsettled hours pay nothing
 
@@ -106,7 +107,7 @@ def test_3_dst_days_have_23_and_25_hours_and_both_0100_hours_count(synth_root):
 def test_3_days_without_trades_count_as_zero():
     p, pr = rows([("WEST", "2023-05-01 10:00", -10, 0), ("WEST", "2023-05-02 10:00", 5, 0),
                   ("WEST", "2023-05-03 10:00", 5, 0)], preds=[-1, 0, 0])
-    a, base = S.idea_A(p, pr), S.baseline(p)                      # baseline signal 0: never trades
+    a, base = S.idea_A_v1(p, pr), S.baseline(p)                      # baseline signal 0: never trades
     days = pd.DatetimeIndex(sorted(p["delivery_date"].unique()))
     r = SC.summarize("A", a, base, days, SC.stationary_indices(3, 200))
     assert r["n_days"] == 3 and r["mean_daily_idea"] == pytest.approx((10 - F23) / 3)
@@ -222,7 +223,7 @@ def test_5_stationary_bootstrap_over_days_mean_block_7_fixed_seed():
                  preds=[-1] * 48)
     days = pd.DatetimeIndex(sorted(p["delivery_date"].unique()))
     small = SC.stationary_indices(2, 500)
-    r = SC.summarize("A", S.idea_A(p, pr), S.baseline(p), days, small)
+    r = SC.summarize("A", S.idea_A_v1(p, pr), S.baseline(p), days, small)
     daily = np.array([24 * (1 - F23), 24 * (2 - F23)])
     np.testing.assert_allclose(r["boot_means"], daily[small].mean(axis=1))
 
@@ -253,9 +254,7 @@ def test_5_verdict_words_are_objective_6_byte_for_byte():
     assert produced | {"not run"} == set(words)
 
 
-@pytest.mark.xfail(strict=True, reason="BUG score.py:192 - a secondary idea can be 'pays' while Holm did not "
-                   "reject it (p uses +1/(n+1), the interval does not); the later ideas are then forced to "
-                   "inconclusive. Patch: verdict only when info['rejected'].")
+# Was xfail(strict): the bug at score.py:192 is patched (verdict only when Holm rejected), 6 Oct late evening.
 def test_5_holm_rejection_and_pays_agree_at_the_boundary():
     rng = np.random.default_rng(0)
     k = 83                                                         # bootstrap means <= 0 out of 10,000
@@ -296,7 +295,7 @@ def test_6_extreme_hours_cut_once_over_all_zone_hours_and_applied_to_both():
     res = R.score_all(p, preds, ["N.Y.C.|WEST"], "gbm")
     cut = np.quantile(p["gap"].abs(), 0.99)
     assert res["extreme_cut_abs_gap_usd"] == pytest.approx(cut)
-    a, b = S.idea_A(p, preds["base"]), S.baseline(p)
+    a, b = S.idea_A_v1(p, preds["base"]), S.baseline(p)
     w = res["ideas"]["A"]["without_extreme_1pct"]
     assert w["abs_gap_cut_usd"] == pytest.approx(cut)
     assert w["idea_money"]["mwh"] == a.loc[p["gap"].abs() <= cut, "mwh"].sum()
@@ -307,7 +306,7 @@ def test_6_worst_month_and_months_positive():
     vals = {"2023-01-15": 5.0, "2023-02-15": -7.0, "2023-03-15": 2.0}
     p, pr = rows([("WEST", f"{d} 10:00", -v, 0) for d, v in vals.items()], preds=[-1, -1, -1])
     days = pd.DatetimeIndex(sorted(p["delivery_date"].unique()))
-    r = SC.summarize("A", S.idea_A(p, pr), S.baseline(p), days, SC.stationary_indices(3, 100))
+    r = SC.summarize("A", S.idea_A_v1(p, pr), S.baseline(p), days, SC.stationary_indices(3, 100))
     assert r["worst_month_idea"]["month"] == "2023-02"
     assert r["worst_month_idea"]["pnl_usd"] == pytest.approx(-7 - F23)
     assert r["months_positive_idea"] == 2 and r["months"] == 3
@@ -323,7 +322,7 @@ def test_7_nothing_is_annualised_or_compounded():
     p, preds = _score_panel(n_days=20)
     res = R.score_all(p, preds, [], "gbm")
     days = pd.DatetimeIndex(sorted(p["delivery_date"].unique()))
-    assert res["ideas"]["A"]["mean_daily_idea"] == pytest.approx(S.idea_A(p, preds["base"])["pnl"].sum() / len(days))
+    assert res["ideas"]["A"]["mean_daily_idea"] == pytest.approx(S.idea_A_v1(p, preds["base"])["pnl"].sum() / len(days))
 
 
 # ================================================================ 8. silent inflation
@@ -340,7 +339,7 @@ def test_8_a_duplicated_panel_row_stops_the_run(monkeypatch):
 def test_8_nan_predictions_never_trade():
     p, _ = rows([("N.Y.C.", "2023-05-02 10:00", 4, 0), ("WEST", "2023-05-02 10:00", 1, 0)])
     nan = pd.Series([np.nan, np.nan], index=p.index)
-    assert S.idea_A(p, nan)["mwh"].sum() == 0 and S.two_sided(p, nan)["mwh"].sum() == 0
+    assert S.idea_A_v1(p, nan)["mwh"].sum() == 0 and S.two_sided(p, nan)["mwh"].sum() == 0
     assert S.idea_C(p, nan, [("N.Y.C.", "WEST")])["mwh"].sum() == 0
     assert AU.pos_two_sided(np.array([np.nan]), np.array([F23])).tolist() == [0.0]
 
@@ -361,8 +360,10 @@ def test_8_tuning_and_pair_choice_never_see_2023(monkeypatch):
     monkeypatch.setattr(gbm, "GRID", gbm.GRID[:1])
     info, cfg, vpred, va = R.tune(p, ["x", "zone_code"], "A", None)
     assert seen[0][2] == pd.Timestamp("2021-12-30")
-    assert seen[1][1:] == (pd.Timestamp("2022-01-01"), pd.Timestamp("2022-12-31"))
-    assert va["delivery_date"].max() == pd.Timestamp("2022-12-31") and vpred.index.equals(va.index)
+    # 6 Oct night (lab reconciliation): a choice sees only outcomes public at the scored period's first bid,
+    # so 2022 ends on 30 Dec (31 Dec settles after 05:00 on 31 Dec).
+    assert seen[1][1:] == (pd.Timestamp("2022-01-01"), pd.Timestamp("2022-12-30"))
+    assert va["delivery_date"].max() == pd.Timestamp("2022-12-30") and vpred.index.equals(va.index)
 
 
 # ================================================================ the second implementation

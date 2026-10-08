@@ -16,11 +16,12 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from points import POINTS  # noqa: E402
 
-OUT = Path.home() / "nyiso-us/raw/gfs"
+MODEL = next((a.split("=", 1)[1] for a in sys.argv[1:] if a.startswith("--model=")), "gfs_global")
+OUT = Path.home() / "nyiso-us/raw" / MODEL
 OUT.mkdir(parents=True, exist_ok=True)
 URL = ("https://previous-runs-api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}"
-       "&hourly={var}&start_date={s}&end_date={e}&models=gfs_seamless")
-DAYS = [int(a) for a in sys.argv[1:]] or [2, 3]
+       "&hourly={var}&start_date={s}&end_date={e}&models={model}")
+DAYS = [int(a) for a in sys.argv[1:] if not a.startswith("--")] or [2, 3]
 
 
 def var(day: int) -> str:
@@ -47,7 +48,7 @@ for day in DAYS:
             f = path(name, year, day)
             if f.exists() and complete(f, day):
                 continue
-            url = URL.format(lat=lat, lon=lon, var=var(day), s=s, e=e)
+            url = URL.format(lat=lat, lon=lon, var=var(day), s=s, e=e, model=MODEL)
             for attempt in range(4):
                 try:
                     with urllib.request.urlopen(url, timeout=120) as r:

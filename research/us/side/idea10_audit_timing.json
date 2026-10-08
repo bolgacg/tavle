@@ -1,0 +1,1157 @@
+{
+ "published_at_rule_violations": 0,
+ "rows_used": 244145,
+ "rows_used_by_lead": {
+  "48": 244145,
+  "72": 244145
+ },
+ "max_pub48_minus_deadline_h": 0.0,
+ "max_pub72_minus_deadline_h": -24.0,
+ "local_hours_used": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21
+ ],
+ "by_local_hour": {
+  "0": {
+   "n": 11099.0,
+   "step48_min": 52.0,
+   "step48_max": 53.0,
+   "rule_margin48_min_h": 21.0,
+   "run_margin48_min_h": 28.0,
+   "run_margin72_min_h": 52.0
+  },
+  "1": {
+   "n": 11132.0,
+   "step48_min": 48.0,
+   "step48_max": 53.0,
+   "rule_margin48_min_h": 19.0,
+   "run_margin48_min_h": 22.0,
+   "run_margin72_min_h": 46.0
+  },
+  "2": {
+   "n": 11077.0,
+   "step48_min": 48.0,
+   "step48_max": 49.0,
+   "rule_margin48_min_h": 18.0,
+   "run_margin48_min_h": 22.0,
+   "run_margin72_min_h": 46.0
+  },
+  "3": {
+   "n": 11099.0,
+   "step48_min": 49.0,
+   "step48_max": 50.0,
+   "rule_margin48_min_h": 17.0,
+   "run_margin48_min_h": 22.0,
+   "run_margin72_min_h": 46.0
+  },
+  "4": {
+   "n": 11099.0,
+   "step48_min": 50.0,
+   "step48_max": 51.0,
+   "rule_margin48_min_h": 16.0,
+   "run_margin48_min_h": 22.0,
+   "run_margin72_min_h": 46.0
+  },
+  "5": {
+   "n": 11099.0,
+   "step48_min": 51.0,
+   "step48_max": 52.0,
+   "rule_margin48_min_h": 15.0,
+   "run_margin48_min_h": 22.0,
+   "run_margin72_min_h": 46.0
+  },
+  "6": {
+   "n": 11099.0,
+   "step48_min": 52.0,
+   "step48_max": 53.0,
+   "rule_margin48_min_h": 14.0,
+   "run_margin48_min_h": 22.0,
+   "run_margin72_min_h": 46.0
+  },
+  "7": {
+   "n": 11099.0,
+   "step48_min": 48.0,
+   "step48_max": 53.0,
+   "rule_margin48_min_h": 13.0,
+   "run_margin48_min_h": 16.0,
+   "run_margin72_min_h": 40.0
+  },
+  "8": {
+   "n": 11099.0,
+   "step48_min": 48.0,
+   "step48_max": 49.0,
+   "rule_margin48_min_h": 12.0,
+   "run_margin48_min_h": 16.0,
+   "run_margin72_min_h": 40.0
+  },
+  "9": {
+   "n": 11099.0,
+   "step48_min": 49.0,
+   "step48_max": 50.0,
+   "rule_margin48_min_h": 11.0,
+   "run_margin48_min_h": 16.0,
+   "run_margin72_min_h": 40.0
+  },
+  "10": {
+   "n": 11099.0,
+   "step48_min": 50.0,
+   "step48_max": 51.0,
+   "rule_margin48_min_h": 10.0,
+   "run_margin48_min_h": 16.0,
+   "run_margin72_min_h": 40.0
+  },
+  "11": {
+   "n": 11099.0,
+   "step48_min": 51.0,
+   "step48_max": 52.0,
+   "rule_margin48_min_h": 9.0,
+   "run_margin48_min_h": 16.0,
+   "run_margin72_min_h": 40.0
+  },
+  "12": {
+   "n": 11099.0,
+   "step48_min": 52.0,
+   "step48_max": 53.0,
+   "rule_margin48_min_h": 8.0,
+   "run_margin48_min_h": 16.0,
+   "run_margin72_min_h": 40.0
+  },
+  "13": {
+   "n": 11099.0,
+   "step48_min": 48.0,
+   "step48_max": 53.0,
+   "rule_margin48_min_h": 7.0,
+   "run_margin48_min_h": 10.0,
+   "run_margin72_min_h": 34.0
+  },
+  "14": {
+   "n": 11099.0,
+   "step48_min": 48.0,
+   "step48_max": 49.0,
+   "rule_margin48_min_h": 6.0,
+   "run_margin48_min_h": 10.0,
+   "run_margin72_min_h": 34.0
+  },
+  "15": {
+   "n": 11099.0,
+   "step48_min": 49.0,
+   "step48_max": 50.0,
+   "rule_margin48_min_h": 5.0,
+   "run_margin48_min_h": 10.0,
+   "run_margin72_min_h": 34.0
+  },
+  "16": {
+   "n": 11099.0,
+   "step48_min": 50.0,
+   "step48_max": 51.0,
+   "rule_margin48_min_h": 4.0,
+   "run_margin48_min_h": 10.0,
+   "run_margin72_min_h": 34.0
+  },
+  "17": {
+   "n": 11099.0,
+   "step48_min": 51.0,
+   "step48_max": 52.0,
+   "rule_margin48_min_h": 3.0,
+   "run_margin48_min_h": 10.0,
+   "run_margin72_min_h": 34.0
+  },
+  "18": {
+   "n": 11099.0,
+   "step48_min": 52.0,
+   "step48_max": 53.0,
+   "rule_margin48_min_h": 2.0,
+   "run_margin48_min_h": 10.0,
+   "run_margin72_min_h": 34.0
+  },
+  "19": {
+   "n": 11088.0,
+   "step48_min": 48.0,
+   "step48_max": 53.0,
+   "rule_margin48_min_h": 1.0,
+   "run_margin48_min_h": 4.0,
+   "run_margin72_min_h": 28.0
+  },
+  "20": {
+   "n": 11099.0,
+   "step48_min": 48.0,
+   "step48_max": 49.0,
+   "rule_margin48_min_h": 0.0,
+   "run_margin48_min_h": 4.0,
+   "run_margin72_min_h": 28.0
+  },
+  "21": {
+   "n": 11066.0,
+   "step48_min": 49.0,
+   "step48_max": 50.0,
+   "rule_margin48_min_h": 0.0,
+   "run_margin48_min_h": 4.0,
+   "run_margin72_min_h": 28.0
+  }
+ },
+ "min_margin_run48_h": 4.0,
+ "min_margin_run72_h": 28.0,
+ "day2_newest_run_used": "00Z on D for the evening hours of D+1; 00Z of D-1 for its first hours",
+ "runs_example": {
+  "2022-12-23": {
+   "distinct_day2_runs": 5,
+   "albany": [
+    {
+     "valid_local": "2022-12-23 00:00:00-05:00",
+     "day2_run_utc": "2022-12-21 00:00:00+00:00",
+     "day2_step": 53,
+     "day3_run_utc": "2022-12-20 00:00:00+00:00",
+     "day3_step": 77,
+     "pub48_rule": "2022-12-21 08:00:00-05:00",
+     "deadline": "2022-12-22 05:00:00-05:00",
+     "t48": 3.9,
+     "t72": 5.0
+    },
+    {
+     "valid_local": "2022-12-23 06:00:00-05:00",
+     "day2_run_utc": "2022-12-21 06:00:00+00:00",
+     "day2_step": 53,
+     "day3_run_utc": "2022-12-20 06:00:00+00:00",
+     "day3_step": 77,
+     "pub48_rule": "2022-12-21 14:00:00-05:00",
+     "deadline": "2022-12-22 05:00:00-05:00",
+     "t48": 9.0,
+     "t72": 8.7
+    },
+    {
+     "valid_local": "2022-12-23 12:00:00-05:00",
+     "day2_run_utc": "2022-12-21 12:00:00+00:00",
+     "day2_step": 53,
+     "day3_run_utc": "2022-12-20 12:00:00+00:00",
+     "day3_step": 77,
+     "pub48_rule": "2022-12-21 20:00:00-05:00",
+     "deadline": "2022-12-22 05:00:00-05:00",
+     "t48": 8.4,
+     "t72": 13.9
+    },
+    {
+     "valid_local": "2022-12-23 18:00:00-05:00",
+     "day2_run_utc": "2022-12-21 18:00:00+00:00",
+     "day2_step": 53,
+     "day3_run_utc": "2022-12-20 18:00:00+00:00",
+     "day3_step": 77,
+     "pub48_rule": "2022-12-22 02:00:00-05:00",
+     "deadline": "2022-12-22 05:00:00-05:00",
+     "t48": -7.9,
+     "t72": 1.4
+    },
+    {
+     "valid_local": "2022-12-23 21:00:00-05:00",
+     "day2_run_utc": "2022-12-22 00:00:00+00:00",
+     "day2_step": 50,
+     "day3_run_utc": "2022-12-21 00:00:00+00:00",
+     "day3_step": 74,
+     "pub48_rule": "2022-12-22 05:00:00-05:00",
+     "deadline": "2022-12-22 05:00:00-05:00",
+     "t48": -9.0,
+     "t72": -8.3
+    }
+   ]
+  },
+  "2022-12-24": {
+   "distinct_day2_runs": 5,
+   "albany": [
+    {
+     "valid_local": "2022-12-24 00:00:00-05:00",
+     "day2_run_utc": "2022-12-22 00:00:00+00:00",
+     "day2_step": 53,
+     "day3_run_utc": "2022-12-21 00:00:00+00:00",
+     "day3_step": 77,
+     "pub48_rule": "2022-12-22 08:00:00-05:00",
+     "deadline": "2022-12-23 05:00:00-05:00",
+     "t48": -9.8,
+     "t72": -9.5
+    },
+    {
+     "valid_local": "2022-12-24 06:00:00-05:00",
+     "day2_run_utc": "2022-12-22 06:00:00+00:00",
+     "day2_step": 53,
+     "day3_run_utc": "2022-12-21 06:00:00+00:00",
+     "day3_step": 77,
+     "pub48_rule": "2022-12-22 14:00:00-05:00",
+     "deadline": "2022-12-23 05:00:00-05:00",
+     "t48": -10.2,
+     "t72": -8.7
+    },
+    {
+     "valid_local": "2022-12-24 12:00:00-05:00",
+     "day2_run_utc": "2022-12-22 12:00:00+00:00",
+     "day2_step": 53,
+     "day3_run_utc": "2022-12-21 12:00:00+00:00",
+     "day3_step": 77,
+     "pub48_rule": "2022-12-22 20:00:00-05:00",
+     "deadline": "2022-12-23 05:00:00-05:00",
+     "t48": -7.7,
+     "t72": -6.9
+    },
+    {
+     "valid_local": "2022-12-24 18:00:00-05:00",
+     "day2_run_utc": "2022-12-22 18:00:00+00:00",
+     "day2_step": 53,
+     "day3_run_utc": "2022-12-21 18:00:00+00:00",
+     "day3_step": 77,
+     "pub48_rule": "2022-12-23 02:00:00-05:00",
+     "deadline": "2022-12-23 05:00:00-05:00",
+     "t48": -8.1,
+     "t72": -8.8
+    },
+    {
+     "valid_local": "2022-12-24 21:00:00-05:00",
+     "day2_run_utc": "2022-12-23 00:00:00+00:00",
+     "day2_step": 50,
+     "day3_run_utc": "2022-12-22 00:00:00+00:00",
+     "day3_step": 74,
+     "pub48_rule": "2022-12-23 05:00:00-05:00",
+     "deadline": "2022-12-23 05:00:00-05:00",
+     "t48": -9.0,
+     "t72": -9.2
+    }
+   ]
+  },
+  "2022-07-20": {
+   "distinct_day2_runs": 5,
+   "albany": [
+    {
+     "valid_local": "2022-07-20 00:00:00-04:00",
+     "day2_run_utc": "2022-07-18 00:00:00+00:00",
+     "day2_step": 52,
+     "day3_run_utc": "2022-07-17 00:00:00+00:00",
+     "day3_step": 76,
+     "pub48_rule": "2022-07-18 08:00:00-04:00",
+     "deadline": "2022-07-19 05:00:00-04:00",
+     "t48": 22.4,
+     "t72": 21.9
+    },
+    {
+     "valid_local": "2022-07-20 06:00:00-04:00",
+     "day2_run_utc": "2022-07-18 06:00:00+00:00",
+     "day2_step": 52,
+     "day3_run_utc": "2022-07-17 06:00:00+00:00",
+     "day3_step": 76,
+     "pub48_rule": "2022-07-18 14:00:00-04:00",
+     "deadline": "2022-07-19 05:00:00-04:00",
+     "t48": 19.5,
+     "t72": 20.9
+    },
+    {
+     "valid_local": "2022-07-20 12:00:00-04:00",
+     "day2_run_utc": "2022-07-18 12:00:00+00:00",
+     "day2_step": 52,
+     "day3_run_utc": "2022-07-17 12:00:00+00:00",
+     "day3_step": 76,
+     "pub48_rule": "2022-07-18 20:00:00-04:00",
+     "deadline": "2022-07-19 05:00:00-04:00",
+     "t48": 24.3,
+     "t72": 31.4
+    },
+    {
+     "valid_local": "2022-07-20 18:00:00-04:00",
+     "day2_run_utc": "2022-07-18 18:00:00+00:00",
+     "day2_step": 52,
+     "day3_run_utc": "2022-07-17 18:00:00+00:00",
+     "day3_step": 76,
+     "pub48_rule": "2022-07-19 02:00:00-04:00",
+     "deadline": "2022-07-19 05:00:00-04:00",
+     "t48": 32.7,
+     "t72": 32.7
+    },
+    {
+     "valid_local": "2022-07-20 21:00:00-04:00",
+     "day2_run_utc": "2022-07-19 00:00:00+00:00",
+     "day2_step": 49,
+     "day3_run_utc": "2022-07-18 00:00:00+00:00",
+     "day3_step": 73,
+     "pub48_rule": "2022-07-19 05:00:00-04:00",
+     "deadline": "2022-07-19 05:00:00-04:00",
+     "t48": 26.5,
+     "t72": 29.1
+    }
+   ]
+  }
+ },
+ "dst_days": {
+  "2021-03-14": {
+   "deadline": "2021-03-13 05:00:00-05:00",
+   "pairs": 0,
+   "hours_used": 0,
+   "last_hour_used": "NaT",
+   "max_pub48": "NaT",
+   "day2_rows_after_deadline_hours": [
+    "23:00 EDT"
+   ],
+   "min_run_margin48_h": NaN
+  },
+  "2021-03-15": {
+   "deadline": "2021-03-14 05:00:00-04:00",
+   "pairs": 0,
+   "hours_used": 0,
+   "last_hour_used": "NaT",
+   "max_pub48": "NaT",
+   "day2_rows_after_deadline_hours": [
+    "22:00 EDT",
+    "23:00 EDT"
+   ],
+   "min_run_margin48_h": NaN
+  },
+  "2021-11-07": {
+   "deadline": "2021-11-06 05:00:00-04:00",
+   "pairs": 242,
+   "hours_used": 22,
+   "last_hour_used": "2021-11-07 20:00:00-05:00",
+   "max_pub48": "2021-11-06 05:00:00-04:00",
+   "day2_rows_after_deadline_hours": [
+    "21:00 EST",
+    "22:00 EST",
+    "23:00 EST"
+   ],
+   "min_run_margin48_h": 4.0
+  },
+  "2021-11-08": {
+   "deadline": "2021-11-07 05:00:00-05:00",
+   "pairs": 242,
+   "hours_used": 22,
+   "last_hour_used": "2021-11-08 21:00:00-05:00",
+   "max_pub48": "2021-11-07 05:00:00-05:00",
+   "day2_rows_after_deadline_hours": [
+    "22:00 EST",
+    "23:00 EST"
+   ],
+   "min_run_margin48_h": 5.0
+  },
+  "2022-03-13": {
+   "deadline": "2022-03-12 05:00:00-05:00",
+   "pairs": 231,
+   "hours_used": 21,
+   "last_hour_used": "2022-03-13 21:00:00-04:00",
+   "max_pub48": "2022-03-12 04:00:00-05:00",
+   "day2_rows_after_deadline_hours": [
+    "23:00 EDT"
+   ],
+   "min_run_margin48_h": 5.0
+  },
+  "2022-03-14": {
+   "deadline": "2022-03-13 05:00:00-04:00",
+   "pairs": 242,
+   "hours_used": 22,
+   "last_hour_used": "2022-03-14 21:00:00-04:00",
+   "max_pub48": "2022-03-13 05:00:00-04:00",
+   "day2_rows_after_deadline_hours": [
+    "22:00 EDT",
+    "23:00 EDT"
+   ],
+   "min_run_margin48_h": 4.0
+  },
+  "2022-11-06": {
+   "deadline": "2022-11-05 05:00:00-04:00",
+   "pairs": 242,
+   "hours_used": 22,
+   "last_hour_used": "2022-11-06 20:00:00-05:00",
+   "max_pub48": "2022-11-05 05:00:00-04:00",
+   "day2_rows_after_deadline_hours": [
+    "21:00 EST",
+    "22:00 EST",
+    "23:00 EST"
+   ],
+   "min_run_margin48_h": 4.0
+  },
+  "2022-11-07": {
+   "deadline": "2022-11-06 05:00:00-05:00",
+   "pairs": 242,
+   "hours_used": 22,
+   "last_hour_used": "2022-11-07 21:00:00-05:00",
+   "max_pub48": "2022-11-06 05:00:00-05:00",
+   "day2_rows_after_deadline_hours": [
+    "22:00 EST",
+    "23:00 EST"
+   ],
+   "min_run_margin48_h": 5.0
+  },
+  "2023-03-12": {
+   "deadline": "2023-03-11 05:00:00-05:00",
+   "pairs": 231,
+   "hours_used": 21,
+   "last_hour_used": "2023-03-12 21:00:00-04:00",
+   "max_pub48": "2023-03-11 04:00:00-05:00",
+   "day2_rows_after_deadline_hours": [
+    "23:00 EDT"
+   ],
+   "min_run_margin48_h": 5.0
+  },
+  "2023-03-13": {
+   "deadline": "2023-03-12 05:00:00-04:00",
+   "pairs": 242,
+   "hours_used": 22,
+   "last_hour_used": "2023-03-13 21:00:00-04:00",
+   "max_pub48": "2023-03-12 05:00:00-04:00",
+   "day2_rows_after_deadline_hours": [
+    "22:00 EDT",
+    "23:00 EDT"
+   ],
+   "min_run_margin48_h": 4.0
+  },
+  "2023-11-05": {
+   "deadline": "2023-11-04 05:00:00-04:00",
+   "pairs": 242,
+   "hours_used": 22,
+   "last_hour_used": "2023-11-05 20:00:00-05:00",
+   "max_pub48": "2023-11-04 05:00:00-04:00",
+   "day2_rows_after_deadline_hours": [
+    "21:00 EST",
+    "22:00 EST",
+    "23:00 EST"
+   ],
+   "min_run_margin48_h": 4.0
+  },
+  "2023-11-06": {
+   "deadline": "2023-11-05 05:00:00-05:00",
+   "pairs": 242,
+   "hours_used": 22,
+   "last_hour_used": "2023-11-06 21:00:00-05:00",
+   "max_pub48": "2023-11-05 05:00:00-05:00",
+   "day2_rows_after_deadline_hours": [
+    "22:00 EST",
+    "23:00 EST"
+   ],
+   "min_run_margin48_h": 5.0
+  }
+ },
+ "lab_vs_mine": {
+  "days_with_surprise_lab": 1009,
+  "days_with_surprise_mine": 1009,
+  "max_abs_surprise_diff": 0.0,
+  "pairs_equal_days": 1461,
+  "max_abs_rank_diff": 0.0,
+  "rank_nan_pattern_equal": true
+ },
+ "injections": [
+  {
+   "delivery_day": "2021-07-07",
+   "deadline": "2021-07-06 05:00:00-04:00",
+   "cut": 0.95,
+   "rank": 0.2233,
+   "decision": "supply",
+   "tests": {
+    "late_rows_corrupted": {
+     "rule_broken": false,
+     "mine_rank": 0.2233,
+     "lab_rank": 0.2233,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_true_time": {
+     "rule_broken": false,
+     "mine_rank": 0.2233,
+     "lab_rank": 0.2233,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_labelled_0500": {
+     "rule_broken": true,
+     "mine_rank": 0.2233,
+     "lab_rank": 1.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    },
+    "future_value_in_day2_rows": {
+     "rule_broken": true,
+     "mine_rank": 1.0,
+     "lab_rank": 1.0,
+     "mine_decision_changed": true,
+     "lab_decision_changed": true
+    },
+    "filter_opened_24h_newer_run": {
+     "rule_broken": true,
+     "mine_rank": 0.2233,
+     "lab_rank": 1.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    }
+   }
+  },
+  {
+   "delivery_day": "2021-11-07",
+   "deadline": "2021-11-06 05:00:00-04:00",
+   "cut": 0.95,
+   "rank": 0.5442,
+   "decision": "supply",
+   "tests": {
+    "late_rows_corrupted": {
+     "rule_broken": false,
+     "mine_rank": 0.5442,
+     "lab_rank": 0.5442,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_true_time": {
+     "rule_broken": false,
+     "mine_rank": 0.5442,
+     "lab_rank": 0.5442,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_labelled_0500": {
+     "rule_broken": true,
+     "mine_rank": 0.5442,
+     "lab_rank": 1.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    },
+    "future_value_in_day2_rows": {
+     "rule_broken": true,
+     "mine_rank": 1.0,
+     "lab_rank": 1.0,
+     "mine_decision_changed": true,
+     "lab_decision_changed": true
+    },
+    "filter_opened_24h_newer_run": {
+     "rule_broken": true,
+     "mine_rank": 0.531,
+     "lab_rank": 1.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    }
+   }
+  },
+  {
+   "delivery_day": "2021-11-08",
+   "deadline": "2021-11-07 05:00:00-05:00",
+   "cut": 0.95,
+   "rank": 0.3612,
+   "decision": "supply",
+   "tests": {
+    "late_rows_corrupted": {
+     "rule_broken": false,
+     "mine_rank": 0.3612,
+     "lab_rank": 0.3612,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_true_time": {
+     "rule_broken": false,
+     "mine_rank": 0.3612,
+     "lab_rank": 0.3612,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_labelled_0500": {
+     "rule_broken": true,
+     "mine_rank": 0.3612,
+     "lab_rank": 1.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    },
+    "future_value_in_day2_rows": {
+     "rule_broken": true,
+     "mine_rank": 1.0,
+     "lab_rank": 1.0,
+     "mine_decision_changed": true,
+     "lab_decision_changed": true
+    },
+    "filter_opened_24h_newer_run": {
+     "rule_broken": true,
+     "mine_rank": 0.3612,
+     "lab_rank": 1.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    }
+   }
+  },
+  {
+   "delivery_day": "2022-01-16",
+   "deadline": "2022-01-15 05:00:00-05:00",
+   "cut": 0.9,
+   "rank": 0.0507,
+   "decision": "supply",
+   "tests": {
+    "late_rows_corrupted": {
+     "rule_broken": false,
+     "mine_rank": 0.0507,
+     "lab_rank": 0.0507,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_true_time": {
+     "rule_broken": false,
+     "mine_rank": 0.0507,
+     "lab_rank": 0.0507,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_labelled_0500": {
+     "rule_broken": true,
+     "mine_rank": 0.0507,
+     "lab_rank": 1.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    },
+    "future_value_in_day2_rows": {
+     "rule_broken": true,
+     "mine_rank": 1.0,
+     "lab_rank": 1.0,
+     "mine_decision_changed": true,
+     "lab_decision_changed": true
+    },
+    "filter_opened_24h_newer_run": {
+     "rule_broken": true,
+     "mine_rank": 0.0507,
+     "lab_rank": 1.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    }
+   }
+  },
+  {
+   "delivery_day": "2022-03-13",
+   "deadline": "2022-03-12 05:00:00-05:00",
+   "cut": 0.9,
+   "rank": 0.4744,
+   "decision": "supply",
+   "tests": {
+    "late_rows_corrupted": {
+     "rule_broken": false,
+     "mine_rank": 0.4744,
+     "lab_rank": 0.4744,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_true_time": {
+     "rule_broken": false,
+     "mine_rank": 0.4744,
+     "lab_rank": 0.4744,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_labelled_0500": {
+     "rule_broken": true,
+     "mine_rank": 0.4744,
+     "lab_rank": 1.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    },
+    "future_value_in_day2_rows": {
+     "rule_broken": true,
+     "mine_rank": 1.0,
+     "lab_rank": 1.0,
+     "mine_decision_changed": true,
+     "lab_decision_changed": true
+    },
+    "filter_opened_24h_newer_run": {
+     "rule_broken": true,
+     "mine_rank": 0.4744,
+     "lab_rank": 1.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    }
+   }
+  },
+  {
+   "delivery_day": "2022-03-14",
+   "deadline": "2022-03-13 05:00:00-04:00",
+   "cut": 0.9,
+   "rank": 0.5184,
+   "decision": "supply",
+   "tests": {
+    "late_rows_corrupted": {
+     "rule_broken": false,
+     "mine_rank": 0.5184,
+     "lab_rank": 0.5184,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_true_time": {
+     "rule_broken": false,
+     "mine_rank": 0.5184,
+     "lab_rank": 0.5184,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_labelled_0500": {
+     "rule_broken": true,
+     "mine_rank": 0.5184,
+     "lab_rank": 1.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    },
+    "future_value_in_day2_rows": {
+     "rule_broken": true,
+     "mine_rank": 1.0,
+     "lab_rank": 1.0,
+     "mine_decision_changed": true,
+     "lab_decision_changed": true
+    },
+    "filter_opened_24h_newer_run": {
+     "rule_broken": true,
+     "mine_rank": 0.5184,
+     "lab_rank": 1.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    }
+   }
+  },
+  {
+   "delivery_day": "2022-11-06",
+   "deadline": "2022-11-05 05:00:00-04:00",
+   "cut": 0.9,
+   "rank": 0.4603,
+   "decision": "supply",
+   "tests": {
+    "late_rows_corrupted": {
+     "rule_broken": false,
+     "mine_rank": 0.4603,
+     "lab_rank": 0.4603,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_true_time": {
+     "rule_broken": false,
+     "mine_rank": 0.4603,
+     "lab_rank": 0.4603,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_labelled_0500": {
+     "rule_broken": true,
+     "mine_rank": 0.4603,
+     "lab_rank": 1.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    },
+    "future_value_in_day2_rows": {
+     "rule_broken": true,
+     "mine_rank": 1.0,
+     "lab_rank": 1.0,
+     "mine_decision_changed": true,
+     "lab_decision_changed": true
+    },
+    "filter_opened_24h_newer_run": {
+     "rule_broken": true,
+     "mine_rank": 0.4712,
+     "lab_rank": 1.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    }
+   }
+  },
+  {
+   "delivery_day": "2022-11-07",
+   "deadline": "2022-11-06 05:00:00-05:00",
+   "cut": 0.9,
+   "rank": 0.8082,
+   "decision": "supply",
+   "tests": {
+    "late_rows_corrupted": {
+     "rule_broken": false,
+     "mine_rank": 0.8082,
+     "lab_rank": 0.8082,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_true_time": {
+     "rule_broken": false,
+     "mine_rank": 0.8082,
+     "lab_rank": 0.8082,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_labelled_0500": {
+     "rule_broken": true,
+     "mine_rank": 0.8082,
+     "lab_rank": 1.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    },
+    "future_value_in_day2_rows": {
+     "rule_broken": true,
+     "mine_rank": 1.0,
+     "lab_rank": 1.0,
+     "mine_decision_changed": true,
+     "lab_decision_changed": true
+    },
+    "filter_opened_24h_newer_run": {
+     "rule_broken": true,
+     "mine_rank": 0.8082,
+     "lab_rank": 1.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    }
+   }
+  },
+  {
+   "delivery_day": "2022-12-23",
+   "deadline": "2022-12-22 05:00:00-05:00",
+   "cut": 0.9,
+   "rank": 1.0,
+   "decision": "load",
+   "tests": {
+    "late_rows_corrupted": {
+     "rule_broken": false,
+     "mine_rank": 1.0,
+     "lab_rank": 1.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_true_time": {
+     "rule_broken": false,
+     "mine_rank": 1.0,
+     "lab_rank": 1.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_labelled_0500": {
+     "rule_broken": true,
+     "mine_rank": 1.0,
+     "lab_rank": 0.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    },
+    "future_value_in_day2_rows": {
+     "rule_broken": true,
+     "mine_rank": 0.0,
+     "lab_rank": 0.0,
+     "mine_decision_changed": true,
+     "lab_decision_changed": true
+    },
+    "filter_opened_24h_newer_run": {
+     "rule_broken": true,
+     "mine_rank": 1.0,
+     "lab_rank": 0.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    }
+   }
+  },
+  {
+   "delivery_day": "2022-12-24",
+   "deadline": "2022-12-23 05:00:00-05:00",
+   "cut": 0.9,
+   "rank": 0.9315,
+   "decision": "load",
+   "tests": {
+    "late_rows_corrupted": {
+     "rule_broken": false,
+     "mine_rank": 0.9315,
+     "lab_rank": 0.9315,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_true_time": {
+     "rule_broken": false,
+     "mine_rank": 0.9315,
+     "lab_rank": 0.9315,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_labelled_0500": {
+     "rule_broken": true,
+     "mine_rank": 0.9315,
+     "lab_rank": 0.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    },
+    "future_value_in_day2_rows": {
+     "rule_broken": true,
+     "mine_rank": 0.0,
+     "lab_rank": 0.0,
+     "mine_decision_changed": true,
+     "lab_decision_changed": true
+    },
+    "filter_opened_24h_newer_run": {
+     "rule_broken": true,
+     "mine_rank": 0.9315,
+     "lab_rank": 0.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    }
+   }
+  },
+  {
+   "delivery_day": "2022-12-25",
+   "deadline": "2022-12-24 05:00:00-05:00",
+   "cut": 0.9,
+   "rank": 0.4137,
+   "decision": "supply",
+   "tests": {
+    "late_rows_corrupted": {
+     "rule_broken": false,
+     "mine_rank": 0.4137,
+     "lab_rank": 0.4137,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_true_time": {
+     "rule_broken": false,
+     "mine_rank": 0.4137,
+     "lab_rank": 0.4137,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_labelled_0500": {
+     "rule_broken": true,
+     "mine_rank": 0.4137,
+     "lab_rank": 1.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    },
+    "future_value_in_day2_rows": {
+     "rule_broken": true,
+     "mine_rank": 1.0,
+     "lab_rank": 1.0,
+     "mine_decision_changed": true,
+     "lab_decision_changed": true
+    },
+    "filter_opened_24h_newer_run": {
+     "rule_broken": true,
+     "mine_rank": 0.4137,
+     "lab_rank": 1.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    }
+   }
+  },
+  {
+   "delivery_day": "2023-01-11",
+   "deadline": "2023-01-10 05:00:00-05:00",
+   "cut": 0.8,
+   "rank": 0.9233,
+   "decision": "load",
+   "tests": {
+    "late_rows_corrupted": {
+     "rule_broken": false,
+     "mine_rank": 0.9233,
+     "lab_rank": 0.9233,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_true_time": {
+     "rule_broken": false,
+     "mine_rank": 0.9233,
+     "lab_rank": 0.9233,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_labelled_0500": {
+     "rule_broken": true,
+     "mine_rank": 0.9233,
+     "lab_rank": 0.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    },
+    "future_value_in_day2_rows": {
+     "rule_broken": true,
+     "mine_rank": 0.0,
+     "lab_rank": 0.0,
+     "mine_decision_changed": true,
+     "lab_decision_changed": true
+    },
+    "filter_opened_24h_newer_run": {
+     "rule_broken": true,
+     "mine_rank": 0.9233,
+     "lab_rank": 0.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    }
+   }
+  },
+  {
+   "delivery_day": "2023-09-05",
+   "deadline": "2023-09-04 05:00:00-04:00",
+   "cut": 0.8,
+   "rank": 0.2795,
+   "decision": "supply",
+   "tests": {
+    "late_rows_corrupted": {
+     "rule_broken": false,
+     "mine_rank": 0.2795,
+     "lab_rank": 0.2795,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_true_time": {
+     "rule_broken": false,
+     "mine_rank": 0.2795,
+     "lab_rank": 0.2795,
+     "mine_decision_changed": false,
+     "lab_decision_changed": false
+    },
+    "newer_run_labelled_0500": {
+     "rule_broken": true,
+     "mine_rank": 0.2795,
+     "lab_rank": 1.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    },
+    "future_value_in_day2_rows": {
+     "rule_broken": true,
+     "mine_rank": 1.0,
+     "lab_rank": 1.0,
+     "mine_decision_changed": true,
+     "lab_decision_changed": true
+    },
+    "filter_opened_24h_newer_run": {
+     "rule_broken": true,
+     "mine_rank": 0.2795,
+     "lab_rank": 1.0,
+     "mine_decision_changed": false,
+     "lab_decision_changed": true
+    }
+   }
+  }
+ ],
+ "injection_summary": {
+  "late_rows_corrupted": {
+   "rule_broken": false,
+   "days": 13,
+   "mine_changed": 0,
+   "lab_changed": 0
+  },
+  "newer_run_true_time": {
+   "rule_broken": false,
+   "days": 13,
+   "mine_changed": 0,
+   "lab_changed": 0
+  },
+  "newer_run_labelled_0500": {
+   "rule_broken": true,
+   "days": 13,
+   "mine_changed": 0,
+   "lab_changed": 13
+  },
+  "future_value_in_day2_rows": {
+   "rule_broken": true,
+   "days": 13,
+   "mine_changed": 13,
+   "lab_changed": 13
+  },
+  "filter_opened_24h_newer_run": {
+   "rule_broken": true,
+   "days": 13,
+   "mine_changed": 0,
+   "lab_changed": 13
+  }
+ }
+}

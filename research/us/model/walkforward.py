@@ -71,3 +71,29 @@ def walk_forward(panel: pd.DataFrame, make_model: Callable[[], object], first: d
         log(f"  refit {ms}: train {rec['train_first']}..{rec['train_last']} ({rec['train_rows']} rows), "
             f"predict {len(test)} rows, {rec['seconds']} s")
     return pd.concat(preds).sort_index(), fits
+
+
+# ----------------------------------------------------------------- choices (lab reconciliation, 6 Oct night)
+# A choice for a scored period (configuration, S and p*, cut, pairs, zones) may use only delivery days whose
+# outcomes were public by 05:00 on the period's first bid day: the same rows train_mask allows for the
+# period's first refit. choice_rows() returns them; check_choice_rows() raises on anything later and logs
+# what each choice used (CHOICE_LOG), so a test can prove no choice saw a later day.
+CHOICE_LOG: list[dict] = []
+
+
+def choice_rows(rows: pd.DataFrame, period_start: dt.date) -> pd.DataFrame:
+    return rows[train_mask(rows, period_start)]
+
+
+def check_choice_rows(rows: pd.DataFrame, period_start: dt.date, what: str) -> pd.DataFrame:
+    cutoff = pd.Timestamp(period_start - dt.timedelta(days=TRAIN_GAP_DAYS))
+    known_by = decision_time(period_start - dt.timedelta(days=1))
+    if len(rows):
+        late_day = rows["delivery_date"].max() > cutoff
+        late_pub = (rows["label_published_at"] > known_by).any() if "label_published_at" in rows else False
+        if late_day or late_pub:
+            raise AssertionError(f"choice '{what}' for the period from {period_start} uses outcomes not public by "
+                                 f"{known_by} (last delivery day {rows['delivery_date'].max().date()})")
+    CHOICE_LOG.append({"what": what, "period_start": str(period_start), "rows": int(len(rows)),
+                       "last_delivery_day": str(rows["delivery_date"].max().date()) if len(rows) else None})
+    return rows

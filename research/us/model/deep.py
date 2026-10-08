@@ -152,7 +152,7 @@ class TCN(nn.Module):
 
 
 class Net(nn.Module):
-    def __init__(self, c: dict, n_points: int, n_extra: int = 0):
+    def __init__(self, c: dict, n_points: int, n_extra: int = 0, spike: bool = False):
         super().__init__()
         H, K, p = c["hidden"], c["K"], c["dropout"]
         self.K = K if n_points > 0 else 0
@@ -171,8 +171,12 @@ class Net(nn.Module):
             self.ctx = nn.Linear(4 * H, 16)
             self.row = nn.Sequential(nn.Linear(2 * n_extra + 16 + N_Z, 32), nn.GELU(), nn.Dropout(p),
                                      nn.Linear(32, 1))
+        self.spike = spike
+        if spike:                                     # created last: the other layers start as without it
+            self.spike_head = nn.Sequential(nn.Dropout(p), nn.Linear(4 * H, 2 * H), nn.GELU(), nn.Dropout(p),
+                                            nn.Linear(2 * H, 24 * N_Z))
 
-    def forward(self, x: dict, lf_mean: torch.Tensor, xr=None, mr=None):
+    def encode(self, x: dict, lf_mean: torch.Tensor) -> torch.Tensor:
         seq = x["seq"]
         B = seq.shape[0]
         parts = [seq]
@@ -186,12 +190,18 @@ class Net(nn.Module):
         lf = torch.clamp(x["lf"] / lf_mean - 1.0, -1.0, 2.0) * x["lfm"]
         fut = torch.cat([lf.reshape(B, -1), x["lfm"].amax(-1), x["lf_age"].amax((1, 2))[:, None] / 5.0,
                          x["dcal"]], -1)
-        z = torch.cat([h[:, -1], h[:, -24:].mean(1), h.mean(1), self.fut(fut)], -1)
+        return torch.cat([h[:, -1], h[:, -24:].mean(1), h.mean(1), self.fut(fut)], -1)
+
+    def forward(self, x: dict, lf_mean: torch.Tensor, xr=None, mr=None):
+        z = self.encode(x, lf_mean)
+        B = z.shape[0]
         out = self.head(z).view(B, 24, N_Z)
         if self.n_extra:
             ctx = self.ctx(z)[:, None, None, :].expand(B, 24, N_Z, 16)
             zone = torch.eye(N_Z, device=z.device)[None, None].expand(B, 24, N_Z, N_Z)
             out = out + self.row(torch.cat([xr, mr, ctx, zone], -1)).squeeze(-1)
+        if self.spike:
+            return out, self.spike_head(z).view(B, 24, N_Z)
         return out
 
 
@@ -290,6 +300,7 @@ class DeepModel:
         xr, mr = self._extra(panel_train, keys, d)
         self.Yt = torch.as_tensor(np.nan_to_num(Y) / self.s, device=self.device)
         self.Ymt = torch.as_tensor(Ym, device=self.device)
+        self._prepare_targets(keys, d, days)
         n_val = min(c["val_days"], max(5, len(days) // 10))
         tr, va = days[:-n_val], days[-n_val:]
         self.nets, seeds_info = [], []
@@ -312,8 +323,27 @@ class DeepModel:
                           "n_points": int(len(self.ptids_used)), "seeds": seeds_info,
                           "fit_s": round(time.time() - t0, 1)})
         del self.Yt, self.Ymt
+        self._cleanup()
         if self.ckpt_path:
             self.save(self.ckpt_path)
+
+    SPIKE = False
+
+    def _prepare_targets(self, keys, d, days):
+        pass
+
+    def _cleanup(self):
+        pass
+
+    def _new_net(self, bias):
+        net = Net(self.c, len(self.cols), len(self.extra_cols), spike=self.SPIKE).to(self.device)
+        with torch.no_grad():                    # start exactly at the training mean per hour and zone
+            net.head[-1].weight.zero_()
+            net.head[-1].bias.copy_(torch.as_tensor(bias.reshape(-1), device=self.device))
+            if net.n_extra:
+                net.row[-1].weight.zero_()
+                net.row[-1].bias.zero_()
+        return net
 
     def _loss(self, net, d, k_idx, xr, mr):
         out = self._forward(net, d, k_idx, xr, mr)
@@ -330,13 +360,7 @@ class DeepModel:
         c, d = self.c, self.data
         torch.manual_seed(seed)
         np.random.seed(seed)
-        net = Net(c, len(self.cols), len(self.extra_cols)).to(self.device)
-        with torch.no_grad():                    # start exactly at the training mean per hour and zone
-            net.head[-1].weight.zero_()
-            net.head[-1].bias.copy_(torch.as_tensor(bias.reshape(-1), device=self.device))
-            if net.n_extra:
-                net.row[-1].weight.zero_()
-                net.row[-1].bias.zero_()
+        net = self._new_net(bias)
         opt = torch.optim.AdamW(net.parameters(), lr=c["lr"], weight_decay=c["weight_decay"])
         g = np.random.default_rng(seed)
         best, best_ep, best_state, bad, ep = math.inf, 0, None, 0, 0
@@ -409,7 +433,8 @@ class DeepModel:
     def save(self, path: Path):
         path = Path(path)
         path.parent.mkdir(parents=True, exist_ok=True)
-        torch.save({"config": self.c, "seeds": self.seeds, "s": self.s, "lf_mean": self.lf_mean.cpu(),
+        torch.save({"kind": type(self).__name__, "config": self.c, "seeds": self.seeds, "s": self.s,
+                    "lf_mean": self.lf_mean.cpu(),
                     "ptids_used": self.ptids_used, "extra_cols": self.extra_cols,
                     "extra_stats": {k: self.info[k] for k in ("extra_mean", "extra_std") if k in self.info},
                     "info": {k: v for k, v in self.info.items() if k not in ("extra_mean", "extra_std")},
@@ -419,7 +444,8 @@ class DeepModel:
     def load(cls, path: Path, data: DD.DeepData | None = None, device=None, log=None) -> "DeepModel":
         """Rebuild a fitted model; points are matched by ptid, so the data may hold a different set."""
         ck = torch.load(path, map_location="cpu", weights_only=False)
-        m = cls(ck["config"], seeds=ck["seeds"], data=data, device=device, log=log, extra_cols=ck["extra_cols"])
+        m = cls(ck["config"], seeds=ck["seeds"], data=data, device=device, log=log, extra_cols=ck["extra_cols"],
+                **cls._ckpt_kwargs(ck))
         m.s, m.ptids_used, m.info = ck["s"], ck["ptids_used"], {**ck["info"], **ck["extra_stats"]}
         m.lf_mean = ck["lf_mean"].to(m.device)
         if data is None:
@@ -430,11 +456,167 @@ class DeepModel:
             raise ValueError("the data lacks points the model was trained on")
         m.cols = torch.as_tensor(pos, dtype=torch.long, device=m.device)
         for sd in ck["nets"]:
-            net = Net(m.c, len(m.cols), len(m.extra_cols)).to(m.device)
+            net = Net(m.c, len(m.cols), len(m.extra_cols), spike=cls.SPIKE).to(m.device)
             net.load_state_dict(sd)
             net.eval()
             m.nets.append(net)
         return m
+
+    @classmethod
+    def _ckpt_kwargs(cls, ck) -> dict:
+        return {}
+
+
+# ----------------------------------------------------------------------------- spike model
+SPIKE_CONFIG = Path(__file__).resolve().parent / "spike_config.json"
+DEFAULT_SPIKE_S = 50.0
+
+
+def spike_threshold(path: Path = SPIKE_CONFIG) -> tuple[float, str]:
+    """The spike threshold S (USD/MWh) from model/spike_config.json, written by the lead modeller.
+    If the file is absent: 50, and the source says so."""
+    path = Path(path)
+    if path.exists():
+        j = json.loads(path.read_text())
+        for k in ("S_usd_per_mwh", "S", "threshold", "spike_threshold", "spike_S", "s"):
+            if k in j and j[k] is not None:
+                return float(j[k]), f"{path.name}: {k}={j[k]}"
+        raise KeyError(f"{path} names no threshold (keys {sorted(j)})")
+    return DEFAULT_SPIKE_S, f"default {DEFAULT_SPIKE_S:g} ({path.name} absent)"
+
+
+def auc(score: np.ndarray, label: np.ndarray) -> float:
+    """Area under the ROC curve (ties averaged)."""
+    ok = np.isfinite(score) & np.isfinite(label)
+    s, y = score[ok], label[ok] > 0.5
+    n1, n0 = int(y.sum()), int((~y).sum())
+    if n1 == 0 or n0 == 0:
+        return float("nan")
+    r = pd.Series(s).rank().to_numpy()
+    return float((r[y].sum() - n1 * (n1 + 1) / 2) / (n1 * n0))
+
+
+def calibrate(q: np.ndarray, w: float) -> np.ndarray:
+    """Exact inverse of a positive-class weight w: the weighted-loss optimum q has odds w times the true
+    odds, so p = q / (q + w (1 - q))."""
+    q = np.asarray(q, dtype=float)
+    return q / (q + w * (1.0 - q))
+
+
+class DeepSpikeModel(DeepModel):
+    """Idea A's spike filter (OBJECTIVES addendum, 6 Oct late evening). Same backbone and inputs as
+    DeepModel; a second output gives P(spike) for every zone-hour of D+1, spike = gap >= S.
+
+    Loss = class-weighted binary cross-entropy of the spike output (positives weighted by
+    negatives / positives in the training rows) + gap_weight x the gap output's squared error. The spike
+    output's layer starts at zero weights with its bias at the weighted-loss optimum for each hour and
+    zone (training spike rate, shrunk toward the overall rate). Early stopping on the class-weighted
+    cross-entropy of the time-ordered validation slice. The weighted output q over-states the spike
+    probability by the odds factor w (positive-class weight of that refit), so each seed's output is
+    mapped back exactly, p = q / (q + w (1 - q)), and predict() returns the average of the seeds' p:
+    a calibrated P(spike), comparable with fixed cuts such as p* in {0.02, 0.05}. predict_both() also
+    returns the weighted average q (p_spike_weighted) and the gap output."""
+    SPIKE = True
+
+    def __init__(self, config=None, threshold: float | None = None, gap_weight: float = 1.0, **kw):
+        super().__init__(config, **kw)
+        if threshold is None:
+            threshold, src = spike_threshold()
+        else:
+            src = "argument"
+        self.threshold, self.threshold_source, self.gap_weight = float(threshold), src, float(gap_weight)
+        self.name = f"deep_spike_{self.c['name']}"
+        self.last_gap: pd.Series | None = None
+
+    def _prepare_targets(self, keys, d, days):
+        g = keys["gap"].to_numpy(float)
+        lab = np.where(np.isfinite(g), (g >= self.threshold).astype(float), np.nan)
+        Sv, Sm, _ = self._dense(keys, lab, d)
+        pos, n = float((Sv[days] * Sm[days]).sum()), float(Sm[days].sum())
+        rate = pos / max(n, 1.0)
+        self.pos_weight = float(np.clip((n - pos) / max(pos, 1.0), 1.0, 1000.0))
+        pz, nz = (Sv[days] * Sm[days]).sum(0), Sm[days].sum(0)
+        p = np.clip((pz + 10 * rate) / (nz + 10), 1e-4, 1 - 1e-4)
+        self.spike_bias = np.log(self.pos_weight * p / (1 - p)).astype(np.float32)
+        self.St = torch.as_tensor(np.nan_to_num(Sv), device=self.device)
+        self.Smt = torch.as_tensor(Sm, device=self.device)
+        self.pw_t = torch.tensor(self.pos_weight, device=self.device)
+        self.info.update({"threshold": self.threshold, "threshold_source": self.threshold_source,
+                          "train_spike_rate": rate, "pos_weight": self.pos_weight, "gap_weight": self.gap_weight})
+
+    def _cleanup(self):
+        del self.St, self.Smt
+
+    def _new_net(self, bias):
+        net = super()._new_net(bias)
+        with torch.no_grad():
+            net.spike_head[-1].weight.zero_()
+            net.spike_head[-1].bias.copy_(torch.as_tensor(self.spike_bias.reshape(-1), device=self.device))
+        return net
+
+    def _bce(self, logit, sel):
+        l = F.binary_cross_entropy_with_logits(logit, self.St[sel], pos_weight=self.pw_t, reduction="none")
+        m = self.Smt[sel]
+        return (l * m).sum(), m.sum()
+
+    def _loss(self, net, d, k_idx, xr, mr):
+        out, logit = self._forward(net, d, k_idx, xr, mr)
+        sel = torch.as_tensor(k_idx, device=self.device)
+        m = self.Ymt[sel]
+        gap_l = (self._crit(out, self.Yt[sel]) * m).sum() / m.sum().clamp(min=1)
+        b, n = self._bce(logit, sel)
+        return b / n.clamp(min=1) + self.gap_weight * gap_l
+
+    @torch.no_grad()
+    def _eval(self, net, va, xr, mr):
+        net.eval()
+        tot, n = 0.0, 0.0
+        for i in range(0, len(va), 64):
+            b = va[i:i + 64]
+            _, logit = self._forward(net, self.data, b, xr, mr)
+            l, m = self._bce(logit, torch.as_tensor(b, device=self.device))
+            tot, n = tot + float(l), n + float(m)
+        return tot / max(n, 1)
+
+    @torch.no_grad()
+    def predict_both(self, panel: pd.DataFrame) -> pd.DataFrame:
+        keys = panel_keys(panel)
+        lock.assert_build_only(keys["delivery_date"])
+        d = self._data(keys["delivery_date"].max().date())
+        k_all = (keys["delivery_date"].to_numpy().astype("datetime64[D]")
+                 - np.datetime64(d.first_day, "D")).astype(np.int64)
+        days = np.unique(k_all)
+        xr, mr = self._extra(panel, keys, d)
+        w = float(self.info["pos_weight"])
+        gaps, probs, cals = [], [], []
+        for net in self.nets:
+            net.eval()
+            g, p = [], []
+            for i in range(0, len(days), 64):
+                o, lg = self._forward(net, d, days[i:i + 64], xr, mr)
+                g.append(o.double().cpu().numpy())
+                p.append(torch.sigmoid(lg.double()).cpu().numpy())
+            q = np.concatenate(p)
+            gaps.append(np.concatenate(g))
+            probs.append(q)
+            cals.append(calibrate(q, w))
+        pos = np.searchsorted(days, k_all)
+        ix = (pos, keys["slot"].to_numpy(), keys["zc"].to_numpy())
+        out = pd.DataFrame({"p_spike": np.mean(cals, 0)[ix], "p_spike_weighted": np.mean(probs, 0)[ix],
+                            "pred_gap": (np.mean(gaps, 0) * self.s)[ix]}, index=panel.index)
+        if not np.isfinite(out.to_numpy()).all():
+            raise FloatingPointError("non-finite deep spike prediction")
+        return out
+
+    def predict(self, panel: pd.DataFrame) -> pd.Series:
+        both = self.predict_both(panel)
+        self.last_both = both.assign(pos_weight=float(self.info["pos_weight"]))
+        self.last_gap = both["pred_gap"]
+        return both["p_spike"].rename("p_spike")
+
+    @classmethod
+    def _ckpt_kwargs(cls, ck) -> dict:
+        return {"threshold": ck["info"]["threshold"], "gap_weight": ck["info"].get("gap_weight", 1.0)}
 
 
 def describe(c: dict) -> str:

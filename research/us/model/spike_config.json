@@ -1,0 +1,19 @@
+{
+ "S_usd_per_mwh": 25,
+ "spike": "gap = rt_lbmp - da_lbmp >= S",
+ "S_grid": [
+  25,
+  50,
+  100
+ ],
+ "p_star_grid": [
+  0.02,
+  0.05
+ ],
+ "chosen_on": "2022, idea A mean daily net P&L, gradient-boosting classifier trained on delivery dates up to 2021-12-30 (rehearsal.py tune_spike)",
+ "gbm_p_star": 0.05,
+ "deep_delivery": {
+  "predictions_2023": "results/deep_spike_2023.parquet: delivery_hour, zone, p_spike (walk-forward 2023, monthly refits, same S)",
+  "choice": "results/deep_spike_choice.json: {\"S\": S, \"p_star\": chosen from p_star_grid on 2022 by idea A mean daily net P&L}, or results/deep_spike_2022.parquet (delivery_hour, zone, p_spike; trained to 2021-12-30) and rescore chooses it"
+ }
+}

@@ -116,14 +116,15 @@ def snapshot_for(bid_day: dt.date, store: T.Store) -> pd.DataFrame:
     return og.drop_duplicates(["snapshot_date", "equipment", "sched_out", "sched_in"])
 
 
-def top_sites(outages: pd.DataFrame, n: int = N_TOP) -> list[str]:
+def top_sites(outages: pd.DataFrame, n: int = N_TOP, last_snapshot: pd.Timestamp = BUILD_LAST_SNAPSHOT) -> list[str]:
     """The n sites with the most distinct outage starts (site, local start date), counted over the
     snapshots that serve build-year delivery days (dated 2020-01-01 to 2023-12-30) and starts on or
     after 2020-01-01. Counting starts, not days active, keeps multi-year outages (one start, always
     on) from filling the list with constant indicators. Ties are broken alphabetically. Rows from
-    later snapshots are never read."""
+    later snapshots are never read. `last_snapshot` moves the end earlier: the 2023 rehearsal counts
+    only snapshots up to 2022-12-30 (OBJECTIVES addendum, 6 Oct late evening; set by the lead modeller)."""
     snap = pd.to_datetime(outages["snapshot_date"])
-    og = outages[(snap >= BUILD_FIRST) & (snap <= BUILD_LAST_SNAPSHOT)]
+    og = outages[(snap >= BUILD_FIRST) & (snap <= min(pd.Timestamp(last_snapshot), BUILD_LAST_SNAPSHOT))]
     start = og["sched_out"].dt.tz_convert(TZ).dt.tz_localize(None).dt.normalize()
     og = og[start >= BUILD_FIRST]
     ev = pd.DataFrame({"equipment": og["equipment"].to_numpy(),

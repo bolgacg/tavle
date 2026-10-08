@@ -195,10 +195,14 @@ def main():
     frame = pd.DataFrame({"delivery_date": days})
     wsel = np.zeros((len(days), C))
     choice = {}
+    build_k = {} if R.MODE == "build" else json.loads((R.RESULTS / "build_pos" / f"{NAME}.json").read_text())["kappa_choice"]
     for q in R.quarters():
-        if q[3] or not R.in_window(q):
+        if q[3] or q[2] not in refit:
             continue
         te = ((dser >= pd.Timestamp(q[0])) & (dser <= pd.Timestamp(q[1]))).to_numpy()
+        if not R.in_window(q):           # run modes: refit only to choose kappa; positions with the build's kappa,
+            wsel[te] = W[build_k[q[2]]["kappa"]][te]           # kept as a determinism check, never scored
+            continue
         m = R.trailing_mask(frame, q[0]) & (dser >= pd.Timestamp(R.FIRST_SCORED)).to_numpy()
         if m.any():
             k = max(A.KAPPAS, key=lambda kk: (net[kk][m].sum(), -A.KAPPAS.index(kk)))

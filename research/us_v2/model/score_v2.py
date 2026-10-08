@@ -255,9 +255,10 @@ def main():
         out["window"] = [str(FIRST), str(R.LAST_SCORED)]
         out["build_results"] = str(BUILD_JSON)
         if BUILD_DAILY.exists():
-            b = R.read_pre2024(BUILD_DAILY, BUILD_DAILY_INDEX)
-            b = b.set_index(BUILD_DAILY_INDEX).rename_axis(None)
-            b = b[b.index < pd.Timestamp(FIRST)]
+            b = ds.dataset(str(BUILD_DAILY), format="parquet").to_table(
+                filter=ds.field(BUILD_DAILY_INDEX) < pd.Timestamp(FIRST).to_datetime64()).to_pandas()
+            R.assert_pre2024(b.index, "build daily")
+            b = b.rename_axis(None)
             pd.concat([b, daily], axis=0).to_parquet(R.RESULTS / f"v2_daily_all{a.tag}.parquet")
     (R.RESULTS / f"v2_results{a.tag}.json").write_text(json.dumps(out, indent=1, default=lab._js))
     write_md(out, R.RESULTS / f"v2_results{a.tag}.md")

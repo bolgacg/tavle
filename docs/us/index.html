@@ -312,7 +312,7 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
     <div class="readout" id="ro-bank" aria-live="polite"></div>
     <div class="three">
       <p><b>what you see</b>Each line is one strategy's 500,000 USD bankroll, day by day after all fees; the lower panel shows how far it sat below its own previous high.</p>
-      <p><b>how to read</b>The three steadiest candidates by Sharpe ratio (average daily profit divided by its day-to-day swings, scaled to a year) are named in strong colour, the other candidates are pale, red is always selling, grey is the habit rule; the dashed line is the start.</p>
+      <p><b>how to read</b>The three steadiest candidates by Sharpe ratio (average daily profit divided by its day-to-day swings, scaled to a year) are named in blue, teal and purple, and the two other candidates that end highest in orange and pink; the remaining candidates are pale, red is always selling, grey is the habit rule; the dashed line is the start.</p>
       <p><b>take-away</b><span id="k-bank">Each candidate ends above both plain rules, but only on years the models were built on; the hatched area is the held-out test, still to run.</span></p>
     </div>
     <p class="note" id="n-bank"></p>
@@ -1499,7 +1499,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     var r = rows.filter(function (r) { return r.reference; }).sort(function (a, b) { return a.name.indexOf('supply') >= 0 ? -1 : 1; });
     return c.concat(r);
   }
-  var TOP3 = {}, STRONG = ['#1f5f99', '#0f7f74', '#7a4f9a'];
+  var TOP3 = {}, STRONG = ['#1f5f99', '#0f7f74', '#7a4f9a'], EARN = ['#d17a00', '#c4589b'], EARNINFO = { picked: [], skipped: [] };
   function sharpe(r) {
     var c = r.cum_net_usd_1mw, n = c.length, m = 0, d = new Array(n);
     for (var i = 0; i < n; i++) { d[i] = i ? c[i] - c[i - 1] : c[0]; m += d[i]; }
@@ -1510,7 +1510,24 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     TOP3 = {};
     eq(v).rows.filter(function (r) { return r.candidate_by_rule; }).map(function (r) { return { r: r, s: sharpe(r) }; })
       .sort(function (a, b) { return b.s - a.s; }).slice(0, 3).forEach(function (x, i) { TOP3[x.r.name] = { c: STRONG[i], s: x.s }; });
+    // the two candidate lines that end highest on the bankroll chart, read from the chart's own data; a line already
+    // among the three steadiest is skipped and the next highest taken, so five distinct lines are highlighted
+    EARNINFO = { picked: [], skipped: [] };
+    eq(v).rows.filter(function (r) { return r.candidate_by_rule; }).sort(function (a, b) { return last(b.bankroll_usd_sizing_view) - last(a.bankroll_usd_sizing_view); })
+      .forEach(function (r) {
+        if (EARNINFO.picked.length >= 2) return;
+        if (TOP3[r.name]) { EARNINFO.skipped.push(r.name); return; }
+        TOP3[r.name] = { c: EARN[EARNINFO.picked.length], s: sharpe(r), earn: true }; EARNINFO.picked.push(r.name);
+      });
   }
+  var SHORT = { V8_error_mining: 'Error model', V15c_wx_border_gbm: 'Weather, borders', V15a_V8_limit: 'Error model, limits', V15a_V5_limit: 'Borders, limits',
+    V16_B_gefs_joined: 'Weather forecasts', V2_limit_gbm: 'Price limits', V5_border_inputs: 'Border prices', V7_recency: 'Recent days', V7_flags: 'Change flags',
+    V9_decompose: 'Price parts', V3_tail_gbm: 'Tail risk, 3 MW', V12_alloc: 'Learned mix', V1_C_deep: 'Pairs, deep', V14f_global_zone: 'Pairs, one model',
+    V14e_mlp_multi: 'Pairs, one network', V11_C_deep_ens4: 'Pairs, deep, 4 windows', V15b_V13_both: 'All inputs deep', V14d_seed_ens: 'Pairs, ten starts',
+    V14a_window_ens: 'Pairs, window mix', V14b_quantile_size: 'Pairs, range sized', V13_C_deep_all: 'Pairs, all inputs', V15b_V13_limit: 'All inputs, limits',
+    V14c_conformal_skip: 'Pairs, skip unsure', V11_C_gbm_ens4: 'Pairs, trees, 4 windows', V1_C_gbm: 'Pairs, trees', V6_LI: 'Long Island',
+    V1_always_supply: 'Always supply', V1_baseline: 'Habit rule' };
+  function shortName(n) { return SHORT[n] || sn(n); }
   function isMinor(r) { return !r.reference && !TOP3[r.name]; }
   function rowColor(r) { return r.reference ? (r.name.indexOf('supply') >= 0 ? C.neg : C.grey) : TOP3[r.name] ? TOP3[r.name].c : '#a9b7c6'; }
   function rowDash(r) { return r.name.indexOf('idea14') === 0 ? '5 3' : null; }
@@ -1528,7 +1545,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     var w = W(box), narrow = w < 560, fs = narrow ? 10.5 : 11.5;
     var t0 = ms(dates[0]), tL = ms(last(dates)), tE = Math.max(ms(END), tL);
     var mL = narrow ? 38 : 48, mT = 26, H = narrow ? 260 : 330, mB = 24;
-    var bankLab = function (r) { return (r.name.indexOf('idea14') === 0 ? 'Idea 14 (added late)' : sn(r.name)) + (TOP3[r.name] ? (narrow ? ' ' : ', Sharpe ') + TOP3[r.name].s.toFixed(1) : ''); };
+    var bankLab = function (r) { return (r.name.indexOf('idea14') === 0 ? 'Idea 14 (added late)' : narrow ? shortName(r.name) : sn(r.name)) + (TOP3[r.name] ? (narrow ? ' ' : ', Sharpe ') + TOP3[r.name].s.toFixed(1) : ''); };
     var Lw = Math.max.apply(null, rows.filter(function (r) { return !isMinor(r); }).map(function (r) { return tw(bankLab(r), fs, 500); }));
     var f = (tL - t0) / (tE - t0);
     var g = Math.max(6, (Lw + 10 - (w - mL) * (1 - f)) / f);
@@ -1582,8 +1599,8 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
       for (var k2 in upaths) { upaths[k2].setAttribute('opacity', !n ? upaths[k2].getAttribute('data-o') : k2 === n ? 1 : 0.1); upaths[k2].setAttribute('stroke-width', k2 === n ? 2.2 : upaths[k2].getAttribute('data-w')); if (k2 === n) upaths[k2].parentNode.appendChild(upaths[k2]); }
     }
     function isMinorN(k) { return rows.some(function (r) { return r.name === k && isMinor(r); }); }
-    var lgH = [['three steadiest candidates (Sharpe: profit per unit of day-to-day swing)', STRONG[0]], ['other candidates that passed', '#a9b7c6'], ['always supply: sell every hour, no model', C.neg], ['habit rule: repeat last year\'s usual side, no model', C.grey]]
-      .map(function (k, i) { var sw = i === 0 ? STRONG.map(function (c, j) { return '<line x1="' + (j * 9) + '" y1="4" x2="' + (j * 9 + 7) + '" y2="4" stroke="' + c + '" stroke-width="2.5"/>'; }).join('') : '<line x1="0" y1="4" x2="25" y2="4" stroke="' + k[1] + '" stroke-width="2.5"/>'; return '<span><svg width="25" height="8">' + sw + '</svg>' + k[0] + '</span>'; }).join('');
+    var lgH = [['three steadiest candidates (Sharpe: profit per unit of day-to-day swing)', STRONG], ['two highest-earning candidates (the other lines that end highest)', EARN], ['other candidates that passed', '#a9b7c6'], ['always supply: sell every hour, no model', C.neg], ['habit rule: repeat last year\'s usual side, no model', C.grey]]
+      .map(function (k, i) { var sw = Array.isArray(k[1]) ? k[1].map(function (c, j) { return '<line x1="' + (j * 9) + '" y1="4" x2="' + (j * 9 + 7) + '" y2="4" stroke="' + c + '" stroke-width="2.5"/>'; }).join('') : '<line x1="0" y1="4" x2="25" y2="4" stroke="' + k[1] + '" stroke-width="2.5"/>'; return '<span><svg width="25" height="8">' + sw + '</svg>' + k[0] + '</span>'; }).join('');
     $('#lg-bank').innerHTML = lgH;
     var ell = Date.UTC(2022, 11, 23);
     if (ell > t0 && ell < tL) ln_(s, X(ell) - 4, mT + 36, X(ell) - 1, mT + 52, '#7a5208', 1);
@@ -1619,7 +1636,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     var uitems = rows.filter(function (r) { return !isMinor(r); }).map(function (r) { return { r: r, y: UY(last(uw[r.name])) + 4 }; });
     deoverlap(uitems, 11, uT + 6, UH - uB - 2);
     uitems.forEach(function (it) {
-      var t = txt(linkWrap(us, it.r.name), X(tL) + 6, it.y, sn(it.r.name), { fs: 10, fill: rowColor(it.r), weight: 500, cls: 'halo' });
+      var t = txt(linkWrap(us, it.r.name), X(tL) + 6, it.y, narrow ? shortName(it.r.name) : sn(it.r.name), { fs: 10, fill: rowColor(it.r), weight: 500, cls: 'halo' });
       t.addEventListener('mouseenter', function () { focus(it.r.name); }); t.addEventListener('mouseleave', function () { focus(null); });
     });
     // label the deepest point of always supply and of the deepest candidate
@@ -1662,9 +1679,11 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     }
     setText('t-bank', title);
     s.setAttribute('aria-label', title);
-    setText('n-bank', V === 'v1'
+    var earnNote = 'The two highest-earning candidates, the other two lines that end highest, are ' + list(EARNINFO.picked.map(function (n) { return sn(n) + ' (Sharpe ' + TOP3[n].s.toFixed(2) + ')'; })) +
+      (EARNINFO.skipped.length ? '; ' + list(EARNINFO.skipped.map(sn)) + ' also ' + (EARNINFO.skipped.length > 1 ? 'end' : 'ends') + ' high but ' + (EARNINFO.skipped.length > 1 ? 'are' : 'is') + ' already among the three steadiest, so I took the next highest. ' : '. ');
+    setText('n-bank', earnNote + (V === 'v1'
       ? 'Idea 14 (dashed) was added after the build-year results were seen, so its pass weighs less. Rows that pass but are flagged fragile are in the appendix.'
-      : 'The version 2 audit found V2 and V3 are one bet, and V3 ends high because it holds about 3 MW; most of the C rows\' profit is a fixed zone-pair spread.');
+      : 'The version 2 audit found the price limit and tail risk rows are one bet, the tail risk row at about 3 MW a position before sizing; most of the zone pair rows\' profit is a fixed pair spread.'));
   }
   function yearTicks(s, X, t0, tE, y, narrow, gy0, gy1) {
     var y0 = new Date(t0).getUTCFullYear() + (new Date(t0).getUTCMonth() === 0 && new Date(t0).getUTCDate() === 1 ? 0 : 1), y1 = new Date(tE).getUTCFullYear(), span = y1 - y0 + 1;

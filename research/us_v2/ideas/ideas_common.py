@@ -17,7 +17,9 @@ INTERFACE (every ideas/vN_*.py module exposes)
             is the framework's own model call, so two-stage ideas reuse the same learner.
 
 HOLDOUT RULE (absolute): nothing on or after 2024-01-01 is read. read_table() filters at the parquet
-level and assert_pre_holdout() refuses any panel row delivered on or after that date.
+level and assert_pre_holdout() refuses any panel row delivered on or after that date. Only the held-out run
+mode (research/us/model/heldout_mode.py, US_RUN_MODE=heldout, open only through the v1 lock) moves the bound
+to 2026-10-01; the dry-run mode keeps 2024-01-01.
 """
 from __future__ import annotations
 
@@ -29,9 +31,29 @@ import numpy as np
 import pandas as pd
 
 TZ = "America/New_York"
-HOLDOUT = dt.date(2024, 1, 1)
+
+
+def _read_end() -> dt.date:
+    """Exclusive read bound of the run mode (heldout_mode next to the v1 lock); a build copy without it: 2024-01-01."""
+    import sys
+    here = Path(__file__).resolve().parent
+    for p in (os.environ.get("V1_MODEL_DIR"), here.parents[1] / "us" / "model"):
+        if p and (Path(p) / "heldout_mode.py").exists() and str(p) not in sys.path:
+            sys.path.insert(1, str(p))
+    try:
+        import heldout_mode as HM
+    except ImportError:
+        if os.environ.get("US_RUN_MODE"):
+            raise
+        return dt.date(2024, 1, 1)
+    return HM.read_end()
+
+
+HOLDOUT = _read_end()
 DECISION_HOUR = 5
 PARQUET_V2 = Path(os.environ.get("NYISO_V2_PARQUET", str(Path.home() / "nyiso-us" / "parquet_v2")))
+if HOLDOUT > dt.date(2024, 1, 1) and PARQUET_V2.resolve() == (Path.home() / "nyiso-us" / "parquet_v2").resolve():
+    raise RuntimeError("held-out mode must not read the build tables (set NYISO_V2_PARQUET to the rebuilt tables)")
 ZONES = ["CAPITL", "CENTRL", "DUNWOD", "GENESE", "HUD VL", "LONGIL", "MHK VL", "MILLWD", "N.Y.C.",
          "NORTH", "WEST"]
 BORDERS = ["PJM", "NPX", "O H", "H Q"]          # NYISO proxy buses: PJM, New England, Ontario, Quebec
@@ -47,7 +69,7 @@ def assert_pre_holdout(delivery) -> None:
     if d.dt.tz is not None:
         d = d.dt.tz_convert(TZ).dt.tz_localize(None)
     if len(d) and (d.dt.normalize() >= pd.Timestamp(HOLDOUT)).any():
-        raise HoldoutError("a row is delivered on or after 2024-01-01: the holdout is closed to v2 design")
+        raise HoldoutError(f"a row is delivered on or after {HOLDOUT}: the holdout is closed to v2 design")
 
 
 def decision_time(bid_day) -> pd.Timestamp:
@@ -56,7 +78,7 @@ def decision_time(bid_day) -> pd.Timestamp:
 
 def read_table(name: str, time_col: str, columns=None, root: Path | None = None,
                filters=None) -> pd.DataFrame:
-    """A parquet_v2 table with rows strictly before 2024-01-01 (New York) on `time_col`."""
+    """A parquet_v2 table with rows strictly before 2024-01-01 (New York; HOLDOUT of the run mode) on `time_col`."""
     import pyarrow.parquet as pq
     end = pd.Timestamp(HOLDOUT, tz=TZ)
     path = (root or PARQUET_V2) / f"{name}.parquet"

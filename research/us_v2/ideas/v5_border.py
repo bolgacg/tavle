@@ -58,11 +58,12 @@ def grid(store=None) -> C.PriceGrid:
 
 def border_rows(cols) -> pd.DataFrame:
     """Border proxy rows: prices_gen/YYYYMM.parquet, point_type 'external', name in C.BORDERS (data
-    agent, 7 Oct). Month files from 2024 on are never opened."""
+    agent, 7 Oct). Month files from 2024 on (from the run mode's bound) are never opened."""
+    import datetime as dt
     import pyarrow.parquet as pq
     parts = []
     for f in sorted((C.PARQUET_V2 / "prices_gen").glob("*.parquet")):
-        if int(f.stem[:4]) >= C.HOLDOUT.year:
+        if dt.date(int(f.stem[:4]), int(f.stem[4:6]), 1) >= C.HOLDOUT:
             continue
         t = pq.read_table(f, columns=["name", "point_type"] + cols,
                           filters=[("point_type", "=", "external")]).to_pandas()

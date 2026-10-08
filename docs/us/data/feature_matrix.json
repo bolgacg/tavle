@@ -1,12 +1,12 @@
 {
- "written": "2026-10-07",
+ "written": "2026-10-08",
  "holdout": "nothing on or after 2024-01-01 read; all inputs are build-year result files",
  "sources": {
   "v1": [
    "research/us/side/lab_results.json",
    "research/us/results/strategy_list_2021_2023.json"
   ],
-  "v2": "gene:~/nyiso-us/results/v2/v2_resultsinterim.json (written 2026-10-07 17:36)"
+  "v2": "gene:~/nyiso-us/results/v2/v2_results.json (final scoring, 8 Oct)"
  },
  "columns": {
   "model": {
@@ -1597,9 +1597,9 @@
    "p_alloc": 0,
    "period": "2013-2023",
    "sharpe": 0.58,
-   "net_per_year": 18572.0,
-   "total": 204294.0,
-   "wo_best5": 119196.0,
+   "net_per_year": 18572,
+   "total": 204294,
+   "wo_best5": 119196,
    "PASS": false,
    "sharpe_strategy_list": null,
    "sharpe_2013_2019": 0.99,
@@ -1646,9 +1646,9 @@
    "p_alloc": 0,
    "period": "2013-2023",
    "sharpe": 0.27,
-   "net_per_year": 22488.0,
-   "total": 247363.0,
-   "wo_best5": 65940.0,
+   "net_per_year": 22488,
+   "total": 247363,
+   "wo_best5": 65940,
    "PASS": false,
    "sharpe_strategy_list": null,
    "sharpe_2013_2019": 0.82,
@@ -1695,9 +1695,9 @@
    "p_alloc": 0,
    "period": "2013-2023",
    "sharpe": 0.74,
-   "net_per_year": 23749.0,
-   "total": 261243.0,
-   "wo_best5": 225188.0,
+   "net_per_year": 23749,
+   "total": 261243,
+   "wo_best5": 225188,
    "PASS": false,
    "sharpe_strategy_list": null,
    "sharpe_2013_2019": 1.42,
@@ -1744,9 +1744,9 @@
    "p_alloc": 0,
    "period": "2013-2023",
    "sharpe": 1.29,
-   "net_per_year": 33469.0,
-   "total": 368164.0,
-   "wo_best5": 313749.0,
+   "net_per_year": 33469,
+   "total": 368164,
+   "wo_best5": 313749,
    "PASS": false,
    "sharpe_strategy_list": null,
    "sharpe_2013_2019": 1.11,
@@ -1793,9 +1793,9 @@
    "p_alloc": 0,
    "period": "2013-2023",
    "sharpe": 2.25,
-   "net_per_year": 60783.0,
-   "total": 668609.0,
-   "wo_best5": 596499.0,
+   "net_per_year": 60783,
+   "total": 668609,
+   "wo_best5": 596499,
    "PASS": true,
    "sharpe_strategy_list": null,
    "sharpe_2013_2019": 2.91,
@@ -1842,9 +1842,9 @@
    "p_alloc": 0,
    "period": "2013-2023",
    "sharpe": 2.41,
-   "net_per_year": 107141.0,
-   "total": 1178549.0,
-   "wo_best5": 1032758.0,
+   "net_per_year": 107141,
+   "total": 1178549,
+   "wo_best5": 1032758,
    "PASS": true,
    "sharpe_strategy_list": null,
    "sharpe_2013_2019": 2.66,
@@ -1891,9 +1891,9 @@
    "p_alloc": 0,
    "period": "2013-2023",
    "sharpe": 1.9,
-   "net_per_year": 355225.0,
-   "total": 3907473.0,
-   "wo_best5": 3166317.0,
+   "net_per_year": 355225,
+   "total": 3907473,
+   "wo_best5": 3166317,
    "PASS": true,
    "sharpe_strategy_list": null,
    "sharpe_2013_2019": 2.38,
@@ -1938,11 +1938,11 @@
    "p_risk": 0,
    "p_sitout_days": 0,
    "p_alloc": 0,
-   "period": "2013-2019 traded, scored 2013-2023",
+   "period": "2013-2023",
    "sharpe": 2.83,
-   "net_per_year": 101426.0,
-   "total": 1115684.0,
-   "wo_best5": 997769.0,
+   "net_per_year": 101426,
+   "total": 1115684,
+   "wo_best5": 997769,
    "PASS": false,
    "sharpe_strategy_list": null,
    "sharpe_2013_2019": 3.57,
@@ -1989,9 +1989,9 @@
    "p_alloc": 0,
    "period": "2013-2023",
    "sharpe": 1.96,
-   "net_per_year": 114546.0,
-   "total": 1260003.0,
-   "wo_best5": 1023111.0,
+   "net_per_year": 114546,
+   "total": 1260003,
+   "wo_best5": 1023111,
    "PASS": true,
    "sharpe_strategy_list": null,
    "sharpe_2013_2019": 2.61,
@@ -2038,9 +2038,9 @@
    "p_alloc": 0,
    "period": "2013-2023",
    "sharpe": 1.26,
-   "net_per_year": 11706.0,
-   "total": 128768.0,
-   "wo_best5": 97050.0,
+   "net_per_year": 11706,
+   "total": 128768,
+   "wo_best5": 97050,
    "PASS": false,
    "sharpe_strategy_list": null,
    "sharpe_2013_2019": 1.03,
@@ -2087,9 +2087,9 @@
    "p_alloc": 0,
    "period": "2013-2023",
    "sharpe": 1.59,
-   "net_per_year": 9275.0,
-   "total": 102025.0,
-   "wo_best5": 87483.0,
+   "net_per_year": 9275,
+   "total": 102025,
+   "wo_best5": 87483,
    "PASS": false,
    "sharpe_strategy_list": null,
    "sharpe_2013_2019": 2.2,
@@ -2136,9 +2136,9 @@
    "p_alloc": 0,
    "period": "2013-2023",
    "sharpe": 1.88,
-   "net_per_year": 118833.0,
-   "total": 1307159.0,
-   "wo_best5": 1060221.0,
+   "net_per_year": 118833,
+   "total": 1307159,
+   "wo_best5": 1060221,
    "PASS": true,
    "sharpe_strategy_list": null,
    "sharpe_2013_2019": 2.57,
@@ -2185,9 +2185,9 @@
    "p_alloc": 0,
    "period": "2013-2023",
    "sharpe": 1.88,
-   "net_per_year": 119540.0,
-   "total": 1314936.0,
-   "wo_best5": 1067657.0,
+   "net_per_year": 119540,
+   "total": 1314936,
+   "wo_best5": 1067657,
    "PASS": true,
    "sharpe_strategy_list": null,
    "sharpe_2013_2019": 2.5,
@@ -2234,9 +2234,9 @@
    "p_alloc": 0,
    "period": "2013-2023",
    "sharpe": 2.08,
-   "net_per_year": 131918.0,
-   "total": 1451096.0,
-   "wo_best5": 1197233.0,
+   "net_per_year": 131918,
+   "total": 1451096,
+   "wo_best5": 1197233,
    "PASS": true,
    "sharpe_strategy_list": null,
    "sharpe_2013_2019": 2.83,
@@ -2283,9 +2283,9 @@
    "p_alloc": 0,
    "period": "2013-2023",
    "sharpe": 1.77,
-   "net_per_year": 109847.0,
-   "total": 1208319.0,
-   "wo_best5": 966230.0,
+   "net_per_year": 109847,
+   "total": 1208319,
+   "wo_best5": 966230,
    "PASS": true,
    "sharpe_strategy_list": null,
    "sharpe_2013_2019": 2.72,
@@ -2332,9 +2332,9 @@
    "p_alloc": 0,
    "period": "2013-2023",
    "sharpe": 1.78,
-   "net_per_year": 49038.0,
-   "total": 539422.0,
-   "wo_best5": 468898.0,
+   "net_per_year": 49038,
+   "total": 539422,
+   "wo_best5": 468898,
    "PASS": false,
    "sharpe_strategy_list": null,
    "sharpe_2013_2019": 2.43,
@@ -2381,9 +2381,9 @@
    "p_alloc": 0,
    "period": "2013-2023",
    "sharpe": 2.1,
-   "net_per_year": 58391.0,
-   "total": 642305.0,
-   "wo_best5": 569130.0,
+   "net_per_year": 58391,
+   "total": 642305,
+   "wo_best5": 569130,
    "PASS": true,
    "sharpe_strategy_list": null,
    "sharpe_2013_2019": 2.81,
@@ -2430,9 +2430,9 @@
    "p_alloc": 0,
    "period": "2013-2023",
    "sharpe": 1.45,
-   "net_per_year": 38426.0,
-   "total": 422684.0,
-   "wo_best5": 361009.0,
+   "net_per_year": 38426,
+   "total": 422684,
+   "wo_best5": 361009,
    "PASS": false,
    "sharpe_strategy_list": null,
    "sharpe_2013_2019": 1.17,
@@ -2440,12 +2440,12 @@
   },
   {
    "name": "V12_alloc",
-   "study": "v2 pending",
+   "study": "v2",
    "src": "us_v2/model/alloc_v12.py",
    "arch": "GateNet (deep_alloc14) over day features; 5 seeds x 3 kappa",
    "ens": "allocator over v2 books",
    "note": null,
-   "pending": "no pos/V12_alloc.parquet yet",
+   "pending": null,
    "m_none": 0,
    "m_rule": 0,
    "m_gbm": 0,
@@ -2478,21 +2478,21 @@
    "p_sitout_days": 0,
    "p_alloc": 1,
    "period": "2013-2023",
-   "sharpe": null,
-   "net_per_year": null,
-   "total": null,
-   "wo_best5": null,
-   "PASS": null,
+   "sharpe": 2.4,
+   "net_per_year": 516125,
+   "total": 5677372,
+   "wo_best5": 4906962,
+   "PASS": true,
    "sharpe_strategy_list": null
   },
   {
    "name": "V13_C_deep_all",
-   "study": "v2 pending",
+   "study": "v2",
    "src": "us_v2/model/v13_model.py, v13_data.py:3-17, v13_rolling.py",
    "arch": "GRU / causal TCN / 2-layer 4-head attention (chosen per quarter), per-group encoders, 24x11x4 multi-task head; 5 seeds",
    "ens": "5 seeds",
    "note": null,
-   "pending": "v13.done absent",
+   "pending": null,
    "m_none": 0,
    "m_rule": 0,
    "m_gbm": 0,
@@ -2525,21 +2525,21 @@
    "p_sitout_days": 0,
    "p_alloc": 0,
    "period": "2013-2023",
-   "sharpe": null,
-   "net_per_year": null,
-   "total": null,
-   "wo_best5": null,
-   "PASS": null,
+   "sharpe": 1.73,
+   "net_per_year": 41033,
+   "total": 451367,
+   "wo_best5": 381510,
+   "PASS": false,
    "sharpe_strategy_list": null
   },
   {
    "name": "V13_A_deep_all",
-   "study": "v2 pending",
+   "study": "v2",
    "src": "us_v2/model/v13_rolling.py:194-198",
    "arch": "GRU / causal TCN / 2-layer 4-head attention (chosen per quarter), per-group encoders, 24x11x4 multi-task head; 5 seeds",
    "ens": "5 seeds",
    "note": null,
-   "pending": "v13.done absent",
+   "pending": null,
    "m_none": 0,
    "m_rule": 0,
    "m_gbm": 0,
@@ -2572,21 +2572,21 @@
    "p_sitout_days": 0,
    "p_alloc": 0,
    "period": "2013-2023",
-   "sharpe": null,
-   "net_per_year": null,
-   "total": null,
-   "wo_best5": null,
-   "PASS": null,
+   "sharpe": 0.66,
+   "net_per_year": 27915,
+   "total": 307062,
+   "wo_best5": 198859,
+   "PASS": false,
    "sharpe_strategy_list": null
   },
   {
    "name": "V14a_window_ens",
-   "study": "v2 pending",
+   "study": "v2",
    "src": "us_v2/model/v14_gbm.py, v14_gru.py, v14_core.py:37",
    "arch": "GRU c1 (seed 0) + GBM",
    "ens": "5 windows (1,2,3,5 y, expanding) x {GRU, GBM}",
    "note": null,
-   "pending": "v14.done absent",
+   "pending": null,
    "m_none": 0,
    "m_rule": 0,
    "m_gbm": 1,
@@ -2619,21 +2619,21 @@
    "p_sitout_days": 0,
    "p_alloc": 0,
    "period": "2013-2023",
-   "sharpe": null,
-   "net_per_year": null,
-   "total": null,
-   "wo_best5": null,
-   "PASS": null,
+   "sharpe": 1.91,
+   "net_per_year": 58159,
+   "total": 639744,
+   "wo_best5": 561207,
+   "PASS": true,
    "sharpe_strategy_list": null
   },
   {
    "name": "V14b_quantile_size",
-   "study": "v2 pending",
+   "study": "v2",
    "src": "us_v2/model/v14_gru.py:181-217, v14_positions.py:322-376",
    "arch": "GRU with 24x11x5 pinball head; 3 seeds; plus GBM quantiles",
    "ens": "3 seeds",
    "note": null,
-   "pending": "v14.done absent",
+   "pending": null,
    "m_none": 0,
    "m_rule": 0,
    "m_gbm": 1,
@@ -2666,21 +2666,21 @@
    "p_sitout_days": 0,
    "p_alloc": 0,
    "period": "2013-2023",
-   "sharpe": null,
-   "net_per_year": null,
-   "total": null,
-   "wo_best5": null,
-   "PASS": null,
+   "sharpe": 1.89,
+   "net_per_year": 18492,
+   "total": 203417,
+   "wo_best5": 181022,
+   "PASS": false,
    "sharpe_strategy_list": null
   },
   {
    "name": "V14c_conformal_skip",
-   "study": "v2 pending",
+   "study": "v2",
    "src": "us_v2/model/v14_positions.py:331-387",
    "arch": "reuses V1_C_deep GRU or GBM",
    "ens": "5 seeds (GRU)",
    "note": "skips pair-hours whose conformal interval crosses break-even",
-   "pending": "v14.done absent",
+   "pending": null,
    "m_none": 0,
    "m_rule": 0,
    "m_gbm": 1,
@@ -2713,21 +2713,21 @@
    "p_sitout_days": 0,
    "p_alloc": 0,
    "period": "2013-2023",
-   "sharpe": null,
-   "net_per_year": null,
-   "total": null,
-   "wo_best5": null,
-   "PASS": null,
+   "sharpe": 1.19,
+   "net_per_year": 18926,
+   "total": 208183,
+   "wo_best5": 154295,
+   "PASS": false,
    "sharpe_strategy_list": null
   },
   {
    "name": "V14d_seed_ens",
-   "study": "v2 pending",
+   "study": "v2",
    "src": "us_v2/model/v14_gru.py:344-348",
    "arch": "GRU c1 (h64, 168 h) + MLP head, 24x11 multi-output, shared net, no zone embedding; 10 seeds + GBM",
    "ens": "10 GRU seeds + GBM",
    "note": null,
-   "pending": "v14.done absent",
+   "pending": null,
    "m_none": 0,
    "m_rule": 0,
    "m_gbm": 1,
@@ -2760,21 +2760,21 @@
    "p_sitout_days": 0,
    "p_alloc": 0,
    "period": "2013-2023",
-   "sharpe": null,
-   "net_per_year": null,
-   "total": null,
-   "wo_best5": null,
-   "PASS": null,
+   "sharpe": 1.93,
+   "net_per_year": 53010,
+   "total": 583112,
+   "wo_best5": 518422,
+   "PASS": true,
    "sharpe_strategy_list": null
   },
   {
    "name": "V14e_mlp_multi",
-   "study": "v2 pending",
+   "study": "v2",
    "src": "us_v2/model/v14_mlp.py:40-98, v14_core.py:76-80",
    "arch": "MLP (256,128) on day matrix, 24x11 multi-output; 5 seeds",
    "ens": "5 seeds",
    "note": null,
-   "pending": "v14.done absent",
+   "pending": null,
    "m_none": 0,
    "m_rule": 0,
    "m_gbm": 0,
@@ -2807,21 +2807,21 @@
    "p_sitout_days": 0,
    "p_alloc": 0,
    "period": "2013-2023",
-   "sharpe": null,
-   "net_per_year": null,
-   "total": null,
-   "wo_best5": null,
-   "PASS": null,
+   "sharpe": 2.14,
+   "net_per_year": 46429,
+   "total": 510722,
+   "wo_best5": 452191,
+   "PASS": false,
    "sharpe_strategy_list": null
   },
   {
    "name": "V14f_global_zone",
-   "study": "v2 pending",
+   "study": "v2",
    "src": "us_v2/model/v14_mlp.py:102-164",
    "arch": "global row MLP (128,64), learned zone (8-d) + hour embedding; 5 seeds",
    "ens": "5 seeds",
    "note": "profit-shaped option: MSE + wrong-side hinge",
-   "pending": "v14.done absent",
+   "pending": null,
    "m_none": 0,
    "m_rule": 0,
    "m_gbm": 0,
@@ -2854,1556 +2854,550 @@
    "p_sitout_days": 0,
    "p_alloc": 0,
    "period": "2013-2023",
-   "sharpe": null,
-   "net_per_year": null,
-   "total": null,
-   "wo_best5": null,
-   "PASS": null,
+   "sharpe": 2.28,
+   "net_per_year": 52382,
+   "total": 576202,
+   "wo_best5": 525256,
+   "PASS": true,
    "sharpe_strategy_list": null
+  },
+  {
+   "name": "C_static_pairs",
+   "study": "v2",
+   "src": "us_v2/model/score_v2.py (registered comparison)",
+   "arch": null,
+   "ens": null,
+   "note": "no model: each pair’s usual side from the previous three years",
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 1,
+   "m_gbm": 0,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 0,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 0,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 0,
+   "i_resid": 0,
+   "y_gap": 0,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 0,
+   "p_pairs": 1,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 1.9,
+   "net_per_year": 46175,
+   "total": 507922,
+   "wo_best5": 433746,
+   "PASS": false,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 1.11,
+   "sharpe_2020_2023": 1.68
+  },
+  {
+   "name": "V2_sides_no_limit",
+   "study": "v2",
+   "src": "us_v2/model/score_v2.py (registered comparison)",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 2.15,
+   "net_per_year": 108482,
+   "total": 1193308,
+   "wo_best5": 1019236,
+   "PASS": true,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 2.66,
+   "sharpe_2020_2023": 1.96
+  },
+  {
+   "name": "V3_tail_gbm_1MW",
+   "study": "v2",
+   "src": "us_v2/model/score_v2.py (registered comparison)",
+   "arch": null,
+   "ens": "mean + q10/q50/q90 models",
+   "note": "V3 sides and hours at 1 MW",
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 1,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 1.94,
+   "net_per_year": 123355,
+   "total": 1356902,
+   "wo_best5": 1107875,
+   "PASS": true,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 2.38,
+   "sharpe_2020_2023": 1.54
+  },
+  {
+   "name": "V15a_V4_limit",
+   "study": "v2",
+   "src": "us_v2/model/v15_limit.py",
+   "arch": null,
+   "ens": null,
+   "note": "traded 2013 to 2019 only (reforecast ends 2019); zero 2020 to 2023 days kept in the Sharpe",
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": "GEFS",
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 1,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 2.65,
+   "net_per_year": 100942,
+   "total": 1110359,
+   "wo_best5": 974187,
+   "PASS": false,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 3.57,
+   "sharpe_2020_2023": null
+  },
+  {
+   "name": "V15a_V5_limit",
+   "study": "v2",
+   "src": "us_v2/model/v15_limit.py",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 1,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 1,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 2.29,
+   "net_per_year": 102329,
+   "total": 1125624,
+   "wo_best5": 970485,
+   "PASS": true,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 2.61,
+   "sharpe_2020_2023": 1.49
+  },
+  {
+   "name": "V15a_V8_limit",
+   "study": "v2",
+   "src": "us_v2/model/v15_limit.py",
+   "arch": null,
+   "ens": "base GBM + residual stage",
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": 0,
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 1,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 1,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 2.57,
+   "net_per_year": 110213,
+   "total": 1212347,
+   "wo_best5": 1077924,
+   "PASS": true,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 2.83,
+   "sharpe_2020_2023": 1.54
+  },
+  {
+   "name": "V15b_V13_both",
+   "study": "v2",
+   "src": "us_v2/model/v15_v13.py",
+   "arch": "GRU / causal TCN / 2-layer 4-head attention (chosen per quarter), per-group encoders, 24x11x4 multi-task head; 5 seeds",
+   "ens": "5 seeds",
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 0,
+   "m_deep": 1,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 1,
+   "i_border": 1,
+   "i_loadfc": 1,
+   "i_wx": "GEFS+GFS",
+   "i_outage": 1,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 1.65,
+   "net_per_year": 75884,
+   "total": 834728,
+   "wo_best5": 679281,
+   "PASS": true,
+   "sharpe_strategy_list": null
+  },
+  {
+   "name": "V15b_V13_limit",
+   "study": "v2",
+   "src": "us_v2/model/v15_v13.py",
+   "arch": "GRU / causal TCN / 2-layer 4-head attention (chosen per quarter), per-group encoders, 24x11x4 multi-task head; 5 seeds",
+   "ens": "5 seeds",
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 1,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 1,
+   "i_border": 1,
+   "i_loadfc": 1,
+   "i_wx": "GEFS+GFS",
+   "i_outage": 1,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 1,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 1.46,
+   "net_per_year": 59352,
+   "total": 652873,
+   "wo_best5": 529172,
+   "PASS": true,
+   "sharpe_strategy_list": null
+  },
+  {
+   "name": "V15c_wx_border_gbm",
+   "study": "v2",
+   "src": "us_v2/model/v15_wxbord.py",
+   "arch": null,
+   "ens": null,
+   "note": null,
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 1,
+   "i_loadfc": 1,
+   "i_wx": "GEFS+GFS",
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 2.18,
+   "net_per_year": 133198,
+   "total": 1465173,
+   "wo_best5": 1207174,
+   "PASS": true,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 2.61,
+   "sharpe_2020_2023": 1.49
+  },
+  {
+   "name": "V15d_V4_pairs",
+   "study": "v2",
+   "src": "us_v2/model/v15_pairs.py",
+   "arch": null,
+   "ens": null,
+   "note": "traded 2013 to 2019 only (reforecast ends 2019); zero 2020 to 2023 days kept in the Sharpe",
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": "GEFS",
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 0,
+   "p_pairs": 1,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 0.83,
+   "net_per_year": 19277,
+   "total": 212044,
+   "wo_best5": 159969,
+   "PASS": false,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 3.57,
+   "sharpe_2020_2023": null
+  },
+  {
+   "name": "V16_B_gefs_joined",
+   "study": "v2",
+   "src": "us_v2/pipeline/run_v16.sh, fetch_gefs_live.py",
+   "arch": null,
+   "ens": null,
+   "note": "GEFS reforecast to 2019 joined to the live GEFS archive from 23 September 2020",
+   "pending": null,
+   "m_none": 0,
+   "m_rule": 0,
+   "m_gbm": 1,
+   "m_deep": 0,
+   "t_wf_monthly": 0,
+   "t_roll3y_q": 1,
+   "t_window_ens": 0,
+   "t_pretrain_ft": 0,
+   "t_recency": 0,
+   "t_regime": 0,
+   "i_px_hist": 1,
+   "i_px_parts": 1,
+   "i_gen": 0,
+   "i_border": 0,
+   "i_loadfc": 1,
+   "i_wx": "GEFS",
+   "i_outage": 0,
+   "i_cal": 1,
+   "i_resid": 0,
+   "y_gap": 1,
+   "y_spike": 0,
+   "y_zoneday": 0,
+   "y_profit": 0,
+   "y_quant": 0,
+   "p_supply_only": 0,
+   "p_both": 1,
+   "p_pairs": 0,
+   "p_limit": 0,
+   "p_risk": 0,
+   "p_sitout_days": 0,
+   "p_alloc": 0,
+   "period": "2013-2023",
+   "sharpe": 2.46,
+   "net_per_year": 153648,
+   "total": 1690124,
+   "wo_best5": 1416110,
+   "PASS": true,
+   "sharpe_strategy_list": null,
+   "sharpe_2013_2019": 3.57,
+   "sharpe_2020_2023": null
   }
  ],
  "meta": {
-  "with_without": [
-   {
-    "col": "m_none",
-    "all_with": [
-     2,
-     -0.06,
-     [
-      -0.4,
-      0.27
-     ]
-    ],
-    "all_without": [
-     48,
-     0.88,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "v1_with": [
-     1,
-     -0.4,
-     [
-      -0.4,
-      -0.4
-     ]
-    ],
-    "v1_without": [
-     31,
-     0.41,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v2_with": [
-     1,
-     0.27,
-     [
-      0.27,
-      0.27
-     ]
-    ],
-    "v2_without": [
-     17,
-     1.75,
-     [
-      0.58,
-      2.83
-     ]
-    ]
-   },
-   {
-    "col": "m_rule",
-    "all_with": [
-     11,
-     0.29,
-     [
-      -0.81,
-      1.03
-     ]
-    ],
-    "all_without": [
-     39,
-     1.0,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "v1_with": [
-     10,
-     0.26,
-     [
-      -0.81,
-      1.03
-     ]
-    ],
-    "v1_without": [
-     22,
-     0.44,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v2_with": [
-     1,
-     0.58,
-     [
-      0.58,
-      0.58
-     ]
-    ],
-    "v2_without": [
-     17,
-     1.73,
-     [
-      0.27,
-      2.83
-     ]
-    ]
-   },
-   {
-    "col": "m_gbm",
-    "all_with": [
-     22,
-     1.41,
-     [
-      0.1,
-      2.83
-     ]
-    ],
-    "all_without": [
-     28,
-     0.4,
-     [
-      -0.81,
-      2.25
-     ]
-    ],
-    "v1_with": [
-     9,
-     0.89,
-     [
-      0.1,
-      1.96
-     ]
-    ],
-    "v1_without": [
-     23,
-     0.18,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v2_with": [
-     13,
-     1.77,
-     [
-      0.74,
-      2.83
-     ]
-    ],
-    "v2_without": [
-     5,
-     1.4,
-     [
-      0.27,
-      2.25
-     ]
-    ]
-   },
-   {
-    "col": "m_deep",
-    "all_with": [
-     15,
-     0.54,
-     [
-      -0.81,
-      2.25
-     ]
-    ],
-    "all_without": [
-     35,
-     0.97,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "v1_with": [
-     12,
-     0.16,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v1_without": [
-     20,
-     0.51,
-     [
-      -0.81,
-      1.96
-     ]
-    ],
-    "v2_with": [
-     3,
-     2.04,
-     [
-      1.78,
-      2.25
-     ]
-    ],
-    "v2_without": [
-     15,
-     1.59,
-     [
-      0.27,
-      2.83
-     ]
-    ]
-   },
-   {
-    "col": "t_wf_monthly",
-    "all_with": [
-     21,
-     0.48,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "all_without": [
-     29,
-     1.11,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "v1_with": [
-     21,
-     0.48,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v1_without": [
-     11,
-     0.2,
-     [
-      -0.81,
-      1.03
-     ]
-    ],
-    "v2_with": [
-     0,
-     null,
-     null
-    ],
-    "v2_without": [
-     18,
-     1.67,
-     [
-      0.27,
-      2.83
-     ]
-    ]
-   },
-   {
-    "col": "t_roll3y_q",
-    "all_with": [
-     16,
-     1.82,
-     [
-      0.74,
-      2.83
-     ]
-    ],
-    "all_without": [
-     34,
-     0.38,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v1_with": [
-     0,
-     null,
-     null
-    ],
-    "v1_without": [
-     32,
-     0.38,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v2_with": [
-     16,
-     1.82,
-     [
-      0.74,
-      2.83
-     ]
-    ],
-    "v2_without": [
-     2,
-     0.42,
-     [
-      0.27,
-      0.58
-     ]
-    ]
-   },
-   {
-    "col": "t_window_ens",
-    "all_with": [
-     2,
-     1.78,
-     [
-      1.45,
-      2.1
-     ]
-    ],
-    "all_without": [
-     48,
-     0.81,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "v1_with": [
-     0,
-     null,
-     null
-    ],
-    "v1_without": [
-     32,
-     0.38,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v2_with": [
-     2,
-     1.78,
-     [
-      1.45,
-      2.1
-     ]
-    ],
-    "v2_without": [
-     16,
-     1.65,
-     [
-      0.27,
-      2.83
-     ]
-    ]
-   },
-   {
-    "col": "t_pretrain_ft",
-    "all_with": [
-     1,
-     1.78,
-     [
-      1.78,
-      1.78
-     ]
-    ],
-    "all_without": [
-     49,
-     0.83,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "v1_with": [
-     0,
-     null,
-     null
-    ],
-    "v1_without": [
-     32,
-     0.38,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v2_with": [
-     1,
-     1.78,
-     [
-      1.78,
-      1.78
-     ]
-    ],
-    "v2_without": [
-     17,
-     1.66,
-     [
-      0.27,
-      2.83
-     ]
-    ]
-   },
-   {
-    "col": "t_recency",
-    "all_with": [
-     1,
-     1.88,
-     [
-      1.88,
-      1.88
-     ]
-    ],
-    "all_without": [
-     49,
-     0.82,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "v1_with": [
-     0,
-     null,
-     null
-    ],
-    "v1_without": [
-     32,
-     0.38,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v2_with": [
-     1,
-     1.88,
-     [
-      1.88,
-      1.88
-     ]
-    ],
-    "v2_without": [
-     17,
-     1.66,
-     [
-      0.27,
-      2.83
-     ]
-    ]
-   },
-   {
-    "col": "t_regime",
-    "all_with": [
-     2,
-     1.88,
-     [
-      1.88,
-      1.88
-     ]
-    ],
-    "all_without": [
-     48,
-     0.8,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "v1_with": [
-     0,
-     null,
-     null
-    ],
-    "v1_without": [
-     32,
-     0.38,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v2_with": [
-     2,
-     1.88,
-     [
-      1.88,
-      1.88
-     ]
-    ],
-    "v2_without": [
-     16,
-     1.64,
-     [
-      0.27,
-      2.83
-     ]
-    ]
-   },
-   {
-    "col": "i_px_hist",
-    "all_with": [
-     47,
-     0.88,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "all_without": [
-     3,
-     0.3,
-     [
-      -0.4,
-      1.03
-     ]
-    ],
-    "v1_with": [
-     30,
-     0.39,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v1_without": [
-     2,
-     0.32,
-     [
-      -0.4,
-      1.03
-     ]
-    ],
-    "v2_with": [
-     17,
-     1.75,
-     [
-      0.58,
-      2.83
-     ]
-    ],
-    "v2_without": [
-     1,
-     0.27,
-     [
-      0.27,
-      0.27
-     ]
-    ]
-   },
-   {
-    "col": "i_px_parts",
-    "all_with": [
-     37,
-     1.06,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "all_without": [
-     13,
-     0.23,
-     [
-      -0.81,
-      1.03
-     ]
-    ],
-    "v1_with": [
-     21,
-     0.48,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v1_without": [
-     11,
-     0.2,
-     [
-      -0.81,
-      1.03
-     ]
-    ],
-    "v2_with": [
-     16,
-     1.82,
-     [
-      0.74,
-      2.83
-     ]
-    ],
-    "v2_without": [
-     2,
-     0.42,
-     [
-      0.27,
-      0.58
-     ]
-    ]
-   },
-   {
-    "col": "i_gen",
-    "all_with": [
-     10,
-     0.73,
-     [
-      -0.81,
-      2.25
-     ]
-    ],
-    "all_without": [
-     40,
-     0.87,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "v1_with": [
-     7,
-     0.16,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v1_without": [
-     25,
-     0.44,
-     [
-      -0.81,
-      1.96
-     ]
-    ],
-    "v2_with": [
-     3,
-     2.04,
-     [
-      1.78,
-      2.25
-     ]
-    ],
-    "v2_without": [
-     15,
-     1.59,
-     [
-      0.27,
-      2.83
-     ]
-    ]
-   },
-   {
-    "col": "i_border",
-    "all_with": [
-     11,
-     0.84,
-     [
-      -0.81,
-      2.25
-     ]
-    ],
-    "all_without": [
-     39,
-     0.85,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "v1_with": [
-     7,
-     0.16,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v1_without": [
-     25,
-     0.44,
-     [
-      -0.81,
-      1.96
-     ]
-    ],
-    "v2_with": [
-     4,
-     2.02,
-     [
-      1.78,
-      2.25
-     ]
-    ],
-    "v2_without": [
-     14,
-     1.57,
-     [
-      0.27,
-      2.83
-     ]
-    ]
-   },
-   {
-    "col": "i_loadfc",
-    "all_with": [
-     42,
-     1.02,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "all_without": [
-     8,
-     -0.06,
-     [
-      -0.81,
-      1.03
-     ]
-    ],
-    "v1_with": [
-     26,
-     0.52,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v1_without": [
-     6,
-     -0.22,
-     [
-      -0.81,
-      1.03
-     ]
-    ],
-    "v2_with": [
-     16,
-     1.82,
-     [
-      0.74,
-      2.83
-     ]
-    ],
-    "v2_without": [
-     2,
-     0.42,
-     [
-      0.27,
-      0.58
-     ]
-    ]
-   },
-   {
-    "col": "i_wx",
-    "all_with": [
-     16,
-     0.71,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "all_without": [
-     34,
-     0.91,
-     [
-      -0.81,
-      2.41
-     ]
-    ],
-    "v1_with": [
-     15,
-     0.57,
-     [
-      -0.81,
-      1.96
-     ]
-    ],
-    "v1_without": [
-     17,
-     0.22,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v2_with": [
-     1,
-     2.83,
-     [
-      2.83,
-      2.83
-     ]
-    ],
-    "v2_without": [
-     17,
-     1.6,
-     [
-      0.27,
-      2.41
-     ]
-    ]
-   },
-   {
-    "col": "i_outage",
-    "all_with": [
-     9,
-     0.15,
-     [
-      -0.81,
-      0.84
-     ]
-    ],
-    "all_without": [
-     41,
-     1.0,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "v1_with": [
-     9,
-     0.15,
-     [
-      -0.81,
-      0.84
-     ]
-    ],
-    "v1_without": [
-     23,
-     0.47,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v2_with": [
-     0,
-     null,
-     null
-    ],
-    "v2_without": [
-     18,
-     1.67,
-     [
-      0.27,
-      2.83
-     ]
-    ]
-   },
-   {
-    "col": "i_cal",
-    "all_with": [
-     37,
-     1.06,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "all_without": [
-     13,
-     0.23,
-     [
-      -0.81,
-      1.03
-     ]
-    ],
-    "v1_with": [
-     21,
-     0.48,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v1_without": [
-     11,
-     0.2,
-     [
-      -0.81,
-      1.03
-     ]
-    ],
-    "v2_with": [
-     16,
-     1.82,
-     [
-      0.74,
-      2.83
-     ]
-    ],
-    "v2_without": [
-     2,
-     0.42,
-     [
-      0.27,
-      0.58
-     ]
-    ]
-   },
-   {
-    "col": "i_resid",
-    "all_with": [
-     1,
-     2.08,
-     [
-      2.08,
-      2.08
-     ]
-    ],
-    "all_without": [
-     49,
-     0.82,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "v1_with": [
-     0,
-     null,
-     null
-    ],
-    "v1_without": [
-     32,
-     0.38,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v2_with": [
-     1,
-     2.08,
-     [
-      2.08,
-      2.08
-     ]
-    ],
-    "v2_without": [
-     17,
-     1.64,
-     [
-      0.27,
-      2.83
-     ]
-    ]
-   },
-   {
-    "col": "y_gap",
-    "all_with": [
-     23,
-     1.58,
-     [
-      -0.33,
-      2.83
-     ]
-    ],
-    "all_without": [
-     27,
-     0.22,
-     [
-      -0.81,
-      1.03
-     ]
-    ],
-    "v1_with": [
-     8,
-     0.99,
-     [
-      -0.33,
-      2.15
-     ]
-    ],
-    "v1_without": [
-     24,
-     0.18,
-     [
-      -0.81,
-      1.03
-     ]
-    ],
-    "v2_with": [
-     15,
-     1.9,
-     [
-      1.26,
-      2.83
-     ]
-    ],
-    "v2_without": [
-     3,
-     0.53,
-     [
-      0.27,
-      0.74
-     ]
-    ]
-   },
-   {
-    "col": "y_spike",
-    "all_with": [
-     11,
-     0.08,
-     [
-      -0.81,
-      0.89
-     ]
-    ],
-    "all_without": [
-     39,
-     1.06,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "v1_with": [
-     10,
-     0.01,
-     [
-      -0.81,
-      0.89
-     ]
-    ],
-    "v1_without": [
-     22,
-     0.55,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v2_with": [
-     1,
-     0.74,
-     [
-      0.74,
-      0.74
-     ]
-    ],
-    "v2_without": [
-     17,
-     1.72,
-     [
-      0.27,
-      2.83
-     ]
-    ]
-   },
-   {
-    "col": "y_zoneday",
-    "all_with": [
-     1,
-     0.66,
-     [
-      0.66,
-      0.66
-     ]
-    ],
-    "all_without": [
-     49,
-     0.85,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "v1_with": [
-     1,
-     0.66,
-     [
-      0.66,
-      0.66
-     ]
-    ],
-    "v1_without": [
-     31,
-     0.37,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v2_with": [
-     0,
-     null,
-     null
-    ],
-    "v2_without": [
-     18,
-     1.67,
-     [
-      0.27,
-      2.83
-     ]
-    ]
-   },
-   {
-    "col": "y_profit",
-    "all_with": [
-     2,
-     0.68,
-     [
-      0.67,
-      0.7
-     ]
-    ],
-    "all_without": [
-     48,
-     0.85,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "v1_with": [
-     2,
-     0.68,
-     [
-      0.67,
-      0.7
-     ]
-    ],
-    "v1_without": [
-     30,
-     0.36,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v2_with": [
-     0,
-     null,
-     null
-    ],
-    "v2_without": [
-     18,
-     1.67,
-     [
-      0.27,
-      2.83
-     ]
-    ]
-   },
-   {
-    "col": "y_quant",
-    "all_with": [
-     1,
-     1.9,
-     [
-      1.9,
-      1.9
-     ]
-    ],
-    "all_without": [
-     49,
-     0.82,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "v1_with": [
-     0,
-     null,
-     null
-    ],
-    "v1_without": [
-     32,
-     0.38,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v2_with": [
-     1,
-     1.9,
-     [
-      1.9,
-      1.9
-     ]
-    ],
-    "v2_without": [
-     17,
-     1.65,
-     [
-      0.27,
-      2.83
-     ]
-    ]
-   },
-   {
-    "col": "p_supply_only",
-    "all_with": [
-     19,
-     0.12,
-     [
-      -0.81,
-      0.91
-     ]
-    ],
-    "all_without": [
-     31,
-     1.29,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "v1_with": [
-     17,
-     0.08,
-     [
-      -0.81,
-      0.91
-     ]
-    ],
-    "v1_without": [
-     15,
-     0.73,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v2_with": [
-     2,
-     0.5,
-     [
-      0.27,
-      0.74
-     ]
-    ],
-    "v2_without": [
-     16,
-     1.81,
-     [
-      0.58,
-      2.83
-     ]
-    ]
-   },
-   {
-    "col": "p_both",
-    "all_with": [
-     23,
-     1.19,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "all_without": [
-     27,
-     0.55,
-     [
-      -0.81,
-      2.25
-     ]
-    ],
-    "v1_with": [
-     12,
-     0.6,
-     [
-      -0.81,
-      1.96
-     ]
-    ],
-    "v1_without": [
-     20,
-     0.25,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v2_with": [
-     11,
-     1.83,
-     [
-      0.58,
-      2.83
-     ]
-    ],
-    "v2_without": [
-     7,
-     1.41,
-     [
-      0.27,
-      2.25
-     ]
-    ]
-   },
-   {
-    "col": "p_pairs",
-    "all_with": [
-     9,
-     1.48,
-     [
-      -0.09,
-      2.25
-     ]
-    ],
-    "all_without": [
-     41,
-     0.71,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "v1_with": [
-     4,
-     1.11,
-     [
-      -0.09,
-      2.15
-     ]
-    ],
-    "v1_without": [
-     28,
-     0.28,
-     [
-      -0.81,
-      1.96
-     ]
-    ],
-    "v2_with": [
-     5,
-     1.77,
-     [
-      1.29,
-      2.25
-     ]
-    ],
-    "v2_without": [
-     13,
-     1.63,
-     [
-      0.27,
-      2.83
-     ]
-    ]
-   },
-   {
-    "col": "p_limit",
-    "all_with": [
-     1,
-     2.41,
-     [
-      2.41,
-      2.41
-     ]
-    ],
-    "all_without": [
-     49,
-     0.81,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "v1_with": [
-     0,
-     null,
-     null
-    ],
-    "v1_without": [
-     32,
-     0.38,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v2_with": [
-     1,
-     2.41,
-     [
-      2.41,
-      2.41
-     ]
-    ],
-    "v2_without": [
-     17,
-     1.62,
-     [
-      0.27,
-      2.83
-     ]
-    ]
-   },
-   {
-    "col": "p_risk",
-    "all_with": [
-     2,
-     1.4,
-     [
-      0.89,
-      1.9
-     ]
-    ],
-    "all_without": [
-     48,
-     0.82,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "v1_with": [
-     1,
-     0.89,
-     [
-      0.89,
-      0.89
-     ]
-    ],
-    "v1_without": [
-     31,
-     0.36,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v2_with": [
-     1,
-     1.9,
-     [
-      1.9,
-      1.9
-     ]
-    ],
-    "v2_without": [
-     17,
-     1.65,
-     [
-      0.27,
-      2.83
-     ]
-    ]
-   },
-   {
-    "col": "p_sitout_days",
-    "all_with": [
-     8,
-     0.24,
-     [
-      -0.81,
-      0.91
-     ]
-    ],
-    "all_without": [
-     42,
-     0.96,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "v1_with": [
-     8,
-     0.24,
-     [
-      -0.81,
-      0.91
-     ]
-    ],
-    "v1_without": [
-     24,
-     0.43,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v2_with": [
-     0,
-     null,
-     null
-    ],
-    "v2_without": [
-     18,
-     1.67,
-     [
-      0.27,
-      2.83
-     ]
-    ]
-   },
-   {
-    "col": "p_alloc",
-    "all_with": [
-     1,
-     0.7,
-     [
-      0.7,
-      0.7
-     ]
-    ],
-    "all_without": [
-     49,
-     0.85,
-     [
-      -0.81,
-      2.83
-     ]
-    ],
-    "v1_with": [
-     1,
-     0.7,
-     [
-      0.7,
-      0.7
-     ]
-    ],
-    "v1_without": [
-     31,
-     0.37,
-     [
-      -0.81,
-      2.15
-     ]
-    ],
-    "v2_with": [
-     0,
-     null,
-     null
-    ],
-    "v2_without": [
-     18,
-     1.67,
-     [
-      0.27,
-      2.83
-     ]
-    ]
-   }
-  ],
   "ridge_alpha": 28.072162039411786,
   "ridge_coef_standardised": [
    [
@@ -4671,6 +3665,7 @@
     0.7,
     0.7
    ]
-  ]
+  ],
+  "note": "with and without summaries are computed in the page from the rows; the ridge and tree summaries below were fitted on 7 Oct to the rows scored then and are not refitted"
  }
 }

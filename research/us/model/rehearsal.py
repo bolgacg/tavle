@@ -522,6 +522,7 @@ def stage_heldout():
         HOLDOUT, RESULTS = HM.window(), HM.run_dir() / "results"
         if CACHE.resolve() == (Path.home() / "nyiso-us" / "cache").resolve():
             raise HM.ModeError("set US_CACHE_DIR: the dry run never writes the build cache")
+        RESULTS.mkdir(parents=True, exist_ok=True)
     lock.assert_build_only([HOLDOUT[1]])                          # raises while locked
     ch = json.loads(CHOICES.read_text())
     commit = lock.freeze_hash() or "nofreeze"                     # only a synthetic test lacks FREEZE here

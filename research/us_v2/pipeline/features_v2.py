@@ -15,6 +15,10 @@ Every input is filtered on its own published_at <= 05:00 on bid day D (v1 timing
 for the v1 blocks; the same filter, asserted, for the border and reforecast blocks). The panel and day
 matrix reuse v1 model code unchanged (panel.build_panel, deep_day.build_day_features) on a
 panel.LockedStore rooted at parquet_v2; the lock refuses any delivery date on or after 2024-01-01.
+
+Run mode (common.py, US_RUN_MODE): unset = the build above. dryrun / heldout build the same files under
+$US_RUN_DIR/parquet_v2/features, named panel_2010_<last year> / day_2010_<last year> (dryrun 2023,
+heldout 2026, delivery to 2026-09-30); the store ends at LAST_DAY + 1 day (2024-01-01 in build mode).
 """
 from __future__ import annotations
 
@@ -48,6 +52,10 @@ FEAT = C.PARQUET / "features"
 PARTS = FEAT / "parts"
 YEARS = range(C.FIRST_DAY.year, C.LAST_DAY.year + 1)
 END = pd.Timestamp(C.LAST_DAY + dt.timedelta(days=1), tz=C.TZ)
+STORE_END = C.LAST_DAY + dt.timedelta(days=1)       # 2024-01-01 in build mode, the LockedStore default
+SPAN = f"{C.FIRST_DAY.year}_{C.LAST_DAY.year}"       # 2010_2023 in build mode
+PANEL_FILE = FEAT / f"panel_{SPAN}.parquet"
+DAY_FILE = FEAT / f"day_{SPAN}.parquet"
 BORDERS = {"H Q": "HQ", "NPX": "NPX", "O H": "OH", "PJM": "PJM"}
 BORDER_DAY_STATS = DY.PX_STATS
 WORKERS = 4
@@ -58,7 +66,7 @@ def log(msg):
 
 
 def bid_day_range(y: int) -> tuple[dt.date, dt.date]:
-    return dt.date(y, 1, 1), dt.date(y, 12, 31)
+    return dt.date(y, 1, 1), min(dt.date(y, 12, 31), C.LAST_DAY)
 
 
 # ------------------------------------------------------------------------------------ panel (v1 code)
@@ -68,7 +76,7 @@ def panel_year(y: int):
         return
     t0 = time.time()
     s, e = bid_day_range(y)
-    p = P.build_panel(s, e, store=P.LockedStore(), workers=WORKERS)
+    p = P.build_panel(s, e, store=P.LockedStore(end=STORE_END), workers=WORKERS)
     P.save_panel(p, out)
     log(f"panel {y}: {len(p)} rows {time.time() - t0:.0f}s")
 
@@ -199,7 +207,7 @@ def build_wxr(table: str = "weather_reforecast", out_name: str = "wxr_hourly.par
             raise AssertionError(f"wxr joined: {int(gap.sum())} point-hours in the 2020-01-01..09-22 gap")
         fl = W.loc[live, "wxr_temp_c"].notna().mean() if live.any() else 0.0
         if not fl >= 0.9:
-            raise AssertionError(f"wxr joined: only {fl:.1%} of 2020-09-23..2023 point-hours filled")
+            raise AssertionError(f"wxr joined: only {fl:.1%} of 2020-09-23..{C.LAST_DAY} point-hours filled")
     tmp = PARTS / (out_name + ".tmp")
     W.to_parquet(tmp, index=False)
     os.replace(tmp, PARTS / out_name)
@@ -215,7 +223,7 @@ def _day_year(y: int):
     s, e = bid_day_range(y)
     first = max(s, C.FIRST_DAY) - dt.timedelta(days=1) if y == C.FIRST_DAY.year else s - dt.timedelta(days=1)
     days = [first + dt.timedelta(days=i) for i in range((e - first).days)]   # delivery days s..e
-    df = DY.build_day_features(days, P.LockedStore())
+    df = DY.build_day_features(days, P.LockedStore(end=STORE_END))
     df.to_parquet(out, index=False)
     return y, time.time() - t0
 
@@ -256,8 +264,8 @@ def assemble():
         wxr_cols = ["wxr_temp_f", "wxr_d1_max_f", "wxr_d1_min_f", "wxr_d1_mean_f", "wxr_d1_hdh65", "wxr_d1_cdh65"]
     lock.assert_build_only(base["delivery_hour"])
     base = base.sort_values(["delivery_hour", "zone"], kind="stable").reset_index(drop=True)
-    _atomic(base, FEAT / "panel_2010_2023.parquet")
-    log(f"panel_2010_2023: {len(base)} rows, {base.shape[1]} cols ({len(wxr_cols)} wxr)")
+    _atomic(base, PANEL_FILE)
+    log(f"{PANEL_FILE.stem}: {len(base)} rows, {base.shape[1]} cols ({len(wxr_cols)} wxr)")
 
     day = pd.concat([pd.read_parquet(PARTS / f"day_base_{y}.parquet") for y in YEARS], ignore_index=True)
     bd = pd.read_parquet(PARTS / "border_day.parquet")
@@ -272,8 +280,8 @@ def assemble():
         day = day.merge(piv.reindex(columns=cols).reset_index(), on="bid_date", how="left", validate="one_to_one")
     lock.assert_build_only(day["delivery_date"])
     day = day.sort_values("bid_date").reset_index(drop=True)
-    _atomic(day, FEAT / "day_2010_2023.parquet")
-    log(f"day_2010_2023: {len(day)} rows, {day.shape[1]} cols")
+    _atomic(day, DAY_FILE)
+    log(f"{DAY_FILE.stem}: {len(day)} rows, {day.shape[1]} cols")
 
 
 def _atomic(df: pd.DataFrame, path: Path):

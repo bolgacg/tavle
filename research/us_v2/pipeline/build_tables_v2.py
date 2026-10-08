@@ -14,6 +14,10 @@ v2 differences, all mechanical:
   * weather_reforecast.parquet: GEFS v12 reforecast 2 m temperature (fetch_reforecast.py), 2010-2019.
   * weather_gefs_joined.parquet (step gefs_joined, idea V16): the reforecast to 2019 plus the archived live
     GEFS v12 (fetch_gefs_live.py) from 2020-09-23, same rule; runs 2020-01-01..2020-09-22 do not exist.
+
+Run mode (common.py, US_RUN_MODE): unset = the build above. dryrun / heldout write the same tables to
+$US_RUN_DIR/parquet_v2 with the end date moved to the mode's last day (dryrun 2023-12-31, heldout
+2026-09-30); every 2024-01-01 bound below is END = LAST_DAY + 1 day.
 """
 from __future__ import annotations
 
@@ -37,7 +41,7 @@ import build_tables as B  # noqa: E402  (v1 code)
 from points import POINTS  # noqa: E402
 
 assert B.PARQUET == C.PARQUET, "v1 build_tables did not pick up the v2 common shim"
-END = pd.Timestamp(C.LAST_DAY + dt.timedelta(days=1), tz=C.TZ)          # 2024-01-01 00:00 New York
+END = pd.Timestamp(C.LAST_DAY + dt.timedelta(days=1), tz=C.TZ)          # 2024-01-01 00:00 New York (build)
 
 
 def read_price_month(series: str, ym: str) -> pd.DataFrame:
@@ -70,7 +74,7 @@ B.read_price_month = read_price_month
 
 
 def _drop_after(path: Path, col: str):
-    """Rewrite a parquet keeping rows with col < 2024-01-01 (filter inside pyarrow; nothing computed)."""
+    """Rewrite a parquet keeping rows with col < END (filter inside pyarrow; nothing computed)."""
     d = ds.dataset(str(path), format="parquet")
     typ = d.schema.field(col).type
     bound = B.pa.scalar(END, type=typ) if B.pa.types.is_timestamp(typ) else B.pa.scalar(END.date(), type=typ)
@@ -117,7 +121,7 @@ def build_weather_gfs():
     df["issue_time"] = df["target_hour"] - pd.to_timedelta(df["run_lead_hours"], unit="h") + C.GFS_NEAREST_RUN_SLACK
     df["source"] = SOURCE_GFS
     df.to_parquet(C.PARQUET / "weather_gfs.parquet", index=False, compression="zstd")
-    B.log(f"weather_gfs rows={len(df)} (v1 table, target_hour < 2024-01-01)")
+    B.log(f"weather_gfs rows={len(df)} (v1 table, target_hour < {END.date()})")
     check_weather("weather_gfs")
 
 
@@ -166,8 +170,8 @@ def build_reforecast():
 
 
 def gefs_live_files() -> list[Path]:
-    """Archived live GEFS runs initialised before 2024-01-01, chosen by FILE NAME: the held-out files
-    (2024 onward) on disk are never opened."""
+    """Archived live GEFS runs initialised on or before LAST_DAY (2023-12-31 in build and dry-run modes),
+    chosen by FILE NAME: in those modes the held-out files (2024 onward) on disk are never opened."""
     out = []
     for f in sorted(C.GEFS_LIVE_RAW.glob("*/*.json")):
         d = dt.datetime.strptime(f.stem, "%Y%m%d").date()

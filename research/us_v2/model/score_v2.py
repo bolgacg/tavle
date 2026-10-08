@@ -11,10 +11,18 @@ positive total at the 0.50 stress cost, placebos, fragility flags, sizing view) 
 Columns: per-year net 2013..2023, total, total without the best 5 days, Sharpe, sizing view, PASS, FRAGILE,
 placebos (one day late, permuted within year), and the tries count (every row x its settings grid, plus the
 ideas tried in v1).
+
+Run modes (rolling.MODE dryrun / heldout): the same scoring restricted to the test window (2023, or 2024-01-01 to
+2026-09-30; 2026 is nine months), every metric, placebo and fragility check of the lab unchanged on that window, the
+bar's year rule two thirds of the window's years; the sizing view is CARRIED from the build (each row's
+scale_for_100k_drawdown in the build's v2_results.json, never refitted on the window) and reported as
+sizing_view_carried. Writes v2_results_<mode>.{json,md}, v2_daily_<mode>.parquet (the window, the build file's format)
+and v2_daily_all_<mode>.parquet (the build's daily table before the window, then the window).
 """
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import json
 import math
 import sys
@@ -26,7 +34,12 @@ import pyarrow.dataset as ds
 
 import rolling as R
 
-YEARS = list(range(R.FIRST_SCORED.year, R.LAST_SCORED.year + 1))
+BUILD = R.MODE == "build"
+FIRST = R.FIRST_SCORED if BUILD else R.TEST_WINDOW[0]
+YEARS = list(range(FIRST.year, R.LAST_SCORED.year + 1))
+BUILD_JSON = R.BUILD_RESULTS / "v2_results.json"
+BUILD_DAILY = R.BUILD_RESULTS / "v2_daily.parquet"
+BUILD_DAILY_INDEX = "__index_level_0__"              # the daily table's unnamed date index (naive local dates)
 
 
 def import_lab():
@@ -89,7 +102,7 @@ def load_prices() -> pd.DataFrame:
                         ["delivery_hour", "zone", "da_lbmp", "rt_lbmp"], ds.field("zone").isin(R.ZONES))
     px["delivery_hour"] = px["delivery_hour"].dt.tz_convert(R.TZ)
     loc = px["delivery_hour"].dt.tz_localize(None)
-    return px[(loc >= pd.Timestamp(R.FIRST_SCORED)) & (loc < pd.Timestamp(R.LAST_SCORED) + pd.Timedelta(days=1))]
+    return px[(loc >= pd.Timestamp(FIRST)) & (loc < pd.Timestamp(R.LAST_SCORED) + pd.Timedelta(days=1))]
 
 
 def positions_to_mw(F: FrameV2, pos: pd.DataFrame) -> np.ndarray:
@@ -140,12 +153,17 @@ def _f(x):
 
 
 def write_md(out: dict, path):
-    L = ["# New York study v2: rolling-window results, 2013 to 2023 (build years only)", "",
+    span = f"{FIRST} to {R.LAST_SCORED}"
+    title = ("# New York study v2: rolling-window results, 2013 to 2023 (build years only)" if BUILD else
+             f"# New York study v2: {R.MODE} run, scored on {span}")
+    read = ("Nothing on or after 2024-01-01 was read." if R.HOLDOUT <= dt.date(2024, 1, 1) else
+            f"Data read up to {R.LAST_SCORED} (the held-out window).")
+    L = [title, "",
          f"Written {out['written']}. Train on the previous 3 years, test on the next quarter, refit quarterly; "
          "settings chosen on the trailing 4 out-of-sample quarters. Net USD at full cost per year (1 MW per "
-         "position). Nothing on or after 2024-01-01 was read.", "",
-         f"Bar: average net >= 50,000 USD a year, positive in at least {out['bar_positive_years']} of 11 years, "
-         "Sharpe > 0.42 over 2013 to 2023, positive total at 0.50 USD/MWh stress cost.", ""]
+         f"position). {read}", "",
+         f"Bar: average net >= 50,000 USD a year, positive in at least {out['bar_positive_years']} of {len(YEARS)} "
+         f"years, Sharpe > 0.42 over {YEARS[0]} to {YEARS[-1]}, positive total at 0.50 USD/MWh stress cost.", ""]
     hdr = ["row"] + [str(y) for y in YEARS] + ["total", "w/o best 5 days", "Sharpe", "USD/MWh", "scale for 100k DD",
                                                "PASS", "FRAGILE", "placebo 1 day late", "placebo permuted mean", "tries"]
     L += ["| " + " | ".join(hdr) + " |", "|" + "---|" * len(hdr)]
@@ -157,6 +175,8 @@ def write_md(out: dict, path):
             _f(r["sizing_view"]["scale_for_100k_drawdown"]), "yes" if r["PASS"] else "no",
             {True: "yes", False: "no"}.get(r["FRAGILE"], "n/a"), _f(p.get("shifted_one_day_total")),
             _f(p.get("shuffled_mean_total")), str(r["settings_tried"])]) + " |")
+    if out.get("not_run"):
+        L += ["", "Not run:", ""] + [f"- {n}: {why}" for n, why in out["not_run"].items()]
     labels = [r for r in out["rows"] if r.get("label")]
     if labels:
         L += ["", "Labels (addendum of 7 Oct):", ""] + [f"- {r['name']}: {r['label']}" for r in labels]
@@ -168,6 +188,15 @@ def write_md(out: dict, path):
     for r in out["rows"]:
         for t in r["too_good"]:
             L.append(f"- {r['name']} {t['year']}: {t['why']}")
+    if not BUILD:
+        L += ["", "Sizing view carried from the build (scale = MW per position at which the build-year worst "
+              "drawdown is 100,000 USD, capped at 5; not refitted here):", "",
+              "| row | scale (build) | net at that scale | worst drawdown at that scale | return a year on 500,000 |",
+              "|---|---|---|---|---|"]
+        for r in out["rows"]:
+            c = r.get("sizing_view_carried") or {}
+            L.append(f"| {r['name']} | {_f(c.get('scale'))} | {_f(c.get('net_usd'))} | "
+                     f"{_f(c.get('max_drawdown_usd'))} | {_f(c.get('return_on_500k_a_year_pct'))} |")
     L += ["", f"Tries: {out['tries']['text']}", "",
           "Sizing view (not part of the verdict): scale = MW per position at which the worst drawdown is 100,000 "
           "USD, capped at 5.", ""]
@@ -176,11 +205,31 @@ def write_md(out: dict, path):
     path.write_text("\n".join(L) + "\n")
 
 
+def carried_sizing(lab, rows: list[dict], daily: pd.DataFrame) -> None:
+    """Run modes: each row's build scale applied to the window's daily net (P&L, costs and drawdown scale
+    linearly with the book)."""
+    build = {r["name"]: r for r in json.loads(BUILD_JSON.read_text())["rows"]} if BUILD_JSON.exists() else {}
+    for r in rows:
+        b = build.get(r["name"])
+        sc = ((b or {}).get("sizing_view") or {}).get("scale_for_100k_drawdown")
+        if sc is None:
+            r["sizing_view_carried"] = {"scale": None, "note": "row not in the build results"}
+            continue
+        d = sc * daily[r["name"]].to_numpy(float)
+        cum = np.concatenate([[0.0], np.cumsum(d)])
+        r["sizing_view_carried"] = {
+            "scale": sc, "source": str(BUILD_JSON), "net_usd": round(float(d.sum())),
+            "max_drawdown_usd": round(float((cum - np.maximum.accumulate(cum)).min())),
+            "return_on_500k_a_year_pct": round(100 * float(d.sum()) / lab.BANK * 365 / len(d), 1),
+            "years": {y: round(float(d[daily.index.year == y].sum())) for y in YEARS},
+            "days": int(len(d))}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--draws", type=int, default=1000)
     ap.add_argument("--quick", action="store_true", help="no fragility (no random-days draws, no bootstrap)")
-    ap.add_argument("--tag", default="")
+    ap.add_argument("--tag", default="" if BUILD else f"_{R.MODE}")
     a = ap.parse_args()
     lab = import_lab()
     bind_frame(lab)
@@ -203,6 +252,18 @@ def main():
     daily = pd.DataFrame({r["name"]: r.pop("_daily") for r in rows}, index=F.days)
     R.RESULTS.mkdir(parents=True, exist_ok=True)
     daily.to_parquet(R.RESULTS / f"v2_daily{a.tag}.parquet")
+    if not BUILD:
+        carried_sizing(lab, rows, daily)
+        out["window"] = [str(FIRST), str(R.LAST_SCORED)]
+        out["not_run"] = {n: "not run: forecast source ends in 2019 (superseded by V16)"
+                          for n in ("V4_B_reforecast", "V15a_V4_limit", "V15d_V4_pairs")}
+        out["build_results"] = str(BUILD_JSON)
+        if BUILD_DAILY.exists():
+            b = ds.dataset(str(BUILD_DAILY), format="parquet").to_table(
+                filter=ds.field(BUILD_DAILY_INDEX) < pd.Timestamp(FIRST).to_datetime64()).to_pandas()
+            R.assert_pre2024(b.index, "build daily")
+            b = b.rename_axis(None)
+            pd.concat([b, daily], axis=0).to_parquet(R.RESULTS / f"v2_daily_all{a.tag}.parquet")
     (R.RESULTS / f"v2_results{a.tag}.json").write_text(json.dumps(out, indent=1, default=lab._js))
     write_md(out, R.RESULTS / f"v2_results{a.tag}.md")
     R.log(f"-> {R.RESULTS / f'v2_results{a.tag}.md'}")

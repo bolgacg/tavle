@@ -5,6 +5,9 @@ Reuses the v1 tests unchanged (research/us/pipeline/test_timing.py) through the 
 SAMPLE = 500 bid days drawn with seed 20261006 from 1 Jan 2010 to 30 Dec 2023 and every table is read from
 parquet_v2. Two v1 tests hard-code 2020-2026 dates and are replaced here; the reforecast table and the
 built feature blocks get their own checks. Timestamps and counts only; no price statistic.
+
+Run mode (common.py, US_RUN_MODE): the same tests read $US_RUN_DIR/parquet_v2 in dryrun and heldout
+modes, with every 2023 / 2024-01-01 bound moved to LAST_DAY / LAST_DAY + 1 day (unchanged in build mode).
 """
 from __future__ import annotations
 
@@ -25,6 +28,10 @@ from test_timing import (SAMPLE, INJECT_DAYS, store, test_500_bid_days_no_lookah
                          test_published_at_rules_for_every_gen_month, test_three_day_rule_on_dst_days)
 
 assert T.PARQUET == C.PARQUET, "timing did not pick up the v2 shim"
+LAST = C.LAST_DAY                                   # 2023-12-31 in build and dry-run modes
+END = pd.Timestamp(LAST + dt.timedelta(days=1), tz=C.TZ)
+YEARS = range(2010, LAST.year + 1)
+SPAN = f"{C.FIRST_DAY.year}_{LAST.year}"
 
 # v2 load_forecast rule: published_at = later(file_written_at, 06:00 on issue_date - 1) (build_tables_v2.
 # lf_published_at). Patched into timing so the reused v1 rule test checks the v2 rule for that table.
@@ -65,12 +72,12 @@ def _dst_days(years):
 
 
 def test_sample_spans_every_year():
-    assert {d.year for d in SAMPLE} == set(range(2010, 2024))
-    assert max(SAMPLE) < dt.date(2023, 12, 31)
+    assert {d.year for d in SAMPLE} == set(YEARS)
+    assert max(SAMPLE) < LAST
 
 
 def test_no_row_on_or_after_holdout(store):
-    end = pd.Timestamp("2024-01-01", tz=C.TZ)
+    end = END
     for name, col in (("prices_zone", "delivery_hour"), ("load_forecast", "target_hour"),
                       ("weather_gfs", "target_hour")):
         assert (store.table(name)[col] < end).all(), name
@@ -80,7 +87,8 @@ def test_dst_days_have_23_and_25_hours(store):
     pz = store.table("prices_zone")
     cap = pz[pz["zone"] == "CAPITL"]
     n = cap.groupby(C.local_midnight(cap["delivery_hour"])).size()
-    spring, fall = _dst_days(range(2010, 2024))
+    spring, fall = (
+        [d for d in days if d <= LAST] for days in _dst_days(YEARS))
     assert all(n[pd.Timestamp(d)] == 23 for d in spring), [(d, n[pd.Timestamp(d)]) for d in spring]
     assert all(n[pd.Timestamp(d)] == 25 for d in fall), [(d, n[pd.Timestamp(d)]) for d in fall]
 
@@ -159,13 +167,13 @@ def test_wxr_block_filled_2010_2019():
     assert fill >= 0.9, f"wxr_hourly {fill:.1%} filled over {n} rows"
     feat = C.PARQUET / "features"
     pcols = ["wxr_temp_f", "wxr_d1_max_f", "wxr_d1_min_f", "wxr_d1_mean_f", "wxr_d1_hdh65", "wxr_d1_cdh65"]
-    p = pd.read_parquet(feat / "panel_2010_2023.parquet", columns=["delivery_hour"] + pcols)
+    p = pd.read_parquet(feat / f"panel_{SPAN}.parquet", columns=["delivery_hour"] + pcols)
     fill, n = _wxr_fill(p, "delivery_hour", pcols)
     assert fill >= 0.9, f"panel wxr_ columns {fill:.1%} filled over {n} rows"
     import pyarrow.parquet as pq
-    dcols = [c for c in pq.read_schema(feat / "day_2010_2023.parquet").names if c.startswith("wxr__")]
+    dcols = [c for c in pq.read_schema(feat / f"day_{SPAN}.parquet").names if c.startswith("wxr__")]
     assert dcols, "day matrix has no wxr__ columns"
-    d = pd.read_parquet(feat / "day_2010_2023.parquet", columns=["delivery_date"] + dcols)
+    d = pd.read_parquet(feat / f"day_{SPAN}.parquet", columns=["delivery_date"] + dcols)
     fill, n = _wxr_fill(d, "delivery_date", dcols)
     assert fill >= 0.9, f"day matrix wxr__ block {fill:.1%} filled over {n} days"
 
@@ -212,7 +220,7 @@ def rfj():
 
 def test_gefs_joined_sources_and_documented_gap(rfj):
     """Reforecast runs only to 2019-12-31, live GEFS v12 runs only from 2020-09-23, no run in between,
-    every run 00 UTC, every valid time before 2024-01-01."""
+    every run 00 UTC, every valid time before LAST_DAY + 1 day (2024-01-01 in build mode)."""
     import build_tables_v2 as BV
     init = rfj["init_utc"].dt.tz_convert("UTC").dt.tz_localize(None)
     ref, live = rfj["source"] == BV.SOURCE_REFORECAST, rfj["source"] == BV.SOURCE_GEFS_LIVE
@@ -220,16 +228,16 @@ def test_gefs_joined_sources_and_documented_gap(rfj):
     assert (init[ref] < GAP0).all() and (init[live] >= LIVE0).all()
     assert not ((init >= GAP0) & (init < LIVE0)).any()
     assert (init.dt.hour == 0).all()
-    assert (rfj["target_hour"] < pd.Timestamp("2024-01-01", tz=C.TZ)).all()
+    assert (rfj["target_hour"] < END).all()
     yrs = init.dt.year.value_counts()
-    assert set(range(2010, 2024)) <= set(yrs.index), sorted(yrs.index)
+    assert set(YEARS) <= set(yrs.index), sorted(yrs.index)
 
 
 def test_gefs_live_files_stop_before_holdout():
-    """The build chooses live files by name and never opens one dated on or after 2024-01-01."""
+    """The build chooses live files by name and never opens one dated after LAST_DAY (2023-12-31 in build mode)."""
     import build_tables_v2 as BV
     files = BV.gefs_live_files()
-    assert files and all(f.stem < "20240101" and f.stem >= "20200923" for f in files)
+    assert files and all(f.stem <= LAST.strftime("%Y%m%d") and f.stem >= "20200923" for f in files)
 
 
 def test_wxr_joined_block_uses_only_public_runs():
@@ -252,11 +260,11 @@ def test_wxr_joined_block_filled_except_documented_gap():
     b = w["bid_date"]
     gap = (b >= GAP0) & (b < LIVE0)
     assert not gap.any(), int(gap.sum())
-    for name, m in (("2010-2019", b < GAP0), ("2020-09-23..2023", b >= LIVE0)):
+    for name, m in (("2010-2019", b < GAP0), (f"2020-09-23..{LAST}", b >= LIVE0)):
         assert m.sum() > 0, name
         fill = float(w.loc[m, "wxr_temp_c"].notna().mean())
         assert fill >= 0.9, f"{name}: {fill:.1%} filled"
-    for y in range(2010, 2024):
+    for y in YEARS:
         n = b.dt.year.eq(y).sum()
         assert n > 0, y
-    assert (b.dt.year <= 2023).all()
+    assert (b <= pd.Timestamp(LAST)).all()

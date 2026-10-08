@@ -10,6 +10,12 @@ as idea 14. Refits quarterly on the 3-year window (rolling.py). kappa (0.01, 0.1
 weights earned most over the trailing 4 quarters; declared default 0.1 when there is none.
 
     python alloc_v12.py [--device cuda] [--wait-ideas-hours 48]
+
+Run modes (rolling.MODE dryrun / heldout): V12 is carried as it ran. The candidates are the 31 rows it read on
+8 Oct 04:11 (BUILD_CANDIDATES: before the V15a reruns wrote their files and before the comparison rows), not the
+files now in pos/. Refits cover the window's quarters plus the 4 quarters before it (the kappa of a window quarter
+is chosen on the trailing 4 quarters of V12's own walk-forward weights, which the build did not save); positions
+before the window are the build's, copied.
 """
 from __future__ import annotations
 
@@ -28,6 +34,27 @@ import deep_alloc14 as A      # v1
 
 NAME = "V12_alloc"
 TRAIN_START = pd.Timestamp(dt.date(R.WARMUP_YEAR, 1, 1))
+# the candidate rows V12 read in the build (log of 8 Oct 04:11, results/v2/pos/V12_alloc.json "candidates")
+BUILD_CANDIDATES = (
+    "V10_C_deep_pretrain", "V11_C_deep_ens4", "V11_C_gbm_ens4", "V13_A_deep_all", "V13_C_deep_all", "V14a_window_ens",
+    "V14b_quantile_size", "V14c_conformal_skip", "V14d_seed_ens", "V14e_mlp_multi", "V14f_global_zone",
+    "V15b_V13_both", "V15b_V13_limit", "V15c_wx_border_gbm", "V15d_V4_pairs", "V16_B_gefs_joined", "V1_A_spike_gbm",
+    "V1_C_deep", "V1_C_gbm", "V1_always_supply", "V1_baseline", "V2_limit_gbm", "V3_tail_gbm", "V4_B_reforecast",
+    "V5_border_inputs", "V6_LI", "V6_NYC", "V7_flags", "V7_recency", "V8_error_mining", "V9_decompose")
+
+NOT_RUN_V4 = ("V4_B_reforecast", "V15d_V4_pairs")     # not rerun in run modes: forecast source ends in 2019
+
+
+def load_day_features() -> pd.DataFrame:
+    """The day-feature matrix as deep_policy.load_day_features reads it; in a run mode through rolling.read_pre2024
+    (deep_policy's own bound is fixed at 2024-01-01), same sort, uniqueness check and weather mask."""
+    if R.MODE == "build":
+        return DP.load_day_features(R.DAYFEATS)
+    df = R.read_pre2024(R.DAYFEATS, "delivery_date")
+    df["delivery_date"] = pd.to_datetime(df["delivery_date"]).dt.normalize()
+    df = df.sort_values("delivery_date", kind="stable").reset_index(drop=True)
+    assert df["delivery_date"].is_unique
+    return DP.mask_weather(df)
 
 
 def candidate_profits(days: pd.DatetimeIndex):
@@ -44,13 +71,19 @@ def candidate_profits(days: pd.DatetimeIndex):
     def is_comparison(f):
         m = f.with_suffix(".json")
         return m.exists() and bool(json.loads(m.read_text()).get("comparison"))
-    names = sorted(f.stem for f in R.POS.glob("*.parquet") if not f.stem.startswith("V12") and not is_comparison(f))
+    if R.MODE == "build":
+        names = sorted(f.stem for f in R.POS.glob("*.parquet") if not f.stem.startswith("V12") and not is_comparison(f))
+    else:
+        names = list(BUILD_CANDIDATES)
     P = np.full((len(days), len(names)), np.nan)
     MW = np.zeros((len(px), len(names)))
     mi = pd.MultiIndex.from_arrays([px["delivery_hour"], px["zone"]])
     di = days.get_indexer(px["ddate"])
     for j, n in enumerate(names):
-        pos = R.read_pre2024(R.POS / f"{n}.parquet", "delivery_hour")
+        f = R.POS / f"{n}.parquet"
+        if R.MODE != "build" and n in NOT_RUN_V4:          # build positions, nothing after 2019 (heldout_v2.NOT_RUN)
+            f = R.RESULTS / "build_pos" / f"{n}.parquet"
+        pos = R.read_pre2024(f, "delivery_hour")
         pos["delivery_hour"] = pos["delivery_hour"].dt.tz_convert(R.TZ)
         s = pos.groupby(["delivery_hour", "zone"])["mw"].sum()
         have = s.reindex(mi).notna().to_numpy()
@@ -63,6 +96,38 @@ def candidate_profits(days: pd.DatetimeIndex):
         cnt = np.bincount(di[ok], minlength=len(days))
         P[:, j] = np.where(cnt > 0, tot, np.nan)
     return names, P, px, MW
+
+
+def refit_quarters() -> set:
+    """Build: every quarter. Run modes: the window's quarters and the 4 before them (their walk-forward weights
+    choose the window's first kappas)."""
+    qs = [q for q in R.quarters() if not q[3]]
+    if R.MODE == "build":
+        return {q[2] for q in qs}
+    first = next(i for i, q in enumerate(qs) if R.in_window(q))
+    return {q[2] for q in qs[max(0, first - R.TRAIL_QUARTERS):]}
+
+
+def with_build_before_window(d: pd.DataFrame, meta: dict):
+    """Run modes: the build's V12 positions before the window (seeded copy in build_pos/), the new ones from it."""
+    w0 = pd.Timestamp(R.TEST_WINDOW[0], tz=R.TZ)
+    seeded = R.RESULTS / "build_pos" / f"{NAME}.parquet"
+    old = R.read_pre2024(seeded, "delivery_hour")
+    old["delivery_hour"] = old["delivery_hour"].dt.tz_convert(R.TZ)
+    old_meta = json.loads(seeded.with_suffix(".json").read_text())
+    out = pd.concat([old[old["delivery_hour"] < w0], d[d["delivery_hour"] >= w0]], ignore_index=True)
+    meta = {**meta, "build_meta_before_window": {k: old_meta.get(k) for k in ("written", "candidates", "kappa_choice")},
+            "kappa_choice": {**{k: v for k, v in old_meta.get("kappa_choice", {}).items() if k < meta_first(meta)},
+                             **meta["kappa_choice"]}}
+    (R.RESULTS / "v12").mkdir(parents=True, exist_ok=True)
+    rs = pd.Timestamp(min(q[0] for q in R.quarters() if q[2] in refit_quarters()), tz=R.TZ)
+    pre = d[(d["delivery_hour"] >= rs) & (d["delivery_hour"] < w0)]
+    pre.to_parquet(R.RESULTS / "v12" / "positions_recomputed_before_window.parquet")
+    return out, meta
+
+
+def meta_first(meta: dict) -> str:
+    return min(meta["kappa_choice"]) if meta["kappa_choice"] else "9999"
 
 
 def main():
@@ -85,7 +150,7 @@ def main():
             break
         time.sleep(120)
     R.log(f"ideas: all={ideas.exists()}, price={price.exists()} after {(time.time() - t0) / 3600:.1f} h")
-    feats = DP.load_day_features(R.DAYFEATS)
+    feats = load_day_features()
     feats = feats[feats["delivery_date"] >= TRAIN_START].reset_index(drop=True)
     R.assert_pre2024(feats["delivery_date"], "v12 day features")
     days = pd.DatetimeIndex(feats["delivery_date"])
@@ -98,8 +163,9 @@ def main():
     SC = np.zeros((len(days), C))
     recs = []
     dser = pd.Series(days)
+    refit = refit_quarters()
     for q in R.quarters():
-        if q[3]:
+        if q[3] or q[2] not in refit:
             continue
         lo, hi = R.window(q[0])
         te = ((dser >= pd.Timestamp(q[0])) & (dser <= pd.Timestamp(q[1]))).to_numpy()
@@ -134,10 +200,14 @@ def main():
     frame = pd.DataFrame({"delivery_date": days})
     wsel = np.zeros((len(days), C))
     choice = {}
+    build_k = {} if R.MODE == "build" else json.loads((R.RESULTS / "build_pos" / f"{NAME}.json").read_text())["kappa_choice"]
     for q in R.quarters():
-        if q[3]:
+        if q[3] or q[2] not in refit:
             continue
         te = ((dser >= pd.Timestamp(q[0])) & (dser <= pd.Timestamp(q[1]))).to_numpy()
+        if not R.in_window(q):           # run modes: refit only to choose kappa; positions with the build's kappa,
+            wsel[te] = W[build_k[q[2]]["kappa"]][te]           # kept as a determinism check, never scored
+            continue
         m = R.trailing_mask(frame, q[0]) & (dser >= pd.Timestamp(R.FIRST_SCORED)).to_numpy()
         if m.any():
             k = max(A.KAPPAS, key=lambda kk: (net[kk][m].sum(), -A.KAPPAS.index(kk)))
@@ -153,9 +223,15 @@ def main():
     mw[ok] = (wsel[di[ok]] * SC[di[ok]] * MW[ok]).sum(1)
     d = px[["delivery_hour", "zone"]].copy()
     d["mw"] = mw
-    R.write_positions(NAME, d[d["delivery_hour"].dt.year >= R.FIRST_SCORED.year],
-                      {"idea": "V12", "line": "learned allocator (idea 14 gate) over the v2 survivors",
-                       "settings_tried": len(A.KAPPAS), "candidates": names, "kappa_choice": choice, "refits": recs})
+    d = d[d["delivery_hour"].dt.year >= R.FIRST_SCORED.year]
+    meta = {"idea": "V12", "line": "learned allocator (idea 14 gate) over the v2 survivors",
+            "settings_tried": len(A.KAPPAS), "candidates": names, "kappa_choice": choice, "refits": recs}
+    if R.MODE != "build":
+        d, meta = with_build_before_window(d, meta)
+        W_out = {k: pd.DataFrame(W[k], index=days, columns=names) for k in A.KAPPAS}
+        for k, w in W_out.items():
+            w[(w != 0).any(axis=1)].to_parquet(R.RESULTS / "v12" / f"weights_kappa{k:g}.parquet")
+    R.write_positions(NAME, d, meta)
     R.done("v2_v12")
 
 

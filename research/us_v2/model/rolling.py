@@ -16,6 +16,12 @@ read time and asserts it (assert_pre2024 here, independent of any unlock switch,
 Paths come from the environment so the data agent's file names are a one-line change:
     V2_HOME (~/nyiso-us), V2_PARQUET ($V2_HOME/parquet_v2), V2_PANEL ($V2_PARQUET/features/panel_2010_2023.parquet),
     V2_DAY ($V2_PARQUET/features/day_2010_2023.parquet), V2_RESULTS ($V2_HOME/results/v2), V1_MODEL_DIR.
+
+Run mode (research/us/model/heldout_mode.py, US_RUN_MODE): unset = build, exactly as above. dryrun = the held-out
+code path with the test window 2023-01-01..2023-12-31 (bound stays 2024-01-01); heldout = 2024-01-01..2026-09-30,
+the read bound becomes 2026-10-01 ONLY through heldout_mode, which opens only through the v1 lock on a frozen clone.
+In both, results go to $US_RUN_DIR/results/v2 (seeded with the build outputs before the window, see heldout_v2.py),
+quarters run to the window's last day, and run_rows refuses to refit a quarter before the window.
 """
 from __future__ import annotations
 
@@ -51,11 +57,24 @@ for _p in (HERE, V1_MODEL, V1_PIPELINE):
 
 import lock  # noqa: E402  (v1 holdout lock)
 
+
+def _run_mode():
+    """(mode, test window, run dir, exclusive read end) from heldout_mode; a build copy without it is build."""
+    try:
+        import heldout_mode as HM
+    except ImportError:
+        if os.environ.get("US_RUN_MODE"):
+            raise
+        return "build", None, None, dt.date(2024, 1, 1)
+    return HM.mode(), HM.window(), HM.run_dir(), HM.read_end()
+
+
+MODE, TEST_WINDOW, RUN_DIR, _READ_END = _run_mode()
 TZ = "America/New_York"
-HOLDOUT = dt.date(2024, 1, 1)
+HOLDOUT = _READ_END                 # first delivery date never read: 2024-01-01 (build, dryrun), 2026-10-01 (heldout)
 END_TS = pd.Timestamp(HOLDOUT, tz=TZ)
 DATA_START = dt.date(2010, 1, 1)
-FIRST_SCORED, LAST_SCORED = dt.date(2013, 1, 1), dt.date(2023, 12, 31)
+FIRST_SCORED, LAST_SCORED = dt.date(2013, 1, 1), HOLDOUT - dt.timedelta(days=1)
 WARMUP_YEAR = 2012
 TRAIN_YEARS = 3
 TRAIN_GAP_DAYS = 2                  # a refit before quarter start S learns from delivery dates <= S - 2 days
@@ -63,10 +82,31 @@ TRAIL_QUARTERS = 4                  # settings are chosen on the previous 4 out-
 ZONES = ["CAPITL", "CENTRL", "DUNWOD", "GENESE", "HUD VL", "LONGIL", "MHK VL", "MILLWD", "N.Y.C.", "NORTH", "WEST"]
 
 V2_HOME = Path(os.environ.get("V2_HOME", str(Path.home() / "nyiso-us")))
-PARQUET = Path(os.environ.get("V2_PARQUET", str(V2_HOME / "parquet_v2")))
-PANEL = Path(os.environ.get("V2_PANEL", str(PARQUET / "features" / "panel_2010_2023.parquet")))
-DAYFEATS = Path(os.environ.get("V2_DAY", str(PARQUET / "features" / "day_2010_2023.parquet")))
-RESULTS = Path(os.environ.get("V2_RESULTS", str(V2_HOME / "results" / "v2")))
+BUILD_RESULTS = V2_HOME / "results" / "v2"
+if MODE == "build":
+    PARQUET = Path(os.environ.get("V2_PARQUET", str(V2_HOME / "parquet_v2")))
+    PANEL = Path(os.environ.get("V2_PANEL", str(PARQUET / "features" / "panel_2010_2023.parquet")))
+    DAYFEATS = Path(os.environ.get("V2_DAY", str(PARQUET / "features" / "day_2010_2023.parquet")))
+    RESULTS = Path(os.environ.get("V2_RESULTS", str(BUILD_RESULTS)))
+else:
+    # dryrun reads the build tables; heldout the tables rebuilt into $US_RUN_DIR/parquet_v2 (file names from the
+    # environment, else the single panel_/day_ file there). Results only under $US_RUN_DIR.
+    PARQUET = Path(os.environ.get("V2_PARQUET", str(V2_HOME / "parquet_v2" if MODE == "dryrun"
+                                                    else RUN_DIR / "parquet_v2")))
+    if MODE == "heldout" and PARQUET.resolve() == (V2_HOME / "parquet_v2").resolve():
+        raise RuntimeError("held-out mode must not read the build tables (set V2_PARQUET to the rebuilt tables)")
+
+    def _one(env, stem):
+        if os.environ.get(env):
+            return Path(os.environ[env])
+        c = sorted((PARQUET / "features").glob(f"{stem}_2010_*.parquet"))
+        if len(c) != 1:
+            raise FileNotFoundError(f"set {env}: {len(c)} candidates {stem}_2010_*.parquet in {PARQUET / 'features'}")
+        return c[0]
+    PANEL, DAYFEATS = _one("V2_PANEL", "panel"), _one("V2_DAY", "day")
+    RESULTS = RUN_DIR / "results" / "v2"
+    if os.environ.get("V2_RESULTS") and Path(os.environ["V2_RESULTS"]).resolve() != RESULTS.resolve():
+        raise RuntimeError(f"V2_RESULTS must be {RESULTS} in {MODE} mode")
 PREDS, POS = RESULTS / "preds", RESULTS / "pos"
 
 
@@ -80,7 +120,8 @@ class HoldoutBreach(AssertionError):
 
 
 def assert_pre2024(values, what: str = "") -> None:
-    """Raise if any date-like value is on or after 2024-01-01 New York time. No switch turns this off."""
+    """Raise if any date-like value is on or after 2024-01-01 New York time. No switch turns this off; only the
+    held-out mode (heldout_mode, open only through the v1 lock) moves the bound to 2026-10-01."""
     s = pd.Series(values).dropna() if not isinstance(values, pd.Series) else values.dropna()
     if not len(s):
         return
@@ -112,7 +153,8 @@ def read_pre2024(path: Path, timecol: str, columns=None, extra=None) -> pd.DataF
 def fees_module():
     """The extended fee table: the data agent's shim (~/nyiso-us/pipeline_v2/fees.py, laptop us_v2/pipeline/fees.py),
     else fees_v2.py next to this file or in V2_PARQUET, else the v1 fees.py; it must
-    cover every year 2010..2023 (raises otherwise, so no year is silently costed at zero)."""
+    cover every year 2010..LAST_SCORED (2023, or 2026 in held-out mode; raises otherwise, so no year is silently
+    costed at zero)."""
     for p in (V2_HOME / "pipeline_v2", HERE.parent / "pipeline", HERE, PARQUET, V1_MODEL):
         for name in ("fees_v2", "fees"):
             f = Path(p) / f"{name}.py"
@@ -122,7 +164,7 @@ def fees_module():
                 spec.loader.exec_module(m)
                 if all(y in m.RATES and y in m.SUPPLY_RATES for y in range(DATA_START.year, LAST_SCORED.year + 1)):
                     return m
-    raise RuntimeError("no fee table covers 2010..2023 (data agent: extend fees.py or write fees_v2.py)")
+    raise RuntimeError(f"no fee table covers 2010..{LAST_SCORED.year} (data agent: extend fees.py or write fees_v2.py)")
 
 
 _FEES = None
@@ -149,9 +191,15 @@ def quarters(first_year: int = WARMUP_YEAR, last_year: int = LAST_SCORED.year) -
         for i, m in enumerate((1, 4, 7, 10)):
             s = dt.date(y, m, 1)
             e = (dt.date(y + (m == 10), (m + 3 - 1) % 12 + 1, 1) - dt.timedelta(days=1))
-            out.append((s, e, f"{y}Q{i + 1}", y == WARMUP_YEAR))
+            if e <= LAST_SCORED:
+                out.append((s, e, f"{y}Q{i + 1}", y == WARMUP_YEAR))
     assert out[-1][1] <= LAST_SCORED
     return out
+
+
+def in_window(q) -> bool:
+    """True when quarter q lies in the run mode's test window (always True in build mode)."""
+    return TEST_WINDOW is None or q[0] >= TEST_WINDOW[0]
 
 
 def window(q_start: dt.date, years: int = TRAIN_YEARS) -> tuple[dt.date, dt.date]:
@@ -214,6 +262,8 @@ def run_rows(name: str, fit_predict, panel: pd.DataFrame | None = None, extra: p
         if resume and f.exists():
             out.append(pd.read_parquet(f))
             continue
+        if not in_window(q):
+            raise RuntimeError(f"{name} {q[2]}: a quarter before the {MODE} window has no seeded part ({f})")
         t0 = time.time()
         tr = panel[train_mask(panel, q[0])]
         te = panel[test_mask(panel, q)]

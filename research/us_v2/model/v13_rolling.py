@@ -12,6 +12,9 @@
        A step is taken when it can run; while the weather flag is missing the no-weather parts run; the full model
        waits for the flag (at most --weather-wait-hours, then V13 full is reported NOT RUN).
     python v13_rolling.py smoke [--device cuda]   2 warm-up quarters, 2 seeds, 2 epochs per architecture (timing)
+    python v13_rolling.py rows [--device cuda]    run modes (held-out, dry run): self-test, the full menu and the
+                                                  main rows only (steps 1 to 3); the no-weather menu and the
+                                                  ablations are diagnostics of the build years and are not rerun
 
 Architecture choice (declared): for quarter q, the architecture whose OUT-OF-SAMPLE predictions earned the most
 over the trailing 4 quarters (rolling.trailing_mask: outcomes public by 05:00 on q's first bid day) under the C
@@ -274,7 +277,7 @@ def score_ablations(log, draws=1000):
 # ============================================================================ driver
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("mode", choices=["all", "smoke", "selftest"])
+    ap.add_argument("mode", choices=["all", "smoke", "selftest", "rows"])
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--weather-wait-hours", type=float, default=30.0)
     ap.add_argument("--draws", type=int, default=1000)
@@ -305,6 +308,16 @@ def main():
             log(f"smoke {arch}: {time.time() - t1:.0f} s for 2 quarters x 2 epochs, 5 seeds")
         return
 
+    if a.mode == "rows":
+        if not WEATHER_FLAG.exists():
+            raise SystemExit(f"V13 rows need {WEATHER_FLAG} (the build ran the full menu with weather)")
+        blocks_full = VD.DayBlocks(data, R.DAYFEATS, with_weather=True, log=log)
+        for arch in VM.ARCHS:
+            run_arch(data, blocks_full, panel, arch, (), name_of(arch), a.device, log, seeds)
+        write_main(panel, log)
+        R.done("v2_v13")
+        log(f"V13 rows complete in {(time.time() - t0) / 3600:.1f} h")
+        return
     blocks_nowx = VD.DayBlocks(data, R.DAYFEATS, with_weather=False, log=log)
     blocks_full = None
     t_wait = time.time()

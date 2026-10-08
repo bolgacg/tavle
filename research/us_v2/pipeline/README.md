@@ -166,3 +166,11 @@ The FERC per-MWh charge and the supply uplift bound for 2010 to 2019 were not fo
 * `wx__` (GFS) exists only from 25 March 2021 and `wxr__` only to 2019.
 
 Every input is filtered on its own `published_at` by 05:00 on D. The v1 blocks use `timing.features_available_at` and `assert_no_lookahead`. The border and reforecast blocks apply the same filter and assert it. The pieces are in `features/parts/`, and `features_v2.py assemble` rejoins them without recomputing. Both matrices are written to a `.tmp` file and then moved into place with `os.replace`, so a reader never sees a half-written file.
+
+## Held-out run and its dry run (`run_heldout_data.sh`)
+
+The run mode comes from `research/us/model/heldout_mode.py` through `common.py` (env `US_RUN_MODE`). Unset, every file above is built exactly as before. In `dryrun` and `heldout` modes the same code writes to `$US_RUN_DIR/parquet_v2` (never `~/nyiso-us/parquet_v2`), and the last delivery day moves to the mode's: 2023-12-31 in the dry run, 2026-09-30 in the held-out run, which opens only through the lock on the frozen clone. The matrices are named `panel_2010_<last year>.parquet` and `day_2010_<last year>.parquet`; point `V2_PANEL` and `V2_DAY` at them.
+
+`run_heldout_data.sh` rebuilds every table (prices, load, outages, weather_gfs, reforecast, gefs_joined) and every feature part and matrix (panel, border, wxr, wxrj, day, assemble), then runs `test_timing_v2.py` over the whole range and `test_window_v2.py` over every bid day of the window (no input published after 05:00 on D, every weather row an archived forecast issued and published before 05:00 on D). A failed or skipped test stops the run before `DATA_OK` is written. `compare_v2.py` then checks the output against the build tree: in the dry run every file and row must be equal; in the held-out run every row before 2024-01-01 must be.
+
+Raw inputs for 2024-01 to 2026-09 by file name (8 Oct 2026): every monthly zip exists; `20260701rtlbmp_zone_csv.zip` names only 12 of 31 days (1 to 18 July and 20 July 2026 are missing); `20260901outSched_csv.zip` lacks 25 September 2026; every live GEFS run file from 2024-01-01 to 2026-09-30 exists; v1's `weather_gfs.parquet` row-group statistics end at 2026-09-30 23:00 UTC, so the last four local hours of 30 September 2026 have no GFS value.

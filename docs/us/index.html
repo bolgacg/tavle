@@ -309,10 +309,9 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
     <p class="csub" style="margin:10px 0 2px">How far each line sat below its own previous high, percent</p>
     <div class="chart" id="ch-under"></div>
     <p class="note" id="uw-note" style="margin-top:2px"></p>
-    <div class="readout" id="ro-bank" aria-live="polite"></div>
     <div class="three">
       <p><b>what you see</b>Each line is one strategy's 500,000 USD bankroll, day by day after all fees; the lower panel shows how far it sat below its own previous high.</p>
-      <p><b>how to read</b>The three steadiest candidates by Sharpe ratio (average daily profit divided by its day-to-day swings, scaled to a year) are named in blue, teal and purple, and the two other candidates that end highest in orange and pink; the remaining candidates are pale, red is always selling, grey is the habit rule; the dashed line is the start.</p>
+      <p><b>how to read</b>The three steadiest candidates by Sharpe ratio (average daily profit divided by its day-to-day swings, scaled to a year) are named in blue, teal and purple, and the three other candidates that end highest in orange, pink and sky blue; the remaining candidates are pale, red is always selling, grey is the habit rule; the dashed line is the start.</p>
       <p><b>take-away</b><span id="k-bank">Each candidate ends above both plain rules, but only on years the models were built on; the hatched area is the held-out test, still to run.</span></p>
     </div>
     <p class="note" id="n-bank"></p>
@@ -1499,7 +1498,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     var r = rows.filter(function (r) { return r.reference; }).sort(function (a, b) { return a.name.indexOf('supply') >= 0 ? -1 : 1; });
     return c.concat(r);
   }
-  var TOP3 = {}, STRONG = ['#1f5f99', '#0f7f74', '#7a4f9a'], EARN = ['#d17a00', '#c4589b'], EARNINFO = { picked: [], skipped: [] };
+  var TOP3 = {}, STRONG = ['#1f5f99', '#0f7f74', '#7a4f9a'], EARN = ['#d17a00', '#c4589b', '#56b4e9'], EARNINFO = { picked: [], skipped: [] };
   function sharpe(r) {
     var c = r.cum_net_usd_1mw, n = c.length, m = 0, d = new Array(n);
     for (var i = 0; i < n; i++) { d[i] = i ? c[i] - c[i - 1] : c[0]; m += d[i]; }
@@ -1510,12 +1509,12 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     TOP3 = {};
     eq(v).rows.filter(function (r) { return r.candidate_by_rule; }).map(function (r) { return { r: r, s: sharpe(r) }; })
       .sort(function (a, b) { return b.s - a.s; }).slice(0, 3).forEach(function (x, i) { TOP3[x.r.name] = { c: STRONG[i], s: x.s }; });
-    // the two candidate lines that end highest on the bankroll chart, read from the chart's own data; a line already
+    // the three candidate lines that end highest on the bankroll chart, read from the chart's own data; a line already
     // among the three steadiest is skipped and the next highest taken, so five distinct lines are highlighted
     EARNINFO = { picked: [], skipped: [] };
     eq(v).rows.filter(function (r) { return r.candidate_by_rule; }).sort(function (a, b) { return last(b.bankroll_usd_sizing_view) - last(a.bankroll_usd_sizing_view); })
       .forEach(function (r) {
-        if (EARNINFO.picked.length >= 2) return;
+        if (EARNINFO.picked.length >= 3) return;
         if (TOP3[r.name]) { EARNINFO.skipped.push(r.name); return; }
         TOP3[r.name] = { c: EARN[EARNINFO.picked.length], s: sharpe(r), earn: true }; EARNINFO.picked.push(r.name);
       });
@@ -1599,7 +1598,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
       for (var k2 in upaths) { upaths[k2].setAttribute('opacity', !n ? upaths[k2].getAttribute('data-o') : k2 === n ? 1 : 0.1); upaths[k2].setAttribute('stroke-width', k2 === n ? 2.2 : upaths[k2].getAttribute('data-w')); if (k2 === n) upaths[k2].parentNode.appendChild(upaths[k2]); }
     }
     function isMinorN(k) { return rows.some(function (r) { return r.name === k && isMinor(r); }); }
-    var lgH = [['three steadiest candidates (Sharpe: profit per unit of day-to-day swing)', STRONG], ['two highest-earning candidates (the other lines that end highest)', EARN], ['other candidates that passed', '#a9b7c6'], ['always supply: sell every hour, no model', C.neg], ['habit rule: repeat last year\'s usual side, no model', C.grey]]
+    var lgH = [['three steadiest candidates (Sharpe: profit per unit of day-to-day swing)', STRONG], ['three highest-earning candidates (the other lines that end highest)', EARN], ['other candidates that passed', '#a9b7c6'], ['always supply: sell every hour, no model', C.neg], ['habit rule: repeat last year\'s usual side, no model', C.grey]]
       .map(function (k, i) { var sw = Array.isArray(k[1]) ? k[1].map(function (c, j) { return '<line x1="' + (j * 9) + '" y1="4" x2="' + (j * 9 + 7) + '" y2="4" stroke="' + c + '" stroke-width="2.5"/>'; }).join('') : '<line x1="0" y1="4" x2="25" y2="4" stroke="' + k[1] + '" stroke-width="2.5"/>'; return '<span><svg width="25" height="8">' + sw + '</svg>' + k[0] + '</span>'; }).join('');
     $('#lg-bank').innerHTML = lgH;
     var ell = Date.UTC(2022, 11, 23);
@@ -1659,14 +1658,12 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
       if (i < 0 || i >= dates.length) { cross.setAttribute('opacity', 0); ucross.setAttribute('opacity', 0); return; }
       var xx = X(ms(dates[i]));
       [cross, ucross].forEach(function (c) { c.setAttribute('x1', xx); c.setAttribute('x2', xx); c.setAttribute('opacity', 0.35); });
-      readBank(i);
     }
     [s, us].forEach(function (sv) {
       sv.addEventListener('pointermove', function (ev) { onMove(ev, sv); });
       sv.addEventListener('pointerdown', function (ev) { onMove(ev, sv); });
     });
-    $('#ro-bank').textContent = 'Hover or tap the chart to read any day.';
-    [s, us].forEach(function (sv) { sv.addEventListener('pointerleave', function () { cross.setAttribute('opacity', 0); ucross.setAttribute('opacity', 0); $('#ro-bank').textContent = 'Hover or tap the chart to read any day.'; }); });
+    [s, us].forEach(function (sv) { sv.addEventListener('pointerleave', function () { cross.setAttribute('opacity', 0); ucross.setAttribute('opacity', 0); }); });
 
     // title and notes
     var nC = cands.length, endC = cands.map(function (r) { return last(r.bankroll_usd_sizing_view); });
@@ -1679,7 +1676,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     }
     setText('t-bank', title);
     s.setAttribute('aria-label', title);
-    var earnNote = 'The two highest-earning candidates, the other two lines that end highest, are ' + list(EARNINFO.picked.map(function (n) { return sn(n) + ' (Sharpe ' + TOP3[n].s.toFixed(2) + ')'; })) +
+    var earnNote = 'The three highest-earning candidates, the other three lines that end highest, are ' + list(EARNINFO.picked.map(function (n) { return sn(n) + ' (Sharpe ' + TOP3[n].s.toFixed(2) + ')'; })) +
       (EARNINFO.skipped.length ? '; ' + list(EARNINFO.skipped.map(sn)) + ' also ' + (EARNINFO.skipped.length > 1 ? 'end' : 'ends') + ' high but ' + (EARNINFO.skipped.length > 1 ? 'are' : 'is') + ' already among the three steadiest, so I took the next highest. ' : '. ');
     setText('n-bank', earnNote + (V === 'v1'
       ? 'Idea 14 (dashed) was added after the build-year results were seen, so its pass weighs less. Rows that pass but are flagged fragile are in the appendix.'
@@ -1695,15 +1692,6 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
       if ((yy - y0) % every === 0) txt(s, x, y, String(yy), { anchor: 'middle', fs: 10.5, cls: 'm' });
     }
   }
-  function readBank(i) {
-    var g = bankGeo, ro = $('#ro-bank'); if (!g) return;
-    var h = '<span class="rd">' + dlab(g.dates[i]) + '</span>';
-    g.rows.slice().sort(function (a, b) { return b.bankroll_usd_sizing_view[i] - a.bankroll_usd_sizing_view[i]; }).forEach(function (r) {
-      h += '<i style="background:' + rowColor(r) + '"></i>' + sn(r.name) + ' ' + fmt(r.bankroll_usd_sizing_view[i]) + ' (' + g.uw[r.name][i].toFixed(1).replace('-', '−') + '%)';
-    });
-    ro.innerHTML = h;
-  }
-
   // ---------- 3: per-year diverging bars, small multiples ----------
   function drawYears() {
     var box = $('#ch-years'), Y = D.years[V], rows = topRows(V), e = eq(V);

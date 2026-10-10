@@ -713,6 +713,7 @@ def stage_lab():
             "window": [str(W0), str(W1)], "years": LB.YEARS, "costs_supply": {str(k): v for k, v in LB.COST.items()},
             "costs_load": {str(k): v for k, v in LB.LOADCOST.items()}, "cost_sources": fees.SOURCE,
             "stress_usd_per_mwh": LB.STRESS, "pending": pending, "n_shuffles": LB.N_SHUFFLE,
+            "days_without_real_time_prices_not_traded_not_scored": [str(d.date()) for d in F.no_rt_days],
             "note": ("'three_year' in each row is the whole window (the lab's field name); 'years' are calendar years "
                      "of the window" + ("; 2026 runs to 30 September" if W1.year == 2026 else "")
                      + "; sizing_view is recomputed on the window, sizing_view_carried uses the build's scale")}

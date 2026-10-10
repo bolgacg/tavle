@@ -80,6 +80,7 @@ UPSTATE = ["WEST", "GENESE", "CENTRL", "NORTH", "MHK VL", "CAPITL"]     # zones 
 BANK = 500_000
 STRESS = 0.50
 YEARS = [2021, 2022, 2023]
+NO_RT_YEAR = -1             # Frame.day_year and Frame.YEAR of a day without any real-time price: in no scored year
 BAR = {"avg_net_per_year": 50_000, "positive_years": 2, "sharpe_3y": 0.42, "stress_total": 0.0}
 
 CUTS = (0.80, 0.90, 0.95, 0.98)
@@ -161,21 +162,29 @@ class Frame:
         occ = h.groupby(["ddate", "zone", "hour"]).cumcount()
         h["slot"] = np.where(occ > 0, 24, h["hour"])
         h["gap"] = h["rt_lbmp"] - h["da_lbmp"]
-        assert h["gap"].notna().all()
         self.h = h
         self.days = pd.DatetimeIndex(sorted(h["ddate"].unique()))
         assert (np.diff(self.days.values).astype("timedelta64[D]").astype(int) == 1).all(), "days not contiguous"
         assert_build(self.days, "frame days")
         self.ND = len(self.days)
         self.bid = self.days - pd.Timedelta(days=1)
-        self.day_year = self.days.year.to_numpy()
         self.DI = self.days.get_indexer(h["ddate"])
+        # A delivery day with no real-time settlement price at all (held-out addendum, 10 Oct 2026: NYISO's archive
+        # lacks them for 19 days of July 2026) is not traded and not scored: its year is set to NO_RT_YEAR, so no
+        # walk puts a position on it and no year mask counts it. Its inputs stay as they are. Any other missing
+        # real-time price stops the run, as before. With every price present nothing below changes.
+        miss = h["gap"].isna().to_numpy()
+        no_rt = np.bincount(self.DI, weights=miss, minlength=self.ND) == np.bincount(self.DI, minlength=self.ND)
+        assert not (miss & ~no_rt[self.DI]).any(), "a day with some real-time prices missing"
+        self.no_rt_days = self.days[no_rt]
+        self.day_year = np.where(no_rt, NO_RT_YEAR, self.days.year.to_numpy())
         self.ZI = pd.Index(ZONES).get_indexer(h["zone"])
         self.SL = h["slot"].to_numpy()
-        self.YEAR = h["ddate"].dt.year.to_numpy()
-        self.GAP = h["gap"].to_numpy(float)
-        self.SUPC = pd.Series(self.YEAR).map(COST).to_numpy(float)
-        self.LOADC = pd.Series(self.YEAR).map(LOADCOST).to_numpy(float)
+        year = h["ddate"].dt.year.to_numpy()
+        self.YEAR = np.where(miss, NO_RT_YEAR, year)
+        self.GAP = np.where(miss, 0.0, h["gap"].to_numpy(float))
+        self.SUPC = pd.Series(year).map(COST).to_numpy(float)
+        self.LOADC = pd.Series(year).map(LOADCOST).to_numpy(float)
         self.NH = len(h)
         self.zone = h["zone"].to_numpy()
 
@@ -340,7 +349,7 @@ def shift_inputs(inp):
 def perm_within_year(F, seed):
     rng = np.random.default_rng(seed)
     perm = np.arange(F.ND)
-    for y in np.unique(F.day_year):
+    for y in np.unique(F.day_year[F.day_year != NO_RT_YEAR]):
         idx = np.where(F.day_year == y)[0]
         perm[idx] = rng.permutation(idx)
     return perm
@@ -435,11 +444,14 @@ def baseline_cube(F: Frame, px, shift_h=0.0, gap_override=None) -> np.ndarray:
     for (z, hr), g in d.groupby(["zone", "hour"], sort=False):
         g = g.sort_values("dh", kind="stable")
         dh, pub, gap = g["dh"].to_numpy(), g["pub"].to_numpy(), g["gap"].to_numpy(float)
+        ok = ~np.isnan(gap)                        # a row without a real-time price is skipped (panel.py's mean)
+        gap = np.where(ok, gap, 0.0)
         cs = np.concatenate([[0.0], np.cumsum(gap)])
+        cn = np.concatenate([[0.0], np.cumsum(ok.astype(float))])
         lo = np.searchsorted(dh, T - Y365, "left")
         hi = np.searchsorted(dh, T, "left")
         S = cs[hi] - cs[lo]
-        N = (hi - lo).astype(float)
+        N = cn[hi] - cn[lo]
         # rows inside the window but not yet published at T: T in (dh, min(pub, dh + 365 d)]
         a = np.searchsorted(T, dh, "right")
         b = np.minimum(np.searchsorted(T, pub, "left"), np.searchsorted(T, dh + Y365, "right"))
@@ -447,7 +459,7 @@ def baseline_cube(F: Frame, px, shift_h=0.0, gap_override=None) -> np.ndarray:
         dS = np.zeros(F.ND + 1)
         dN = np.zeros(F.ND + 1)
         np.add.at(dS, a[k], gap[k]); np.add.at(dS, b[k], -gap[k])
-        np.add.at(dN, a[k], 1.0); np.add.at(dN, b[k], -1.0)
+        np.add.at(dN, a[k], ok[k] * 1.0); np.add.at(dN, b[k], -(ok[k] * 1.0))
         S -= np.cumsum(dS)[:-1]
         N -= np.cumsum(dN)[:-1]
         with np.errstate(invalid="ignore", divide="ignore"):
@@ -821,7 +833,7 @@ class RandomDays:
         per = F.days.to_period("M")
         self.months = []
         for mth in sorted(set(per[np.isin(F.day_year, YEARS)])):
-            idx = np.where(per == mth)[0]
+            idx = np.where((per == mth) & (F.day_year == mth.year))[0]
             k = len(idx)
             perms = np.argsort(rng.random((draws, k)), axis=1)
             self.months.append((mth, idx, perms))
@@ -1423,12 +1435,13 @@ def hist_cube(F):
     December of Y-1 (public by 05:00 on 31 December, the first bid of Y). 2020 has no earlier data: NaN."""
     c = np.full((F.ND, len(ZONES), 25), np.nan)
     h = F.h
-    for Y in sorted(set(F.day_year)):
-        hist = h[h["ddate"] <= pd.Timestamp(f"{Y - 1}-12-30")]
+    year = h["ddate"].dt.year.to_numpy()                 # calendar years (a day without real-time prices included)
+    for Y in sorted(set(year)):
+        hist = h[(h["ddate"] <= pd.Timestamp(f"{Y - 1}-12-30")) & h["gap"].notna()]
         if not len(hist):
             continue
         rate = (hist["gap"] >= HIST_S).groupby([hist["zone"], hist["hour"]]).mean()
-        sel = np.where(F.YEAR == Y)[0]
+        sel = np.where(year == Y)[0]
         key = pd.MultiIndex.from_arrays([F.zone[sel], h["hour"].to_numpy()[sel]])
         c[F.DI[sel], F.ZI[sel], F.SL[sel]] = rate.reindex(key).to_numpy(float)
     return c

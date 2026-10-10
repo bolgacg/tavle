@@ -1,1 +1,2 @@
-a581c3b3eb444e7a1caca39d3f79fbe8be8e3aeb
+f0636cc3cc36d67dd76f4261db0723b82ac08194
+Supersedes a581c3b3eb444e7a1caca39d3f79fbe8be8e3aeb (10 Oct 2026) only by the rebuild of July 2026 real-time prices from NYISO's 5-minute prices: research/us_v2/pipeline/rt_from_5min.py (new), research/us/pipeline/build_tables.py and research/us_v2/pipeline/build_tables_v2.py (read a rebuilt day only where the official zip lacks it), research/us/model/orchestrate_heldout.sh (the input check counts the days inside each zip). See the 10 Oct 2026 addendum in research/us/OBJECTIVES.md.

@@ -49,9 +49,8 @@ def read_price_month(series: str, ym: str) -> pd.DataFrame:
     p = C.zip_path(ym, series)
     if not p.exists():
         return pd.DataFrame()
-    z = zipfile.ZipFile(p)
     frames, written = [], {}
-    for info in sorted(z.infolist(), key=lambda i: i.filename):
+    for z, info in B.price_entries(p, series):     # official daily files, plus rebuilt days the zip lacks
         d = dt.datetime.strptime(info.filename[:8], "%Y%m%d").date()
         df = pd.read_csv(z.open(info), header=0, names=B.PRICE_COLS, usecols=range(6),
                          dtype={"name": str, "ptid": "int64"})

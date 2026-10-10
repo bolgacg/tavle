@@ -26,7 +26,7 @@ import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-from common import (DA_POST_BOUND, EXTERNAL, GFS_LEAD_HOURS, GFS_RAW, ISOLF_COLS, PARQUET, RT_LAG,
+from common import (DA_POST_BOUND, EXTERNAL, GFS_LEAD_HOURS, GFS_RAW, ISOLF_COLS, PARQUET, RAW, RT_LAG,
                     RT_REVISION_GRACE, TZ, ZONES, entries, gfs_published_at, later, local_at,
                     local_midnight, localize_wall, localize_written, month_keys, zip_path)
 from points import POINTS
@@ -40,15 +40,34 @@ def log(msg: str):
 
 
 # ----------------------------------------------------------------------------------- prices
+REBUILT = RAW / "rt_rebuilt"        # hourly real-time days NYISO's hourly archive lacks (us_v2/pipeline/rt_from_5min.py)
+
+
+def price_entries(p, series: str) -> list:
+    """(zip, entry) for every daily file of a monthly zip, sorted by name. A day the official zip lacks is taken
+    from REBUILT/<same zip name> when that file exists (rebuilt from NYISO's 5-minute prices, added 10 Oct 2026)
+    and listed in the build log; without such a file this is the official zip alone, as before."""
+    import zipfile
+    z = zipfile.ZipFile(p)
+    out = [(z, i) for i in z.infolist()]
+    r = REBUILT / p.name
+    if r.exists():
+        have = {i.filename[:8] for i in z.infolist()}
+        rz = zipfile.ZipFile(r)
+        add = [(rz, i) for i in rz.infolist() if i.filename[:8] not in have]
+        LOG.setdefault("rt_rebuilt_from_5min", {}).setdefault(series, []).extend(i.filename[:8] for _, i in add)
+        out += add
+    return sorted(out, key=lambda e: e[1].filename)
+
+
 def read_price_month(series: str, ym: str) -> pd.DataFrame:
     """All rows of one monthly zip, with delivery_hour localized and the file's write time."""
     import zipfile
     p = zip_path(ym, series)
     if not p.exists():
         return pd.DataFrame()
-    z = zipfile.ZipFile(p)
     frames, written = [], {}
-    for info in sorted(z.infolist(), key=lambda i: i.filename):
+    for z, info in price_entries(p, series):
         d = dt.datetime.strptime(info.filename[:8], "%Y%m%d").date()
         df = pd.read_csv(z.open(info), header=0, names=PRICE_COLS,
                          dtype={"name": str, "ptid": "int64"})

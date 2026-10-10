@@ -5,7 +5,8 @@
 #   setsid nohup bash research/us/model/orchestrate_heldout.sh <run dir> > <run dir>/orchestrate.log 2>&1 < /dev/null &
 #
 # Stages, in order; each leaves <run dir>/markers/<stage>.done and is skipped on a restart:
-#   inputs     raw inputs for 2024-01 to 2026-09 present, counted by FILE NAME only (no value is opened)
+#   inputs     raw inputs for 2024-01 to 2026-09 present, counted by FILE NAME, and the days inside each zip by
+#              entry name (no value is opened)
 #   dry_data   v2 tables and features rebuilt for the dry-run window (2023); must equal the build tree, tests pass
 #   dry_v2     every v2 row's 2023 positions recomputed; every row must equal the build exactly
 #   dry_v1     every v1 row's 2023 positions, predictions and daily net recomputed; must equal the build exactly
@@ -48,6 +49,29 @@ if ! is_done inputs; then
     for y in 2024 2025; do n=$(ls "$HOME/nyiso-us/raw/${y}"*"${s}_csv.zip" 2>/dev/null | wc -l); [ "$n" = 12 ] || miss="$miss $s/$y:$n"; done
     n=$(ls "$HOME/nyiso-us/raw/2026"0[1-9]*"${s}_csv.zip" 2>/dev/null | wc -l); [ "$n" = 9 ] || miss="$miss $s/2026:$n"
   done
+  # 10 Oct 2026: also the days INSIDE each monthly zip (names only). A real-time zone day the hourly archive lacks
+  # counts when it was rebuilt from NYISO's 5-minute prices (raw/rt_rebuilt, us_v2/pipeline/rt_from_5min.py). An
+  # outages snapshot may be missing (features_outages.py uses the newest earlier one); missing ones are listed.
+  days=$("$PY" -I - "$HOME/nyiso-us/raw" <<'PYEOF'
+import calendar, sys, zipfile
+from pathlib import Path
+raw, bad, snap = Path(sys.argv[1]), [], []
+for s in ("damlbmp_zone", "rtlbmp_zone", "damlbmp_gen", "rtlbmp_gen", "isolf", "outSched"):
+    for y in (2024, 2025, 2026):
+        for m in range(1, 13 if y < 2026 else 10):
+            ym = f"{y}{m:02d}01"
+            want = {f"{y}{m:02d}{d:02d}" for d in range(1, calendar.monthrange(y, m)[1] + 1)}
+            have = set()
+            for p in (raw / f"{ym}{s}_csv.zip", raw / "rt_rebuilt" / f"{ym}{s}_csv.zip"):
+                if p.exists():
+                    have |= {i.filename[:8] for i in zipfile.ZipFile(p).infolist()}
+            lack = sorted(want - have)
+            (snap if s == "outSched" else bad).extend(f"{s}/{d}" for d in lack)
+print("MISSING " + " ".join(bad) if bad else "OK" + (" outages snapshots missing: " + " ".join(snap) if snap else ""))
+PYEOF
+)
+  st "inputs, days inside the zips: $days"
+  case "$days" in OK*) ;; *) miss="$miss $days";; esac
   for y in 2024 2025 2026; do
     n=$(find "$HOME/nyiso-us/raw/gefs_live/$y" -type f 2>/dev/null | wc -l)
     want=$([ $y = 2024 ] && echo 366 || ([ $y = 2025 ] && echo 365 || echo 273))

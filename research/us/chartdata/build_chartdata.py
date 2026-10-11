@@ -11,11 +11,31 @@ Reads (never writes) the scored results on gene and writes compact JSON files fo
     placebo.json        real total against one day late, permuted and random days, every row (top rows flagged)
     seeds.json          the 20-seed spread per deep row (robustness checks)
     events.json         weather events and the dated addenda (date, label, commit) for the timeline
+    heldout.json        (--only heldout) the held-out results the page leads with: daily net per row, the event split,
+                        excess over the no-model rules with intervals, the registered verdicts, the zone-pair story,
+                        the correlations and the two books, the S&P 500 and deposit baselines
 
 HOLDOUT. By default every daily table is filtered AT READ (pyarrow filter) to dates before 2024-01-01 and the
-result is asserted; per-year fields from the summary files are dropped for 2024 onward. The held-out run has not
-happened. When it has, rerun with --include-heldout (and point --v1-daily/--v2-daily etc. at the files that hold
-it); the page data then runs to --end.
+result is asserted; per-year fields from the summary files are dropped for 2024 onward. The single held-out run
+finished on 11 Oct 2026. --include-heldout reads up to --end; point --v1-daily/--v2-daily etc. at the run's files.
+
+Fixed 11 Oct 2026 (page code, not frozen model code): the --include-heldout data step crashed with KeyError
+'V15a_V4_limit', because the run's daily table keeps the three version 2 rows that read only the 2019 reforecast and
+traded nothing, while its results file leaves them out. Daily columns without a results row are now reported as not
+run instead of crashing, and V12_alloc, dropped from the held-out run on 9 Oct but run by mistake, is reported as not
+run in held-out mode. The version 2 summary fields the page reads (total_1mw, total_wo_best5, sharpe_results,
+years_positive) are now written by this script as well.
+
+The held-out step (--only heldout) reads the run's outputs and the read-only audit of them from --heldout-dir:
+    from_gene/lab_daily_heldout.parquet, from_gene/v2_daily_heldout.parquet   daily net per row, 1 MW, the window
+    audit_scratch/analysis.json                     event split, excess with intervals, placebos, per row
+    ho_v1/side/lab_results_heldout.json, ho_v2/results/v2/v2_results_heldout.json   the scorers' held-out results
+    ho_reh/heldout_*.json                           the registered verdict run (ideas A to D)
+    from_gene/b_books.csv, from_gene/b_corr.txt, from_gene/a_2025.txt   the books, correlations and the 2025 analysis
+and from the repo: research/us*/HELDOUT-LIST.md (the build-year numbers each row carried into the run) and
+research/us/chartdata/sources/ (FRED SP500 and Statistics Denmark DNRUIPI downloads for the baselines).
+
+    laptop: python3 build_chartdata.py --only heldout --repo ~/projects/tavle --out ~/projects/tavle/docs/us/data
 
     gene:   cd ~/nyiso-us/chartdata && ../.venv/bin/python -I build_chartdata.py --out out
     laptop: python3 build_chartdata.py --only events --repo ~/projects/tavle --out ~/projects/tavle/docs/us/data
@@ -29,6 +49,7 @@ import argparse
 import datetime as dt
 import json
 import math
+import re
 import subprocess
 import sys
 import time
@@ -52,6 +73,10 @@ AUDIT_NOTES = {
     "V10_C_deep_pretrain": "stage-1 audit: shares C's pair machinery, read as V1_C_deep (not separately audited)",
 }
 REFERENCE_ROWS = {"always_supply", "baseline_usual_side", "V1_always_supply", "V1_baseline"}
+# Dropped from the held-out run by the addendum of 9 Oct 2026 (it could not reproduce its own 2023 build); the run
+# scored it anyway, so in held-out mode it is reported as not run.
+NOT_RUN_HELDOUT = {"V12_alloc": "dropped on 9 Oct 2026 (6199e84): its build-year run could not be reproduced; "
+                                "the held-out run scored it by mistake and it is excluded"}
 
 WEATHER_EVENTS = [
     {"id": "polar_vortex_2014", "start": "2014-01-06", "end": "2014-01-08",
@@ -119,6 +144,12 @@ def row_meta(name: str, r: dict, version: str) -> dict:
          "sizing_return_pct": sv.get("return_on_500k_at_that_scale_pct")}
     if name in AUDIT_NOTES:
         m["audit_note"] = AUDIT_NOTES[name]
+    if version == "v2":     # the fields the page's version 2 ranking reads
+        yrs = {k: v for k, v in (r.get("years") or {}).items()}
+        m.update({"years_positive": sum(1 for v in yrs.values() if v > 0),
+                  "years_traded": sum(1 for v in yrs.values() if v != 0),
+                  "total_1mw": r.get("total"), "total_wo_best5": r.get("total_without_best_5_days"),
+                  "sharpe_results": r.get("sharpe"), "pass_1mw_bar": bool(r.get("PASS"))})
     return m
 
 
@@ -301,6 +332,331 @@ def event_check(daily_sets):
     return out
 
 
+# ------------------------------------------------------------------ the held-out step
+HO_EVENTS = [
+    {"id": "storm_2026", "start": "2026-01-24", "end": "2026-02-02",
+     "label": "Winter storm, 24 January to 2 February 2026"},
+    {"id": "heat_2026", "start": "2026-06-28", "end": "2026-07-05",
+     "label": "Heat wave, 28 June to 5 July 2026"},
+]
+# The audit's verdict words, grouped into the families the page shows (heldout_results/AUDIT.md, section 6)
+FAMILY_OF_VERDICT = {"event luck": "sell", "pair stance": "pairs", "mostly event luck": "mix", "comparison": "plain",
+                     "broken": "not_run"}
+PLAIN_ROWS = {"v1:always_supply": "always supply", "v1:baseline_usual_side": "habit rule",
+              "v2:C_static_pairs": "zone pairs, no model"}
+MIX_ROWS = {"v1:idea13_portfolio", "v1:idea14_learned_allocator_candidates"}
+
+
+def sha(path: Path) -> str:
+    import hashlib
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()[:16]
+
+
+def md_table_rows(path: Path):
+    """Rows of every markdown table in a file, as lists of stripped cells (header and rule lines skipped)."""
+    out = []
+    for line in Path(path).read_text().splitlines():
+        if not line.startswith("|") or set(line.replace("|", "").strip()) <= set("-: "):
+            continue
+        out.append([c.strip() for c in line.strip().strip("|").split("|")])
+    return out
+
+
+def pre_values(repo: Path) -> dict:
+    """Build-year numbers each row carried into the held-out run, from the two HELDOUT-LIST.md files."""
+    num = lambda x: float(x.replace(",", "").replace("%", "").replace("−", "-"))
+    out = {}
+    for ver, f in (("v1", "research/us/HELDOUT-LIST.md"), ("v2", "research/us_v2/HELDOUT-LIST.md")):
+        section = None
+        for line in (repo / f).read_text().splitlines():
+            if line.startswith("## "):
+                section = "candidate" if line.startswith("## Candidates") else "comparison"
+                continue
+            if not line.startswith("|") or set(line.replace("|", "").strip()) <= set("-: "):
+                continue
+            c = [x.strip() for x in line.strip().strip("|").split("|")]
+            if c[0] in ("Strategy", "Row"):
+                continue
+            name = c[0].replace(" (registered comparison)", "").replace(" (second build)", " [lead]")
+            if ver == "v1":    # Strategy | 2021 | 2022 | 2023 | net | Sharpe | MW | return | passes | fragile
+                yrs = [num(x) for x in c[1:4]]
+                out[f"v1:{name}"] = {"sharpe": num(c[5]), "scale_mw": num(c[6]), "ret_pct": num(c[7]),
+                                     "years_pos": sum(1 for y in yrs if y > 0), "years_n": 3, "period": "2021 to 2023",
+                                     "list": section}
+            else:              # Row | net | avg | 2023 | positive years | Sharpe | MW | return | passes | fragile
+                out[f"v2:{name}"] = {"sharpe": num(c[5]), "scale_mw": num(c[6]), "ret_pct": num(c[7]),
+                                     "years_pos": int(num(c[4])), "years_n": 11, "period": "2013 to 2023",
+                                     "list": section}
+    return out
+
+
+def parse_matrix_blocks(text: str, title: str) -> list[dict]:
+    """Each whitespace table under a line equal to `title` in b_corr.txt, in order: {row: {col: value}}."""
+    lines, out = text.splitlines(), []
+    for i, l in enumerate(lines):
+        if l.strip() != title:
+            continue
+        cols = lines[i + 1].split()
+        m = {}
+        for l2 in lines[i + 2:]:
+            parts = l2.split()
+            if len(parts) != len(cols) + 1:
+                break
+            m[parts[0]] = {c: float(v) for c, v in zip(cols, parts[1:])}
+        out.append(m)
+    return out
+
+
+def parse_books(path: Path) -> list[dict]:
+    import csv
+    rows = []
+    for r in csv.DictReader(open(path)):
+        f = lambda k: float(r[k])
+        rows.append({"book": "mix" if r["book"].startswith("mix") else "pairs", "limit_usd": int(f("limit")),
+                     "size": "cautious" if r["size"].startswith("cautious") else "full",
+                     "pairs_mw": f("pairs MW"), "wx_mw": f("V15c MW"),
+                     "build": {"ret_pct": f("build ret/yr %"), "sharpe": f("build Sharpe"),
+                               "worst_dd": int(f("build worst DD")), "worst_day": int(f("build worst day")),
+                               "worst_day_date": r["build worst day date"]},
+                     "ho": {"ret_pct": f("held-out ret/yr %"), "sharpe": f("held-out Sharpe"),
+                            "worst_dd": int(f("held-out worst DD")), "worst_day": int(f("held-out worst day")),
+                            "worst_day_date": r["held-out worst day date"]},
+                     "ho_ex": {"ret_pct": f("held-out w/o events ret/yr %"), "sharpe": f("held-out w/o events Sharpe"),
+                               "worst_dd": int(f("held-out w/o events worst DD"))},
+                     "limit_held": r["held-out DD within limit"] == "True",
+                     "years_ret_pct": {"2024": f("2024 ret %"), "2025": f("2025 ret %"), "2026": f("2026 ret %")}})
+    return rows
+
+
+def baselines_heldout(src: Path) -> dict:
+    """S&P 500 (FRED SP500, price only) and Danish household deposits (DNRUIPI) over the held-out window."""
+    import csv
+    import statistics as st
+    px = [(d, float(v)) for d, v in csv.reader(open(src / "sp500_fred.csv")) if d[:2] == "20" and v not in ("", ".")]
+    start = [v for d, v in px if d < "2024-01-01"][-1]                 # close before the window
+    win = [(d, v) for d, v in px if "2024-01-01" <= d <= "2026-09-30"]
+    end_d, end = win[-1]
+    years = (dt.date(2026, 9, 30) - dt.date(2023, 12, 31)).days / 365.25
+    ann = (end / start) ** (1 / years) - 1
+    rets = [b / a - 1 for (_, a), (_, b) in zip([("", start)] + win[:-1], win)]
+    bill = {d: float(v) for d, v in csv.reader(open(src / "dtb3_fred.csv")) if d[:2] == "20" and v not in ("", ".")}
+    last_bill, ex = None, []
+    for (d, _), r in zip(win, rets):          # excess over the 3-month Treasury bill, the day's rate over 252 days
+        last_bill = bill.get(d, last_bill)
+        ex.append(r - last_bill / 100 / 252)
+    sharpe = st.mean(ex) / st.stdev(ex) * math.sqrt(252)
+    peak, mdd = start, 0.0
+    for _, v in win:
+        peak = max(peak, v)
+        mdd = min(mdd, v / peak - 1)
+    dep = {}
+    for row in csv.reader(open(src / "deposit_dnruipi.csv", encoding="utf-8-sig"), delimiter=";"):
+        if len(row) == 7 and row[5][:4].isdigit():
+            dep[row[5]] = float(row[6].replace(",", "."))
+    months = [m for m in sorted(dep) if "2024M01" <= m <= "2026M09"]
+    dep_avg = sum(dep[m] for m in months) / len(months)
+    return {"window": "2024-01-01 to 2026-09-30", "basis_usd": BANK,
+            "sp500": {"source": "FRED series SP500 (S&P Dow Jones Indices), daily close, price only",
+                      "url": "https://fred.stlouisfed.org/series/SP500", "file": "research/us/chartdata/sources/sp500_fred.csv",
+                      "first_close": start, "last_close": end, "last_close_date": end_d,
+                      "return_a_year_pct_price_only": round(100 * ann, 1),
+                      "dividends_note": "dividends add about 1.3 percent a year (research/us/results/cost_capital_audit.md)",
+                      "usd_a_year_on_basis": int(round(BANK * ann, -2)),
+                      "sharpe_over_bills_price_only": round(sharpe, 2),
+                      "sharpe_note": "daily price returns minus the 3-month Treasury bill rate (FRED DTB3, "
+                                     "research/us/chartdata/sources/dtb3_fred.csv), times the square root of 252",
+                      "worst_drawdown_pct": round(100 * mdd, 1)},
+            "deposit": {"source": "Statistics Denmark table DNRUIPI: households' bank deposits, all currencies, all "
+                                  "maturities, effective rate, monthly", "url": "https://www.statbank.dk/DNRUIPI",
+                        "file": "research/us/chartdata/sources/deposit_dnruipi.csv",
+                        "months": f"{months[0]} to {months[-1]}", "n_months": len(months),
+                        "average_pct": round(dep_avg, 2), "usd_a_year_on_basis": int(round(BANK * dep_avg / 100, -2)),
+                        "note": "a Danish krone rate applied to a dollar sum, as a stand-in for idle cash at a bank"}}
+
+
+RUN_NAMES = {"v1_daily": "run/ho_v1/side/lab_daily_heldout.parquet",
+             "v2_daily": "run/ho_v2/results/v2/v2_daily_heldout.parquet",
+             "audit": "audit of the run, analysis.json", "v1_results": "run/ho_v1/side/lab_results_heldout.json",
+             "v2_results": "run/ho_v2/results/v2/v2_results_heldout.json",
+             "registered": "run/ho_reh/heldout_202401_202609_f0636cc3cc36_20261010T1138.json",
+             "books": "analysis of 11 Oct 2026, b_books.csv", "corr": "analysis of 11 Oct 2026, b_corr.txt",
+             "pairs2025": "analysis of 11 Oct 2026, a_2025.txt"}
+PUBLISHED = {"audit": "docs/us/results/audit_analysis.json", "registered": "docs/us/results/registered_verdicts_heldout.json",
+             "books": "docs/us/results/b_books.csv", "corr": "docs/us/results/b_corr.txt",
+             "pairs2025": "docs/us/results/a_2025.txt", "v1_results": "docs/us/results/lab_results_heldout.md (table)",
+             "v2_results": "docs/us/results/v2_results_heldout.md (table)"}
+
+
+def build_heldout(a, repo: Path, out_dir: Path) -> dict:
+    import pandas as pd
+    hd = Path(a.heldout_dir).expanduser()
+    f = {"v1_daily": hd / "from_gene/lab_daily_heldout.parquet", "v2_daily": hd / "from_gene/v2_daily_heldout.parquet",
+         "audit": hd / "audit_scratch/analysis.json", "v1_results": hd / "ho_v1/side/lab_results_heldout.json",
+         "v2_results": hd / "ho_v2/results/v2/v2_results_heldout.json",
+         "registered": sorted((hd / "ho_reh").glob("heldout_*.json"))[-1],
+         "books": hd / "from_gene/b_books.csv", "corr": hd / "from_gene/b_corr.txt", "pairs2025": hd / "from_gene/a_2025.txt"}
+    aud = json.loads(f["audit"].read_text())
+    r1 = json.loads(f["v1_results"].read_text())["strategies"]
+    r2 = {r["name"]: r for r in json.loads(f["v2_results"].read_text())["rows"]}
+    reh = json.loads(f["registered"].read_text())
+    pre = pre_values(repo)
+
+    # daily net per row, 1 MW, the window only
+    d1 = pd.read_parquet(f["v1_daily"]); d2 = pd.read_parquet(f["v2_daily"])
+    for d in (d1, d2):
+        d.index = pd.DatetimeIndex(d.index).tz_localize(None).normalize()
+        assert str(d.index.min().date()) == "2024-01-01" and str(d.index.max().date()) == "2026-09-30", d.index
+    assert (d1.index == d2.index).all()
+    dates = [str(x.date()) for x in d1.index]
+
+    # verdict words from the audit report's verdict table
+    verdict = {}
+    for c in md_table_rows(hd / "AUDIT.md"):
+        if len(c) == 6 and ":" in c[0] and c[0] != "row":
+            verdict[c[0]] = c[5]
+    ev_mask = pd.Series(False, index=d1.index)
+    for e in HO_EVENTS:
+        ev_mask |= (d1.index >= e["start"]) & (d1.index <= e["end"])
+    n_ev = int(ev_mask.sum())
+
+    rows = []
+    for key, x in aud.items():
+        ver, name = key.split(":", 1)
+        v = verdict.get(key, "")
+        fam = "plain" if key in PLAIN_ROWS else "mix" if key in MIX_ROWS else \
+            next((fam for w, fam in FAMILY_OF_VERDICT.items() if v.startswith(w)), None)
+        assert fam, (key, v)
+        daily = (d1 if ver == "v1" else d2)[name]
+        assert abs(daily.sum() - x["total_1MW"]) < 1, (key, daily.sum(), x["total_1MW"])     # same numbers as the audit
+        res = r1.get(name) if ver == "v1" else r2.get(name)
+        ho_sharpe = (res["three_year"]["sharpe"] if ver == "v1" else res["sharpe"]) if res else x.get("sharpe")
+        yrs = x["years"]
+        passes = (x["ret_build_scale"] >= 10 and sum(1 for y in yrs.values() if y["net"] > 0) >= 2
+                  and (x.get("sharpe") or 0) > 0.42 and (x.get("stress") or 0) > 0)
+        row = {"key": key, "name": name, "version": ver, "family": fam, "verdict": v,
+               "role": "not_run" if fam == "not_run" else "plain" if fam == "plain" else "candidate",
+               "scale_mw": x["scale"], "pre": pre.get(key),
+               "ho": {"net_1mw": x["total_1MW"], "storm": x["storm"], "heat": x["heat"],
+                      "event_share_pct": x["event_share_pct"], "net_1mw_ex": x["total_ex_events"],
+                      "ret_pct": x["ret_build_scale"], "ret_pct_ex": x["ret_build_scale_ex_events"],
+                      "sharpe": ho_sharpe, "sharpe_ex": x.get("sharpe_ex_events"),
+                      "years": {k: y["net"] for k, y in yrs.items()},
+                      "years_ret_pct": {k: y["ret"] for k, y in yrs.items()},
+                      "stress_050": x.get("stress"), "pass_sizing_view": bool(passes)},
+               "excess_vs_supply": x.get("excess_vs_always_supply"),
+               "excess_vs_static_pairs": x.get("excess_vs_C_static_pairs"),
+               "excess_vs_habit": x.get("excess_vs_baseline_usual_side"),
+               "hit_rate": {k: (x.get("hits") or {}).get(k) for k in ("event_days", "non_event", "build_2021_2023")},
+               "one_day_late": (x.get("scorer_placebo") or {}).get("one_day_late")}
+        rows.append(row)
+    # The audit covers the candidates that cleared the bar on the window; the four that did not are computed here
+    # from the same daily tables, the same way (return a year at build scale over 1,004 days, 986 without events).
+    FAILED = {"v1:C_gbm": ("pairs", "negative at the 0.50 USD per MWh cost stress"),
+              "v2:V14a_window_ens": ("pairs", "under 10 percent a year"),
+              "v2:V14b_quantile_size": ("pairs", "under 10 percent a year"),
+              "v2:V6_LI": ("sell", "under 10 percent a year")}
+    listed = {k for k, v in pre.items() if v["list"] == "candidate"} - {"v2:V12_alloc"}
+    assert listed - set(aud) == set(FAILED), sorted(listed - set(aud))
+    ny = len(d1) / 365.25
+    for key, (fam, why) in FAILED.items():
+        ver, name = key.split(":", 1)
+        daily = (d1 if ver == "v1" else d2)[name]
+        res = r1[name] if ver == "v1" else r2[name]
+        sc = pre[key]["scale_mw"]
+        tot, ex = float(daily.sum()), float(daily[~ev_mask].sum())
+        stress = (res.get("stress_0.50_total") if ver == "v2" else None)
+        rows.append({"key": key, "name": name, "version": ver, "family": fam, "verdict": "fails the bar: " + why,
+                     "role": "candidate", "scale_mw": sc, "pre": pre[key],
+                     "ho": {"net_1mw": int(round(tot)), "net_1mw_ex": int(round(ex)),
+                            "storm": int(round(float(daily[(d1.index >= "2026-01-24") & (d1.index <= "2026-02-02")].sum()))),
+                            "heat": int(round(float(daily[(d1.index >= "2026-06-28") & (d1.index <= "2026-07-05")].sum()))),
+                            "event_share_pct": round(100 * (tot - ex) / tot, 1) if tot else None,
+                            "ret_pct": round(100 * tot * sc / BANK / ny, 1),
+                            "ret_pct_ex": round(100 * ex * sc / BANK / ((len(d1) - n_ev) / 365.25), 1),
+                            "sharpe": res["three_year"]["sharpe"] if ver == "v1" else res["sharpe"],
+                            "years": {k: int(round(float(v))) for k, v in daily.groupby(daily.index.year).sum().items()},
+                            "stress_050": stress, "pass_sizing_view": False},
+                     "excess_vs_supply": None, "excess_vs_static_pairs": None, "excess_vs_habit": None,
+                     "hit_rate": None, "one_day_late": None})
+    cands = [r for r in rows if r["role"] == "candidate"]
+    n_pass = sum(1 for r in cands if r["ho"]["pass_sizing_view"])
+    assert (len(cands), n_pass) == (32, 28), (len(cands), n_pass)    # AUDIT.md: 28 of the 32 tested candidates
+
+    # every scored row's held-out total at 1 MW, for the appendix tables
+    totals = {"v1": {n: int(round(float(d1[n].sum()))) for n in d1.columns},
+              "v2": {n: int(round(float(d2[n].sum()))) for n in d2.columns}}
+    hero = sorted({r["name"] for r in rows if r["family"] in ("sell", "pairs", "plain")} - {"V3_tail_gbm"})
+    daily = {n: ints((d1 if n in d1.columns and n not in d2.columns else d2)[n]) for n in hero}
+
+    # correlations of daily net, 1 MW, three periods (b_corr.txt)
+    txt = f["corr"].read_text()
+    pear = parse_matrix_blocks(txt, "Pearson (pairwise complete)")
+    assert len(pear) == 3
+    corr = {"names": {"pairs": "zone pairs, no model", "V15c": "weather and border model (V15c)",
+                      "V16": "weather model (V16)", "always_supply": "always supply", "idea13": "portfolio (idea 13)",
+                      "V1_C_deep": "zone pairs, deep model (V1)"},
+            "periods": {"build": "2013 to 2023 (version 1 rows 2021 to 2023)", "heldout": "held-out window",
+                        "heldout_ex": "held-out window without the 18 event days"},
+            "pearson": {"build": pear[0], "heldout": pear[1], "heldout_ex": pear[2]}}
+    ysec = txt.split("yearly sums")[1].split("###")[0].splitlines()
+    cols = ysec[1].split()
+    yearly = {int(l.split()[0]): dict(zip(cols, [float(v) for v in l.split()[1:]])) for l in ysec[2:] if l.strip()}
+
+    # the 2025 pair story (a_2025.txt)
+    t25 = f["pairs2025"].read_text()
+    spread = re.search(r"by year: (\[.*\])", t25).group(1)
+    spread = [tuple(float(v) for v in m) for m in re.findall(r"\((\d+), (-?[\d.]+), (-?[\d.]+)\)", spread)]
+    m25 = re.search(r"2025 CAPITL minus NYC.*?mean DA cong CAPITL ([\d.]+) NYC ([\d.]+); RT cong CAPITL ([\d.]+) NYC ([\d.]+)", t25)
+    sp = t25.split("## C_static_pairs")[1]
+    comp = re.search(r"\n2025\s+(-?\d+\.?\d*)\s+(-?\d+\.?\d*)\s+(-?\d+\.?\d*)\s+(-?\d+\.?\d*)\s+(-?\d+\.?\d*)", sp).groups()
+    avg = re.search(r"2013-23 avg\s+(-?\d+\.?\d*)", sp).group(1)
+    blk = re.search(r"\n16-21\s+(-?\d+\.?\d*)\s+(-?\d+\.?\d*)\s+(-?\d+\.?\d*)", sp).groups()
+    mon = {int(m.group(1)): float(m.group(2)) for m in re.finditer(r"\n\s*(\d{1,2})\s+(-?\d+\.?\d*)\s+-?\d", sp.split("by month")[1].split("by hour")[0])}
+    zone = {}
+    for l in sp.split("by zone")[1].split("by month")[0].splitlines()[2:]:
+        p = l.split()
+        if len(p) == 10:
+            zone[p[0]] = {"meanMW_2025": float(p[9]), "net_2025": float(p[7]), "meanMW_avg": float(p[3])}
+    years_p = sorted(yearly)
+    pairs = {"years": years_p, "net_1mw": [int(yearly[y]["pairs"]) for y in years_p],
+             "nyc_minus_capitl_gap": [round(-c, 2) for y, c, _ in spread],
+             "gap_years": [int(y) for y, _, _ in spread],
+             "y2025": {"net": float(comp[0]), "energy": float(comp[1]), "loss": float(comp[2]),
+                       "congestion": float(comp[3]), "fees": float(comp[4]), "avg_2013_2023_net": float(avg),
+                       "da_cong_capitl": float(m25.group(1)), "da_cong_nyc": float(m25.group(2)),
+                       "rt_cong_capitl": float(m25.group(3)), "rt_cong_nyc": float(m25.group(4)),
+                       "hours_16_21": float(blk[0]), "hours_16_21_avg": float(blk[2]),
+                       "jan_feb": mon[1] + mon[2], "july": mon[7], "zones": zone},
+             "sharpe_pre": pre["v2:C_static_pairs"]["sharpe"],
+             "sharpe_ho": r2["C_static_pairs"]["sharpe"]}
+    assert all(v > 0 for v in pairs["net_1mw"]) and pairs["years"] == list(range(2013, 2027))
+
+    ideas = {k: {"verdict": v["verdict"], "mean_daily_diff_vs_habit": round(v["mean_daily_diff"], 1),
+                 "interval": [round(z, 1) for z in v["interval"]], "interval_level": round(v["interval_level"], 4),
+                 "holm_rank": (v.get("holm") or {}).get("rank"),
+                 "interval_95": [round(z, 1) for z in v["interval_95"]]} for k, v in reh["ideas"].items()}
+    vsf = reh["value_of_the_spike_filter"]
+    out = {"meta": {"written": time.strftime("%Y-%m-%d"),
+                    "window": "2024-01-01 to 2026-09-30, 1,004 days, scored once from the code frozen at f0636cc",
+                    "unit": "USD net after costs; 1 MW per position unless a field says build scale (the MW each row "
+                            "carried from its build years, the size at which its build-year worst drawdown is 100,000)",
+                    "event_days": n_ev,
+                    "sources": {k: {"run_file": RUN_NAMES[k], "sha256_16": sha(v),
+                                    "published_copy": PUBLISHED.get(k)} for k, v in f.items()},
+                    "not_run": NOT_RUN_HELDOUT,
+                    "hero_rows_note": "V3_tail_gbm is left out of the 1 MW chart: it averages about 2 MW a position"},
+           "events": HO_EVENTS, "rows": rows, "totals_1mw": totals,
+           "counts": {"tested_candidates": len(cands), "pass_sizing_view": n_pass,
+                      "sell": sum(1 for r in cands if r["family"] == "sell"),
+                      "pairs": sum(1 for r in cands if r["family"] == "pairs")},
+           "registered": {"ideas": ideas, "spike_filter_minus_always_supply":
+                          {"mean_daily": round(vsf["mean_daily_diff"], 2), "interval_95": [round(z, 2) for z in vsf["interval_95"]]}},
+           "daily": {"dates": dates, "rows": daily},
+           "books": parse_books(f["books"]), "corr": corr, "pairs": pairs,
+           "baselines": baselines_heldout(repo / "research/us/chartdata/sources")}
+    return {"heldout.json": write(out_dir, "heldout.json", out)}
+
+
 # ------------------------------------------------------------------ main
 def write(out_dir: Path, name: str, obj) -> int:
     p = out_dir / name
@@ -313,7 +669,9 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--root", default=str(Path.home() / "nyiso-us"))
     ap.add_argument("--out", default="out")
-    ap.add_argument("--only", choices=["all", "data", "events"], default="all")
+    ap.add_argument("--only", choices=["all", "data", "events", "heldout"], default="all")
+    ap.add_argument("--heldout-dir", default=str(Path.home() / "nyiso-us" / "heldout_results"),
+                    help="the held-out run's outputs and their audit (see the docstring)")
     ap.add_argument("--repo", default=None, help="tavle git repo, for the addenda commits")
     ap.add_argument("--ref", default="origin/master", help="git ref holding the published record")
     ap.add_argument("--include-heldout", action="store_true",
@@ -325,7 +683,7 @@ def main():
     ap.add_argument("--v2-daily", default=None)
     ap.add_argument("--robust", default=None)
     ap.add_argument("--top-extra", default="", help="comma-separated row names added to the top rows")
-    ap.add_argument("--max-bytes", type=int, default=1_500_000)
+    ap.add_argument("--max-bytes", type=int, default=3_000_000)
     a = ap.parse_args()
 
     if a.include_heldout:
@@ -348,11 +706,26 @@ def main():
     sizes, report = {}, {}
     v1d = v2d = None
 
+    if a.only == "heldout":
+        sizes.update(build_heldout(a, Path(a.repo).expanduser(), out_dir))
+        for k, v in sizes.items():
+            log(f"{k}: {v / 1000:.0f} kB")
+        return
+
     if a.only in ("all", "data"):
         res1, rows1, v1d = load_v1(a)
         res2, rows2, v2d, r2path, d2path = load_v2(a, root)
         log(f"v1 {v1d.shape} {v1d.index[0].date()}..{v1d.index[-1].date()}; "
             f"v2 {v2d.shape} {v2d.index[0].date()}..{v2d.index[-1].date()} from {d2path}")
+        # A daily column with no results row (the three 2019-only weather rows, which traded nothing) is reported
+        # as not run; in held-out mode so is a row the objectives dropped before the run.
+        drop1 = {n: "no results row" for n in v1d.columns if n not in rows1}
+        drop2 = {n: "no results row: it read only the 2019 reforecast and traded nothing" for n in v2d.columns
+                 if n not in rows2}
+        if a.include_heldout:
+            drop2.update({n: why for n, why in NOT_RUN_HELDOUT.items() if n in v2d.columns})
+        v1d, v2d = v1d.drop(columns=list(drop1)), v2d.drop(columns=list(drop2))
+        report["not_run"] = {**drop1, **drop2}
         metas1 = [row_meta(n, rows1[n], "v1") for n in v1d.columns]
         metas2 = [row_meta(n, rows2[n], "v2") for n in v2d.columns]
         pos_dir = root / "results" / "v2" / "pos"
@@ -363,6 +736,7 @@ def main():
                          holdout_note)
         e2 = equity_file("v2", v2d, metas2, 2013, f"{d2path} (daily), {r2path} (flags, sizing)", holdout_note)
         e2["meta"]["positions_not_yet_scored"] = unscored
+        e2["meta"]["not_run"] = {k: v for k, v in report["not_run"].items() if k not in drop1}
         e2["meta"]["note"] = ("v2 rolling windows: train on the previous 3 years, test the next quarter; "
                               "scored 2013 onward")
         sizes["equity_v1.json"] = write(out_dir, "equity_v1.json", e1)

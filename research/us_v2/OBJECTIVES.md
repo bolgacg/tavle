@@ -2,7 +2,7 @@
 
 Version 1 (research/us/) stays as published. Version 2 asks the same question with far more history and more ideas.
 The held-out years 2024-01-01 to 2026-09-30 are NOT read by v2 either: v2 is built and judged on 2010 to 2023 only,
-and then ONE held-out run tests the approved v1 and v2 candidates together (Bo's rule: no design after seeing them).
+and then ONE held-out run tests the approved v1 and v2 candidates together (my rule: no design after seeing them).
 
 Design
 - Rolling windows: train on the previous 3 years, test on the next quarter, roll quarterly, scored from 2013 to 2023
@@ -32,7 +32,7 @@ Design
 7 Oct 2026, V13, registered before it runs (no held-out data read):
 V13. All-inputs deep model: one deep network fed every input public by 05:00 on D (zone and generator-point prices and their energy, congestion and loss parts, border prices, the operator's load forecasts, outage counts, archived weather forecasts where they exist, calendar), trained in the same rolling windows, predicting each zone's next-day gap; positions as in C and A. A fixed menu of at most three architectures (recurrent, temporal convolution, small attention), chosen on earlier windows only; strong regularisation and input dropout. Feature-group ablations (each input group removed in turn) show what each source adds. It is one idea in the count; the ablations are diagnostics, not extra strategies.
 
-7 Oct 2026, V14 family, six deep-learning setups approved by Bo, registered before any runs (research: research/us_v2/dl_setups_research.md; no held-out data read):
+7 Oct 2026, V14 family, six deep-learning setups approved by me, registered before any runs (research: research/us_v2/dl_setups_research.md; no held-out data read):
 V14a. Window ensemble: models trained on 1, 2, 3 and 5-year windows and an expanding window, recency-weighted, predictions averaged.
 V14b. Quantile heads (GRU and gradient boosting) used to size positions: smaller when the predicted range is wide.
 V14c. Conformal wrapper: calibrated intervals from earlier windows; skip an hour when its interval includes the fee-adjusted break-even.
@@ -66,3 +66,5 @@ NYISO's hourly real-time zone archive lacks 1 to 18 July and 20 July 2026 (the d
 
 11 Oct 2026, a correction to the addendum of 10 Oct about the rebuilt July 2026 real-time prices:
 That addendum says the rebuilt prices match NYISO's hourly values "within 0.005 USD/MWh". That describes the unrounded averages, not the prices the builders store. After rounding to the cent, as NYISO publishes them, 3,930 of the 4,320 official July 2026 zone-hours compared (12 days with an official file, 15 zones, 24 hours) match exactly and the other 390 differ by 1 cent, because NYISO averages its unrounded 5-minute prices while the 5-minute prices it publishes carry two decimals. The self-test that produced these counts is in raw/rt_rebuilt/README.md on the training machine. Nothing in the run changes: the rebuilt days, their publication times and every score stay as they ran.
+
+Wording note, 11 October 2026: two lines above still named me in the third person, in the introduction and in the V14 addendum of 7 Oct; they now read "my rule" and "approved by me", as the version 1 file was reworded on 7 October. No rule, number or date changed; the git history keeps the original wording.

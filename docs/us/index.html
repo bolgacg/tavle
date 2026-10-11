@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
 <title>Can a model trade New York's day-ahead to real-time gap after costs?</title>
-<meta name="description" content="A study of virtual trading in New York's power market, with every rule fixed before results and the held-out years still sealed. Charts show the build years; the single held-out run is pending. Bolgaç Gülen, October 2026.">
+<meta name="description" content="A pre-registered study of virtual trading in New York's power market. On unseen months, January 2024 to September 2026, no model beat simple no-model rules once two weather events are removed; a zone-pair position with no model made money in all 14 years. Bolgaç Gülen, October 2026.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -263,62 +263,78 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
 .fm-ctl button[hidden]{display:none}
 #ch-strips svg g:hover rect.fm-hit{fill:#f6f4f0}
 .fm-row{cursor:default}
+/* held-out sections */
+.answers{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 26px;margin:22px 0 6px;max-width:980px}
+.ans{border-top:2px solid var(--ink);padding-top:8px}
+.ans b{display:block;font-family:var(--serif);font-size:18px;line-height:1.3;margin-bottom:5px;font-weight:600}
+.ans p{font-size:15px;line-height:1.5;margin:0;color:var(--ink)}
+@media (max-width:860px){.answers{grid-template-columns:1fr}}
+.hyp{margin-top:18px;border:1px dashed #d9b46a;background:#fffdf7;border-radius:6px;padding:12px 16px;max-width:820px}
+.hyp p{font-size:14.5px;margin:0}
+.hyp b{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a5d09;margin-bottom:4px;font-weight:500}
+#ch-rank g.rk,#ch-excess g{cursor:pointer}
+table.gen td small{max-width:220px}
+#tb-verdicts{min-width:600px}#tb-books{min-width:820px}
 </style>
 </head>
 <body>
 <nav id="sidenav" aria-label="Sections"><p class="navh">On this page</p><ol>
-  <li><a href="#bankroll" style="--band:var(--b1)">Results so far</a></li>
+  <li><a href="#result" style="--band:var(--b1)">The answer</a></li>
   <li><a href="#primer" style="--band:var(--b2)">The bet</a></li>
+  <li><a href="#evidence" style="--band:var(--b10)">The evidence</a></li>
+  <li><a href="#pairs" style="--band:var(--b5)">What held up</a></li>
+  <li><a href="#book" style="--band:var(--b4)">The book</a></li>
+  <li><a href="#integrity" style="--band:var(--b6)">How it was kept clean</a></li>
+  <li><a href="#next" style="--band:var(--b7)">Next</a></li>
   <li><a href="#strategies" style="--band:var(--b3)">The strategies</a></li>
-  <li><a href="#v2rank" style="--band:var(--b10)">Version 2 results</a></li>
+  <li><a href="#bankroll" style="--band:var(--b1)">Build years</a></li>
+  <li><a href="#v2rank" style="--band:var(--b10)">Version 2, build years</a></li>
   <li><a href="#weather" style="--band:var(--b10)">The weather row</a></li>
   <li><a href="#deep" style="--band:var(--b10)">Deep models</a></li>
   <li><a href="#made" style="--band:var(--b9)">What they are made of</a></li>
   <li><a href="#where" style="--band:var(--b4)">Where the money came from</a></li>
   <li><a href="#clean" style="--band:var(--b5)">Luck and leaks</a></li>
-  <li><a href="#rules" style="--band:var(--b6)">How the test is kept clean</a></li>
-  <li><a href="#heldout" style="--band:var(--b7)">Held-out run</a></li>
   <li><a href="#glossary" style="--band:var(--b2)">Terms</a></li>
   <li><a href="#appendix" style="--band:var(--b8)">Audit appendix</a></li>
 </ol></nav>
 
 <header><div class="wrap">
-  <div class="eyebrow">Study &middot; held-out run pending, freeze by 10 October 2026</div>
+  <div class="eyebrow">Study &middot; New York power market &middot; rules fixed 6 October, single held-out run 10 and 11 October 2026</div>
   <h1>Can a model trade New York's <span style="white-space:nowrap">day-ahead</span> to <span style="white-space:nowrap">real-time</span> gap after costs?</h1>
-  <p class="dek">New York's grid sells each hour of power twice: a day-ahead price is set the day before, and a real-time price as the hour happens. This study bets on the gap between the two with virtual positions, paper trades that buy at one price and sell at the other with no power delivered, using only what is public at the 05:00 bidding deadline and paying every fee.</p>
-  <p class="dek" style="margin-top:10px">I have scored <span data-k="nRowsAll">71</span> strategies on the years I built them on: <span data-k="nRows1">33</span> in version 1 (2021 to 2023) and <span data-k="nRows2">38</span> in version 2 (2013 to 2023), and <span data-k="nCand1L">7</span> and <span data-k="nCand2">26</span> of them pass a bar fixed before any model ran. January 2024 to September 2026 stays sealed for one held-out run, a single test on years no model has seen; it has not happened, so no held-out number appears anywhere on this page.</p>
-  
+  <p class="dek">New York's grid sells each hour of power twice: a day-ahead price is set the day before, and a real-time price as the hour happens. I built <span data-k="nRowsAll">71</span> strategies that bet on the gap between the two with virtual positions, paper trades settled on that gap with no power delivered, using only what was public at the 05:00 bidding deadline and paying every fee. I fixed the rules and the bar in public, built on 2013 to 2023, froze the code, and then ran every strategy once on January 2024 to September 2026, months no model had seen.</p>
+  <div class="answers">
+    <div class="ans"><b>Did any model beat simple rules on the unseen months?</b><p>No. All four verdicts I registered before the run read "inconclusive", so skill is not proven. Of the <span data-h="nTested">32</span> strategies I sent to the test, <span data-h="nPass">28</span> cleared the profit bar I had set in advance, but most of that profit came in two weather events that paid anyone who sold, and without them none of my models beats a rule that uses no model.</p></div>
+    <div class="ans"><b>What held up in both periods?</b><p>A simple position with no model: bet that power in New York City costs more in real time, relative to the upstate zones that feed it, than the day-ahead market expects. It made money in every year from 2013 to 2025 and in 2026 so far, with a Sharpe ratio (average daily profit over its day-to-day swings, scaled to a year) of <span data-h="pairsSharpePre">1.9</span> before the test and <span data-h="pairsSharpeHo">2.3</span> in it.</p></div>
+    <div class="ans"><b>What would I run?</b><p>Most of the risk in that position and the rest in one model that reads weather forecasts and neighbouring grids' prices, because their daily profits are uncorrelated. I chose this mix after the run, so it still needs a forward test; sized to keep its worst loss under 7 percent of 500,000 USD, it returned <span data-h="book7Ho">14.9</span> percent a year on the unseen months, against <span data-h="spRet">18.8</span> for the S&amp;P 500, with a Sharpe ratio of <span data-h="book7Sh">2.2</span> against <span data-h="spSh">0.9</span>.</p></div>
+  </div>
   <div class="byline"><span>Bolgaç Gülen &middot; October 2026</span><span>&middot;</span>
-    <a href="https://github.com/bolgacg/tavle/blob/master/research/us/OBJECTIVES.md">the objectives file</a><span>&middot;</span>
-    <a href="https://github.com/bolgacg/tavle/commits/master/research/us/OBJECTIVES.md">its change history</a><span>&middot;</span>
-    <a href="https://github.com/bolgacg/tavle/tree/master/research/us">code and results</a><span>&middot;</span>
+    <a href="https://github.com/bolgacg/tavle/blob/master/research/us/OBJECTIVES.md">the objectives</a><span>&middot;</span>
+    <a href="https://github.com/bolgacg/tavle/blob/master/research/us/FREEZE">the freeze</a><span>&middot;</span>
+    <a href="https://github.com/bolgacg/tavle/tree/master/docs/us/results">held-out results and their audit</a><span>&middot;</span>
+    <a href="https://github.com/bolgacg/tavle/tree/master/research/us">code</a><span>&middot;</span>
     <a href="#appendix">audit appendix</a></div>
 </div></header>
 
-<noscript><div class="wrap"><p class="err">The charts on this page are drawn by a script from the JSON files linked under each chart. With scripts off, the files and the audit appendix still hold every number.</p></div></noscript>
+<noscript><div class="wrap"><p class="err">The charts on this page are drawn by a script from the JSON files linked under each chart. With scripts off, the files, the results folder and the audit appendix still hold every number.</p></div></noscript>
 
-<section id="bankroll" data-band style="--band:var(--b1);padding-top:28px"><div class="wrap">
-  <div class="card">
-    <div class="vt" role="group" aria-label="Study version"><button data-v="v2" aria-pressed="true">Version 2 &middot; 2013 to 2023</button><button data-v="v1" aria-pressed="false">Version 1 &middot; 2021 to 2023</button></div>
-    <p class="hint"><b>Click a version</b> to switch every chart on the page. <b>Hover or tap</b> a chart to read one day.</p>
-    <h2 class="ctitle" id="t-bank">Loading the build-year results</h2>
-    <p class="csub">Each line starts with 500,000 USD and pays every fee. Fixed-size bets, profits not reinvested, so lines rise in a straight-ish line rather than compounding.</p>
-    <p class="hint"><b>Click a name</b> for how that strategy works; <b>hover a name</b> to pick out its line in both panels.</p>
-    <div class="lg" id="lg-bank" aria-hidden="true"></div>
-    <div class="chart" id="ch-bank"></div>
-    <p class="csub" style="margin:10px 0 2px">How far each line sat below its own previous high, percent</p>
-    <div class="chart" id="ch-under"></div>
-    <p class="note" id="uw-note" style="margin-top:2px"></p>
+<section id="result" data-band style="--band:var(--b1);padding-top:28px"><div class="wrap">
+  <p class="why">Most of my models' profit on the unseen months came from two weather events; without them they did no better than simply selling everywhere.</p>
+  <div class="card" id="hero-card">
+    <div class="vt" role="group" aria-label="Which days to count" id="vt-hero"><button data-m="all" aria-pressed="true">All 1,004 days</button><button data-m="ex" aria-pressed="false">Without the 18 storm and heat-wave days</button></div>
+    <p class="hint"><b>Click the second view</b> to take the two weather events out. <b>Hover or tap</b> a line to name it.</p>
+    <h2 class="ctitle" id="t-hero">The unseen months: what my models earned against rules with no model</h2>
+    <p class="csub">Cumulative profit after every fee, US dollars, 1&nbsp;MW per zone and hour (always supply holds 11&nbsp;MW at once, one in each zone), 1 January 2024 to 30 September 2026. Thin lines are the strategies I built; thick lines are rules that use no model: <b>always supply</b> sells power day-ahead in every zone and hour; <b>zone pairs</b> buy in one area and sell in another.</p>
+    <div class="lg" id="lg-hero" aria-hidden="true"></div>
+    <div class="chart" id="ch-hero"></div>
+    <div class="readout" id="ro-hero" aria-live="polite"></div>
     <div class="three">
-      <p><b>what you see</b>Each line is one strategy's 500,000 USD bankroll, day by day after all fees; the lower panel shows how far it sat below its own previous high.</p>
-      <p><b>how to read</b>The three steadiest candidates by Sharpe ratio (average daily profit divided by its day-to-day swings, scaled to a year) are named in blue, teal and purple, and the three other candidates that end highest in orange, pink and sky blue; the remaining candidates are pale, red is always selling, grey is the habit rule; the dashed line is the start.</p>
-      <p><b>take-away</b><span id="k-bank">Each candidate ends above both plain rules, but only on years the models were built on; the hatched area is the held-out test, still to run.</span></p>
+      <p><b>what you see</b>One line per strategy over the 33 unseen months. Orange lines are models that mostly sell day-ahead; blue lines are models that buy one zone and sell another. The shaded bands are the two weather events.</p>
+      <p><b>how to read</b>Watch the step at the January storm: the orange models and the plain sell-everything rule (red) jump on the same days. Then switch the view and watch the orange lines fall back to the red one.</p>
+      <p><b>take-away</b><span id="k-hero">The sell-side models made their money on the same storm and heat-wave days as a rule that always sells; the pair position with no model climbed in both views.</span></p>
     </div>
-    <p class="note" id="n-bank"></p>
-    <p class="note">Each strategy's fixed size (its sizing view) is the one at which its worst build-year fall from a high, its drawdown, is 100,000 USD. "Pass the bar" means the tests in <a href="#primer">The bet</a>. Names: A sits out spike-risk hours, B reads weather forecasts, C buys one zone and sells another, D reads planned outages; boosting and deep are the two model types; ideas 1 to 14 (version 1) and V1 to V16 (version 2, with plain names in <a href="#v2rank">Version 2 results</a>) are listed in the <a href="#appendix">appendix</a>.</p>
-    <div class="cfoot">Data: <a href="data/equity_v1.json">equity_v1.json</a> &middot; <a href="data/equity_v2.json">equity_v2.json</a> (daily, every row, flags and sizing) &middot; <a href="data/drawdown.json">drawdown.json</a> (the same falls in USD at 1&nbsp;MW). Drawn in the page from these files. Detail: <a href="#a-results">every result</a>.</div>
+    <p class="note" id="n-hero"></p>
+    <div class="cfoot">Data: <a href="data/heldout.json">heldout.json</a> (daily profit of every line, the event windows, and the source files with their fingerprints), written by <a href="https://github.com/bolgacg/tavle/blob/master/research/us/chartdata/build_chartdata.py">build_chartdata.py</a> from the run's daily tables. Drawn in the page from that file.</div>
   </div>
-  <a class="appx-link" href="#appendix">Open the audit appendix: the objectives verbatim, every dated addendum, every result, every audit</a>
 </div></section>
 
 <section id="primer" data-band style="--band:var(--b2)"><div class="wrap">
@@ -326,14 +342,194 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
   <h2>A virtual position bets on the gap between two prices for the same hour</h2>
   <p class="why">Every strategy on this page is a rule for when to take this one kind of position, on which side and in which zone.</p>
   <ol class="primer">
-    <li>NYISO, the company that runs New York's grid, sells power for each hour twice: a <b>day-ahead</b> price is set the day before, and a <b>real-time</b> price is set as the hour happens. Prices are in US dollars per megawatt-hour (MWh), roughly what 800 American homes use in an hour.</li>
-    <li><b>Virtual supply</b> means selling power day-ahead and buying it back in real time: a short position, betting the price falls. <b>Virtual load</b> is the reverse, buying day-ahead and selling in real time: a long position, betting the price rises. No power moves.</li>
-    <li>A worked example: if New York City's 17:00 hour clears day-ahead at 50 USD and real-time at 40, virtual supply earns 10 USD per MWh, less NYISO's fee of about 0.13 to 0.19; had real-time spiked to 300, it would lose 250.</li>
-    <li>Bids close at <b>05:00 New York time the day before delivery</b>, so every input a model reads must be public by then. The fee alone (0.1333 USD per MWh in 2024) was more than the 0.06 that all virtual traders in New York earned per MWh that year before fees, so losing is the expected result.</li>
-    <li>A strategy is a <b>candidate</b> for the held-out run when it passes the bar fixed before any model ran: at its sizing view it earns at least 10 percent a year on the bankroll, about the long-run average return of the S&amp;P 500; it makes money in at least two of three years; its Sharpe ratio (average daily profit divided by its day-to-day swings, scaled to a year) is above 0.42, the S&amp;P 500's long-run Sharpe; and it still makes money at a cost of 0.50 USD per MWh.</li>
-    <li>It must also not be <b>flagged fragile</b>. A strategy is fragile if its three-year total turns negative once its best ten days of a year are removed; if nudging one setting one step flips its total to a loss; or if trading the same number of random days in the same months beats it more than one time in five. An audit can also flag it.</li>
+    <li>NYISO, the company that runs New York's grid, sells power for each hour twice: a <b>day-ahead</b> price is set the day before, and a <b>real-time</b> price is set as the hour happens. Prices are in US dollars per megawatt-hour (MWh), about what 800 average American homes use in an hour.</li>
+    <li><b>Virtual supply</b> means selling power day-ahead and buying it back in real time: a short position that wins when real time comes in lower. <b>Virtual load</b> is the reverse, a long position. No power moves. <b>Always supply</b>, the plain rule on this page, sells 1&nbsp;MW in every zone and every hour.</li>
+    <li>A worked example: if New York City's 17:00 hour clears day-ahead at 50 USD and real-time at 40, virtual supply earns 10 USD per MWh, less fees of about 0.15 to 0.21 USD per MWh; had real time spiked to 300, it would lose 250.</li>
+    <li>A <b>zone pair</b> buys in one of NYISO's 11 price zones and sells in another for the same hour, so a move in the overall price cancels and only the difference between the zones, mostly the cost of crowded power lines (congestion), is left.</li>
+    <li>Bids close at <b>05:00 New York time the day before delivery</b>, so every input a model reads must be public by then. NYISO's virtual trading fee alone (0.1333 USD per MWh in 2024, about 0.15 with the smaller charges I add) was more than the 0.06 that all virtual traders in New York earned per MWh that year before fees, so losing is the expected result.</li>
+    <li>The <b>bar</b>, fixed before any model ran: each strategy is sized so its worst loss from a high on the build years is 100,000 USD; at that size it must earn at least 10 percent a year on a 500,000 USD bankroll; it makes money in most years; its Sharpe ratio beats the S&amp;P 500's long-run 0.42; and it still makes money at a cost of 0.50 USD per MWh. A strategy that passed this on the build years and was not flagged <b>fragile</b> (leaning on a few days or a lucky setting) went to the held-out test as a <b>candidate</b>.</li>
+  </ol>
+  <p class="note">The <a href="#glossary">terms</a> section defines every other word; the <a href="#strategies">strategy cards</a> say what each named strategy bets and reads.</p>
+</div></section>
+
+<section id="evidence" data-band style="--band:var(--b10)"><div class="wrap">
+  <div class="sec-label">The evidence</div>
+  <h2>Clearing the bar on the unseen months was common; beating a rule with no model was not</h2>
+  <p class="why">The models made money on the unseen months, but not more than a rule with no model. The bar asked only for profit, and the market paid sellers well during two weather events, so each chart below asks the harder question: what did a model add over a rule with no model on the same days?</p>
+
+  <div class="answers" style="margin-top:4px">
+    <div class="ans"><b>Did the models make money on the unseen months?</b><p>Yes: <span data-h="nPass">28</span> of <span data-h="nTested">32</span> cleared the profit bar, the first chart below.</p></div>
+    <div class="ans"><b>Did they earn it with skill?</b><p>No: the sell-side ones earned it on the same storm days as a rule that simply sells, and without those days none beats that rule, the second chart.</p></div>
+    <div class="ans"><b>What did the pre-registered test say?</b><p>"Inconclusive" for all four ideas, counting every day, the table at the end.</p></div>
+  </div>
+  <div class="card" id="rank-card">
+    <h3 class="ctitle" id="t-rank">Return a year before and during the test</h3>
+    <p class="csub">Return a year on the 500,000 USD bankroll at each strategy's fixed size (the MW at which its worst build-year fall is 100,000 USD, carried into the test unchanged), after every fee.</p>
+    <div class="lg"><span><svg width="14" height="12"><line x1="7" y1="1" x2="7" y2="11" stroke="#5b6470" stroke-width="2"/></svg>build years, the result that put it on the list</span><span><svg width="14" height="12"><circle cx="7" cy="6" r="5" fill="#c8641e"/></svg>unseen months, all days</span><span><svg width="14" height="12"><circle cx="7" cy="6" r="4.2" fill="#fff" stroke="#c8641e" stroke-width="2"/></svg>unseen months without the 18 event days</span><span><svg width="18" height="12"><line x1="9" y1="0" x2="9" y2="12" stroke="#c8860d" stroke-width="2" stroke-dasharray="3 2"/></svg>the 10 percent bar</span><span><svg width="14" height="14"><rect x="5" y="0" width="3" height="14" fill="#b03a3a"/></svg><svg width="14" height="14"><rect x="5" y="0" width="3" height="14" fill="#173a5e"/></svg>the matching rule with no model, same size, without the event days</span></div>
+    <p class="hint"><b>Hover or tap a row</b> to read its numbers.</p>
+    <div class="chart" id="ch-rank"></div>
+    <div class="readout" id="ro-rank" aria-live="polite"></div>
+    <div class="three">
+      <p><b>what you see</b>One row per strategy that went to the test, grouped by the kind of bet, and the three rules with no model at the bottom. The grey tick is its build-year return, the filled dot its return on the unseen months, the hollow dot the same without the two weather events.</p>
+      <p><b>how to read</b>A long gap between a filled and a hollow dot means the two events carried that row. Compare each hollow dot with always supply's at the bottom, which sells everything with no model.</p>
+      <p><b>take-away</b><span id="k-rank"></span></p>
+    </div>
+    <p class="note" id="n-rank"></p>
+    <div class="cfoot">Data: <a href="data/heldout.json">heldout.json</a>, fields rows[].pre (from <a href="https://github.com/bolgacg/tavle/blob/master/research/us/HELDOUT-LIST.md">version 1</a> and <a href="https://github.com/bolgacg/tavle/blob/master/research/us_v2/HELDOUT-LIST.md">version 2</a> held-out lists, written before the run) and rows[].ho (from the audit, <a href="results/AUDIT.md">AUDIT.md</a>, table 1).</div>
+  </div>
+
+  <div class="card" id="excess-card">
+    <div class="vt" role="group" aria-label="Which days to count" id="vt-excess"><button data-m="ex" aria-pressed="true">Without the 18 event days</button><button data-m="all" aria-pressed="false">All 1,004 days</button></div>
+    <h3 class="ctitle" id="t-excess">What each model earned over the matching rule with no model</h3>
+    <p class="csub">Each line is one model's extra profit a year over the rule with no model that makes the same kind of bet, US dollars at 1&nbsp;MW per position. If the line crosses zero, the model added nothing the data can show. Sell-side models are compared with always supply; pair models with the zone pairs with no model. The two panels have their own scales.</p>
+    <div class="lg"><span><svg width="34" height="12"><line x1="2" y1="6" x2="32" y2="6" stroke="#9aa5b1" stroke-width="2"/><circle cx="17" cy="6" r="4" fill="#5b6470"/></svg>interval includes zero: no difference shown</span><span><svg width="34" height="12"><line x1="2" y1="6" x2="32" y2="6" stroke="#2f7d54" stroke-width="2.5"/><circle cx="17" cy="6" r="4" fill="#2f7d54"/></svg>interval above zero</span><span><svg width="34" height="12"><line x1="2" y1="6" x2="32" y2="6" stroke="#b03a3a" stroke-width="2.5"/><circle cx="17" cy="6" r="4" fill="#b03a3a"/></svg>interval below zero: worse than no model</span></div>
+    <p class="hint"><b>Click a view</b> to put the two weather events back in.</p>
+    <div class="chart" id="ch-excess"></div>
+    <div class="readout" id="ro-excess" aria-live="polite"></div>
+    <div class="three">
+      <p><b>what you see</b>Each row is one model's extra profit a year over its no-model rule; the dot is the estimate and the line the range that 95 percent of resampled histories fall in.</p>
+      <p><b>how to read</b>A line that crosses the zero line means the data cannot tell the model from the rule. Only a line wholly right of zero would show skill.</p>
+      <p><b>take-away</b><span id="k-excess"></span></p>
+    </div>
+    <p class="note" id="n-excess"></p>
+    <div class="cfoot">Data: <a href="data/heldout.json">heldout.json</a>, fields rows[].excess_vs_supply and rows[].excess_vs_static_pairs, from the audit (<a href="results/AUDIT.md">AUDIT.md</a>, table 2), which recomputed every daily profit from the positions and prices and matched the scorers to 0.00 USD.</div>
+  </div>
+
+  <h3 style="margin-top:30px">The four verdicts I registered before any model ran</h3>
+  <p class="why" style="margin-top:8px">Objective 6 gives each idea one word against the habit rule (every zone and hour takes the side that won over the past year). "Pays" needed the whole interval above zero. Idea A was the main test, at 95 percent; B, C and D were secondary, with intervals widened for testing three at once (the Holm correction). These verdicts count every day, so they do not depend on leaving any event out.</p>
+  <div class="tscroll"><table class="gen" id="tb-verdicts"></table></div>
+  <p class="note" id="n-verdicts"></p>
+  <p class="prose" style="margin-top:14px">One kind of bet did hold up without the events, and the next section shows it.</p>
+</div></section>
+
+<section id="pairs" data-band style="--band:var(--b5)"><div class="wrap">
+  <div class="sec-label">What held up</div>
+  <h2 id="h-pairs">A zone-pair position with no model made money in every year from 2013</h2>
+  <p class="why">This is the one result that held in both periods with little help from the two weather events, so it is the part of the study I would build on. I registered it on 7 October as a yardstick for the pair models (<a href="https://github.com/bolgacg/tavle/commit/10c01b4">10c01b4</a>), not as a candidate; I single it out after the run, and the forward test is what would confirm it.</p>
+  <div class="card" id="pairs-card">
+    <h3 class="ctitle" id="t-pairstory">Profit of the pair position each year, and the price gap behind it</h3>
+    <p class="csub">Top: net profit of the zone pairs with no model, US dollars a year at 1&nbsp;MW per position; 2026 covers January to September. Bottom: how far New York City's real-time price ran above its day-ahead price, minus the same for the Capital zone (around Albany, upstate), average over every hour of the year, USD per MWh.</p>
+    <div class="chart" id="ch-pairstory"></div>
+    <div class="readout" id="ro-pairstory" aria-live="polite"></div>
+    <div class="three">
+      <p><b>what you see</b>Two bar charts on one row of years: the stance's profit above, and below it the extra real-time premium in the city over the Capital zone, the gap a long-city, short-Capital pair collects.</p>
+      <p><b>how to read</b>Dark bars are the unseen years; the orange bar is 2025, the largest premium; 2026 covers January to September. Read down a column: the city premium is the spread of the stance's main pair, so it explains 2025 well; other strong years, such as 2021, came from the other pairs.</p>
+      <p><b>take-away</b><span id="k-pairstory"></span></p>
+    </div>
+    <div class="cfoot">Data: <a href="data/heldout.json">heldout.json</a>, field pairs, from <a href="results/b_corr.txt">b_corr.txt</a> (yearly sums) and <a href="results/a_2025.txt">a_2025.txt</a> (price parts), computed with the frozen scorer's own profit function (<a href="results/analysis_2025_and_correlation.md">the analysis</a>).</div>
+  </div>
+  <ul class="plist" id="pairs-why">
+    <li id="pw-stance"></li>
+    <li id="pw-2025"></li>
+    <li id="pw-when"></li>
+    <li id="pw-models"></li>
+  </ul>
+  <div class="hyp"><p><b>Hypothesis, not tested</b><span id="pw-hyp">The main power lines into New York City (NYISO's Central-East and Upstate New York to Con Edison interfaces) ran closer to their limits in real time than the day-ahead market expected, plausibly because older peaking plants in the city retired in May 2025 under the state's emissions rule for peakers, before the Champlain Hudson line into the city began delivering. Why the premium is still there to collect is untested too; fees, collateral and the few traders active in these pairs are candidates. This page does not test either; the test would compare the interfaces' real-time and day-ahead congestion prices before and after May 2025.</span></p></div>
+</div></section>
+
+<section id="book" data-band style="--band:var(--b4)"><div class="wrap">
+  <div class="sec-label">The book I would run</div>
+  <h2 id="h-book">Adding one weather and border model to the pair position lifts the return for the same drawdown limit, because the two are uncorrelated</h2>
+  <p class="why">The book puts most of the risk in the pair position and a fifth in one weather and border model; because the two lose money on different days, together they can run larger for the same worst loss. My limits are a worst fall of 7 percent of the 500,000 USD bankroll without leverage and 15 percent with it. I sized each book on 2013 to 2023 so its worst fall there hit the limit, then cut it to 70 percent as a margin. The sizes come from the build years, but I set the limits, the 70 percent margin and the mix itself, the pairs plus the weather and border model (V15c) at 80 and 20 percent of the risk, after seeing the unseen months, on 11 October. So the book's numbers there are not a clean test; the forward test is.</p>
+
+  <div class="card" id="corr-card">
+    <h3 class="ctitle" id="t-corr">How closely the daily profits of two strategies move together</h3>
+    <p class="csub">Correlation of daily profit, from minus 1 (always opposite) through 0 (unrelated) to plus 1 (always together), in three periods.</p>
+    <div class="lg"><span><svg width="14" height="12"><circle cx="7" cy="6" r="4.2" fill="#fff" stroke="#5b6470" stroke-width="2"/></svg>2013 to 2023</span><span><svg width="14" height="12"><circle cx="7" cy="6" r="5" fill="#2c4a6b"/></svg>unseen months</span><span><svg width="14" height="12"><rect x="2" y="1" width="9" height="9" fill="#c8641e" transform="rotate(45 6.5 5.5)"/></svg>unseen months without the 18 event days</span></div>
+    <div class="chart" id="ch-corr"></div>
+    <div class="three">
+      <p><b>what you see</b>Each row is one pair of strategies; the marks show their correlation before the test, during it, and during it without the two weather events.</p>
+      <p><b>how to read</b>Marks near zero mean the two earn on different days, so together they swing less than either alone. Marks near plus 1 mean the two are one bet.</p>
+      <p><b>take-away</b><span id="k-corr"></span></p>
+    </div>
+    <div class="cfoot">Data: <a href="data/heldout.json">heldout.json</a>, field corr, from <a href="results/b_corr.txt">b_corr.txt</a> (Pearson correlation of daily net at 1&nbsp;MW; Spearman and the tail checks are in the same file).</div>
+  </div>
+
+  <div class="card" id="books-card">
+    <div class="vt" role="group" aria-label="Drawdown limit" id="vt-books"><button data-l="35000" aria-pressed="true">7 percent limit, no leverage</button><button data-l="75000" aria-pressed="false">15 percent limit, about twice the size</button></div>
+    <h3 class="ctitle" id="t-books">The two books against the pair position alone</h3>
+    <p class="csub">Return a year on 500,000 USD at the cautious size (70 percent of the size that hits the limit on 2013 to 2023), after every fee. Dashed lines: the S&amp;P 500 and a Danish bank deposit over the same unseen months, on the same 500,000.</p>
+    <div class="lg"><span><svg width="14" height="12"><rect x="1" y="1" width="12" height="10" fill="#9db8d6"/></svg>2013 to 2023</span><span><svg width="14" height="12"><rect x="1" y="1" width="12" height="10" fill="#173a5e"/></svg>unseen months</span><span><svg width="14" height="12"><rect x="1" y="1" width="12" height="10" fill="#c8641e"/></svg>unseen months without the 18 event days</span></div>
+    <div class="chart" id="ch-books"></div>
+    <p class="hint" style="margin:8px 0 2px">On a phone, <b>scroll the table sideways</b>.</p>
+    <div class="tscroll"><table class="gen" id="tb-books"></table></div>
+    <div class="three">
+      <p><b>what you see</b>For each book, three bars: its return a year on 2013 to 2023, on the unseen months, and on the unseen months without the two weather events.</p>
+      <p><b>how to read</b>Compare the mixed book with the pairs alone under the same limit: the mixed book can hold larger positions because its two parts are uncorrelated. The pairs alone hold 0.43&nbsp;MW a leg here, sized to the 7 percent limit; the evidence chart shows the same rule at its larger registered size, hence its higher return there. Both books lose the same amount in their worst build-year fall by construction, since that is how they were sized.</p>
+      <p><b>take-away</b><span id="k-books"></span></p>
+    </div>
+    <div class="cfoot">Data: <a href="data/heldout.json">heldout.json</a>, fields books and baselines, from <a href="results/b_books.csv">b_books.csv</a> (the books, scored with the frozen code's profit function), FRED's <a href="https://fred.stlouisfed.org/series/SP500">SP500</a> and <a href="https://fred.stlouisfed.org/series/DTB3">DTB3</a> series and Statistics Denmark's <a href="https://www.statbank.dk/DNRUIPI">DNRUIPI</a> table (downloads in <a href="https://github.com/bolgacg/tavle/tree/master/research/us/chartdata/sources">chartdata/sources</a>).</div>
+  </div>
+  <ul class="plist neg" id="book-limits">
+    <li id="bl-storm"></li>
+    <li id="bl-edge"></li>
+    <li id="bl-money"></li>
+  </ul>
+</div></section>
+
+<section id="integrity" data-band style="--band:var(--b6)"><div class="wrap">
+  <div class="sec-label">How the test was kept clean</div>
+  <h2>I fixed the rules and froze the code before the test, and every stop in the run is dated in public</h2>
+  <p class="why">A held-out result only means something if nothing was chosen after seeing it, so this section shows what was fixed when, what the run tripped over, and how each fix was kept from touching the result.</p>
+  <p class="prose">In short: rules fixed on 6 and 7 October, code frozen on 8 October and moved on 10 October to the commit that fixed the July data check (f0636cc), with every row before 2024 unchanged; four stops during the run, each fixed in public without changing a rule, a model or a pre-2024 number. On the event days the models picked the winning side no more often than always supply did, where a leak would show up as a far higher hit rate. Three things came after the run and are labelled as such wherever they appear: the two event windows I leave out, singling out the pair rule, and the book (its limits, margin and mix).</p>
+  <p class="prose">I used Claude, an AI assistant, to help set up the experiments, write code and run the audits; every rule, decision and approval here is mine.</p>
+  <ul class="plist">
+    <li>The objectives were committed on 6 October (<a href="https://github.com/bolgacg/tavle/commit/7f98a86">7f98a86</a>) and 7 October for version 2 (<a href="https://github.com/bolgacg/tavle/commit/9e0416b">9e0416b</a>), before any model ran; every later change is a dated addendum, never an edit.</li>
+    <li>The rule that picks the candidates was fixed on 7 October (<a href="https://github.com/bolgacg/tavle/commit/99234c2">99234c2</a>), and the two lists it produced were published on 8 October (<a href="https://github.com/bolgacg/tavle/commit/6f4c85e">6f4c85e</a>), with the build-year code and a fingerprint of every file (<a href="https://github.com/bolgacg/tavle/commit/aeb7927">aeb7927</a>).</li>
+    <li>The code was frozen on 8 October (<a href="https://github.com/bolgacg/tavle/commit/b56c5e8">b56c5e8</a>). Every data loader refuses dates from 2024 unless the code is unchanged since the frozen commit and an explicit switch is set.</li>
+    <li>Before the test, the frozen code re-ran 2023 and had to reproduce the build-year positions. Version 1 matched exactly; version 2 matched 33 rows exactly, three deep rows within a tolerance I set (at most 4 of 96,360 zone-hours, under 50 USD over the year), and one row could not be reproduced and was dropped.</li>
+  </ul>
+
+  <div class="card">
+    <h3 class="ctitle" id="t-addenda">Loading</h3>
+    <p class="csub">Every dated commit to the two objectives files, 6 to 11 October 2026; the list below names each one</p>
+    <div class="chart" id="ch-addenda"></div>
+    <details class="sub"><summary>Show all dated changes <span>with their commits</span></summary><ol class="tl-list" id="l-addenda"></ol></details>
+    <div class="cfoot">Data: <a href="data/events.json">events.json</a>, from the git history of <a href="https://github.com/bolgacg/tavle/commits/master/research/us/OBJECTIVES.md">research/us/OBJECTIVES.md</a> and <a href="https://github.com/bolgacg/tavle/commits/master/research/us_v2/OBJECTIVES.md">research/us_v2/OBJECTIVES.md</a>. The full text of every addendum is in the <a href="#a-objectives">appendix</a>.</div>
+  </div>
+
+  <h3 style="margin-top:30px">The run log: every stop and every fix</h3>
+  <p class="why" style="margin-top:8px">The run script stops at the first failed check and writes down why. It stopped four times; each fix below was decided and published before the run went on, and none changed a rule or a model.</p>
+  <ol class="stl">
+    <li class="done"><span class="d">8 Oct 2026</span><span>Stopped at the version 2 dry run. Three deep rows differed from their build run in a handful of zone-hours, because the graphics card does not repeat its arithmetic bit for bit, and the learned mix of version 2 strategies (V12) could not reproduce its build run at all. On 9 October I set a tolerance for the first and dropped V12 (<a href="https://github.com/bolgacg/tavle/commit/6199e84">6199e84</a>).</span></li>
+    <li class="done"><span class="d">9 Oct 2026</span><span>Stopped at the data rebuild. 300 weather forecast values for 30 and 31 December 2023 were blank in the build and filled in the rebuild, because the build had not read forecast hours that fall in 2024. They were issued before the deadline, so this is missing data, not a leak; I accepted the rebuilt table (<a href="https://github.com/bolgacg/tavle/commit/c174584">c174584</a>).</span></li>
+    <li class="done"><span class="d">10 Oct 2026</span><span>Stopped at version 1 scoring. NYISO's hourly real-time archive lacks 1 to 18 and 20 July 2026, and my input check had missed it because it counted monthly files, not the days inside them. A first fix that skipped those days (<a href="https://github.com/bolgacg/tavle/commit/0d6185f">0d6185f</a>) was reverted before any run used it (<a href="https://github.com/bolgacg/tavle/commit/e3118db">e3118db</a>). I rebuilt the days from NYISO's own 5-minute prices, fixed the check to count days (<a href="https://github.com/bolgacg/tavle/commit/f0636cc">f0636cc</a>) and moved the freeze to that commit (<a href="https://github.com/bolgacg/tavle/commit/5856c45">5856c45</a>); every row before 2024 stayed identical.</span></li>
+    <li class="done"><span class="d">10 Oct 2026</span><span>Stopped at the data rebuild again on the same 300 weather values, and went on under the rule of 9 October.</span></li>
+    <li class="done"><span class="d">11 Oct 2026</span><span>Scoring finished. The two steps after it crashed: the summary, because always supply's placebo field holds a sentence instead of numbers, and the chart data, because the daily table keeps three rows that never traded. Both were rebuilt outside the frozen code from the scored files; the chart data script is page code and its fix is in this page's commit. The run script still logged "ALL DONE" after both crashes, and it also scored V12 although it had been dropped; V12 is left out of every table here.</span></li>
+  </ol>
+
+  <h3 style="margin-top:30px">What the audit of the results checked</h3>
+  <ul class="plist">
+    <li>Every audited row's daily profit was recomputed from its positions and NYISO's prices and matched the scorers to 0.00 USD on every day; the version 1 and version 2 price tables agree on all 265,045 zone-hours of the window.</li>
+    <li>No real-time price is stamped before its hour ends, and no price of a delivery day is stamped before 05:00 on the bid day; the one input that matches a bid-day price in 3.8 percent of rows is the last hour already published, which the registration allows.</li>
+    <li>On the event days the models picked the winning side in 54 to 69 percent of the zone-hours they traded, against 68.4 percent for always supply. A model that could see real time would be right far more often; these mostly sold, as always supply did.</li>
+    <li>The rebuilt July days match NYISO's own generator energy prices within 0.01 USD in every hour. They were unusual days, real time 7.55 USD below day-ahead on average, and setting them aside shrinks July a lot but changes no verdict. After rounding to the cent, 3,930 of 4,320 official July zone-hours match the rebuild exactly and the rest differ by 1 cent (addendum of 11 October).</li>
+    <li>Two fee rates rest on the tariff and planning values, not on NYISO postings: 2025 (the tariff's cap) and 2026 (unconfirmed), 21 of the 33 months; the stress runs at 0.50 USD per MWh cover them.</li>
+  </ul>
+  <p class="note">The audit, the four stop reports' outcomes and every table behind this page are in <a href="https://github.com/bolgacg/tavle/tree/master/docs/us/results">docs/us/results</a>: <a href="results/AUDIT.md">AUDIT.md</a>, <a href="results/pre_vs_heldout.md">pre_vs_heldout.md</a>, the scorers' tables <a href="results/v2_results_heldout.md">v2_results_heldout.md</a> and <a href="results/lab_results_heldout.md">lab_results_heldout.md</a>, the registered verdict run <a href="results/registered_verdicts_heldout.json">registered_verdicts_heldout.json</a> and the summary rebuilt outside the frozen code, <a href="results/DONE_audit.md">DONE_audit.md</a>.</p>
+
+  <h3 style="margin-top:30px">Where this study is weakest</h3>
+  <ul class="plist neg">
+    <li>Two weather events decide most totals on the unseen months, as one storm, Elliott in December 2022, did on the build years; 33 months hold too few such days to separate skill from luck for a strategy that sells. I defined the two windows after the run, and both paid the sellers; a June 2025 heat wave that cost always supply 113,888 USD in a month stays in both views.</li>
+    <li>Bids are assumed to clear at the market price without moving it, which flatters storm days most.</li>
+    <li>I tried 71 strategy rows and hundreds of settings on the build years; the held-out test was the check on that, and it found no model skill beyond the rules with no model.</li>
+    <li>Ideas 1 and 2 came from exploring the build years, and a reviewer saw 2024 summary statistics before the freeze; both are disclosed in the objectives.</li>
+  </ul>
+</div></section>
+
+<section id="next" data-band style="--band:var(--b7)"><div class="wrap">
+  <div class="sec-label">What I would do next</div>
+  <h2>Before any real money, the book has to survive a forward test, a real cost check and a route to market</h2>
+  <p class="why">The unseen months are one sample of 33 months with two unusual events in it, so the next steps are about a longer sample and about costs a backtest does not see.</p>
+  <ol class="primer">
+    <li><b>Forward paper trading.</b> Publish the book's positions before 05:00 each day and score them after real time settles, for long enough to see more than one winter, with the size and the rules fixed now.</li>
+    <li><b>A real cost check.</b> The pair rule trades two legs every hour, so its profit is thin: 0.72 USD per MWh after fees on the unseen months. At a stressed cost of 0.50 USD per MWh it still made <span data-h="pairsStress">83,781</span> USD at 1&nbsp;MW (<a href="results/audit_analysis.json">audit_analysis.json</a>), but all-in costs near 1.00 would erase it. Uplift charges, collateral and the price impact of the bids need real quotes.</li>
+    <li><b>Access to the market.</b> Virtual bids need a NYISO customer account with a capital deposit and two days of collateral, or trading through a registered participant; a trader outside the United States also needs a US entity or a bank letter of credit.</li>
+    <li><b>Test the 2025 hypothesis.</b> Compare day-ahead and real-time congestion on the interfaces into the city before and after May 2025; if the city premium came from retired plants, it should fade as new lines deliver.</li>
+    <li><b>Keep the sell-side model small until it earns its place.</b> Its edge over always selling is not proven; in the book it earns its 20 percent of the risk by losing on different days from the pairs, which a forward test can confirm or refute.</li>
   </ol>
 </div></section>
+
 
 <section id="strategies" data-band style="--band:var(--b3)"><div class="wrap">
   <div class="sec-label">The strategies</div>
@@ -342,6 +538,8 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
   <div class="cards">
     <article class="scard" id="s-always"><div class="tagl">no model</div><h3>Always supply</h3><dl><dt>What it bets</dt><dd>Sells 1&nbsp;MW day-ahead in every zone and every hour and buys it back in real time: a permanent short position.</dd><dt>What it reads at 05:00</dt><dd>Nothing.</dd><dt>How it was trained</dt><dd>Not trained; it is the simplest possible bet, and every strategy should beat it.</dd></dl></article>
     <article class="scard" id="s-habit"><div class="tagl">no model</div><h3>Habit rule</h3><dl><dt>What it bets</dt><dd>In each zone and hour of the day, takes the side that won on average over the past year (short if real time usually came in below day-ahead, long if above).</dd><dt>What it reads at 05:00</dt><dd>The average gap for that zone and hour over the previous 365 days.</dd><dt>How it was trained</dt><dd>Not trained; a rolling average, the second plain rule every model must beat.</dd></dl></article>
+    <article class="scard" id="s-static"><div class="tagl">no model</div><h3>Zone pairs, no model</h3><dl><dt>What it bets</dt><dd>In each of five zone pairs and each hour, buys one zone and sells the other on the side that won on average over the previous three years, 1&nbsp;MW a leg.</dd><dt>What it reads at 05:00</dt><dd>Past prices only.</dd><dt>How it was trained</dt><dd>Not trained; registered on 7 October as the benchmark for the pair models. It is the stance that held up on the unseen months.</dd></dl></article>
+    <article class="scard" id="s-V15c"><div class="tagl">gradient boosting</div><h3>Weather and border model (V15c)</h3><dl><dt>What it bets</dt><dd>Short or long in each zone and hour when its forecast gap beats the fee, otherwise out; in practice it mostly sells.</dd><dt>What it reads at 05:00</dt><dd>Prices and their parts, NYISO's load forecast, archived weather forecasts and prices at the borders with neighbouring grids.</dd><dt>How it was trained</dt><dd>Gradient boosting retrained each quarter on the previous three years. It is the 20 percent part of the book I would run.</dd></dl></article>
     <article class="scard" id="s-A_regression_v1"><div class="tagl">gradient boosting</div><h3>A, first rule</h3><dl><dt>What it bets</dt><dd>Sells (short) only in the zone-hours where the forecast says real time will come in below day-ahead by more than the fee; otherwise stays out.</dd><dt>What it reads at 05:00</dt><dd>Today's day-ahead prices, real-time prices for hours already finished, recent gaps and spikes, NYISO's load forecast, and the calendar.</dd><dt>How it was trained</dt><dd>Gradient boosting (many small decision trees), refit on the 1st of every month on all data up to two days before (walk-forward), settings chosen on the year before.</dd></dl></article>
     <article class="scard" id="s-B_gbm"><div class="tagl">gradient boosting</div><h3>B, gradient boosting</h3><dl><dt>What it bets</dt><dd>Short where the forecast gap is below minus the fee, long where it is above plus the fee, otherwise out.</dd><dt>What it reads at 05:00</dt><dd>The same as A, plus GFS weather forecasts issued two days before each delivery hour, at points across New York.</dd><dt>How it was trained</dt><dd>Gradient boosting, walk-forward with monthly refits, from May 2021 when the weather archive starts.</dd></dl></article>
     <article class="scard" id="s-B_deep"><div class="tagl">neural network</div><h3>B, deep model</h3><dl><dt>What it bets</dt><dd>The same bet as B with gradient boosting.</dd><dt>What it reads at 05:00</dt><dd>The same inputs as B.</dd><dt>How it was trained</dt><dd>A PyTorch neural network, the average of three random starts, refit monthly; its settings were chosen on 2022.</dd></dl></article>
@@ -354,6 +552,33 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
     <article class="scard" id="s-V3"><div class="tagl">gradient boosting</div><h3>Tail sizing (V3)</h3><dl><dt>What it bets</dt><dd>The same side as V2, but sized up to 3&nbsp;MW by expected profit against the size of a bad-day loss.</dd><dt>What it reads at 05:00</dt><dd>The same inputs as A.</dd><dt>How it was trained</dt><dd>Quarterly refits; the audit found it sits near 3&nbsp;MW almost always, so its lead over V2 is size, not skill.</dd></dl></article>
   </div>
   <p class="note">Walk-forward means each month (or quarter) is predicted by a model trained only on earlier data, so no month helps predict itself. Every other strategy, failures included, is in the <a href="#a-results">table of every result</a>.</p>
+</div></section>
+
+<section id="bankroll" data-band style="--band:var(--b1)"><div class="wrap">
+  <div class="sec-label">The build years</div>
+  <h2 id="h-bank">On the years I built them on, the candidates ended above both plain rules</h2>
+  <p class="why">This is the result that chose who went to the test: every strategy scored month by month (version 1, 2021 to 2023) or quarter by quarter (version 2, 2013 to 2023) on data its model had not been trained on. It looked strong, which is why the unseen months at the top of the page are the result that counts.</p>
+  <div class="card">
+    <div class="vt" role="group" aria-label="Study version"><button data-v="v2" aria-pressed="true">Version 2 &middot; 2013 to 2023</button><button data-v="v1" aria-pressed="false">Version 1 &middot; 2021 to 2023</button></div>
+    <p class="hint"><b>Click a version</b> to switch every build-year chart on the page. <b>Hover or tap</b> a chart to read one day.</p>
+    <h2 class="ctitle" id="t-bank">Loading the build-year results</h2>
+    <p class="csub">Each line starts with 500,000 USD and pays every fee. Fixed-size bets, profits not reinvested, so lines rise in a straight-ish line rather than compounding.</p>
+    <p class="hint"><b>Click a name</b> for how that strategy works; <b>hover a name</b> to pick out its line in both panels.</p>
+    <div class="lg" id="lg-bank" aria-hidden="true"></div>
+    <div class="chart" id="ch-bank"></div>
+    <p class="csub" style="margin:10px 0 2px">How far each line sat below its own previous high, percent</p>
+    <div class="chart" id="ch-under"></div>
+    <p class="note" id="uw-note" style="margin-top:2px"></p>
+    <div class="three">
+      <p><b>what you see</b>Each line is one strategy's 500,000 USD bankroll, day by day after all fees; the lower panel shows how far it sat below its own previous high.</p>
+      <p><b>how to read</b>The three steadiest candidates by Sharpe ratio (average daily profit divided by its day-to-day swings, scaled to a year) are named in blue, teal and purple, and the three other candidates that end highest in orange, pink and sky blue; the remaining candidates are pale, red is always selling, grey is the habit rule; the dashed line is the start.</p>
+      <p><b>take-away</b><span id="k-bank">Each candidate ends above both plain rules on the years its model was built on; the unseen months at the top of the page are the test of that, and there the edge did not hold beyond the rules with no model.</span></p>
+    </div>
+    <p class="note" id="n-bank"></p>
+    <p class="note">Each strategy's fixed size (its sizing view) is the one at which its worst build-year fall from a high, its drawdown, is 100,000 USD. "Pass the bar" means the tests in <a href="#primer">The bet</a>. Names: A sits out spike-risk hours, B reads weather forecasts, C buys one zone and sells another, D reads planned outages; boosting and deep are the two model types; ideas 1 to 14 (version 1) and V1 to V16 (version 2, with plain names in <a href="#v2rank">Version 2 results</a>) are listed in the <a href="#appendix">appendix</a>.</p>
+    <div class="cfoot">Data: <a href="data/equity_v1.json">equity_v1.json</a> &middot; <a href="data/equity_v2.json">equity_v2.json</a> (daily, every row, flags and sizing) &middot; <a href="data/drawdown.json">drawdown.json</a> (the same falls in USD at 1&nbsp;MW). Drawn in the page from these files. Detail: <a href="#a-results">every result</a>.</div>
+  </div>
+  <a class="appx-link" href="#appendix">Open the audit appendix: the objectives verbatim, every dated addendum, every result, every audit</a>
 </div></section>
 
 <section id="v2rank" data-band style="--band:var(--b10)"><div class="wrap">
@@ -372,7 +597,7 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
       <p><b>how to read</b>Compare a bar with the S&amp;P 500 line first, then read its Sharpe: a long bar with a low Sharpe made its money with deep falls along the way. A bar whose dark part is much shorter than its pale part depends on a handful of days.</p>
       <p><b>take-away</b><span id="k-v2rank"></span></p>
     </div>
-    <p class="note">Status: candidate passes the bar and is not fragile, so it enters the held-out run; fragile passes but leans on a few days or a lucky setting; too few years made money in fewer than 8 of 11; comparison was registered as a yardstick before it was scored. Comparisons run in the held-out test too.</p>
+    <p class="note">Status: candidate passes the bar and is not fragile, so it went to the held-out run; fragile passes but leans on a few days or a lucky setting; too few years made money in fewer than 8 of 11; comparison was registered as a yardstick before it was scored. Comparisons ran in the held-out test too.</p>
     <p class="note" id="n-v2rank"></p>
     <div class="cfoot">Data: <a href="data/equity_v2.json">equity_v2.json</a> (every row, its flags and its daily profit) &middot; <a href="data/years.json">years.json</a> &middot; <a href="data/baselines.json">baselines.json</a> (the S&amp;P 500 and deposit figures with their sources). Scored on the training machine from results/v2/v2_results.json, final scoring of 8 October 2026. Selection: <a href="https://github.com/bolgacg/tavle/blob/master/research/us_v2/HELDOUT-LIST.md">research/us_v2/HELDOUT-LIST.md</a>.</div>
   </div>
@@ -389,7 +614,7 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
     <li id="lim-v13"></li>
     <li id="lim-alloc"></li>
   </ul>
-  <p class="why" style="margin-top:14px">Every one of these numbers comes from the years I built the models on. The next sections explain the best row and the deep models; the held-out run further down is the test that counts.</p>
+  <p class="why" style="margin-top:14px">Every one of these numbers comes from the years I built the models on. The next sections explain the best row and the deep models; the held-out run at the top of the page is the test that counts.</p>
 </div></section>
 
 <section id="weather" data-band style="--band:var(--b10)"><div class="wrap">
@@ -492,7 +717,7 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
   <div class="sec-label">Where the money came from</div>
   <h2>Most of the profit sits in a few months, and one storm decides the plain bet</h2>
   <p class="note" style="margin:-4px 0 10px">Winter Storm Elliott is the flash freeze of 23 and 24 December 2022, when real-time prices in New York ran far above day-ahead.</p>
-  <p class="why">A result that rests on one month or one storm can vanish in the held-out years, so these three charts show when each candidate earned.</p>
+  <p class="why">A result that rests on one month or one storm can vanish on new years, as the two weather events of 2026 showed on the unseen months, so these three charts show when each candidate earned on the build years.</p>
 
   <div class="card">
     <div class="vt" role="group" aria-label="Study version"><button data-v="v2" aria-pressed="true">Version 2</button><button data-v="v1" aria-pressed="false">Version 1</button></div>
@@ -501,7 +726,7 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
     <div class="chart mult" id="ch-years"></div>
     <div class="readout" id="ro-years"></div>
     <div class="three">
-      <p><b>what you see</b>One panel per strategy, one bar per year, green above zero and red below; hatched slots are the held-out years.</p>
+      <p><b>what you see</b>One panel per strategy, one bar per year, green above zero and red below; build years only.</p>
       <p><b>how to read</b>A bar's height is that year's profit or loss against the bankroll; all panels use the same scale, so heights compare across panels.</p>
       <p><b>take-away</b><span id="k-years"></span></p>
     </div>
@@ -517,7 +742,7 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
     <div class="chart" id="ch-month"></div>
     <div class="readout" id="ro-month"></div>
     <div class="three">
-      <p><b>what you see</b>One row per year and one cell per month; green cells made money, red cells lost it, and hatched rows are held out.</p>
+      <p><b>what you see</b>One row per year and one cell per month; green cells made money and red cells lost it; build years only.</p>
       <p><b>how to read</b>Darker means a larger amount; the number in a cell is thousands of US dollars, and tapping a cell prints its exact value.</p>
       <p><b>take-away</b>Look for one dark cell that outweighs the rest: that month, not a steady edge, would then be carrying the strategy.</p>
     </div>
@@ -583,62 +808,9 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
   </div>
 </div></section>
 
-<section id="rules" data-band style="--band:var(--b6)"><div class="wrap">
-  <div class="sec-label">How the test is kept clean</div>
-  <h2>The rules were fixed before the held-out years were opened, and every change is dated in public</h2>
-  <p class="why">A plan only means something if it existed before the results, so this section shows when each rule was written and what the checks found, my own errors included.</p>
-  <ul class="plist">
-    <li>The objectives were committed before any model ran; every later change is a dated addendum, never an edit.</li>
-    <li>Every data loader refuses dates from 1 January 2024 until a freeze commit is named, and the held-out run is the last job.</li>
-    <li><span id="k-count">Version 1 scored 33 strategy rows plus idea 13, and version 2 has scored 10</span>, failures included.</li>
-    <li>Every rule faces the placebos above, and independent re-implementations audited the profit code, costs, storm rules, idea 10 and version 2.</li>
-  </ul>
 
-  <div class="card">
-    <h3 class="ctitle" id="t-addenda">Loading</h3>
-    <p class="csub">Dated commits to the objectives files, 6 and 7 October 2026, in Danish time (I work from Denmark); the list below gives each one</p>
-    <div class="chart" id="ch-addenda"></div>
-    <ol class="tl-list" id="l-addenda"></ol>
-    <div class="cfoot">Data: <a href="data/events.json">events.json</a>, from the git history of <a href="https://github.com/bolgacg/tavle/commits/master/research/us/OBJECTIVES.md">research/us/OBJECTIVES.md</a> and <a href="https://github.com/bolgacg/tavle/commits/master/research/us_v2/OBJECTIVES.md">research/us_v2/OBJECTIVES.md</a>. The full text of every addendum is in the <a href="#a-objectives">appendix</a>.</div>
-  </div>
 
-  <h3 style="margin-top:30px">What the audits caught, my own errors included</h3>
-  <ul class="plist">
-    <li>Idea A's first rule had almost no skill in the 2023 rehearsal, so A was rebuilt around its spike flag before any held-out data was read.</li>
-    <li>A verdict bug could print "pays" without the Holm correction, and idea D counted outage sites through 2023; both were fixed before the freeze.</li>
-    <li>The 2021 and 2025 fees were wrong and were corrected from NYISO's postings.</li>
-    <li>Two of my own scripts loaded 2024 rows and dropped them in the next line; nothing was used, and the slip is disclosed.</li>
-    <li>Two clock times in the objectives were wrong, and one script let 55 rows in on spring-forward days; no decision changed.</li>
-    <li>The storm rules and idea 10 depend on Winter Storm Elliott's two days, so they are flagged fragile.</li>
-    <li>In version 2, the limit prices add nothing, V3's lead is position size, and most of C deep is a fixed zone-pair spread.</li>
-  </ul>
 
-  <h3 style="margin-top:30px">Where this study is weakest</h3>
-  <ul class="plist neg">
-    <li>One storm carries much of the profit: Elliott's two days gave B boosting 180,520 of its 555,120 USD in 2022.</li>
-        <li>Bids are assumed to clear at the market price without moving it, which flatters storm days most.</li>
-    <li>Ideas 1 and 2 came from exploring the build years, and a reviewer saw 2024 summary statistics before the freeze; both are disclosed.</li>
-  </ul>
-</div></section>
-
-<section id="heldout" data-band style="--band:var(--b7)"><div class="wrap">
-  <div class="sec-label">Held-out run</div>
-  <h2 id="t-heldout">The held-out results go here after the single run</h2>
-  <p class="why">This is the only test on this page that the models could not have been shaped by, so it is run once, with the code frozen first. No held-out number exists yet.</p>
-  <ol class="stl">
-    <li class="done"><span class="d">8 Oct 2026, done</span><span>The held-out lists are published: 7 version 1 and 26 version 2 candidates, chosen mechanically by the rule I fixed on 7 October, with every other row kept as a comparison (<a href="https://github.com/bolgacg/tavle/commit/6f4c85e">6f4c85e</a>; <a href="https://github.com/bolgacg/tavle/blob/master/research/us/HELDOUT-LIST.md">version 1 list</a>, <a href="https://github.com/bolgacg/tavle/blob/master/research/us_v2/HELDOUT-LIST.md">version 2 list</a>).</span></li>
-    <li class="done"><span class="d">8 Oct 2026, done</span><span>The build-year code of both versions is published exactly as it ran, with a sha256 fingerprint of every file, so anyone can check that the held-out run uses the same code (<a href="https://github.com/bolgacg/tavle/commit/aeb7927">aeb7927</a>, <a href="https://github.com/bolgacg/tavle/blob/master/research/us/CODE-MANIFEST.txt">CODE-MANIFEST.txt</a>).</span></li>
-    <li class="todo"><span class="d">now, in progress</span><span>The held-out runners are being built: the same rolling windows continue quarter by quarter (version 2) and month by month (version 1) into 2024, with sizes carried over unchanged.</span></li>
-    <li class="todo"><span class="d">by 10 Oct 2026</span><span>Freeze: one commit names the code and settings, and the sealed run starts from a clean copy of that commit.</span></li>
-    <li class="todo"><span class="d">after the freeze</span><span>The single sealed run on January 2024 to September 2026; its results replace the pending cells below, beside the S&amp;P 500 and bank deposit returns over the same months.</span></li>
-  </ol>
-  <div class="slot">
-    <h3>January 2024 to September 2026 <span class="pending" id="ho-badge">held-out run pending</span></h3>
-    <p style="font-size:14.5px;color:var(--soft)">Every candidate and both plain rules (always supply and the habit rule) run once on years no model has seen. The cells and the hatched chart areas fill in when the chart data is rebuilt with the held-out run.</p>
-    <div class="tscroll"><table class="gen" id="tb-heldout"></table></div>
-    <p class="note">Return a year is on the 500,000 USD bankroll at the sizing view. The one-word verdict per idea (pays, doesn't pay, inconclusive or not run) comes from the scoring script with its bootstrap interval and Holm correction, as fixed in objectives 5 and 6. The build-year bar chose who enters the held-out run; the held-out verdict is that test.</p>
-  </div>
-</div></section>
 
 <section id="glossary" data-band style="--band:var(--b2)"><div class="wrap">
   <div class="sec-label">Terms</div>
@@ -649,7 +821,15 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
     <div><b>virtual load</b> buying day-ahead and selling in real time: a long position, betting the price rises (a DEC)</div>
     <div><b>load zone</b> one of NYISO's 11 pricing regions, A (West) to K (Long Island)</div>
     <div><b>build years</b> the years models were tuned and scored on: 2021 to 2023, or 2013 to 2023 in version 2</div>
-    <div><b>held-out run</b> one run on January 2024 to September 2026 after the code is frozen</div>
+    <div><b>held-out run</b> the single run on January 2024 to September 2026, the unseen months, from the frozen code</div>
+    <div><b>zone pair</b> buy in one price zone and sell in another for the same hour, so only the difference between the zones counts</div>
+    <div><b>congestion</b> the part of a price caused by full power lines; it makes prices differ between zones</div>
+    <div><b>N.Y.C., CAPITL, WEST</b> NYISO's New York City zone (J), Capital zone around Albany (F) and West zone around Buffalo (A)</div>
+    <div><b>sell-side model</b> a model whose positions are mostly virtual supply, so it wins when real time comes in below day-ahead</div>
+    <div><b>event days</b> the 18 days of the winter storm (24 January to 2 February 2026) and the heat wave (28 June to 5 July 2026)</div>
+    <div><b>correlation</b> how closely two daily profit series move together, from minus 1 to plus 1; near 0 means unrelated</div>
+    <div><b>drawdown limit</b> the largest fall from a high I accept: 7 percent of 500,000 USD without leverage, 15 percent with it</div>
+    <div><b>95 percent interval</b> the range that 95 of 100 resampled histories fall in; one that crosses zero shows no difference</div>
     <div><b>walk-forward</b> each month or quarter scored by a model trained only on earlier data</div>
     <div><b>sizing view</b> the size at which a strategy's worst build-year drop is 100,000 USD, at most 5&nbsp;MW</div>
     <div><b>Sharpe ratio</b> average daily profit divided by its day-to-day swings, scaled to a year; the S&amp;P 500's long-run value is about 0.42</div>
@@ -673,7 +853,7 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
       <ol class="toc">
         <li><a href="#a-objectives">Objectives and every dated addendum, verbatim</a></li>
         <li><a href="#a-results">Every result row, both versions</a></li>
-        <li><a href="#d-results">Results section as drafted for the held-out run</a></li>
+        <li><a href="#d-results">Results section drafted before the run (replaced)</a></li>
         <li><a href="#d-robustness">Robustness: seeds, neighbouring settings, costs and seasons</a></li>
         <li><a href="#a-audits">Audits: what each one checked and found</a></li>
         <li><a href="#d-weaknesses">Weaknesses, long form</a></li>
@@ -783,7 +963,19 @@ Robustness checks run on the strongest rows before the list is approved, all on 
 - The held-out run is the last job: it starts only after every v2 strategy, the weather-based ones included, has finished on 2010 to 2023.
 - Weather inputs are archived forecasts only (GFS previous runs from 2021; GEFS reforecasts before), each stamped with the time it was issued; observed weather and reanalysis are never inputs, and a test fails the build if any weather row is not a forecast issued before 05:00 on D.
 
-Wording note, 7 October 2026: earlier addenda referred to me in the third person and named the AI assistants that ran parts of the work; they are now written in my own voice. No rule, number or date changed; the git history keeps the original wording.</div>
+Wording note, 7 October 2026: earlier addenda referred to me in the third person and named the AI assistants that ran parts of the work; they are now written in my own voice. No rule, number or date changed; the git history keeps the original wording.
+
+8 Oct 2026, the code published before the held-out run (no held-out data read):
+- The held-out lists for version 1 and version 2 are in the repository (research/us/HELDOUT-LIST.md, research/us_v2/HELDOUT-LIST.md), chosen by the rule of 7 Oct.
+- The build-year code of both versions is now published exactly as it ran: every file is byte-identical to the copy that produced the 2020 to 2023 results, with its sha256 in research/us/CODE-MANIFEST.txt. Some docstrings in that code still use the older wording; they are left unchanged so that the published code is the code that ran.
+- The held-out mode is new code written after this commit. It only extends the walk-forward (version 1, month by month with each year's choices made on the year before) and the rolling windows (version 2, quarter by quarter) to 30 September 2026, rebuilds the version 2 tables to that date under the same publication-time tests and the same forecasts-only weather rule, and opens only through the lock (a FREEZE file naming the frozen commit, unchanged code, and an explicit switch). It changes no build-year code path; before the freeze it is proved by a dry run whose test window ends on 31 December 2023 and must reproduce the build-year positions exactly.
+
+8 Oct 2026, the freeze (no held-out data read): code frozen at a581c3b3eb444e7a1caca39d3f79fbe8be8e3aeb; the held-out run uses only this commit; v2 dry runs run first on gene, and if any row fails to reproduce 2023 exactly the held-out run does not start. The version 1 dry run is repeated from the same commit before it as well. research/us/FREEZE names the commit; research/us/model/orchestrate_heldout.sh runs every stage.
+
+10 Oct 2026, real-time prices missing in July 2026, rebuilt from NYISO's own 5-minute prices (no held-out result read):
+The version 1 held-out run stopped at its scoring stage because 19 delivery days had no real-time price: 1 to 18 July and 20 July 2026. NYISO's monthly archive of hourly real-time zone prices for July 2026 holds only 12 daily files, and the daily files of the missing days return 404 (checked again on 10 Oct 2026). NYISO's archive of 5-minute real-time zone prices has every day of July, and NYISO's hourly price is the time-weighted average of its 5-minute prices within the hour. So the missing days are rebuilt that way by research/us_v2/pipeline/rt_from_5min.py. Checked against NYISO's own hourly values on 15,120 zone-hours (June 2026 and the 12 July days present), the rebuilt average is within 0.005 USD/MWh of the official price in every one; after rounding to the cent, 3,930 of the 4,320 July zone-hours are identical and the rest differ by one cent, because NYISO averages unrounded 5-minute prices while the published ones carry two decimals.
+The rebuilt days sit in their own raw folder (raw/rt_rebuilt, with a README naming the source files). The price builders of both versions use a rebuilt day only where NYISO's hourly file lacks it, list it in the build log, and give it a publication time by the same rule as every other real-time row. Every row before 2024 is unchanged: the rebuilt version 1 price table equals the old one in every row except the 5,016 zone-hours that had no real-time price (and the 1,824 border rows of the same days). The input check missed the gap because it counted monthly files by name, not the days inside them; it now counts the days. It also lists one missing outage snapshot (25 Sep 2026), which the frozen outage features already handle by using the newest earlier snapshot.
+A first fix that skipped these days in scoring (commit 0d6185f) was reverted (commit e3118db) before any run used it. The new code commit is f0636cc3cc36d67dd76f4261db0723b82ac08194; it differs from a581c3b only by the rebuild script, the two price readers and the input check. The held-out stages that read prices run again: the version 2 data rebuild, the registered verdict run and the version 1 run. The dry runs and the lock stand, since no row before 2024 changed.</div>
         <div class="vhead">research/us_v2/OBJECTIVES.md &middot; version 2 &middot; <a style="color:#fff" href="https://github.com/bolgacg/tavle/commits/master/research/us_v2/OBJECTIVES.md">history</a></div>
         <div class="verbatim"># New York study, version 2: objectives (registered 7 Oct 2026, before any v2 model runs)
 
@@ -816,7 +1008,45 @@ Design
 - Comparison row added: V2 sides without limits (the gradient-boosting side at every hour, 1 MW, no limit price), because the audit showed the limit prices add nothing and the profit comes from the side.
 - Labels corrected: V2's result is reported as the gradient-boosting direction model; V3 is reported per MWh and at 1 MW, since its total reflects position size.
 
-Wording note, 7 October 2026: earlier addenda referred to me in the third person and named the AI assistants that ran parts of the work; they are now written in my own voice. No rule, number or date changed; the git history keeps the original wording.</div>
+7 Oct 2026, V13, registered before it runs (no held-out data read):
+V13. All-inputs deep model: one deep network fed every input public by 05:00 on D (zone and generator-point prices and their energy, congestion and loss parts, border prices, the operator's load forecasts, outage counts, archived weather forecasts where they exist, calendar), trained in the same rolling windows, predicting each zone's next-day gap; positions as in C and A. A fixed menu of at most three architectures (recurrent, temporal convolution, small attention), chosen on earlier windows only; strong regularisation and input dropout. Feature-group ablations (each input group removed in turn) show what each source adds. It is one idea in the count; the ablations are diagnostics, not extra strategies.
+
+7 Oct 2026, V14 family, six deep-learning setups approved by me, registered before any runs (research: research/us_v2/dl_setups_research.md; no held-out data read):
+V14a. Window ensemble: models trained on 1, 2, 3 and 5-year windows and an expanding window, recency-weighted, predictions averaged.
+V14b. Quantile heads (GRU and gradient boosting) used to size positions: smaller when the predicted range is wide.
+V14c. Conformal wrapper: calibrated intervals from earlier windows; skip an hour when its interval includes the fee-adjusted break-even.
+V14d. Seed ensemble of the GRU plus gradient boosting, averaged.
+V14e. One multi-output network for all 24 hours and 11 zones (the electricity-price benchmark design).
+V14f. One global model with learned zone embeddings; if time allows, an N-BEATSx/NHiTS variant or a profit-trained loss with a tail penalty, chosen on earlier windows only.
+Each is one idea in the count, same rolling windows, rules, placebos and fragility checks. The held-out run waits until all of them have finished.
+
+7 Oct 2026, V15, four combinations the feature matrix showed were untried (research/us_v2/feature_matrix.md), registered before they run; no held-out data read:
+V15a. The limit-price rule (V2) applied to the V4 weather, V5 border and V8 error-mining models.
+V15b. The V13 all-inputs deep model traded on both sides and with limit prices, not only pairs and supply-only.
+V15c. One gradient-boosting model with weather and border inputs together; weather from the GEFS reforecast to 2019 and the GFS archive from 2021, never observed weather.
+V15d. The zone-pair rule driven by the V4 weather model.
+One idea in the count; same rolling windows, rules, placebos and fragility checks; the held-out run waits for it.
+
+7 Oct 2026, V16, the last addition before the held-out run; no held-out data read:
+V16. Idea V4 (weather forecasts against the operator's load forecast) with a consistent forecast source: the GEFS reforecast to 2019 joined to the archived live GEFS forecasts (the same GEFS version 12 model) from 23 September 2020, control member, 00 UTC run, same leads and points; January to September 2020 has no forecast and is not traded. Same rolling windows and rules. The live GEFS archive for 2024 to 2026 is downloaded for the held-out run but sealed: only file counts are read before the run. After V16 the list of ideas is closed.
+
+8 Oct 2026, code and held-out list published before the held-out run (no held-out data read): the list is research/us_v2/HELDOUT-LIST.md; the code that produced the 2013 to 2023 results is published byte-identical to what ran, with sha256 in research/us/CODE-MANIFEST.txt; the held-out mode is new code that only continues the rolling windows to 30 September 2026 (details in the version 1 addendum of the same date).
+
+8 Oct 2026, the freeze (no held-out data read): code frozen at a581c3b3eb444e7a1caca39d3f79fbe8be8e3aeb; the held-out run uses only this commit; v2 dry runs run first on gene, and if any row fails to reproduce 2023 exactly the held-out run does not start. The version 1 dry run is repeated from the same commit before it as well. research/us/FREEZE names the commit; research/us/model/orchestrate_heldout.sh runs every stage.
+
+9 Oct 2026, dry run result and one rule change before any held-out data is read:
+The 2023 dry run from the frozen code (a581c3b) reproduced 33 version 2 rows exactly. Four did not. Three are the all-inputs deep model and its two variants (V13_C_deep_all, V15b_V13_both, V15b_V13_limit): 4, 1 and 2 of 96,360 zone-hours differ, worth 45, 7 and 8 USD over 2023, from the graphics card not repeating its arithmetic bit for bit. I count these three as reproduced: a row passes if at most 0.01 percent of zone-hours differ and the 2023 net differs by less than 100 USD. The fourth is the allocator V12_alloc: 72,616 zone-hours differ (2,135 USD), because its build-year run used inputs from before V15a and V16 finished, as noted in HELDOUT-LIST.md. It cannot be reproduced, so it is dropped from the held-out run and reported as not run. The frozen code is unchanged; the held-out run restarts after the dry runs with this decision recorded in run/markers/dry_v2.done. The full dry run table is in the held-out run folder.
+
+9 Oct 2026, held-out data rebuild, one accepted difference:
+The held-out data rebuild passed every timing and window test (57 of 57) and matched the build tree in 207 of 208 files for all rows before 2024-01-01. The one difference is the joined GEFS weather table used by V16: 300 of 1,395,948 temperature values for bid days 30 and 31 December 2023 were blank in the build and are now filled. They are forecasts issued on those bid days, published at the same times as before, for delivery hours from 23:00 on 31 December 2023 into 1 January 2024; the build left them blank only because it did not read forecast hours that fall in 2024. This is missing data in the build, not a leak. I accept the rebuilt table and the held-out run continues from the data stage; the comparison is in the run folder (compare_build.json).
+
+10 Oct 2026, real-time prices missing in July 2026, rebuilt from NYISO's own 5-minute prices (no held-out result read):
+NYISO's hourly real-time zone archive lacks 1 to 18 July and 20 July 2026 (the daily files return 404, checked again on 10 Oct 2026). These days are rebuilt as the time-weighted average of NYISO's 5-minute real-time zone prices (research/us_v2/pipeline/rt_from_5min.py), which matches NYISO's hourly values within 0.005 USD/MWh on 15,120 official zone-hours of June and July 2026. The version 2 price builder uses a rebuilt day only where the official file lacks it, with the same publication rule as every other real-time row, and every row before 2024 is unchanged (the data rebuild compares them with the build tree again). The input check missed the gap because it counted files by name, not the days inside them; it now counts the days. Code commit f0636cc3cc36d67dd76f4261db0723b82ac08194 differs from a581c3b only by this; the held-out data rebuild and every later held-out stage run again. Details in the version 1 addendum of the same date.
+
+11 Oct 2026, a correction to the addendum of 10 Oct about the rebuilt July 2026 real-time prices:
+That addendum says the rebuilt prices match NYISO's hourly values "within 0.005 USD/MWh". That describes the unrounded averages, not the prices the builders store. After rounding to the cent, as NYISO publishes them, 3,930 of the 4,320 official July 2026 zone-hours compared (12 days with an official file, 15 zones, 24 hours) match exactly and the other 390 differ by 1 cent, because NYISO averages its unrounded 5-minute prices while the 5-minute prices it publishes carry two decimals. The self-test that produced these counts is in raw/rt_rebuilt/README.md on the training machine. Nothing in the run changes: the rebuilt days, their publication times and every score stay as they ran.
+
+Wording note, 11 October 2026: two lines above still named me in the third person, in the introduction and in the V14 addendum of 7 Oct; they now read "my rule" and "approved by me", as the version 1 file was reworded on 7 October. No rule, number or date changed; the git history keeps the original wording.</div>
       </section>
 
       <section id="a-results">
@@ -827,66 +1057,15 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
         <div class="tscroll"><table class="gen" id="tb-all-v1"></table></div>
         <h3 style="margin-top:22px">Version 2, 2013 to 2023</h3>
         <div class="tscroll"><table class="gen" id="tb-all-v2"></table></div>
-        <p class="note">USD at 1&nbsp;MW per zone-hour after full costs, summed over the 11 zones. Placebo columns give the share of the real profit kept, in percent; "n/a" means the row has no score to perturb (always supply). Idea 13, the portfolio of the survivors, is built from other rows and is reported in the robustness tables. Version 2 positions not yet scored: <span id="k-unscored"></span>. Generated in the page from <a href="data/equity_v1.json">equity_v1.json</a>, <a href="data/equity_v2.json">equity_v2.json</a>, <a href="data/years.json">years.json</a> and <a href="data/placebo.json">placebo.json</a>; rolling one-year Sharpe ratios are in <a href="data/rolling_sharpe.json">rolling_sharpe.json</a>.</p>
+        <p class="note">USD at 1&nbsp;MW per zone-hour after full costs, summed over the 11 zones. Placebo columns give the share of the real profit kept, in percent; "n/a" means the row has no score to perturb (always supply). Idea 13, the portfolio of the survivors, is built from other rows and is reported in the robustness tables. Version 2 rows registered but never scored on the build years: <span id="k-unscored"></span>. The last column is each row's held-out total from <a href="data/heldout.json">heldout.json</a>; "not run" marks rows with no held-out positions, and V12 was dropped before the run. Generated in the page from <a href="data/equity_v1.json">equity_v1.json</a>, <a href="data/equity_v2.json">equity_v2.json</a>, <a href="data/years.json">years.json</a> and <a href="data/placebo.json">placebo.json</a>; rolling one-year Sharpe ratios are in <a href="data/rolling_sharpe.json">rolling_sharpe.json</a>.</p>
       </section>
 
       
 
 <section id="d-results"><div>
   <div class="sec-label">Results</div>
-  <h2>Results, as drafted for the held-out run</h2>
-  <p class="note" style="max-width:760px">Drafted on 7 October with four candidates (B and C, each with two models). By the selection rule fixed the same day, A's first rule and idea 14 also qualify; the generated table of every result above gives the current count. The drafted wording is kept as written.</p>
-  <p class="why">This section answers the study's question: which of the ideas made money after fees, first on the building years and then on the years nobody had looked at.</p>
-  <div class="verdict"><p><b>On the building years, four strategies pass the bar and are not flagged fragile.</b> They are idea B with two models and idea C with two models. On the held-out years, <span class="pending">held-out run pending</span>.</p></div>
-  <div class="qa">
-    <div><b>How many passed on 2021 to 2023?</b>Eight of 32 strategies met the bar at 1&nbsp;MW. Four of the eight are flagged fragile, by the lab's checks or by the audits, so four are candidates.</div>
-    <div><b>How many passed on the held-out years?</b><span class="pending">held-out run pending</span> of the <span class="pending">held-out run pending</span> candidates.</div>
-    <div><b>Which candidate did best?</b><span class="pending">held-out run pending</span> earned <span class="pending">held-out run pending</span> USD at 1&nbsp;MW, against <span class="pending">held-out run pending</span> on the building years.</div>
-    <div><b>Did anything beat always taking supply?</b><span class="pending">held-out run pending</span></div>
-  </div>
-  <p class="prose" style="margin-top:18px">All figures are US dollars for 1&nbsp;MW per zone-hour after the grid operator's fees, summed over the 11 zones. The bar, fixed before any model ran: at least 50,000 USD a year on average, profit in at least two of the three years, a Sharpe ratio above 0.42, and a positive total with costs raised to 0.50 USD per MWh. The sizing view column gives the position size at which the worst three-year loss from a peak would be 100,000 USD, and the yearly return on a 500,000 USD bankroll at that size.</p>
-  <p class="prose">Held-out columns cover January 2024 to September 2026, run once after the code was frozen. They were empty when this page was drafted and are filled from the single run.</p>
-
-  <h3 style="margin-top:28px">Candidates</h3>
-  <p class="why" style="margin-top:8px">These passed the bar on the building years and no audit or check flagged them fragile. They were the list for the held-out run.</p>
-  <div class="tscroll"><table><thead><tr><th>Strategy</th><th>2021</th><th>2022</th><th>2023</th><th>Total</th><th>Without best 5 days</th><th>Sharpe</th><th>Sizing view</th><th>Held-out total</th><th>Held-out Sharpe</th></tr></thead><tbody><tr><td>B, gradient boosting<span class="zc">B gbm</span></td><td class="n">51,187</td><td class="n">555,120</td><td class="n neg">&minus;22,361</td><td class="n">583,946</td><td class="n">329,676</td><td class="n">1.96</td><td class="n">2.3 MW, 89.5%</td><td class="n"><span class="pending">held-out run pending</span></td><td class="n"><span class="pending">held-out run pending</span></td></tr>
-<tr><td>B, deep model<span class="zc">B deep</span></td><td class="n">35,464</td><td class="n">310,719</td><td class="n neg">&minus;35,731</td><td class="n">310,453</td><td class="n">70,950</td><td class="n">1.18</td><td class="n">1.45 MW, 29.9%</td><td class="n"><span class="pending">held-out run pending</span></td><td class="n"><span class="pending">held-out run pending</span></td></tr>
-<tr><td>C, gradient boosting<span class="zc">C gbm</span></td><td class="n">41,457</td><td class="n">124,029</td><td class="n">4,403</td><td class="n">169,889</td><td class="n">107,596</td><td class="n">1.67</td><td class="n">3.41 MW, 38.6%</td><td class="n"><span class="pending">held-out run pending</span></td><td class="n"><span class="pending">held-out run pending</span></td></tr>
-<tr><td>C, deep model<span class="zc">C deep</span></td><td class="n">57,838</td><td class="n">73,206</td><td class="n">34,363</td><td class="n">165,407</td><td class="n">122,663</td><td class="n">2.15</td><td class="n">3.92 MW, 43.2%</td><td class="n"><span class="pending">held-out run pending</span></td><td class="n"><span class="pending">held-out run pending</span></td></tr>
-<tr><td>Portfolio of the survivors<span class="zc">idea 13</span></td><td class="n">123,226</td><td class="n">507,435</td><td class="n">33,485</td><td class="n">664,146</td><td class="n"><span class="pending">not computed yet</span></td><td class="n">3.12</td><td class="n">0.594 MW, 26.3%</td><td class="n"><span class="pending">held-out run pending</span></td><td class="n"><span class="pending">held-out run pending</span></td></tr></tbody></table></div>
-  <div class="three">
-    <p><b>What</b>One row per strategy. Years 2021 to 2023 are the building years, scored month by month using only earlier data. The last two columns are the held-out years.</p>
-    <p><b>How to read</b>Look at the three year columns first. A strategy that earns in all three is steadier than one that earns in two.</p>
-    <p><b>Take</b><span class="pending">held-out run pending</span></p>
-  </div>
-  <p class="note">Idea 13 adds the survivors together, each scaled to the same worst loss. Its without-best-5-days figure is <span class="pending">not computed yet</span>. Idea 14, a learned mix of the four candidates, was added after the build-year table was seen: its build-year row is in the table of every result above.</p>
-
-  <h3 style="margin-top:28px">Fragile passers</h3>
-  <p class="why" style="margin-top:8px">These passed the bar but fail a check described in the audits section. Most of their profit comes from two days in December 2022.</p>
-  <div class="tscroll"><table><thead><tr><th>Strategy</th><th>2021</th><th>2022</th><th>2023</th><th>Total</th><th>Without best 5 days</th><th>Sharpe</th><th>Sizing view</th><th>Held-out total</th><th>Held-out Sharpe</th></tr></thead><tbody><tr><td>Weather surprise<span class="zc">idea 10</span></td><td class="n">3,034</td><td class="n">311,142</td><td class="n">37,955</td><td class="n">352,130</td><td class="n">88,091</td><td class="n">1.03</td><td class="n">1.21 MW, 28.5%</td><td class="n"><span class="pending">held-out run pending</span></td><td class="n"><span class="pending">held-out run pending</span></td></tr>
-<tr><td>Storm-day flip<span class="zc">idea 2</span></td><td class="n">78,415</td><td class="n">290,469</td><td class="n neg">&minus;48,392</td><td class="n">320,492</td><td class="n">38,019</td><td class="n">0.94</td><td class="n">0.74 MW, 15.9%</td><td class="n"><span class="pending">held-out run pending</span></td><td class="n"><span class="pending">held-out run pending</span></td></tr>
-<tr><td>Storm-day flip, second build<span class="zc">idea 2, second build</span></td><td class="n">74,421</td><td class="n">282,065</td><td class="n neg">&minus;49,753</td><td class="n">306,733</td><td class="n">24,260</td><td class="n">0.90</td><td class="n">0.74 MW, 15.2%</td><td class="n"><span class="pending">held-out run pending</span></td><td class="n"><span class="pending">held-out run pending</span></td></tr>
-<tr><td>Deep zone-day model<span class="zc">idea 5</span></td><td class="n">20,081</td><td class="n">149,388</td><td class="n">46,173</td><td class="n">215,642</td><td class="n neg">&minus;3,489</td><td class="n">0.66</td><td class="n">0.59 MW, 8.5%</td><td class="n"><span class="pending">held-out run pending</span></td><td class="n"><span class="pending">held-out run pending</span></td></tr></tbody></table></div>
-  <div class="three">
-    <p><b>What</b>The same columns for strategies that passed the bar and were then flagged fragile.</p>
-    <p><b>How to read</b>The 2022 column carries most of each total. Without the best 5 days, the totals shrink by a large share.</p>
-    <p><b>Take</b><span class="pending">held-out run pending</span></p>
-  </div>
-
-  <h3 style="margin-top:28px">Comparisons</h3>
-  <p class="why" style="margin-top:8px">These are the plain rules every idea has to beat, and the first version of idea A, which was registered before the others.</p>
-  <div class="tscroll"><table><thead><tr><th>Strategy</th><th>2021</th><th>2022</th><th>2023</th><th>Total</th><th>Without best 5 days</th><th>Sharpe</th><th>Sizing view</th><th>Held-out total</th><th>Held-out Sharpe</th></tr></thead><tbody><tr><td>Always take supply<span class="zc">basic</span></td><td class="n neg">&minus;5,015</td><td class="n neg">&minus;198,269</td><td class="n">68,154</td><td class="n neg">&minus;135,130</td><td class="n neg">&minus;216,721</td><td class="n">&minus;0.40</td><td class="n">0.29 MW, &minus;2.6%</td><td class="n"><span class="pending">held-out run pending</span></td><td class="n"><span class="pending">held-out run pending</span></td></tr>
-<tr><td>Baseline, each zone-hour's usual side<span class="zc">baseline</span></td><td class="n">12,655</td><td class="n neg">&minus;8,643</td><td class="n neg">&minus;72,836</td><td class="n neg">&minus;68,824</td><td class="n neg">&minus;126,628</td><td class="n">&minus;0.81</td><td class="n">0.8 MW, &minus;3.7%</td><td class="n"><span class="pending">held-out run pending</span></td><td class="n"><span class="pending">held-out run pending</span></td></tr>
-<tr><td>A, simple hourly average<span class="zc">A mean</span></td><td class="n">7,484</td><td class="n neg">&minus;87,770</td><td class="n">2,638</td><td class="n neg">&minus;77,648</td><td class="n neg">&minus;107,266</td><td class="n">&minus;0.52</td><td class="n">0.72 MW, &minus;3.7%</td><td class="n"><span class="pending">held-out run pending</span></td><td class="n"><span class="pending">held-out run pending</span></td></tr>
-<tr><td>A, spike filter, gradient boosting<span class="zc">A gbm</span></td><td class="n neg">&minus;16,822</td><td class="n">46,476</td><td class="n">20,542</td><td class="n">50,195</td><td class="n">32,268</td><td class="n">0.73</td><td class="n">1.66 MW, 5.6%</td><td class="n"><span class="pending">held-out run pending</span></td><td class="n"><span class="pending">held-out run pending</span></td></tr>
-<tr><td>A, first rule (regression)<span class="zc">A v1</span></td><td class="n">25,769</td><td class="n">32,400</td><td class="n">39,058</td><td class="n">97,227</td><td class="n">41,713</td><td class="n">0.72</td><td class="n">1.71 MW, 11.1%</td><td class="n"><span class="pending">held-out run pending</span></td><td class="n"><span class="pending">held-out run pending</span></td></tr></tbody></table></div>
-  <div class="three">
-    <p><b>What</b>Simple rules with no or little modelling. Always taking supply is the cheapest bet and the one the market's average gap favours.</p>
-    <p><b>How to read</b>A candidate that does not clearly beat these rows has not shown that the model adds anything.</p>
-    <p><b>Take</b><span class="pending">held-out run pending</span></p>
-  </div>
-  <p class="note">Every number on this page was generated by the build script from the lab and robustness output named in the repository, not typed. The build-year figures are from <span class="file">lab_results.md</span>. Strategies tried in total: 33 rows in version 1 plus idea 13, and 10 rows in version 2 so far.</p>
-  <p class="prose" style="margin-top:14px"><b>Handover.</b> A strategy that passes once may have been lucky, so the next section shows what happens to the candidates when the random starts, the settings and the costs change.</p>
+  <h2>The results section drafted before the run is replaced by the evidence at the top</h2>
+  <p class="prose">On 7 October I drafted this section with empty held-out cells, to be filled from the single run. The run has happened, and its results are in <a href="#evidence">the evidence</a>, <a href="#pairs">the pair position</a> and <a href="#book">the book</a> sections, with the full tables in <a href="https://github.com/bolgacg/tavle/tree/master/docs/us/results">docs/us/results</a>. The draft's build-year tables are in the git history of this page (commit <a href="https://github.com/bolgacg/tavle/commit/84d364d">84d364d</a>).</p>
 </div></section>
 
 <section id="d-robustness"><div>
@@ -935,7 +1114,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     <p><b>How to read</b>A strategy that earns in every season is less tied to one kind of weather.</p>
     <p><b>Take</b>Both C models lose money at 1.00 USD per MWh, so they leave little room for price impact. Summer is close to zero for both.</p>
   </div>
-  <p class="note">The six half-years for each row are in <span class="file">robustness_summary.md</span>. B earns in the first half of 2022 and the second, and loses in both halves of 2023. Held-out recheck: <span class="pending">held-out run pending</span>.</p>
+  <p class="note">The six half-years for each row are in <span class="file">robustness_summary.md</span>. B earns in the first half of 2022 and the second, and loses in both halves of 2023. On the unseen months these rows are in <a href="#evidence">the evidence</a>: B earned most of its profit in the January 2026 storm, and both C models sat at or below the zone pairs with no model.</p>
 </div></section>
 
 <section id="d-audits"><div>
@@ -964,7 +1143,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     <li><b>Public data only.</b> Everything used was public by 05:00 New York time the day before. A trader with the grid operator's internal data, or a faster weather feed, would do differently.</li>
     <li><b>One market.</b> The study covers New York only. Whether any result carries to another grid is untested.</li>
   </ul>
-  <div class="limits"><p><b>Most likely failure on the held-out years.</b> No storm of Elliott's size lands, the B models earn their 2023 pattern, and the candidates trail always taking supply in calm months. <span class="pending">held-out run pending</span></p></div>
+  <div class="limits"><p><b>Most likely failure on the held-out years, as written before the run.</b> No storm of Elliott's size lands, the B models earn their 2023 pattern, and the candidates trail always taking supply in calm months. <b>What happened.</b> A storm did land, in January 2026, but real time ran below day-ahead, so it paid the sellers; the B models earned most of their unseen-month profit in it, and without the storm and the June heat wave they were level with always supply.</p></div>
 </div></section>
 
 <section id="d-glossary"><div>
@@ -995,7 +1174,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
   <ol class="sources">
     <li><a href="https://www.nyiso.com/documents/20142/2223763/2024-State-of-the-Market-Report.pdf/63b4d5c8-7e8c-45ac-02f7-7885406bae71">Potomac Economics, NYISO State of the Market 2024</a> <span>and the <a href="https://www.nyiso.com/documents/20142/2223763/2022-State-of-the-Market-Report.pdf/617e9176-cb4b-de7d-1026-af57175c4a8e">2022 report</a>: net virtual profit of about 1.8 million USD in 2024, 0.06 USD per MWh, against about 20 million gross in 2022. The reports name Long Island as the zone most prone to real-time premiums. The two years use different profit methods.</span></li>
     <li><a href="https://arxiv.org/abs/2601.05085">Hubert, Lolas and Sircar, Trading Electrons: Predicting DART Spread Spikes in ISO Electricity Markets (2026)</a> <span>is the closest match. It trades NYISO's 11 zones, trains on 2015 to 2019 and tests on 2022 to 2025, and earns about 6 million USD, nearly all in Long Island, with sell trades ahead of buy trades. It models no transaction costs.</span></li>
-    <li><a href="https://ideas.repec.org/a/eee/eneeco/v119y2023ics0140988323000191.html">Galarneau-Vincent, Gauthier and Godin, Foreseeing the worst: forecasting electricity DART spikes (Energy Economics, 2023)</a> <span>predicts the probability of a spike in the Long Island zone and trades on it. Only the abstract was available to us.</span></li>
+    <li><a href="https://ideas.repec.org/a/eee/eneeco/v119y2023ics0140988323000191.html">Galarneau-Vincent, Gauthier and Godin, Foreseeing the worst: forecasting electricity DART spikes (Energy Economics, 2023)</a> <span>predicts the probability of a spike in the Long Island zone and trades on it. Only the abstract was available to me.</span></li>
     <li><a href="https://arxiv.org/abs/1802.03010">Baltaoglu, Tong and Zhao, Algorithmic Bidding for Virtual Trading in Electricity Markets</a> <span>tests an online learner on NYISO and PJM data from 2011 to 2016. It beat the S&amp;P 500 on Sharpe ratio, and its profits fell over the years as prices converged. It assumes the trader does not move prices.</span></li>
     <li><a href="https://ceepr.mit.edu/wp-content/uploads/2021/09/2017-003.pdf">Birge, Hortacsu, Mercadal and Pavlin, Limits to Arbitrage in Electricity Markets (MISO, 2018)</a> <span>finds that some large traders bought day-ahead against the premium and lost for years, apparently to raise the value of their congestion rights. A losing pattern is therefore not always noise.</span></li>
     <li><a href="https://ceepr.mit.edu/wp-content/uploads/2021/09/2015-002.pdf">Parsons and co-authors, Financial Arbitrage and Efficient Dispatch (MIT CEEPR, 2015)</a> <span>argues that day-ahead and real-time prices differ because the two market programs make different approximations. Profit for a virtual trader is therefore no evidence that the trader improves the market, and this page does not claim it.</span></li>
@@ -1007,7 +1186,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
   <div class="sec-label">Version 2</div>
   <h2>The same question with 14 years of history</h2>
   <p class="why">The main weakness of this page is how few storms the building years hold, and version 2 is built to answer it.</p>
-  <p class="prose">Version 2 trains each model on the previous three years and tests the next quarter, rolling forward from 2013 to 2023, 44 quarters in all. It reuses the same costs, bar, placebos and fragility flags, and it adds sixteen ideas such as bids with price limits, tail-risk sizing and border-region prices. It does not read 2024 onward either: one held-out run tests the approved version 1 and version 2 candidates together.</p>
+  <p class="prose">Version 2 trains each model on the previous three years and tests the next quarter, rolling forward from 2013 to 2023, 44 quarters in all. It reuses the same costs, bar, placebos and fragility flags, and it adds sixteen ideas such as bids with price limits, tail-risk sizing and border-region prices. It did not read 2024 onward either: one held-out run tested the version 1 and version 2 candidates together, and its results lead this page.</p>
   <p class="prose">The version 2 results are on this page (<a href="#v2rank">Version 2 results</a>). The plan is in <a href="https://github.com/bolgacg/tavle/blob/master/research/us_v2/OBJECTIVES.md">research/us_v2/OBJECTIVES.md</a>.</p>
 </div></section>
 
@@ -1024,6 +1203,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
           <li><b>Strategy lab, 6 Oct.</b> Every version 1 strategy scored the same way, with placebos, fragility flags and the sizing view. <span class="file">research/us/side/lab_results.md</span> &middot; the full strategy list: <a href="https://github.com/bolgacg/tavle/blob/master/research/us/results/strategy_list_2021_2023.md">strategy_list_2021_2023.md</a></li>
           <li><b>Robustness, 7 Oct.</b> 20 seeds per deep model, neighbouring settings, costs at 1.00 USD per MWh, seasons and half-years, and idea 13. <span class="file">research/us/results/robustness_summary.md</span></li>
           <li><b>Version 2, stage 1, 7 Oct.</b> V2's limit prices add nothing (the same sides without limits earn 14,759 USD more), V3's total is leverage, and C deep's departures from its static side earn near noise. <a href="https://github.com/bolgacg/tavle/blob/master/research/us_v2/audit/v2_stage1_audit.md">v2_stage1_audit.md</a></li>
+          <li><b>The held-out results, 11 Oct.</b> Every audited row's daily profit recomputed from positions and prices to 0.00 USD; the event split, the excess over the rules with no model with two kinds of interval, placebos on the window, a leak check on the event days, the publication times and the rebuilt July days; and why two steps crashed after scoring. <a href="results/AUDIT.md">AUDIT.md</a></li>
           <li><b>Timing, 6 Oct.</b> On 500 random bid days nothing used was published after 05:00, and every one of the injected lookahead rows was caught; 30 of 30 tests pass. <a href="https://github.com/bolgacg/tavle/blob/master/research/us/results/timing_test.json">timing_test.json</a></li>
         </ul>
         <p class="prose" style="margin-top:12px">Before the lab, on the same build years, two side scripts tried six rules beside always supply and the storm audit ran 22 diagnostic variants of ideas 1 and 2; inside the version 1 rows, choices searched 155 grid settings (lab count of 6 October). These are counted in the lab file and are part of why only the held-out run can settle the question.</p>
@@ -1307,9 +1487,8 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
         <div class="sec-label">Method</div>
         <h2>How the charts are made</h2>
         <div class="prose">
-          <p>I used Claude, an AI assistant, to help set up the experiments, write code and run the audits; every rule, decision and approval here is mine.</p>
           <p>Every chart on this page is drawn by a short script inside the page from the JSON files linked under it, which the chart data script writes from the scored results; no chart number is typed. The JSON files carry their own source, unit and a holdout line saying that nothing on or after 1 January 2024 was read.</p>
-          <p>When the single held-out run is done, the chart data script is run again with its held-out option, and the same files then run to September 2026. The page draws whatever the files hold, so the hatched areas fill in and the held-out table above gets its numbers without editing this page.</p>
+          <p>The build-year charts read files written with nothing after 31 December 2023. The held-out sections read <a href="data/heldout.json">heldout.json</a>, written by the same script's held-out step from the run's daily tables, the scorers' results, the registered verdict run and the audit; the file lists each source with a fingerprint, and the copies in <a href="https://github.com/bolgacg/tavle/tree/master/docs/us/results">docs/us/results</a> hold the same numbers. The script's held-out data step crashed at the end of the run on three rows that never traded; it is page code, not frozen model code, and the fix is in its history.</p>
           <p>The chart forms follow the monitoring charts I use for my own automated trading: hand-built inline SVG, an equity line against a dashed start, twin panels on one time axis, diverging bars and interval dot plots.</p>
         </div>
       </section>
@@ -1379,7 +1558,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
   var C = { ink: '#1a1d21', soft: '#5b6470', faint: '#8b95a1', rule: '#e2e0dc', rule2: '#c9c5be',
     acc: '#2c4a6b', pos: '#2f7d54', neg: '#b03a3a', amber: '#c8860d', grey: '#8b95a1', v2: '#7a4f9a' };
   var D = {}, V = 'v2', monthSel = { v1: null, v2: null }, hoverIdx = null;
-  var FILES = ['equity_v1', 'equity_v2', 'drawdown', 'monthly', 'placebo', 'seeds', 'years', 'events', 'feature_matrix', 'baselines'];
+  var FILES = ['equity_v1', 'equity_v2', 'drawdown', 'monthly', 'placebo', 'seeds', 'years', 'events', 'feature_matrix', 'baselines', 'heldout'];
 
   // ---------- names ----------
   var NAMES = {
@@ -1521,7 +1700,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
   }
   var SHORT = { V8_error_mining: 'Error model', V15c_wx_border_gbm: 'Weather, borders', V15a_V8_limit: 'Error model, limits', V15a_V5_limit: 'Borders, limits',
     V16_B_gefs_joined: 'Weather forecasts', V2_limit_gbm: 'Price limits', V5_border_inputs: 'Border prices', V7_recency: 'Recent days', V7_flags: 'Change flags',
-    V9_decompose: 'Price parts', V3_tail_gbm: 'Tail risk, 3 MW', V12_alloc: 'Learned mix', V1_C_deep: 'Pairs, deep', V14f_global_zone: 'Pairs, one model',
+    V9_decompose: 'Price parts', V3_tail_gbm: 'Tail risk, about 2 MW', V12_alloc: 'Learned mix', V1_C_deep: 'Pairs, deep', V14f_global_zone: 'Pairs, one model',
     V14e_mlp_multi: 'Pairs, one network', V11_C_deep_ens4: 'Pairs, deep, 4 windows', V15b_V13_both: 'All inputs deep', V14d_seed_ens: 'Pairs, ten starts',
     V14a_window_ens: 'Pairs, window mix', V14b_quantile_size: 'Pairs, range sized', V13_C_deep_all: 'Pairs, all inputs', V15b_V13_limit: 'All inputs, limits',
     V14c_conformal_skip: 'Pairs, skip unsure', V11_C_gbm_ens4: 'Pairs, trees, 4 windows', V1_C_gbm: 'Pairs, trees', V6_LI: 'Long Island',
@@ -1542,7 +1721,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     setTop3(V);
     var box = $('#ch-bank'), ubox = $('#ch-under'), e = eq(V), dates = e.dates, rows = topRows(V);
     var w = W(box), narrow = w < 560, fs = narrow ? 10.5 : 11.5;
-    var t0 = ms(dates[0]), tL = ms(last(dates)), tE = Math.max(ms(END), tL);
+    var t0 = ms(dates[0]), tL = ms(last(dates)), tE = tL;
     var mL = narrow ? 38 : 48, mT = 26, H = narrow ? 260 : 330, mB = 24;
     var bankLab = function (r) { return (r.name.indexOf('idea14') === 0 ? 'Idea 14 (added late)' : narrow ? shortName(r.name) : sn(r.name)) + (TOP3[r.name] ? (narrow ? ' ' : ', Sharpe ') + TOP3[r.name].s.toFixed(1) : ''); };
     var Lw = Math.max.apply(null, rows.filter(function (r) { return !isMinor(r); }).map(function (r) { return tw(bankLab(r), fs, 500); }));
@@ -1555,13 +1734,6 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     var Y = function (v) { return mT + (1 - (v - lo) / (hi - lo)) * (H - mT - mB); };
     var s = svg(w, H, $('#t-bank').textContent);
     hatch(s, 'hb');
-    // pending band
-    if (tL < ms(END)) {
-      var x0 = X(tL + DAY), x1 = X(ms(END));
-      s.appendChild(el('rect', { x: x0, y: mT - 8, width: x1 - x0, height: H - mT - mB + 8, fill: 'url(#hb)' }));
-      var lab = (x1 - x0) > 150 ? 'held-out years 2024 to 2026: not run yet' : (x1 - x0) > 70 ? 'held-out, not run yet' : 'not run yet';
-      txt(s, (x0 + x1) / 2, mT - 12, lab, { anchor: 'middle', fill: '#8a5d09', fs: 10.5 });
-    }
     // grid
     niceTicks(lo, hi, narrow ? 4 : 5).forEach(function (v) {
       ln_(s, mL, Y(v), mL + P, Y(v), C.rule, 1);
@@ -1618,7 +1790,6 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     var UY = function (v) { return uT + (v / umin) * (UH - uT - uB); };
     var us = svg(w, UH, 'How far below its own peak each strategy sat, in percent');
     hatch(us, 'hu');
-    if (tL < ms(END)) us.appendChild(el('rect', { x: X(tL + DAY), y: uT, width: X(ms(END)) - X(tL + DAY), height: UH - uT - uB, fill: 'url(#hu)' }));
     niceTicks(umin, 0, 3).forEach(function (v) {
       ln_(us, mL, UY(v), mL + P, UY(v), v === 0 ? C.ink : C.rule, v === 0 ? 1 : 1);
       txt(us, mL - 6, UY(v) + 4, v === 0 ? '0' : '−' + Math.abs(v) + '%', { anchor: 'end', fs: 10.5, cls: 'm' });
@@ -1670,7 +1841,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     var refs = rows.filter(function (r) { return r.reference; });
     var title;
     if (!hasHO(V)) {
-      title = cap(words(nC)) + ' of ' + eq(V).rows.length + ' strategies pass the bar on ' + dates[0].slice(0, 4) + ' to ' + last(dates).slice(0, 4) + ', the years they were built on; the deciding test has not run';
+      title = cap(words(nC)) + ' of ' + eq(V).rows.length + ' strategies passed the bar on ' + dates[0].slice(0, 4) + ' to ' + last(dates).slice(0, 4) + ', the years they were built on; the test on unseen months is at the top of the page';
     } else {
       title = 'Bankroll through the held-out run: ' + cands.map(function (r) { return sn(r.name) + ' ' + fmtM(last(r.bankroll_usd_sizing_view)); }).join(', ');
     }
@@ -1695,7 +1866,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
   // ---------- 3: per-year diverging bars, small multiples ----------
   function drawYears() {
     var box = $('#ch-years'), Y = D.years[V], rows = topRows(V), e = eq(V);
-    var years = Y.years.slice(), lastY = 2026, pend = [];
+    var years = Y.years.slice(), lastY = last(years), pend = [];
     for (var yy = last(years) + 1; yy <= lastY; yy++) pend.push(yy);
     var slots = years.concat(pend);
     var pctOf = function (r, i) { return 100 * Y.rows[r.name][i] * r.sizing_scale_mw / BANK; };
@@ -1757,7 +1928,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
       var y = Y.rows[r.name], bad = years.filter(function (_, i) { return y[i] <= 0; });
       return sn(r.name) + ' (' + list(bad.map(String)) + ')';
     });
-    setText('k-years', others.length ? 'Losing years: ' + list(others) + '; one strong year can carry a total, so the steady panels deserve more weight.' : 'Every candidate earns in every build year; the held-out slots will show whether that lasts.');
+    setText('k-years', others.length ? 'Losing years: ' + list(others) + '; one strong year can carry a total, so the steady panels deserve more weight.' : 'Every candidate earns in every build year; the unseen months at the top of the page test whether that lasted.');
     setText('ro-years', 'Tap a bar for its exact value.');
   }
 
@@ -1775,7 +1946,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
   }
   function drawMonth() {
     var box = $('#ch-month'), M = D.monthly[V], name = monthSel[V], vals = M.rows[name], months = M.months;
-    var y0 = +months[0].slice(0, 4), y1 = Math.max(2026, +last(months).slice(0, 4));
+    var y0 = +months[0].slice(0, 4), y1 = +last(months).slice(0, 4);
     var w = W(box), narrow = w < 560, mL = 40, mT = 18, cellW = Math.min(64, (w - mL - 4) / 12), cellH = narrow ? 20 : 24;
     var nY = y1 - y0 + 1, h = mT + nY * cellH + 6;
     var s = svg(w, h, 'Monthly profit of ' + ln(name));
@@ -1801,8 +1972,6 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
           r.style.cursor = 'pointer';
           s.appendChild(r);
           if (cellW >= 20 && Math.abs(v) >= 500) txt(s, x + cellW / 2, y + cellH / 2 + 4, (v < 0 ? '−' : '') + Math.round(Math.abs(v) / 1000), { anchor: 'middle', fs: cellW >= 30 ? 10 : 8.5, cls: 'm', fill: cc.dark ? '#fff' : C.ink }).style.pointerEvents = 'none';
-        } else if (key >= HO.slice(0, 7) && key <= '2026-09') {
-          s.appendChild(el('rect', { x: x + 1, y: y + 1, width: cellW - 2, height: cellH - 2, fill: 'url(#hm)', stroke: '#e3c78f', 'stroke-dasharray': '2 2' }));
         }
       }
     }
@@ -1824,17 +1993,12 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     var box = $('#ch-storm'), e = D.equity_v2, r = e.rows.filter(function (x) { return x.name === 'V1_always_supply'; })[0];
     var dates = e.dates, cum = r.cum_net_usd_1mw, d = cum.map(function (v, i) { return i ? v - cum[i - 1] : v; });
     var w = W(box), narrow = w < 560, mL = narrow ? 40 : 48, mR = 8, mT = narrow ? 96 : 52, mB = 22, H = narrow ? 300 : 280;
-    var t0 = ms(dates[0]), tE = Math.max(ms(END), ms(last(dates)));
+    var t0 = ms(dates[0]), tE = ms(last(dates));
     var X = function (t) { return mL + (t - t0) / (tE - t0) * (w - mL - mR); };
     var lo = Math.min.apply(null, d) * 1.05, hi = Math.max(60000, Math.max.apply(null, d) * 1.1);
     var Y = function (v) { return mT + (hi - v) / (hi - lo) * (H - mT - mB); };
     var s = svg(w, H, 'Daily profit of always supply with storms marked');
     hatch(s, 'hs');
-    if (ms(last(dates)) < ms(END)) {
-      var px0 = X(ms(last(dates)) + DAY), px1 = X(ms(END));
-      s.appendChild(el('rect', { x: px0, y: mT - 6, width: px1 - px0, height: H - mT - mB + 6, fill: 'url(#hs)' }));
-      txt(s, (px0 + px1) / 2, H - mB - 6, 'pending', { anchor: 'middle', fs: 10, fill: '#8a5d09' });
-    }
     niceTicks(lo, hi, 4).forEach(function (v) {
       ln_(s, mL, Y(v), w - mR, Y(v), v === 0 ? C.ink : C.rule, 1);
       txt(s, mL - 6, Y(v) + 4, v === 0 ? '0' : fmtM(v).replace('-', '−'), { anchor: 'end', fs: 10.5, cls: 'm' });
@@ -2041,42 +2205,40 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
   function drawAddenda() {
     var box = $('#ch-addenda'), A = D.events.addenda.slice();
     var tsOf = function (a) { return Date.UTC(+a.date.slice(0, 4), +a.date.slice(5, 7) - 1, +a.date.slice(8, 10), +a.time_dk.slice(0, 2), +a.time_dk.slice(3, 5)); };
-    var t0 = tsOf(A[0]) - 3600000, t1 = tsOf(last(A)) + 3600000;
-    var TABLE = Date.UTC(2026, 9, 6, 23, 32);
-    var w = W(box), narrow = w < 560, mL = 10, mR = 10, H = 150, base = 116;
-    var X = function (t) { return mL + (t - t0) / (t1 - t0) * (w - mL - mR); };
+    // milestones, from the commits that carry them: the first full results table (6 Oct, 23:32 Danish time, a fixed
+    // reference), the freeze (b56c5e8) and the start of the held-out run (the day after the freeze)
+    var TABLE = Date.UTC(2026, 9, 6, 23, 32), FREEZE = tsOf(A.filter(function (a) { return a.commit === 'b56c5e8'; })[0]);
+    var d0 = Date.UTC(2026, 9, 6), d1 = Date.UTC(2026, 9, 12);
+    var w = W(box), narrow = w < 560, mL = 6, mR = 6, H = narrow ? 156 : 146, base = H - 40;
+    var X = function (t) { return mL + (t - d0) / (d1 - d0) * (w - mL - mR); };
     var s = svg(w, H, 'Dated commits to the objectives');
+    var ph = [[d0, TABLE, '#e3ebf4', narrow ? 'first' : 'before results'], [TABLE, FREEZE, '#f6efe0', narrow ? 'to freeze' : 'to the freeze'], [FREEZE, d1, '#f5e1df', narrow ? 'the run' : 'the held-out run and its stops']];
+    ph.forEach(function (p, k) { s.appendChild(el('rect', { x: X(p[0]), y: 18, width: X(p[1]) - X(p[0]), height: base - 18, fill: p[2] })); });
+    ph.forEach(function (p, k) { var cx = (X(p[0]) + X(p[1])) / 2; txt(s, Math.max(mL + 2, cx), 13, p[3], { anchor: k === 0 ? 'start' : 'middle', fs: 10.5, fill: C.ink, weight: 600, cls: 'halo' }); });
     ln_(s, mL, base, w - mR, base, C.ink, 1);
-    // hour ticks
-    for (var t = Math.ceil(t0 / 10800000) * 10800000; t <= t1; t += 10800000) {
-      var d = new Date(t), hh = d.getUTCHours();
-      ln_(s, X(t), base, X(t), base + 4, C.ink, 1);
-      if (!narrow || hh % 6 === 0) txt(s, X(t), base + 16, (hh === 0 ? (d.getUTCDate() + ' Oct ') : '') + (hh < 10 ? '0' : '') + hh + ':00', { anchor: 'middle', fs: 9.5, cls: 'm' });
+    for (var d = d0; d < d1; d += DAY) {
+      ln_(s, X(d), base, X(d), base + 5, C.ink, 1);
+      var dd = new Date(d).getUTCDate();
+      txt(s, X(d + DAY / 2), base + 18, narrow ? String(dd) : dd + ' Oct', { anchor: 'middle', fs: 10.5, cls: 'm' });
     }
-    s.appendChild(el('rect', { x: X(TABLE), y: 0, width: w - mR - X(TABLE), height: base, fill: '#f6efe0' }));
-    ln_(s, X(TABLE), 0, X(TABLE), base, C.amber, 1.4, '4 3');
-    var nBefore = A.filter(function (a) { return tsOf(a) <= TABLE; }).length, nAfter = A.length - nBefore;
-    txt(s, X(TABLE) - 6, 12, nBefore + (narrow ? ' before results' : ' changes before the first results'), { fs: 10.5, fill: C.ink, anchor: 'end', weight: 600, cls: 'halo' });
-    txt(s, X(TABLE) + 6, 12, nAfter + ' after, each says so', { fs: 10.5, fill: '#7a5208', weight: 600, cls: 'halo' });
-    txt(s, X(TABLE) + 6, 25, 'first results table 23:32', { fs: 10, fill: '#8a5d09', cls: 'halo' });
-    var after = 0;
+    var cnt = [0, 0, 0];
     A.forEach(function (a) {
-      var x = X(tsOf(a)), aft = tsOf(a) > TABLE; if (aft) after++;
-      ln_(s, x, base - 30, x, base, aft ? '#a46a10' : C.acc, 2.2);
+      var t = tsOf(a), x = X(t), k = t <= TABLE ? 0 : t <= FREEZE ? 1 : 2; cnt[k]++;
+      ln_(s, x, base - 34, x, base, ['#2c4a6b', '#a46a10', '#b03a3a'][k], 2.2);
     });
-    txt(s, mL, base - 36, 'each tick is one dated change', { fs: 10.5, fill: C.soft });
+    txt(s, mL + 2, base + 34, narrow ? 'each tick is one dated change' : 'each tick is one dated change; the list below names them', { fs: 10, fill: C.soft });
     box.innerHTML = ''; box.appendChild(s);
     var ul = $('#l-addenda'); ul.innerHTML = '';
     var hdr = function (t) { var h = document.createElement('li'); h.style.cssText = 'display:block;column-span:all;font:600 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--faint);border-top:0;padding-top:10px'; h.textContent = t; ul.appendChild(h); };
-    var nB = A.filter(function (a) { return tsOf(a) <= TABLE; }).length;
+    var last_k = -1;
     A.forEach(function (a, i) {
-      if (i === 0) hdr(nB + ' changes before the first full results table');
-      if (i === nB) hdr((A.length - nB) + ' changes after it, each saying so');
+      var t = tsOf(a), k = t <= TABLE ? 0 : t <= FREEZE ? 1 : 2;
+      if (k !== last_k) { hdr([cnt[0] + ' changes before the first full results table', cnt[1] + ' changes after it and up to the freeze, each saying so', cnt[2] + ' changes after the freeze, during the run'][k]); last_k = k; }
       var li = document.createElement('li');
-      li.innerHTML = '<span class="k">' + (i + 1) + '</span><span><span class="t">' + +a.date.slice(8, 10) + ' Oct ' + a.time_dk + ' &middot; <a href="https://github.com/bolgacg/tavle/commit/' + a.commit + '">' + a.commit + '</a>' + (a.file === 'v2' ? ' &middot; version 2' : '') + '</span><br>' + a.label + '</span>';
+      li.innerHTML = '<span class="k">' + (i + 1) + '</span><span><span class="t">' + +a.date.slice(8, 10) + ' Oct &middot; <a href="https://github.com/bolgacg/tavle/commit/' + a.commit + '">' + a.commit + '</a>' + (a.file === 'v2' ? ' &middot; version 2' : '') + '</span><br>' + a.label + '</span>';
       ul.appendChild(li);
     });
-    var title = 'Every rule change is dated in a public commit: ' + words(A.length - after) + ' came before the first full results, and the ' + words(after) + ' after them each say so';
+    var title = 'Every rule change is dated in a public commit: ' + words(cnt[0]) + ' before the first full results, ' + words(cnt[1]) + ' between them and the freeze, and ' + words(cnt[2]) + ' during the run';
     setText('t-addenda', title); s.setAttribute('aria-label', title);
   }
 
@@ -2084,9 +2246,8 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
   function cell(v, cls) { return '<td class="n' + (cls ? ' ' + cls : '') + '">' + v + '</td>'; }
   var PEND = '<span class="pending">pending</span>';
   function hoTotal(r, v) {
-    var e = eq(v), i = e.dates.indexOf('2023-12-31');
-    if (!hasHO(v) || i < 0) return null;
-    return last(r.cum_net_usd_1mw) - r.cum_net_usd_1mw[i];
+    var t = D.heldout && D.heldout.totals_1mw[v], k = r.name.replace('[second build]', '[lead]');
+    return t && k in t ? t[k] : null;
   }
   function drawHeldout() {
     var t = $('#tb-heldout'), h = '<thead><tr><th>Strategy</th><th>Build years, not a result: return a year on the 500,000 bankroll</th><th>Held-out: total at 1&nbsp;MW, USD</th><th>Held-out: return a year at the sizing view</th><th>Verdict</th></tr></thead><tbody>';
@@ -2114,7 +2275,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     ];
     var ncol = 9 + years.length;
     var h = '<thead><tr><th>Strategy</th>' + years.map(function (y) { return '<th>' + y + '</th>'; }).join('') +
-      '<th>Total, 1&nbsp;MW</th><th>Sizing view, MW</th><th>Return a year</th><th>Pass at 1&nbsp;MW</th><th>Placebo: one day late, % kept</th><th>Placebo: shuffled, % kept</th><th>Fragile because</th><th>Held-out total</th></tr></thead><tbody>';
+      '<th>Total, 1&nbsp;MW</th><th>Sizing view, MW</th><th>Return a year</th><th>Pass at 1&nbsp;MW</th><th>Placebo: one day late, % kept</th><th>Placebo: shuffled, % kept</th><th>Fragile because</th><th>Held-out total, 1&nbsp;MW, 2024 to Sep 2026</th></tr></thead><tbody>';
     groups.forEach(function (g) {
       var rows = e.rows.filter(g[1]).sort(function (a, b) { return last(b.cum_net_usd_1mw) - last(a.cum_net_usd_1mw); });
       if (!rows.length) return;
@@ -2129,7 +2290,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
           cell(fmt(tot), tot < 0 ? 'neg' : '') + cell(r.sizing_scale_mw) + cell(sgn(r.sizing_return_pct, 1) + '%', r.sizing_return_pct < 0 ? 'neg' : '') +
           cell(r.pass_1mw ? 'yes' : 'no') + cell(pc(p.one_day_late_total)) + cell(pc(p.permuted_mean_total)) +
           '<td class="flag">' + (r.fragile_reasons && r.fragile_reasons.length ? r.fragile_reasons.join('; ') : 'not fragile') + '</td>' +
-          cell(ho == null ? PEND : fmt(ho)) + '</tr>';
+          cell(ho == null ? (r.name === 'V12_alloc' ? 'dropped' : 'not run') : fmt(ho), ho < 0 ? 'neg' : '') + '</tr>';
       });
     });
     t.innerHTML = h + '</tbody>';
@@ -2443,7 +2604,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
       var k = e.getAttribute('data-k');
       e.textContent = { nRowsAll: n1 + n2, nCand1: c1, nCand1L: c1 + 1, nRows1: n1, nCand2: c2, nRows2: n2 }[k];  // nCand1L: idea 13, a portfolio of rows, is the seventh version 1 candidate
     });
-    setText('k-count', 'Version 1 scored ' + n1 + ' strategy rows, plus idea 13, a portfolio built from those rows, and version 2 scored ' + n2 + ' rows with 87 settings in all');
+
     setText('k-unscored', un.length ? un.join(', ') : 'none');
   }
 
@@ -2469,7 +2630,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     V9_decompose: ['One model per price part', 'V9', 'tree model', SIDE, BASE_IN, ROLL + ' Three models predict the energy, congestion and loss parts of the gap separately; their sum sets the side.'],
     V2_limit_gbm: ['Bids with price limits', 'V2', 'tree model', SIDE + ' Each bid carries a limit price per zone and hour and counts only when day-ahead clears at or past it.', BASE_IN, ROLL + ' My audit found the limits add nothing: the profit is the side the trees pick.'],
     V2_sides_no_limit: ['Same sides, no price limits', 'comparison', 'tree model', SIDE, BASE_IN, ROLL + ' Registered as a comparison after the audit, to show what the limits add.'],
-    V3_tail_gbm: ['Sized by tail risk, about 3 MW', 'V3', 'tree model', SIDE + ' Size up to 3 MW, set by expected profit against the size of a bad loss.', BASE_IN, ROLL + ' Its lead over the others is mostly size: it sits near 3 MW almost always.'],
+    V3_tail_gbm: ['Tail-risk sizing', 'V3', 'tree model', SIDE + ' Size up to 3 MW, set by expected profit against the size of a bad loss.', BASE_IN, ROLL + ' Its lead over the others is mostly size: it sits near 3 MW almost always.'],
     V3_tail_gbm_1MW: ['Tail risk rule at 1 MW', 'comparison', 'tree model', 'The same sides and hours as the tail risk row, at 1 MW.', BASE_IN, ROLL + ' Registered as a comparison, to remove the effect of size.'],
     V12_alloc: ['Learned mix of strategies', 'V12', 'deep model', 'Each day splits one unit of risk across the version 2 strategies that had passed when it was built.', 'Day-level inputs: weather forecasts, load forecasts, outage counts and recent prices.', ROLL + ' A small neural network; built before the last rows finished, so it mixes the list as it stood then. Its positions are larger than 1 MW.'],
     V15b_V13_both: ['All inputs deep model, either side', 'V15b', 'deep model', SIDE, 'Every input public by 05:00: zone and power plant prices with their parts, border prices, load forecasts, outage counts, archived weather forecasts where they exist, the calendar.', ROLL + ' Architecture (recurrent, convolution or small attention network) chosen on earlier quarters only.'],
@@ -2596,8 +2757,8 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     var a13 = v2row('V13_A_deep_all'), c13 = v2row('V13_C_deep_all');
     $('#lim-v13').innerHTML = 'The all inputs deep model did not pass in its spike flag form, which sells everywhere except hours it flags as likely price spikes: at the size where its worst fall is 100,000 USD it returns ' + a13.sizing_return_pct.toFixed(1) + ' percent a year, against the 10 percent the bar needs. Its zone pair form passed but earned ' + fmt(c13.total_1mw) + ' USD, less than the simpler deep model.';
     var al = v2row('V12_alloc');
-    $('#lim-alloc').innerHTML = 'The learned mix of strategies, a small network that each day splits the risk across the strategies that had passed (' + fmt(al.total_1mw) + ' USD at its own, larger sizes), was built before the price limit reruns and the joined weather row finished, so it mixes the list as it stood then; it goes into the held-out run as it ran.';
-    $('#lim-flags').innerHTML = 'Most top rows have at least one year with a Sharpe ratio above 3, unusually smooth for a trading rule, which my rules treat as a reason for an audit, not a pass; the per-year flags are listed in the results file. Version 2 tried ' + rows.length + ' strategy rows and 87 settings in all, and with that many tries some rows will look good by chance; the held-out run is the check on that.';
+    $('#lim-alloc').innerHTML = 'The learned mix of strategies, a small network that each day splits the risk across the strategies that had passed (' + fmt(al.total_1mw) + ' USD at its own, larger sizes), was built before the price limit reruns and the joined weather row finished, so it mixes the list as it stood then; its 2023 run could not be reproduced from the frozen code, so I dropped it before the held-out run.';
+    $('#lim-flags').innerHTML = 'Most top rows have at least one year with a Sharpe ratio above 3, unusually smooth for a trading rule, which my rules treat as a reason for an audit, not a pass; the per-year flags are listed in the results file. Version 2 tried ' + rows.length + ' strategy rows and 87 settings in all, and with that many tries some rows will look good by chance; the held-out run at the top of the page was the check on that, and it found no model skill beyond the rules with no model.';
   }
   function drawWeather() {
     var box = $('#ch-weather'), w = W(box), narrow = w < 560, y = v2years('V16_B_gefs_joined'), old = v2years('V4_B_reforecast');
@@ -2618,7 +2779,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     setText('h-weather', 'Closing a three year gap in the forecast archive made the weather model the best 1 MW row on the build years');
     setText('t-weather', 'The joined weather row earned ' + fmt(r.total_1mw) + ' USD, ' + fmt(added) + ' of it in the years the live archive added');
     setText('k-weather', 'With the gap closed the row made money in ' + r.years_positive + ' of 11 years with a Sharpe ratio of ' + r.sharpe_results.toFixed(2) + ', and it passes the bar; the first weather row, with ' + o.years_positive + ' years traded, could not.');
-    setText('n-weather', 'Two cautions. I registered the joined row after seeing the first weather row’s 2013 to 2019 results, so it is the same idea with more data, not a fresh idea, and its 2013 to 2019 days are unchanged. And 2022 alone gave ' + fmt(y.v[i22]) + ' of its ' + fmt(r.total_1mw) + ' USD. The live archive for 2024 onward is downloaded but sealed: only its file counts were read.');
+    setText('n-weather', 'Two cautions. I registered the joined row after seeing the first weather row’s 2013 to 2019 results, so it is the same idea with more data, not a fresh idea, and its 2013 to 2019 days are unchanged. And 2022 alone gave ' + fmt(y.v[i22]) + ' of its ' + fmt(r.total_1mw) + ' USD. The live archive for 2024 onward stayed sealed until the held-out run, where this row returned ' + hrow('V16_B_gefs_joined').ho.ret_pct.toFixed(1) + ' percent a year at its size, ' + hrow('V16_B_gefs_joined').ho.ret_pct_ex.toFixed(1) + ' without the two weather events of 2026.');
   }
   function drawDeep() {
     var box = $('#ch-deep'), w = W(box), narrow = w < 600;
@@ -2655,29 +2816,399 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
     $('#dw-pool').innerHTML = 'One result I would follow up is pooling. One deep model that treats every zone and hour as its own training example, with a learned code for each zone and hour, sees about 290,000 examples in a three year window instead of about 1,100 days, and it reached a Sharpe ratio of ' + gz.sharpe_results.toFixed(2) + ', the best of the deep zone pair models, though only a little above the simpler deep model\u2019s ' + cd.sharpe_results.toFixed(2) + '. Pooling further, across neighbouring regions or with longer histories, is the next step I would test.';
   }
 
+
+  // ---------- held-out: shared ----------
+  var FAMC = { sell: '#c8641e', pairs: '#2c6aa0', mix: '#7a4f9a', plain: '#5b6470' };
+  var FAML = { sell: '#e7b48f', pairs: '#a9c3de' };
+  var PLAINC = { always_supply: '#b03a3a', baseline_usual_side: '#7d8792', C_static_pairs: '#173a5e' };
+  var PLAINN = { always_supply: 'Always supply (no model)', baseline_usual_side: 'Habit rule (no model)', C_static_pairs: 'Zone pairs, no model' };
+  NAMES.idea13_portfolio = ['Idea 13', 'Idea 13, equal-risk mix of the version 1 survivors'];
+  NAMES.idea14_learned_allocator_candidates = ['Idea 14', 'Idea 14, learned mix of four version 1 rows'];
+  function H() { return D.heldout; }
+  function hrows() { return H().rows; }
+  function hrow(n) { return hrows().filter(function (r) { return r.name === n; })[0]; }
+  function hname(r) { return r.name in PLAINN ? PLAINN[r.name] : r.version === 'v2' && V2N[r.name] ? V2N[r.name][0] + ' (' + V2N[r.name][1] + ')' : ln(r.name); }
+  function hshort(r) { return r.name in PLAINN ? PLAINN[r.name] : r.version === 'v2' && SHORT[r.name] ? SHORT[r.name] : sn(r.name); }
+  function inEv(d) { return H().events.some(function (e) { return d >= e.start && d <= e.end; }); }
+  function pct1(v) { return (v < 0 ? '−' : '') + Math.abs(v).toFixed(1); }
+  function famRows(f) { return hrows().filter(function (r) { return r.family === f && r.role === 'candidate'; }); }
+  var NUMW = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+  function book(kind, lim) { return H().books.filter(function (b) { return b.book === kind && b.limit_usd === lim && b.size === 'cautious'; })[0]; }
+
+  function fillHeld() {
+    var h = H(), sp = hrow('C_static_pairs'), b7 = book('mix', 35000), BL2 = h.baselines;
+    var more = { spRet: BL2.sp500.return_a_year_pct_price_only.toFixed(1), book7Sh: b7.ho.sharpe.toFixed(1), spSh: BL2.sp500.sharpe_over_bills_price_only.toFixed(1) };
+    var ratio = Math.abs(BL2.sp500.worst_drawdown_pct) / (100 * Math.abs(b7.ho.worst_dd) / BANK);
+    var vals = { nPass: h.counts.pass_sizing_view, nTested: h.counts.tested_candidates, pairsYears: h.pairs.years.length,
+      pairsSharpePre: h.pairs.sharpe_pre.toFixed(1), pairsSharpeHo: h.pairs.sharpe_ho.toFixed(1), book7Ho: b7.ho.ret_pct.toFixed(1),
+      book7VsSp: NUMW[Math.round(ratio)] || String(Math.round(ratio)), pairsStress: fmt(sp.ho.stress_050) };
+    for (var k in more) vals[k] = more[k];
+    document.querySelectorAll('[data-h]').forEach(function (e) { var k = e.getAttribute('data-h'); if (k in vals) e.textContent = vals[k]; });
+  }
+
+  // ---------- held-out hero: cumulative profit, with and without the two events ----------
+  var heroMode = 'all';
+  function drawHero() {
+    var h = H(), box = $('#ch-hero'), dates = h.daily.dates, w = W(box), narrow = w < 560;
+    var names = Object.keys(h.daily.rows), mask = dates.map(inEv);
+    var cum = {}, lo = 0, hi = 0;
+    names.forEach(function (n) {
+      var d = h.daily.rows[n], c = 0, o = new Array(d.length);
+      for (var i = 0; i < d.length; i++) { if (!(heroMode === 'ex' && mask[i])) c += d[i]; o[i] = c; if (c < lo) lo = c; if (c > hi) hi = c; }
+      cum[n] = o;
+    });
+    var fam = {}; hrows().forEach(function (r) { fam[r.name] = r.family; });
+    var thick = ['baseline_usual_side', 'C_static_pairs', 'always_supply'];
+    var thin = names.filter(function (n) { return thick.indexOf(n) < 0; });
+    var nSell = thin.filter(function (n) { return fam[n] === 'sell'; }).length, nPair = thin.filter(function (n) { return fam[n] === 'pairs'; }).length;
+    var labs = [{ n: 'always_supply', t: narrow ? 'Always supply' : 'Always supply, no model', c: PLAINC.always_supply },
+      { n: 'C_static_pairs', t: narrow ? 'Pairs, no model' : 'Zone pairs, no model', c: PLAINC.C_static_pairs },
+      { n: 'baseline_usual_side', t: narrow ? 'Habit rule' : 'Habit rule, no model', c: PLAINC.baseline_usual_side }];
+    function med(f) { var e = thin.filter(function (n) { return fam[n] === f; }).map(function (n) { return last(cum[n]); }).sort(function (a, b) { return a - b; }); return e[e.length >> 1]; }
+    labs.push({ grp: 'sell', t: nSell + (narrow ? ' sell-side' : ' sell-side models'), c: FAMC.sell, v: med('sell') });
+    labs.push({ grp: 'pairs', t: nPair + (narrow ? ' pair models' : ' pair models'), c: FAMC.pairs, v: med('pairs') });
+    var fs = narrow ? 10.5 : 11.5, Lw = Math.max.apply(null, labs.map(function (l) { return tw(l.t, fs, 600); }));
+    var mL = narrow ? 40 : 52, mR = Lw + 12, mT = 40, mB = 24, Hh = narrow ? 310 : 370;
+    var t0 = ms(dates[0]), tE = ms(last(dates));
+    var X = function (t) { return mL + (t - t0) / (tE - t0) * (w - mL - mR); };
+    hi = Math.max(hi, 1) * 1.04; lo = Math.min(lo, 0) - (hi - lo) * 0.03;
+    var Y = function (v) { return mT + (hi - v) / (hi - lo) * (Hh - mT - mB); };
+    var s = svg(w, Hh, $('#t-hero').textContent);
+    h.events.forEach(function (e, j) {
+      var a = X(ms(e.start)), b = X(ms(e.end) + DAY);
+      s.appendChild(el('rect', { x: a - 1, y: mT - 6, width: Math.max(4, b - a + 2), height: Hh - mT - mB + 6, fill: heroMode === 'ex' ? '#f1ede6' : '#f6e3bf' }));
+      var t = narrow ? (j ? 'heat wave' : 'storm') : (j ? 'heat wave, 28 Jun to 5 Jul' : 'winter storm, 24 Jan to 2 Feb');
+      if (heroMode === 'ex') t = narrow ? 'left out' : (j ? 'heat wave left out' : 'storm left out');
+      txt(s, b + 2, j ? mT - 6 + 4 : mT - 20 + 4, t, { anchor: 'end', fs: 10.5, fill: '#7a5208', weight: 600, cls: 'halo' });
+    });
+    niceTicks(lo, hi, narrow ? 4 : 5).forEach(function (v) {
+      ln_(s, mL, Y(v), w - mR, Y(v), v === 0 ? C.ink : C.rule, 1);
+      txt(s, mL - 6, Y(v) + 4, v === 0 ? '0' : fmtM(v).replace('-', '−'), { anchor: 'end', fs: 10.5, cls: 'm' });
+    });
+    [2024, 2025, 2026].forEach(function (yy) { var x = X(Date.UTC(yy, 0, 1)); ln_(s, x, mT - 6, x, Hh - mB, '#efede9', 1); txt(s, x + 3, Hh - mB + 15, String(yy), { fs: 10.5, cls: 'm' }); });
+    var paths = {};
+    function pathOf(n) { var c = cum[n], d = ''; for (var i = 0; i < c.length; i++) d += (i ? 'L' : 'M') + X(ms(dates[i])).toFixed(1) + ' ' + Y(c[i]).toFixed(1); return d; }
+    thin.forEach(function (n) { paths[n] = el('path', { d: pathOf(n), fill: 'none', stroke: FAML[fam[n]] || '#ccc', 'stroke-width': 1.1, opacity: 0.9 }); s.appendChild(paths[n]); });
+    thick.forEach(function (n) { paths[n] = el('path', { d: pathOf(n), fill: 'none', stroke: PLAINC[n], 'stroke-width': n === 'baseline_usual_side' ? 2 : 2.8, 'stroke-dasharray': n === 'baseline_usual_side' ? '5 3' : null }); s.appendChild(paths[n]); });
+    var items = labs.map(function (l) { return { l: l, y: Y(l.n ? last(cum[l.n]) : l.v) + 4 }; });
+    deoverlap(items, fs + 4, mT, Hh - mB);
+    items.forEach(function (it) { txt(s, w - mR + 6, it.y, it.l.t, { fs: fs, fill: it.l.c, weight: 600, cls: 'halo' }); });
+    var hl = el('path', { d: '', fill: 'none', stroke: C.ink, 'stroke-width': 2.4, opacity: 0 }); s.appendChild(hl);
+    var dot = el('circle', { r: 3.5, fill: C.ink, opacity: 0 }); s.appendChild(dot);
+    box.innerHTML = ''; box.appendChild(s);
+    function pick(ev) {
+      var rc = s.getBoundingClientRect(), x = (ev.clientX - rc.left) * (w / rc.width), y = (ev.clientY - rc.top) * (Hh / rc.height);
+      var i = Math.round((t0 + (x - mL) / (w - mL - mR) * (tE - t0) - t0) / DAY);
+      if (i < 0 || i >= dates.length) return;
+      var best = null; names.forEach(function (n) { var dy = Math.abs(Y(cum[n][i]) - y); if (!best || dy < best.dy) best = { n: n, dy: dy }; });
+      var r = hrow(best.n);
+      hl.setAttribute('d', paths[best.n].getAttribute('d')); hl.setAttribute('opacity', 0.85); hl.setAttribute('stroke', thick.indexOf(best.n) >= 0 ? PLAINC[best.n] : FAMC[fam[best.n]]);
+      dot.setAttribute('cx', X(ms(dates[i]))); dot.setAttribute('cy', Y(cum[best.n][i])); dot.setAttribute('opacity', 1);
+      setText('ro-hero', hname(r) + ': ' + fmt(cum[best.n][i]) + ' USD by ' + dlab(dates[i]) + ', ' + fmt(last(cum[best.n])) + ' at the end' + (heroMode === 'ex' ? ', event days left out.' : '.'));
+    }
+    s.addEventListener('pointermove', pick); s.addEventListener('pointerdown', pick);
+    s.addEventListener('pointerleave', function () { hl.setAttribute('opacity', 0); dot.setAttribute('opacity', 0); });
+    $('#lg-hero').innerHTML = '<span><svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="' + FAML.sell + '" stroke-width="2"/></svg>models that mostly sell day-ahead</span>' +
+      '<span><svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="' + FAML.pairs + '" stroke-width="2"/></svg>models that trade zone pairs</span>' +
+      '<span><svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="' + PLAINC.always_supply + '" stroke-width="3"/></svg>always supply, no model</span>' +
+      '<span><svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="' + PLAINC.C_static_pairs + '" stroke-width="3"/></svg>zone pairs, no model</span>' +
+      '<span><svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="' + PLAINC.baseline_usual_side + '" stroke-width="2" stroke-dasharray="5 3"/></svg>habit rule, no model</span>';
+    var sellEnd = thin.filter(function (n) { return fam[n] === 'sell'; }).map(function (n) { return last(cum[n]); }).sort(function (a, b) { return a - b; });
+    var sup = last(cum.always_supply), pr = last(cum.C_static_pairs);
+    var above = sellEnd.filter(function (v) { return v > sup; }).length;
+    setText('t-hero', heroMode === 'all'
+      ? 'My models’ big gains on the unseen months came on the same storm and heat-wave days as a rule that always sells'
+      : 'Without the 18 event days, the sell-side models end near the rule that always sells, and the pair position with no model still climbs');
+    s.setAttribute('aria-label', $('#t-hero').textContent);
+    setText('k-hero', heroMode === 'all'
+      ? 'With every day counted, the ' + nSell + ' sell-side models end between ' + fmtM(sellEnd[0]) + ' and ' + fmtM(last(sellEnd)) + ' USD at 1 MW, and always supply at ' + fmtM(sup) + '; most of each line is the January storm, and the dip in June 2025 is a heat wave that went the other way. Switch the view to take the events out.'
+      : 'Both left-out events paid the sellers; the June 2025 heat wave, which cost them, stays in. Without the event days the sell-side models end between ' + fmtM(sellEnd[0]) + ' and ' + fmtM(last(sellEnd)) + ', around always supply’s ' + fmtM(sup) + ', while the zone pairs with no model end at ' + fmtM(pr) + '.');
+    setText('n-hero', 'I defined the two event windows after the run, from the dates of the storm and the heat wave. Left out of this 1 MW chart: the tail-risk row (V3), which holds about 2 MW a position, and the two mixes of strategies (ideas 13 and 14), which hold several rows at once; all three are in the ranking below. V12 was dropped before the run and is left out everywhere. ' + h.meta.event_days + ' event days are left out in the second view.');
+    if (!$('#ro-hero').textContent) setText('ro-hero', 'Hover or tap the chart to name the nearest line.');
+  }
+
+  // ---------- held-out ranking: build years, unseen months, without the events ----------
+  function drawRank() {
+    var h = H(), box = $('#ch-rank'), w = W(box), narrow = w < 640;
+    var groups = [['sell', 'Models that mostly sell day-ahead'], ['pairs', 'Models that trade zone pairs'], ['mix', 'Mixes of version 1 strategies'], ['plain', 'Rules with no model']];
+    var as1 = hrow('always_supply'), sp1 = hrow('C_static_pairs'), yrsEx = (h.daily.dates.length - h.meta.event_days) / 365.25;
+    var asEx = 100 * as1.ho.net_1mw_ex / BANK / yrsEx, spEx = 100 * sp1.ho.net_1mw_ex / BANK / yrsEx;   // percent a year per MW, without the events
+    var ref = function (r) { return r.family === 'sell' || r.family === 'mix' ? { v: asEx * r.scale_mw, c: PLAINC.always_supply } : r.family === 'pairs' ? { v: spEx * r.scale_mw, c: PLAINC.C_static_pairs } : null; };
+    var lay = [], y = 26, rowH = narrow ? 38 : 21, labW = narrow ? 0 : 268, colW = narrow ? 0 : 56;
+    groups.forEach(function (g) {
+      var rs = hrows().filter(function (r) { return r.family === g[0] && r.role !== 'not_run'; }).sort(function (a, b) { return b.ho.ret_pct - a.ho.ret_pct; });
+      lay.push({ head: g[1] + ' (' + rs.length + ')', y: y + 14 }); y += 22;
+      rs.forEach(function (r) { lay.push({ r: r, y: y }); y += rowH; }); y += 8;
+    });
+    var vals = [0]; hrows().forEach(function (r) { if (r.role === 'not_run') return; vals.push(r.ho.ret_pct, r.ho.ret_pct_ex); if (r.pre) vals.push(r.pre.ret_pct); });
+    var lo = Math.min(-5, Math.floor(Math.min.apply(null, vals) / 10) * 10), hi = Math.ceil(Math.max.apply(null, vals) / 10) * 10;
+    var x0 = labW + 6, x1 = w - colW - 8, X = function (v) { return x0 + (v - lo) / (hi - lo) * (x1 - x0); };
+    var Hh = y + 22, s = svg(w, Hh, 'Return a year before and during the test');
+    for (var t = lo; t <= hi; t += (narrow ? 20 : 10)) { ln_(s, X(t), 18, X(t), Hh - 20, t === 0 ? C.rule2 : '#efede9', 1); txt(s, X(t), Hh - 6, (t > 0 ? '+' : t < 0 ? '−' : '') + Math.abs(t) + '%', { anchor: 'middle', fs: 10, cls: 'm', fill: C.faint }); }
+    ln_(s, X(10), 10, X(10), Hh - 20, C.amber, 1.3, '4 3'); txt(s, X(10) + 3, 12, 'bar 10%', { fs: 10, fill: '#8a5d09', cls: 'halo' });
+    if (!narrow) txt(s, w - 2, 12, 'bar met', { anchor: 'end', fs: 10, fill: C.faint });
+    var rowsEls = [];
+    lay.forEach(function (L) {
+      if (L.head) { txt(s, 0, L.y, L.head, { fs: 12, fill: C.acc, weight: 600 }); return; }
+      var r = L.r, cy = narrow ? L.y + 26 : L.y + rowH / 2, col = r.family === 'plain' ? PLAINC[r.name] : FAMC[r.family];
+      var g = el('g', { 'class': 'rk' });
+      g.appendChild(el('rect', { x: 0, y: L.y, width: w, height: rowH, fill: 'transparent', 'class': 'rkhit' }));
+      var nm = (narrow ? hshort(r) : hname(r)) + (!narrow && r.name === 'V3_tail_gbm' ? ', averages 2 MW' : '');
+      var tt = txt(g, narrow ? 0 : 0, narrow ? L.y + 12 : cy + 4, nm, { fs: narrow ? 11.5 : 11.5, fill: C.ink, weight: r.family === 'plain' ? 600 : 400 });
+      if (!narrow) while (tw(tt.textContent, 11.5) > labW - 4 && tt.textContent.length > 6) tt.textContent = tt.textContent.slice(0, -2) + '.';
+      var rf = ref(r);
+      if (rf) g.appendChild(el('rect', { x: X(rf.v) - 1.5, y: cy - 7, width: 3, height: 14, fill: rf.c, opacity: 0.85 }));
+      if (r.pre) ln_(g, X(r.pre.ret_pct), cy - 6, X(r.pre.ret_pct), cy + 6, C.soft, 2);
+      ln_(g, X(r.ho.ret_pct_ex), cy, X(r.ho.ret_pct), cy, col, 1.6);
+      g.appendChild(el('circle', { cx: X(r.ho.ret_pct), cy: cy, r: 4.6, fill: col }));
+      g.appendChild(el('circle', { cx: X(r.ho.ret_pct_ex), cy: cy, r: 3.8, fill: '#fff', stroke: col, 'stroke-width': 1.8 }));
+      var ok = r.ho.pass_sizing_view;
+      if (!narrow) txt(g, w - 2, cy + 4, r.family === 'plain' ? 'rule' : ok ? 'yes' : 'no', { anchor: 'end', fs: 11, fill: r.family === 'plain' ? C.faint : ok ? C.pos : C.neg, weight: 600 });
+      else txt(g, w - 1, L.y + 12, r.family === 'plain' ? '' : ok ? 'bar met' : 'bar missed', { anchor: 'end', fs: 10.5, fill: ok ? C.pos : C.neg });
+      var say = function () {
+        rowsEls.forEach(function (o) { o.querySelector('.rkhit').setAttribute('fill', o === g ? '#eef2f7' : 'transparent'); });
+        setText('ro-rank', hname(r) + ': ' + (r.pre ? 'build years ' + pct1(r.pre.ret_pct) + '% a year (Sharpe ' + r.pre.sharpe.toFixed(2) + '); ' : '') + 'unseen months ' + pct1(r.ho.ret_pct) + '% (Sharpe ' + r.ho.sharpe.toFixed(2) + '), ' + pct1(r.ho.ret_pct_ex) + '% without the 18 event days' + (rf ? '; the matching no-model rule at the same size, without them, ' + pct1(rf.v) + '%' : '') + ', at ' + r.scale_mw + ' MW a position. Audit: ' + r.verdict + '.');
+      };
+      g.addEventListener('mouseenter', say); g.addEventListener('click', say);
+      rowsEls.push(g); s.appendChild(g);
+    });
+    box.innerHTML = ''; box.appendChild(s);
+    var cands = hrows().filter(function (r) { return r.role === 'candidate'; }), sell = famRows('sell'), mid = function (a) { a = a.slice().sort(function (x, y) { return x - y; }); return a.length % 2 ? a[a.length >> 1] : (a[a.length / 2 - 1] + a[a.length / 2]) / 2; };
+    var sellEx = mid(sell.map(function (r) { return r.ho.ret_pct_ex; })), sellRef = mid(sell.map(function (r) { return asEx * r.scale_mw; }));
+    setText('t-rank', h.counts.pass_sizing_view + ' of the ' + h.counts.tested_candidates + ' strategies I tested cleared my bar on the unseen months; without the two weather events the sell-side models fall back towards always selling');
+    var diffs = sell.map(function (r) { return r.ho.ret_pct_ex - asEx * r.scale_mw; }), md = mid(diffs);
+    setText('k-rank', 'Without the 18 event days the typical sell-side model returns ' + Math.abs(md).toFixed(1) + ' percentage points a year ' + (md >= 0 ? 'more' : 'less') + ' than simply selling everything at the same size (median of the ' + sell.length + ' paired differences); the pair models barely move, because the events were not their days.');
+    setText('n-rank', 'Coloured ticks mark the matching rule with no model, held at the row\'s own size and without the event days: always supply (red) for the sell-side models and mixes, the zone pairs with no model (dark blue) for the pair models. "Bar met" uses the registered bar at each row\'s fixed size: at least 10 percent a year, two of three years positive, Sharpe above 0.42, positive at 0.50 USD per MWh. V12 is left out: it was dropped before the run. Ranked within each group by the return on the unseen months.');
+    setText('ro-rank', 'Hover or tap a row to read its numbers.');
+  }
+
+  // ---------- excess over the matching no-model rule ----------
+  var exMode = 'ex';
+  function drawExcess() {
+    var h = H(), box = $('#ch-excess'), w = W(box), narrow = w < 640;
+    var k = exMode === 'ex' ? ['per_year_ex_events', 'ci_iid_ex_events', 'ci_block7_ex_events'] : ['per_year', 'ci_iid', 'ci_block7'];
+    var P = [{ t: 'Sell-side models and mixes, against always supply', f: 'excess_vs_supply', rs: hrows().filter(function (r) { return (r.family === 'sell' || r.family === 'mix') && r.excess_vs_supply; }) },
+      { t: 'Pair models, against the zone pairs with no model', f: 'excess_vs_static_pairs', rs: hrows().filter(function (r) { return r.family === 'pairs' && r.excess_vs_static_pairs; }) }];
+    var labW = narrow ? 0 : 268, rowH = narrow ? 34 : 20, y = 8, lay = [];
+    P.forEach(function (p, pi) {
+      p.rs.sort(function (a, b) { return b[p.f][k[0]] - a[p.f][k[0]]; });
+      lay.push({ head: p.t, y: y + 14, pi: pi }); y += 24;
+      p.y0 = y; p.rs.forEach(function (r) { lay.push({ r: r, p: p, y: y }); y += rowH; }); p.y1 = y; y += 34;
+    });
+    var Hh = y, s = svg(w, Hh, 'Profit a year over the matching rule with no model');
+    var x0 = labW + 8, x1 = w - 10;
+    P.forEach(function (p) {
+      var cap = 0; p.rs.forEach(function (r) { if (r.name === 'V3_tail_gbm') return; var e = r[p.f]; cap = Math.max(cap, Math.abs(e[k[1]][0]), Math.abs(e[k[1]][1])); });
+      cap = niceTicks(0, cap * 1.08, 2).slice(-1)[0] || cap; if (cap < cap * 1.0) cap *= 1.2;
+      var m = Math.max.apply(null, p.rs.map(function (r) { var e = r[p.f]; return r.name === 'V3_tail_gbm' ? 0 : Math.max(Math.abs(e[k[1]][0]), Math.abs(e[k[1]][1])); })) * 1.06;
+      p.X = function (v) { return x0 + (Math.max(-m, Math.min(m, v)) + m) / (2 * m) * (x1 - x0); }; p.m = m;
+      niceTicks(-m, m, narrow ? 3 : 5).forEach(function (t) { ln_(s, p.X(t), p.y0 - 4, p.X(t), p.y1, t === 0 ? C.ink : '#efede9', t === 0 ? 1.2 : 1); txt(s, p.X(t), p.y1 + 13, t === 0 ? '0' : (t > 0 ? '+' : '−') + fmtM(Math.abs(t)), { anchor: 'middle', fs: 10, cls: 'm', fill: C.faint }); });
+      txt(s, p.X(0) - 4, p.y1 + 26, 'model worse', { anchor: 'end', fs: 10, fill: C.neg }); txt(s, p.X(0) + 4, p.y1 + 26, 'model better', { fs: 10, fill: C.pos });
+    });
+    var nAbove = [0, 0], nBelow = [0, 0];
+    lay.forEach(function (L) {
+      if (L.head) { txt(s, 0, L.y, L.head, { fs: 12, fill: C.acc, weight: 600 }); return; }
+      var r = L.r, p = L.p, e = r[p.f], est = e[k[0]], ci = e[k[1]], cy = narrow ? L.y + 24 : L.y + rowH / 2, pi = P.indexOf(p);
+      var col = ci[0] > 0 ? C.pos : ci[1] < 0 ? C.neg : '#9aa5b1', dc = ci[0] > 0 ? C.pos : ci[1] < 0 ? C.neg : C.soft;
+      if (ci[0] > 0) nAbove[pi]++; if (ci[1] < 0) nBelow[pi]++;
+      var g = el('g', {});
+      g.appendChild(el('rect', { x: 0, y: L.y, width: w, height: rowH, fill: 'transparent' }));
+      var nm = (narrow ? hshort(r) : hname(r)) + (r.name === 'V3_tail_gbm' ? ', averages 2 MW' : '');
+      var tt = txt(g, 0, narrow ? L.y + 11 : cy + 4, nm, { fs: 11.5, fill: C.ink });
+      if (!narrow) while (tw(tt.textContent, 11.5) > labW - 4 && tt.textContent.length > 6) tt.textContent = tt.textContent.slice(0, -2) + '.';
+      var a = p.X(ci[0]), b = p.X(ci[1]);
+      g.appendChild(el('line', { x1: a, x2: b, y1: cy, y2: cy, stroke: col, 'stroke-width': ci[0] > 0 || ci[1] < 0 ? 2.5 : 2 }));
+      if (ci[1] > p.m) g.appendChild(el('path', { d: 'M' + (b - 6) + ' ' + (cy - 4) + 'L' + b + ' ' + cy + 'L' + (b - 6) + ' ' + (cy + 4), fill: 'none', stroke: col, 'stroke-width': 1.5 }));
+      g.appendChild(el('circle', { cx: p.X(est), cy: cy, r: 4, fill: dc }));
+      var say = function () { setText('ro-excess', hname(r) + ': ' + (est >= 0 ? '+' : '') + fmt(est) + ' USD a year over ' + (p.f === 'excess_vs_supply' ? 'always supply' : 'the zone pairs with no model') + ', 95 percent interval ' + fmt(ci[0]) + ' to ' + fmt(ci[1]) + ' from whole days, ' + fmt(e[k[2]][0]) + ' to ' + fmt(e[k[2]][1]) + ' from 7-day blocks' + (exMode === 'ex' ? ', event days left out.' : ', all days.')); };
+      g.addEventListener('mouseenter', say); g.addEventListener('click', say);
+      s.appendChild(g);
+    });
+    box.innerHTML = ''; box.appendChild(s);
+    setText('t-excess', exMode === 'ex'
+      ? 'Without the two weather events, ' + (nAbove[0] ? words(nAbove[0]) + ' of' : 'none of') + ' my sell-side models beats always selling by more than chance, and ' + (nAbove[1] ? 'only ' + words(nAbove[1]) : 'no') + ' pair model beats the same pairs with no model'
+      : 'With the two events counted, ' + words(nAbove[0]) + ' rows clear zero against always selling, and no pair model beats the same pairs with no model');
+    var v3 = hrow('V3_tail_gbm'), i13 = hrow('idea13_portfolio');
+    setText('k-excess', exMode === 'ex'
+      ? 'Every interval against always supply crosses zero; against the zone pairs with no model every pair model sits below on its estimate, and ' + words(nBelow[1]) + ' of them significantly.'
+      : 'The two rows that clear zero are the tail-risk row, which holds about 2 MW a position, so its lead is size, and idea 13, whose lead vanishes when days are resampled in 7-day blocks (' + fmt(i13.excess_vs_supply.ci_block7[0]) + ' to ' + fmt(i13.excess_vs_supply.ci_block7[1]) + ').');
+    setText('n-excess', 'The intervals resample whole days at random (10,000 draws). Resampling 7-day blocks, which keeps runs of bad days together, gives wider intervals; hover a row for both. With ' + (P[0].rs.length + P[1].rs.length) + ' rows tested a stray interval clear of zero would not be surprising, and the sell-side rows are not independent tests: their daily profits correlate 0.8 to 0.95. I defined the two event windows after the run. Rows that failed the bar, and the rules with no model, have no row here; the tail-risk row averages about 2 MW a position and is clipped where it runs off the scale.');
+    if (!$('#ro-excess').textContent) setText('ro-excess', 'Hover or tap a row for its numbers.');
+  }
+
+  function drawVerdicts() {
+    var R = H().registered, I = R.ideas, what = { A: 'sell everywhere except hours a model flags as spike risk', B: 'weather forecasts against NYISO’s load forecast', C: 'zone pairs', D: 'congestion from planned outages' };
+    var hh = '<thead><tr><th>Idea</th><th>What it bets</th><th>USD a day over the habit rule</th><th>Interval, USD a day</th><th>Interval level (widened for B, C, D)</th><th>Verdict</th></tr></thead><tbody>';
+    ['A', 'B', 'C', 'D'].forEach(function (k) {
+      var v = I[k];
+      hh += '<tr><td>' + k + '</td><td style="text-align:left">' + what[k] + '</td>' + cell((v.mean_daily_diff_vs_habit >= 0 ? '+' : '') + fmt(v.mean_daily_diff_vs_habit)) + cell(fmt(v.interval[0]) + ' to ' + fmt(v.interval[1])) + cell(Math.round(1000 * v.interval_level) / 10 + '%') + '<td class="n">' + v.verdict + '</td></tr>';
+    });
+    $('#tb-verdicts').innerHTML = hh + '</tbody>';
+    var sf = R.spike_filter_minus_always_supply;
+    var dI = I.D;
+    setText('n-verdicts', 'Each verdict uses the registered gradient boosting model, 1 MW per position, over all 1,004 days; multiply by 365 for a year. The intervals resample whole days. Idea D came closest: its plain 95 percent interval, ' + fmt(dI.interval_95[0]) + ' to ' + fmt(dI.interval_95[1]) + ', sits above zero, but the widening for three tests, fixed before the run, takes it to ' + fmt(dI.interval[0]) + ' to ' + fmt(dI.interval[1]) + '. Holm widens the strongest result most: D to 98.3 percent, B to 97.5, and C, the weakest, stays at 95. Idea A against always supply, the value of its spike filter, is ' + fmt(sf.mean_daily) + ' USD a day, interval ' + fmt(sf.interval_95[0]) + ' to +' + fmt(sf.interval_95[1]) + '. Source: registered_verdicts_heldout.json in the results folder.');
+  }
+
+  // ---------- the pair position: 14 years of profit, and the city premium ----------
+  function drawPairStory() {
+    var P = H().pairs, box = $('#ch-pairstory'), w = W(box), narrow = w < 560, n = P.years.length;
+    var mL = narrow ? 34 : 46, mR = 6, top = 34, h1 = narrow ? 150 : 170, gapH = 46, h2 = narrow ? 110 : 120, Hh = top + h1 + gapH + h2 + 40;
+    var bw = (w - mL - mR) / n, s = svg(w, Hh, 'Profit of the zone pairs with no model, and the city premium, by year');
+    var mx = Math.max.apply(null, P.net_1mw) * 1.12, Y1 = function (v) { return top + h1 - v / mx * h1; };
+    var g = P.nyc_minus_capitl_gap, gl = Math.min(0, Math.min.apply(null, g)), gh = Math.max.apply(null, g) * 1.15;
+    var y2t = top + h1 + gapH, Y2 = function (v) { return y2t + (gh - v) / (gh - gl) * h2; };
+    var hoX = mL + P.years.indexOf(2024) * bw;
+    s.appendChild(el('rect', { x: hoX, y: 4, width: w - mR - hoX, height: Hh - 22, fill: '#f3f1ed' }));
+    txt(s, hoX + 4, 14, narrow ? 'unseen' : 'unseen months', { fs: 10.5, fill: C.ink, weight: 600 });
+    txt(s, mL, 14, narrow ? 'build years' : 'build years, 2013 to 2023', { fs: 10.5, fill: C.soft });
+    niceTicks(0, mx, 3).forEach(function (t) { ln_(s, mL, Y1(t), w - mR, Y1(t), t ? '#ebe9e4' : C.ink, 1); txt(s, mL - 5, Y1(t) + 4, t ? fmtM(t) : '0', { anchor: 'end', fs: 10, cls: 'm', fill: C.faint }); });
+    niceTicks(gl, gh, 3).forEach(function (t) { ln_(s, mL, Y2(t), w - mR, Y2(t), t ? '#ebe9e4' : C.ink, 1); txt(s, mL - 5, Y2(t) + 4, t ? t.toFixed(t % 1 ? 1 : 0) : '0', { anchor: 'end', fs: 10, cls: 'm', fill: C.faint }); });
+    txt(s, mL, y2t - 10, narrow ? 'city premium over Capital, USD/MWh' : 'New York City’s real-time premium over the Capital zone, USD per MWh', { fs: 10.5, fill: C.soft, weight: 600 });
+    var cols = [];
+    P.years.forEach(function (yy, i) {
+      var x = mL + i * bw + bw * 0.16, bwi = bw * 0.68, ho = yy >= 2024, v = P.net_1mw[i], gv = g[P.gap_years.indexOf(yy)];
+      s.appendChild(el('rect', { x: x, y: Y1(v), width: bwi, height: Y1(0) - Y1(v), fill: ho ? '#173a5e' : '#9db8d6' }));
+      if (!narrow || yy === 2025 || i === 0) txt(s, x + bwi / 2, Y1(v) - 4, Math.round(v / 1000) + 'k', { anchor: 'middle', fs: narrow ? 9.5 : 10, cls: 'm', fill: C.ink });
+      var hi2 = yy === 2025;
+      s.appendChild(el('rect', { x: x, y: Math.min(Y2(gv), Y2(0)), width: bwi, height: Math.max(1, Math.abs(Y2(gv) - Y2(0))), fill: gv < 0 ? '#c9c5be' : hi2 ? '#c8641e' : ho ? '#5d7f9f' : '#b9c8d9' }));
+      if (!narrow || hi2) txt(s, x + bwi / 2, gv >= 0 ? Y2(gv) - 4 : Y2(gv) + 12, gv.toFixed(2), { anchor: 'middle', fs: narrow ? 9.5 : 10, cls: 'm', fill: hi2 ? '#8a3d0b' : C.soft, weight: hi2 ? 600 : 400 });
+      txt(s, x + bwi / 2, Hh - 8 - (yy === 2026 && !narrow ? 12 : 0), narrow ? "'" + String(yy).slice(2) : String(yy), { anchor: 'middle', fs: 10, cls: 'm', fill: ho ? C.ink : C.faint });
+      if (yy === 2026 && !narrow) txt(s, x + bwi / 2, Hh - 8, 'Jan to Sep', { anchor: 'middle', fs: 9.5, fill: C.soft });
+      var hit = el('rect', { x: mL + i * bw, y: 18, width: bw, height: Hh - 36, fill: 'transparent' });
+      var say = function () { setText('ro-pairstory', yy + (yy === 2026 ? ' (January to September)' : '') + ': ' + fmt(v) + ' USD at 1 MW; city premium over Capital ' + gv.toFixed(2) + ' USD per MWh.'); };
+      hit.addEventListener('mouseenter', say); hit.addEventListener('click', say); s.appendChild(hit);
+    });
+    txt(s, mL, top + 2, narrow ? 'profit, USD at 1 MW' : 'net profit of the zone pairs with no model, USD at 1 MW', { fs: 10.5, fill: C.soft, weight: 600 });
+    box.innerHTML = ''; box.appendChild(s);
+    var y5 = P.y2025, i25 = P.years.indexOf(2025), gmax = Math.max.apply(null, g);
+    setText('h-pairs', 'A zone-pair position with no model made money in every year from 2013 to 2025, and in 2026 so far');
+    setText('t-pairstory', 'The pair position made money in every year, and its strongest unseen year, 2025, came with ' + (g[P.gap_years.indexOf(2025)] === gmax ? 'the largest city premium since 2013' : 'a large city premium'));
+    setText('k-pairstory', 'Over 2013 to 2023 it made ' + fmt(y5.avg_2013_2023_net) + ' USD a year on average at 1 MW; in 2025 it made ' + fmt(P.net_1mw[i25]) + ', in the year the city’s real-time premium over Capital was largest.');
+    var spr = hrow('C_static_pairs');
+    $('#pw-stance').innerHTML = 'The rule: each quarter, pick the five zone pairs that earned most over the previous three years, and in each hour take the side that won there on average, 1&nbsp;MW a leg, no model. In 2025 its main legs were long New York City and short the Capital and West zones upstate; idea C\'s registered pairs, by contrast, set Capital against other upstate zones. Its Sharpe ratio was ' + P.sharpe_pre.toFixed(2) + ' on 2013 to 2023 and ' + P.sharpe_ho.toFixed(2) + ' on the unseen months; without the two event windows it returned ' + spr.ho.ret_pct_ex.toFixed(1) + ' percent a year at its size, though January to September 2026 was slightly negative on that view.';
+    $('#pw-2025').innerHTML = 'The 2025 profit is congestion, the price of crowded lines: ' + fmt(y5.congestion) + ' USD at 1&nbsp;MW came from the congestion part of the price, while the energy part cancels across the two legs. The day-ahead market under-priced congestion into the city, ' + y5.da_cong_nyc.toFixed(2) + ' USD per MWh day-ahead against ' + y5.rt_cong_nyc.toFixed(2) + ' in real time, and over-priced Capital’s, ' + y5.da_cong_capitl.toFixed(2) + ' against ' + y5.rt_cong_capitl.toFixed(2) + '.';
+    $('#pw-when').innerHTML = 'It came in bursts: January and February made ' + fmt(y5.jan_feb) + ' USD and July ' + fmt(y5.july) + '. The late-afternoon hours, 16:00 to 22:00, made ' + fmt(y5.hours_16_21) + ', against ' + fmt(y5.hours_16_21_avg) + ' a year on average in 2013 to 2023.';
+    var cd = hrow('V1_C_deep');
+    $('#pw-models').innerHTML = 'Every pair model I trained held the same stance and none beat the rule (<a href="#excess-card">the chart above</a>). The deep pair model (V1) made ' + fmt(cd.ho.years['2025']) + ' USD in 2025 against the rule’s ' + fmt(P.net_1mw[i25]) + ', mostly because it held smaller positions on the same side.';
+  }
+
+  // ---------- correlations ----------
+  function drawCorr() {
+    var Cc = H().corr, box = $('#ch-corr'), w = W(box), narrow = w < 600;
+    var PR = [['pairs', 'V15c', 'Zone pairs, no model', 'Weather and border model (V15c)'], ['pairs', 'always_supply', 'Zone pairs, no model', 'Always supply'], ['pairs', 'V1_C_deep', 'Zone pairs, no model', 'Zone pairs, deep model (V1)'],
+      ['V15c', 'V16', 'Weather and border model (V15c)', 'Weather model (V16)'], ['V15c', 'always_supply', 'Weather and border model (V15c)', 'Always supply'], ['V15c', 'idea13', 'Weather and border model (V15c)', 'Idea 13 mix (version 1)']];
+    var labW = narrow ? 0 : 330, rowH = narrow ? 50 : 34, mT = 24, Hh = mT + PR.length * rowH + 26;
+    var x0 = labW + 10, x1 = w - 12, X = function (v) { return x0 + (v + 1) / 2 * (x1 - x0); };
+    var s = svg(w, Hh, 'Correlation of daily profit');
+    [-1, -0.5, 0, 0.5, 1].forEach(function (t) { ln_(s, X(t), mT - 6, X(t), Hh - 22, t === 0 ? C.ink : '#efede9', t === 0 ? 1.2 : 1); txt(s, X(t), Hh - 8, t === 0 ? '0' : (t > 0 ? '+' : '−') + Math.abs(t), { anchor: 'middle', fs: 10, cls: 'm', fill: C.faint }); });
+    txt(s, X(-1), mT - 10, 'opposite', { fs: 10, fill: C.faint }); txt(s, X(0), mT - 10, 'unrelated', { anchor: 'middle', fs: 10, fill: C.faint }); txt(s, X(1), mT - 10, 'one bet', { anchor: 'end', fs: 10, fill: C.faint });
+    PR.forEach(function (p, i) {
+      var y = mT + i * rowH, cy = narrow ? y + 34 : y + rowH / 2;
+      if (i) ln_(s, 0, y, w, y, '#f0eee9', 1);
+      var lab = p[2] + ' with ' + p[3].charAt(0).toLowerCase() + p[3].slice(1);
+      if (narrow) txt(s, 0, y + 14, lab, { fs: 11, fill: C.ink, weight: 500 }); else txt(s, 0, cy + 4, lab, { fs: 11.5, fill: C.ink, weight: 500 });
+      var v = ['build', 'heldout', 'heldout_ex'].map(function (k) { return Cc.pearson[k][p[0]][p[1]]; });
+      ln_(s, X(Math.min.apply(null, v)), cy, X(Math.max.apply(null, v)), cy, '#d3d0ca', 2);
+      s.appendChild(el('circle', { cx: X(v[0]), cy: cy, r: 4.4, fill: '#fff', stroke: C.soft, 'stroke-width': 1.8 }));
+      s.appendChild(el('rect', { x: X(v[2]) - 4, y: cy - 4, width: 8, height: 8, fill: '#c8641e', transform: 'rotate(45 ' + X(v[2]) + ' ' + cy + ')' }));
+      s.appendChild(el('circle', { cx: X(v[1]), cy: cy, r: 5, fill: C.acc }));
+      txt(s, X(v[1]), cy - 8, (v[1] < 0 ? '−' : '') + Math.abs(v[1]).toFixed(2), { anchor: 'middle', fs: 10, cls: 'm halo', fill: C.acc, weight: 600 });
+    });
+    box.innerHTML = ''; box.appendChild(s);
+    var pb = Cc.pearson.build.pairs.V15c, ph = Cc.pearson.heldout.pairs.V15c, ws = Cc.pearson.heldout.V15c.always_supply, wv = Cc.pearson.heldout.V15c.V16;
+    setText('t-corr', 'The pair position and the weather and border model earn on different days (correlation ' + pb.toFixed(2) + ' before the test, ' + ph.toFixed(2) + ' during it); the sell-side models move as one bet');
+    setText('k-corr', 'During the test the weather and border model moved with the weather model (' + wv.toFixed(2) + ') and with always supply (' + ws.toFixed(2) + '), so adding more sell-side models adds the same bet again; the pair position moved with none of them. Before the test the weather and border model moved against always supply (' + Cc.pearson.build.V15c.always_supply.toFixed(2).replace('-', '−') + ') because it bet the other way on the 2022 storm days; on rank correlation, which a few extreme days cannot dominate, the two are loosely related in both periods.');
+  }
+
+  // ---------- the books ----------
+  var bookLim = 35000;
+  function drawBooks() {
+    var h = H(), box = $('#ch-books'), w = W(box), narrow = w < 600, BL2 = h.baselines;
+    var mix = book('mix', bookLim), pr = book('pairs', bookLim);
+    var G = [[narrow ? 'Mixed book' : 'Mixed book, 80/20 by risk', mix], [narrow ? 'Pairs alone' : 'Zone pairs alone', pr]];
+    var bars = [['build', '2013 to 2023', '#9db8d6'], ['ho', 'unseen months', '#173a5e'], ['ho_ex', 'unseen, without the event days', '#c8641e']];
+    var labW = narrow ? 0 : 250, bh = 13, gH = narrow ? 3 * (bh + 4) + 22 : 3 * (bh + 4) + 12, mT = 30, Hh = mT + G.length * gH + 30;
+    var mxv = Math.max(BL2.sp500.return_a_year_pct_price_only, mix.ho.ret_pct, mix.build.ret_pct) * 1.12;
+    var x0 = labW + 6, x1 = w - 46, X = function (v) { return x0 + Math.max(0, v) / mxv * (x1 - x0); };
+    var s = svg(w, Hh, 'Return a year of the two books');
+    niceTicks(0, mxv, narrow ? 3 : 5).forEach(function (t) { ln_(s, X(t), mT - 4, X(t), Hh - 22, t ? '#efede9' : C.ink, 1); txt(s, X(t), Hh - 8, t + '%', { anchor: 'middle', fs: 10, cls: 'm', fill: C.faint }); });
+    var spv = BL2.sp500.return_a_year_pct_price_only, dpv = BL2.deposit.average_pct;
+    ln_(s, X(spv), 12, X(spv), Hh - 22, C.amber, 1.4, '4 3'); txt(s, X(spv) - 3, 12, 'S&P 500 ' + spv.toFixed(1) + '%', { anchor: 'end', fs: 10.5, fill: '#8a5d09', cls: 'halo' });
+    ln_(s, X(dpv), 24, X(dpv), Hh - 22, C.soft, 1.2, '3 3'); txt(s, X(dpv) + 3, 24, 'deposit ' + dpv.toFixed(2) + '%', { fs: 10.5, fill: C.soft, cls: 'halo' });
+    G.forEach(function (gg, i) {
+      var y = mT + i * gH, b = gg[1];
+      txt(s, 0, narrow ? y + 10 : y + 14, gg[0], { fs: 12, fill: C.ink, weight: 600, cls: 'halo' });
+      if (!narrow) txt(s, 0, y + 28, b.pairs_mw.toFixed(2) + ' MW a pair leg' + (b.wx_mw ? ' + ' + b.wx_mw.toFixed(2) + ' MW weather' : ''), { fs: 10.5, fill: C.faint });
+      bars.forEach(function (bb, j) {
+        var yy = (narrow ? y + 16 : y) + j * (bh + 4), v = b[bb[0]].ret_pct;
+        s.appendChild(el('rect', { x: X(0), y: yy, width: Math.max(1, X(v) - X(0)), height: bh, fill: bb[2] }));
+        txt(s, X(v) + 4, yy + 10.5, pct1(v) + '%', { fs: 10.5, cls: 'm halo', fill: C.ink });
+      });
+    });
+    box.innerHTML = ''; box.appendChild(s);
+    // table: all four cautious books, then the market baselines
+    var th = '<thead><tr><th>Book, cautious size</th><th>MW a pair leg</th><th>MW weather and border</th><th>2013 to 2023: return a year</th><th>Sharpe</th><th>Worst fall</th><th>Unseen months: return a year</th><th>Sharpe</th><th>Worst fall</th><th>Worst day</th><th>Without the event days: return a year</th><th>Limit held</th></tr></thead><tbody>';
+    [35000, 75000].forEach(function (L) {
+      th += '<tr class="grp"><td colspan="12">' + (L === 35000 ? '7 percent limit (35,000 USD)' : '15 percent limit (75,000 USD), about twice the positions') + '</td></tr>';
+      [['Mixed book<small>80% of risk in pairs, 20% in V15c</small>', book('mix', L)], ['Zone pairs alone', book('pairs', L)]].forEach(function (x) {
+        var b = x[1];
+        th += '<tr' + (L === bookLim ? ' style="background:#f6f8fb"' : '') + '><td>' + x[0] + '</td>' + cell(b.pairs_mw.toFixed(3)) + cell(b.wx_mw ? b.wx_mw.toFixed(3) : 'none') + cell(pct1(b.build.ret_pct) + '%') + cell(b.build.sharpe.toFixed(2)) + cell(fmt(b.build.worst_dd), 'neg') +
+          cell(pct1(b.ho.ret_pct) + '%') + cell(b.ho.sharpe.toFixed(2)) + cell(fmt(b.ho.worst_dd), 'neg') + cell(fmt(b.ho.worst_day) + '<small>' + dlab(b.ho.worst_day_date) + '</small>', 'neg') + cell(pct1(b.ho_ex.ret_pct) + '%') + cell(b.limit_held ? 'yes' : 'no') + '</tr>';
+      });
+    });
+    var sp = BL2.sp500, dp = BL2.deposit;
+    th += '<tr class="grp"><td colspan="12">The same 500,000 USD over the unseen months</td></tr>';
+    th += '<tr><td>S&amp;P 500, price only<small>dividends add about 1.3% a year</small></td>' + cell('n/a') + cell('n/a') + cell('n/a') + cell('n/a') + cell('n/a') + cell(pct1(sp.return_a_year_pct_price_only) + '%') + cell(sp.sharpe_over_bills_price_only.toFixed(2)) + cell(fmt(BANK * sp.worst_drawdown_pct / 100), 'neg') + cell('n/a') + cell('n/a') + cell('n/a') + '</tr>';
+    th += '<tr><td>Danish household bank deposit<small>' + dp.n_months + ' months to August 2026</small></td>' + cell('n/a') + cell('n/a') + cell('n/a') + cell('n/a') + cell('n/a') + cell(dp.average_pct.toFixed(2) + '%') + cell('n/a') + cell('none') + cell('n/a') + cell('n/a') + cell('n/a') + '</tr>';
+    $('#tb-books').innerHTML = th + '</tbody>';
+    var m7 = book('mix', 35000), p7 = book('pairs', 35000);
+    setText('h-book', 'Adding one weather and border model to the pair position lifts the return for the same drawdown limit, because the two are uncorrelated');
+    var spd = Math.round(BANK * Math.abs(sp.worst_drawdown_pct) / 100);
+    setText('t-books', 'At the cautious size for my ' + (bookLim === 35000 ? '7' : '15') + ' percent limit, the mixed book returned ' + pct1(mix.ho.ret_pct) + ' percent a year on the unseen months, less than the S&P 500\'s ' + pct1(sp.return_a_year_pct_price_only) + ', with a worst fall of ' + fmt(Math.abs(mix.ho.worst_dd)) + ' USD against the index\'s ' + fmt(spd));
+    setText('k-books', 'Its Sharpe ratio was ' + mix.ho.sharpe.toFixed(2) + ', from daily profit that is already earned on top of interest-bearing collateral, against ' + sp.sharpe_over_bills_price_only.toFixed(2) + ' for the index, from its daily return above Treasury bills. Without the two weather events the mixed book still returned ' + pct1(mix.ho_ex.ret_pct) + ' percent a year against ' + pct1(pr.ho_ex.ret_pct) + ' for the pairs alone. The S&P 500 returned ' + pct1(sp.return_a_year_pct_price_only) + ' percent a year on the same 500,000, about ' + fmt(sp.usd_a_year_on_basis) + ' USD, with a worst fall of ' + pct1(Math.abs(sp.worst_drawdown_pct)) + ' percent; a bank deposit returned ' + dp.average_pct.toFixed(2) + ' percent. The mix was chosen after the run, so read these as a description, not a test.');
+    var full = H().books.filter(function (b) { return b.book === 'mix' && b.limit_usd === bookLim && b.size === 'full'; })[0];
+    var ratio = Math.abs(mix.ho.worst_day / mix.build.worst_day);
+    $('#bl-storm').innerHTML = 'The book’s worst unseen day, ' + dlab(mix.ho.worst_day_date) + ', the first day of the storm, lost ' + ratio.toFixed(1) + ' times its worst day of 2013 to 2023 (' + dlab(mix.build.worst_day_date) + '). At the 15 percent size one such day costs about ' + fmt(Math.abs(Math.round(book('mix', 75000).ho.worst_day / 1000) * 1000)) + ' USD, so the 70 percent sizing is a margin I would keep.';
+    var v15 = hrow('V15c_wx_border_gbm'), ex = v15.excess_vs_supply;
+    $('#bl-edge').innerHTML = 'The weather and border model’s edge over always selling is not proven: without the event days it earned ' + fmt(ex.per_year_ex_events) + ' USD a year more at 1&nbsp;MW, interval ' + fmt(ex.ci_iid_ex_events[0]) + ' to ' + fmt(ex.ci_iid_ex_events[1]) + '. What it brings to the book is sell-side exposure that loses on different days from the pairs.';
+    $('#bl-money').innerHTML = 'This is a test on past prices, not a trading record. Before real money it would need the forward paper test, a cost check with real quotes and access to the market through a registered participant (<a href="#next">next steps</a>).';
+  }
+
   // ---------- wiring ----------
   function drawVersioned() {
     var jobs = [drawBank, drawYears, drawMonthChips, drawMonth, drawPlacebo, drawStrips, drawMatrix, drawPairs];
     jobs.forEach(function (f) { try { f(); } catch (err) { console.error(err); } });
   }
   function drawStatic() {
-    [drawV2Rank, drawWeather, drawDeep, drawStorm, drawSeeds, drawClock, drawAddenda, drawHeldout, function () { drawAll('v1'); drawAll('v2'); }, counts]
+    [fillHeld, drawHero, drawRank, drawExcess, drawVerdicts, drawPairStory, drawCorr, drawBooks, drawV2Rank, drawWeather, drawDeep, drawStorm, drawSeeds, drawClock, drawAddenda, function () { drawAll('v1'); drawAll('v2'); }, counts]
       .forEach(function (f) { try { f(); } catch (err) { console.error(err); } });
   }
-  document.querySelectorAll('.vt button').forEach(function (b) {
+  document.querySelectorAll('.vt button[data-v]').forEach(function (b) {
     b.addEventListener('click', function () {
       V = b.getAttribute('data-v');
-      document.querySelectorAll('.vt button').forEach(function (x) { x.setAttribute('aria-pressed', x.getAttribute('data-v') === V ? 'true' : 'false'); });
+      document.querySelectorAll('.vt button[data-v]').forEach(function (x) { x.setAttribute('aria-pressed', x.getAttribute('data-v') === V ? 'true' : 'false'); });
       drawVersioned();
     });
   });
+  function toggle(sel, attr, set, draw) {
+    document.querySelectorAll(sel + ' button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        set(b.getAttribute(attr));
+        document.querySelectorAll(sel + ' button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        try { draw(); } catch (e) { console.error(e); }
+      });
+    });
+  }
+  toggle('#vt-hero', 'data-m', function (v) { heroMode = v; }, drawHero);
+  toggle('#vt-excess', 'data-m', function (v) { exMode = v; }, drawExcess);
+  toggle('#vt-books', 'data-l', function (v) { bookLim = +v; }, drawBooks);
   $('#fm-reset').addEventListener('click', function () { FM.sort = null; FM.filter = false; try { drawMatrix(); } catch (e) { console.error(e); } });
   $('#clock').addEventListener('input', function () { try { drawClock(); } catch (e) { console.error(e); } });
   var lastW = 0, rt;
   window.addEventListener('resize', function () {
     clearTimeout(rt); rt = setTimeout(function () {
       var w = document.body.clientWidth; if (Math.abs(w - lastW) < 4) return; lastW = w;
-      drawVersioned(); drawV2Rank(); drawWeather(); drawDeep(); drawStorm(); drawSeeds(); drawClock(); drawAddenda();
+      drawVersioned(); [drawHero, drawRank, drawExcess, drawPairStory, drawCorr, drawBooks].forEach(function (f) { try { f(); } catch (e) { console.error(e); } }); drawV2Rank(); drawWeather(); drawDeep(); drawStorm(); drawSeeds(); drawClock(); drawAddenda();
     }, 120);
   });
   var appx = document.getElementById('appx');
@@ -2708,7 +3239,7 @@ Wording note, 7 October 2026: earlier addenda referred to me in the third person
   })).then(function () {
     lastW = document.body.clientWidth;
     drawVersioned(); drawStatic();
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { drawVersioned(); drawV2Rank(); drawWeather(); drawDeep(); drawStorm(); drawSeeds(); drawClock(); drawAddenda(); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { drawVersioned(); [drawHero, drawRank, drawExcess, drawPairStory, drawCorr, drawBooks].forEach(function (f) { try { f(); } catch (e) { console.error(e); } }); drawV2Rank(); drawWeather(); drawDeep(); drawStorm(); drawSeeds(); drawClock(); drawAddenda(); });
   }).catch(function (err) {
     console.error(err);
     document.querySelectorAll('.chart').forEach(function (c) { c.innerHTML = '<p class="err">The chart data could not be loaded (' + err.message + '). The JSON files are linked under each chart.</p>'; });

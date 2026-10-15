@@ -289,6 +289,7 @@ table.gen td small{max-width:220px}
   <li><a href="#pairs" style="--band:var(--b5)">The pair position</a></li>
   <li><a href="#book" style="--band:var(--b4)">The combined book</a></li>
   <li><a href="#evidence" style="--band:var(--b10)">What did not work out</a></li>
+  <li><a href="#next" style="--band:var(--b7)">Next step</a></li>
   <li><a href="#integrity" style="--band:var(--b6)">How it was kept clean</a></li>
   <li><a href="#strategies" style="--band:var(--b3)">The strategies</a></li>
   <li><a href="#bankroll" style="--band:var(--b1)">Build years</a></li>
@@ -326,6 +327,13 @@ table.gen td small{max-width:220px}
   <div class="sec-label">What worked</div>
   <h2><span data-h="nPass">28</span> of the <span data-h="nTested">32</span> strategies I sent to the test cleared the profit bar on the unseen months, the pair models with little help from the weather</h2>
   <p class="why">The bar was fixed before any model ran: at least 10 percent a year on a 500,000 USD bankroll, money in most years, and a Sharpe ratio above the S&amp;P 500's long-run 0.42. Clearing the bar is not the same as beating a rule with no model; the section on <a href="#evidence">what did not work out</a> tests that.</p>
+  <h3 style="margin-top:22px">What the deep models did</h3>
+  <p class="prose">The deep models made their money on the peaks and on steady zone-pair premiums; the rules with no model farm the everyday premium more cheaply.</p>
+  <ul class="plist">
+    <li>The deep weather model (B, deep) made <span data-h="bdNet">432,594</span> USD at 1&nbsp;MW on the unseen months, <span data-h="bdShare">77.7</span> percent of it on the 18 storm and heat-wave days. It cashed in on the peaks. It did not time them: a copy that bid one day late made <span data-h="bdLate">462,644</span>, so what paid was the side it held when the weather turned.</li>
+    <li>The deep pair models learned a steady zone-pair stance and held it through the weather: only <span data-h="cdLo">10</span> to <span data-h="cdHi">34</span> percent of their profit came on the event days. The version 2 deep pair model (V1) held the same position as the rule with no model, long New York City and short Capital, at a smaller size, and the first deep pair model (C, deep) returned <span data-h="cdRet">41.1</span> percent a year at its fixed size.</li>
+    <li>Without the event days, no model beat the rule with no model that makes the same kind of bet; the section on <a href="#evidence">what did not work out</a> shows the test.</li>
+  </ul>
   <div class="card" id="top-card">
     <h3 class="ctitle">The best performers on the unseen months, January 2024 to September 2026</h3>
     <p class="csub">Return a year on the 500,000 USD bankroll at each strategy's fixed size, after every fee. The Sharpe ratio is the average daily profit over its day-to-day swings, scaled to a year; higher means steadier.</p>
@@ -439,7 +447,7 @@ table.gen td small{max-width:220px}
   <h2>Two weather events carried much of the models' profit, and no model beat its rule with no model</h2>
   <p class="why">I expected the models to earn their profit by timing, on ordinary days. Three outcomes say they did not:</p>
   <ul class="plist neg">
-    <li>Two 2026 weather events, a winter storm from 24 January to 2 February and a heat wave from 28 June to 5 July, paid anyone who sold power day-ahead. Without those 18 days, the models that mostly sell did no better than always supply, the rule that sells everywhere with no model. I drew both windows after the run. The June 2025 heat wave, which cost sellers money, stays in both views. Inside the heat-wave window, 1 to 5 July 2026 use prices I rebuilt from NYISO's 5-minute data; their energy part matches NYISO's official generator prices within a cent. I did not measure the price gap in the two windows.</li>
+    <li>Two 2026 weather events, a winter storm from 24 January to 2 February and a heat wave from 28 June to 5 July, paid anyone who sold power day-ahead. Without those 18 days, the models that mostly sell did no better than always supply, the rule that sells everywhere with no model. I drew both windows after the run. The June 2025 heat wave, which cost sellers money, stays in both views. Inside the heat-wave window, 1 to 5 July 2026 use prices I rebuilt from NYISO's 5-minute data; their energy part matches NYISO's official generator prices within a cent. I did not measure the price gap or the temperature in the two windows, so the page cannot say how unusual they were.</li>
     <li>All four verdicts I registered before the run read "inconclusive", so model skill is not proven.</li>
     <li>On the unseen months none of the pair models beat the zone pairs with no model, and two did measurably worse.</li>
   </ul>
@@ -481,6 +489,12 @@ table.gen td small{max-width:220px}
   <p class="hint" style="margin:8px 0 2px">On a phone, <b>scroll the table sideways</b>.</p>
   <div class="tscroll"><table class="gen" id="tb-verdicts"></table></div>
   <p class="note" id="n-verdicts"></p>
+</div></section>
+
+<section id="next" data-band style="--band:var(--b7)"><div class="wrap">
+  <div class="sec-label">Next step</div>
+  <h2>Next, I would train the models without the storm days, and give the storm days a model of their own</h2>
+  <p class="prose">I would retrain every model with storm and heat-wave days left out of its training data, so it cannot lean on storm surges and has to earn its keep on ordinary days. Separately, I would build a model whose only job is those days, because getting them right is worth a lot on its own: on the unseen months the 18 event days paid always supply <span data-h="asEv">280,357</span> USD at 1&nbsp;MW, <span data-h="asEvPct">81</span> percent of everything it made.</p>
 </div></section>
 
 <section id="integrity" data-band style="--band:var(--b6)"><div class="wrap">
@@ -629,7 +643,9 @@ table.gen td small{max-width:220px}
   <p class="why">The best row in version 2 is an idea that stopped at 2019 for lack of data. I filled the gap after seeing its 2013 to 2019 results, so it counts as the same idea with more data, not a new one.</p>
   <p class="prose">My version 2 weather idea<span class="zc">V4</span> compares weather forecasts with NYISO's own load forecast. It reads the GEFS reforecast, an archive of the US weather service's forecast model rerun over past years, and that archive ends in 2019. So it traded nothing from 2020 to 2023, and with only seven years traded it could not pass the bar.</p>
   <p class="prose">I joined the same model's live forecast archive, which starts on 23 September 2020, the first run of its current version (GEFS v12). The joined row covers 2013 to 2023 except January to September 2020, which it does not trade. It reads forecasts issued before the 05:00 bidding deadline only, never the weather that was later observed.</p>
-  <p class="prose">Two forecast models feed the weather strategies, from three archives. B and the version 1 models that read weather use GFS temperature forecasts from Open-Meteo's archive of past runs, which starts in 2021; some version 2 rows, such as V15c, use the same GFS archive. The version 2 weather rows add the GEFS reforecast for the years to 2019, and V16 also reads the live GEFS archive from September 2020. The GFS values come from 12 points, one per load zone and two in the North zone. A bid uses the forecast made two days before each hour, because a fresher run may not be public by 05:00, and the three-day forecast for 22:00 and 23:00, whose two-day value comes out after the deadline. This page does not separate what the weather inputs added from the other inputs.</p>
+  <p class="prose">Two forecast models feed the weather strategies, from three archives. B and the version 1 models that read weather use GFS forecasts of air temperature from Open-Meteo's archive of past runs, which starts in 2021, at 12 points (one per load zone, two in the North zone); some version 2 rows, such as V15c, use the same GFS archive. The version 2 weather rows add the GEFS reforecast for the years to 2019, and V16 also reads the live GEFS archive from September 2020.</p>
+  <p class="prose">For GFS, the archive gives the value forecast two days (48 hours) before each hour without naming the run behind it. Allowing that run to be up to three hours later and to take up to five hours to publish, the value is public by 05:00 for delivery hours up to 21:00, so 22:00 and 23:00 use the three-day value. Fresher runs were public for most hours; I chose this fixed, conservative lead so that no input could arrive after the deadline.</p>
+  <p class="prose">For GEFS, each bid reads the control run (the single unperturbed forecast, not the ensemble mean) started at 00 UTC on the bid day, which is public before 05:00: air temperature at the same 12 points every three hours, filled in hour by hour along straight lines. For each zone, the model reads its main point's hourly temperature and that day's high, low and mean, and its heating and cooling degree hours (how far the hours run below or above 65 degrees Fahrenheit). This page does not separate what the weather inputs added from the other inputs.</p>
   <p class="prose">On the unseen months the joined weather row (V16) returned <span data-h="v16Ho">46.0</span> percent a year at its fixed size, and <span data-h="v16Ex">12.7</span> without the 18 storm and heat-wave days; like the other sell-side models, it did not beat always supply at the same size (<a href="#evidence">what did not work out</a>).</p>
   <div class="card" id="weather-card">
     <h3 class="ctitle" id="t-weather">Loading</h3>
@@ -2843,12 +2859,17 @@ Wording note, 11 October 2026: two lines above still named me in the third perso
   var NUMW = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
   function book(kind, lim) { return H().books.filter(function (b) { return b.book === kind && b.limit_usd === lim && b.size === 'cautious'; })[0]; }
 
+  var DEEPP = ['C_deep', 'V1_C_deep', 'V11_C_deep_ens4', 'V13_C_deep_all'];   // the deep pair models
   function fillHeld() {
     var h = H(), sp = hrow('C_static_pairs'), b7 = book('mix', 35000), BL2 = h.baselines;
     var more = { spRet: BL2.sp500.return_a_year_pct_price_only.toFixed(1), book7Sh: b7.ho.sharpe.toFixed(1), spSh: BL2.sp500.sharpe_over_bills_price_only.toFixed(1) };
     var ratio = Math.abs(BL2.sp500.worst_drawdown_pct) / (100 * Math.abs(b7.ho.worst_dd) / BANK);
     var vals = { nPass: h.counts.pass_sizing_view, nTested: h.counts.tested_candidates, pairsYears: h.pairs.years.length,
-      pairsSharpePre: h.pairs.sharpe_pre.toFixed(1), pairsSharpeHo: h.pairs.sharpe_ho.toFixed(1), book7Ho: b7.ho.ret_pct.toFixed(1), book15Ho: book('mix', 75000).ho.ret_pct.toFixed(1), book7Ex: b7.ho_ex.ret_pct.toFixed(1), v16Ho: hrow('V16_B_gefs_joined').ho.ret_pct.toFixed(1), v16Ex: hrow('V16_B_gefs_joined').ho.ret_pct_ex.toFixed(1),
+      pairsSharpePre: h.pairs.sharpe_pre.toFixed(1), pairsSharpeHo: h.pairs.sharpe_ho.toFixed(1), book7Ho: b7.ho.ret_pct.toFixed(1), book15Ho: book('mix', 75000).ho.ret_pct.toFixed(1), book7Ex: b7.ho_ex.ret_pct.toFixed(1),
+      bdNet: fmt(hrow('B_deep').ho.net_1mw), bdShare: hrow('B_deep').ho.event_share_pct.toFixed(1), bdLate: fmt(hrow('B_deep').one_day_late),
+      cdLo: Math.round(Math.min.apply(null, DEEPP.map(function (n) { return hrow(n).ho.event_share_pct; }))), cdHi: Math.round(Math.max.apply(null, DEEPP.map(function (n) { return hrow(n).ho.event_share_pct; }))),
+      cdRet: hrow('C_deep').ho.ret_pct.toFixed(1),
+      asEv: fmt(hrow('always_supply').ho.storm + hrow('always_supply').ho.heat), asEvPct: Math.round(hrow('always_supply').ho.event_share_pct), v16Ho: hrow('V16_B_gefs_joined').ho.ret_pct.toFixed(1), v16Ex: hrow('V16_B_gefs_joined').ho.ret_pct_ex.toFixed(1),
       book7VsSp: NUMW[Math.round(ratio)] || String(Math.round(ratio)), pairsStress: fmt(sp.ho.stress_050) };
     for (var k in more) vals[k] = more[k];
     document.querySelectorAll('[data-h]').forEach(function (e) { var k = e.getAttribute('data-h'); if (k in vals) e.textContent = vals[k]; });

@@ -71,6 +71,7 @@ tr.grp td{font-family:var(--sans);font-weight:600;font-size:13px;color:var(--ink
 #check-table td:first-child{white-space:nowrap}
 @media (max-width:640px){#check-table .zc{display:none}#check-table td:first-child{white-space:normal}#check-table th+th,#check-table td+td{padding-left:8px}#check-table td.n{font-size:12px}#check-table th{font-size:9px;letter-spacing:.05em}}
 .tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tscroll.more{-webkit-mask-image:linear-gradient(to right,#000 82%,transparent);mask-image:linear-gradient(to right,#000 82%,transparent)}
 .timing td{text-align:left;font-size:14px;line-height:1.5}
 .timing th{text-align:left}
 .timing td:first-child{font-weight:500;width:24%}
@@ -2745,8 +2746,8 @@ Wording note, 11 October 2026: two lines above still named me in the third perso
     v2card(v2sel);
     var cand = rows.filter(function (r) { return r.candidate_by_rule; }), top = rows.filter(function (r) { return r.total_1mw <= CAP; })[0];
     var beat = rows.filter(function (r) { return r.total_1mw > sp && r.total_1mw <= CAP; }), beatT = beat.filter(function (r) { return V2N[r.name][2] === 'tree model'; }).length;
-    setText('h-v2rank', 'On the build years 2013 to 2023, ' + cand.length + ' of the ' + rows.length + ' strategies in version 2, the longer history, pass the bar, and the weather forecast model earns the most');
-    setText('t-v2rank', narrow ? 'At 1 MW, ' + words(beat.length) + ' strategies beat the S&P 500; the weather row leads' : 'At 1 MW, ' + words(beat.length) + ' strategies beat the S&P 500 on the same 500,000, and the weather forecast row is the best of them');
+    setText('h-v2rank', 'On the 2013 to 2023 build years, ' + cand.length + ' of ' + rows.length + ' strategies passed the bar, and the weather model earned the most');
+    setText('t-v2rank', narrow ? 'At one megawatt per position, ' + words(beat.length) + ' strategies beat the S&P 500; the weather model leads' : 'Trading one megawatt per position, ' + words(beat.length) + ' strategies beat the S&P 500 on the same 500,000, and the weather model is the best of them');
     setText('k-v2rank', 'At 1 MW the weather forecast row earned ' + fmt(top.total_1mw) + ' USD over the eleven years, against ' + fmt(sp) + ' for the S&P 500 on the same 500,000 at its average yearly return. Leaving out the two rows that trade more than 1 MW, ' + words(beat.length) + ' rows clear that line, and ' + words(beatT) + ' of them are tree models that pick a side each hour.');
     setText('n-v2rank', 'Baselines: the S&P 500 line is its average yearly total return over 2013 to 2023 (' + BL.sp500.average_pct.toFixed(2) + ' percent, dividends included) times 500,000 times 11 years, not reinvested, because the strategies keep a fixed size and do not reinvest either; reinvested, the same 500,000 would have gained ' + fmt(BL.sp500.profit_compounded_usd) + '. The deposit line uses Danish household deposit rates over the same years (average ' + BL.deposit.average_pct.toFixed(2) + ' percent). Two bars run past the axis, marked with a break: the learned mix and the tail risk row trade more than 1 MW, so their totals are not comparable with the rest. Pass the bar means at least 10 percent a year on the bankroll at the size whose worst fall is 100,000 USD, profit in at least 8 of 11 years, Sharpe above 0.42 and profit at a cost of 0.50 USD per MWh. Candidate means it passes and is not flagged fragile; comparison rows run beside the candidates in the held-out test.');
     // limits, computed
@@ -3262,6 +3263,14 @@ Wording note, 11 October 2026: two lines above still named me in the third perso
   });
 })();
 
+</script>
+<script>
+(function () {
+  function cue(el) { el.classList.toggle('more', el.scrollWidth - el.clientWidth - el.scrollLeft > 4); }
+  function all() { document.querySelectorAll('.tscroll').forEach(cue); }
+  document.addEventListener('scroll', function (e) { if (e.target.classList && e.target.classList.contains('tscroll')) cue(e.target); }, true);
+  window.addEventListener('resize', all); window.addEventListener('load', function () { all(); setTimeout(all, 1500); });
+})();
 </script>
 </body>
 </html>

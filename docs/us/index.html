@@ -71,6 +71,10 @@ tr.grp td{font-family:var(--sans);font-weight:600;font-size:13px;color:var(--ink
 #check-table td:first-child{white-space:nowrap}
 @media (max-width:640px){#check-table .zc{display:none}#check-table td:first-child{white-space:normal}#check-table th+th,#check-table td+td{padding-left:8px}#check-table td.n{font-size:12px}#check-table th{font-size:9px;letter-spacing:.05em}}
 .tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.w-narrow,.phone-only{display:none}
+@media (max-width:480px){.w-wide{display:none}.w-narrow{display:inline}.phone-only{display:block}
+  #tb-top{min-width:0!important}#tb-top th:nth-child(5),#tb-top td:nth-child(5){display:none}
+  #tb-books{min-width:0!important}#tb-books th:nth-child(n+2):nth-child(-n+6),#tb-books td:nth-child(n+2):nth-child(-n+6),#tb-books th:nth-child(8),#tb-books td:nth-child(8),#tb-books th:nth-child(10),#tb-books td:nth-child(10){display:none}}
 .tscroll.more{-webkit-mask-image:linear-gradient(to right,#000 82%,transparent);mask-image:linear-gradient(to right,#000 82%,transparent)}
 .timing td{text-align:left;font-size:14px;line-height:1.5}
 .timing th{text-align:left}
@@ -325,7 +329,7 @@ table.gen td small{max-width:220px}
   <div class="card" id="top-card">
     <h3 class="ctitle">The best performers on the unseen months, January 2024 to September 2026</h3>
     <p class="csub">Return a year on the 500,000 USD bankroll at each strategy's fixed size, after every fee. The Sharpe ratio is the average daily profit over its day-to-day swings, scaled to a year; higher means steadier.</p>
-    <p class="hint" style="margin:8px 0 2px">On a phone, <b>scroll the table sideways</b>.</p>
+    <p class="hint phone-only" style="margin:8px 0 2px">On a phone the build-year column is left out; a wider screen shows it.</p>
     <div class="tscroll"><table class="gen" id="tb-top"></table></div>
     <p class="note" id="n-top"></p>
     <div class="cfoot">Data: <a href="data/heldout.json">heldout.json</a>, fields rows[].ho, from the audit (<a href="results/AUDIT.md">AUDIT.md</a>) and <a href="results/pre_vs_heldout.md">pre_vs_heldout.md</a>.</div>
@@ -414,7 +418,7 @@ table.gen td small{max-width:220px}
     <p class="csub">Return a year on 500,000 USD at the cautious size (70 percent of the size that hits the limit on 2013 to 2023), after every fee. Dashed lines: the S&amp;P 500 and a Danish bank deposit over the same unseen months, on the same 500,000.</p>
     <div class="lg"><span><svg width="14" height="12"><rect x="1" y="1" width="12" height="10" fill="#9db8d6"/></svg>2013 to 2023</span><span><svg width="14" height="12"><rect x="1" y="1" width="12" height="10" fill="#173a5e"/></svg>unseen months</span><span><svg width="14" height="12"><rect x="1" y="1" width="12" height="10" fill="#c8641e"/></svg>unseen months without the 18 event days</span></div>
     <div class="chart" id="ch-books"></div>
-    <p class="hint" style="margin:8px 0 2px">On a phone, <b>scroll the table sideways</b>.</p>
+    <p class="hint phone-only" style="margin:8px 0 2px">On a phone the table shows the unseen months only; a wider screen adds the sizes and the build years.</p>
     <div class="tscroll"><table class="gen" id="tb-books"></table></div>
     <div class="three">
       <p><b>what you see</b>For each book, three bars: its return a year on 2013 to 2023, on the unseen months, and on the unseen months without the two weather events.</p>
@@ -435,7 +439,7 @@ table.gen td small{max-width:220px}
   <h2>Two weather events carried much of the models' profit, and no model beat its rule with no model</h2>
   <p class="why">I expected the models to earn their profit by timing, on ordinary days. Three outcomes say they did not:</p>
   <ul class="plist neg">
-    <li>Two 2026 weather events, a winter storm from 24 January to 2 February and a heat wave from 28 June to 5 July, paid anyone who sold power day-ahead. Without those 18 days, the models that mostly sell did no better than always supply, the rule that sells everywhere with no model. I drew both windows after the run. The June 2025 heat wave, which cost sellers money, stays in both views. Five days of the 2026 heat wave use prices I rebuilt from NYISO's 5-minute data; their energy part matches NYISO's official generator prices within a cent.</li>
+    <li>Two 2026 weather events, a winter storm from 24 January to 2 February and a heat wave from 28 June to 5 July, paid anyone who sold power day-ahead. Without those 18 days, the models that mostly sell did no better than always supply, the rule that sells everywhere with no model. I drew both windows after the run. The June 2025 heat wave, which cost sellers money, stays in both views. Inside the heat-wave window, 1 to 5 July 2026 use prices I rebuilt from NYISO's 5-minute data; their energy part matches NYISO's official generator prices within a cent. I did not measure the price gap in the two windows.</li>
     <li>All four verdicts I registered before the run read "inconclusive", so model skill is not proven.</li>
     <li>On the unseen months none of the pair models beat the zone pairs with no model, and two did measurably worse.</li>
   </ul>
@@ -541,9 +545,9 @@ table.gen td small{max-width:220px}
     <article class="scard" id="s-always"><div class="tagl">no model</div><h3>Always supply</h3><dl><dt>What it bets</dt><dd>Sells 1&nbsp;MW day-ahead in every zone and every hour and buys it back in real time: a permanent short position.</dd><dt>What it reads at 05:00</dt><dd>Nothing.</dd><dt>How it was trained</dt><dd>Not trained; it is the simplest possible bet, and every strategy should beat it.</dd></dl></article>
     <article class="scard" id="s-habit"><div class="tagl">no model</div><h3>Habit rule</h3><dl><dt>What it bets</dt><dd>In each zone and hour of the day, takes the side that won on average over the past year (short if real time usually came in below day-ahead, long if above).</dd><dt>What it reads at 05:00</dt><dd>The average gap for that zone and hour over the previous 365 days.</dd><dt>How it was trained</dt><dd>Not trained; a rolling average, the second plain rule every model must beat.</dd></dl></article>
     <article class="scard" id="s-static"><div class="tagl">no model</div><h3>Zone pairs, no model</h3><dl><dt>What it bets</dt><dd>In each of five zone pairs and each hour, buys one zone and sells the other on the side that won on average over the previous three years, 1&nbsp;MW a leg.</dd><dt>What it reads at 05:00</dt><dd>Past prices only.</dd><dt>How it was trained</dt><dd>Not trained; registered on 7 October as the benchmark for the pair models. It is the stance that held up on the unseen months.</dd></dl></article>
-    <article class="scard" id="s-V15c"><div class="tagl">gradient boosting</div><h3>Weather and border model (V15c)</h3><dl><dt>What it bets</dt><dd>Short or long in each zone and hour when its forecast gap beats the fee, otherwise out; in practice it mostly sells.</dd><dt>What it reads at 05:00</dt><dd>Prices and their parts, NYISO's load forecast, archived weather forecasts and prices at the borders with neighbouring grids.</dd><dt>How it was trained</dt><dd>Gradient boosting retrained each quarter on the previous three years. It is the 20 percent part of the combined book.</dd></dl></article>
+    <article class="scard" id="s-V15c"><div class="tagl">gradient boosting</div><h3>Weather and border model (V15c)</h3><dl><dt>What it bets</dt><dd>Short or long in each zone and hour when its forecast gap beats the fee, otherwise out; in practice it mostly sells.</dd><dt>What it reads at 05:00</dt><dd>Prices and their parts, NYISO's load forecast, forecast air temperature (the GEFS reforecast to 2019, GFS from 2021) and prices at the borders with neighbouring grids.</dd><dt>How it was trained</dt><dd>Gradient boosting retrained each quarter on the previous three years. It is the 20 percent part of the combined book.</dd></dl></article>
     <article class="scard" id="s-A_regression_v1"><div class="tagl">gradient boosting</div><h3>A, first rule</h3><dl><dt>What it bets</dt><dd>Sells (short) only in the zone-hours where the forecast says real time will come in below day-ahead by more than the fee; otherwise stays out.</dd><dt>What it reads at 05:00</dt><dd>Today's day-ahead prices, real-time prices for hours already finished, recent gaps and spikes, NYISO's load forecast, and the calendar.</dd><dt>How it was trained</dt><dd>Gradient boosting (many small decision trees), refit on the 1st of every month on all data up to two days before (walk-forward), settings chosen on the year before.</dd></dl></article>
-    <article class="scard" id="s-B_gbm"><div class="tagl">gradient boosting</div><h3>B, gradient boosting</h3><dl><dt>What it bets</dt><dd>Short where the forecast gap is below minus the fee, long where it is above plus the fee, otherwise out.</dd><dt>What it reads at 05:00</dt><dd>The same as A, plus GFS weather forecasts issued two days before each delivery hour, at points across New York.</dd><dt>How it was trained</dt><dd>Gradient boosting, walk-forward with monthly refits, from May 2021 when the weather archive starts.</dd></dl></article>
+    <article class="scard" id="s-B_gbm"><div class="tagl">gradient boosting</div><h3>B, gradient boosting</h3><dl><dt>What it bets</dt><dd>Short where the forecast gap is below minus the fee, long where it is above plus the fee, otherwise out.</dd><dt>What it reads at 05:00</dt><dd>The same as A, plus GFS forecasts of air temperature at 12 points across New York, made two days before each delivery hour (three days for 22:00 and 23:00), so they are public before 05:00.</dd><dt>How it was trained</dt><dd>Gradient boosting, walk-forward with monthly refits, from May 2021 when the weather archive starts.</dd></dl></article>
     <article class="scard" id="s-B_deep"><div class="tagl">neural network</div><h3>B, deep model</h3><dl><dt>What it bets</dt><dd>The same bet as B with gradient boosting.</dd><dt>What it reads at 05:00</dt><dd>The same inputs as B.</dd><dt>How it was trained</dt><dd>A PyTorch neural network, the average of three random starts, refit monthly; its settings were chosen on 2022.</dd></dl></article>
     <article class="scard" id="s-C_gbm"><div class="tagl">gradient boosting</div><h3>C, gradient boosting</h3><dl><dt>What it bets</dt><dd>Buys one zone and sells another (long one, short the other) in five zone pairs, when the forecast price difference beats twice the fee; a move in the overall price level cancels out.</dd><dt>What it reads at 05:00</dt><dd>The same inputs as A, for both zones of each pair.</dd><dt>How it was trained</dt><dd>Gradient boosting, walk-forward with monthly refits; the five pairs are chosen on the year before.</dd></dl></article>
     <article class="scard" id="s-C_deep"><div class="tagl">neural network</div><h3>C, deep model</h3><dl><dt>What it bets</dt><dd>The same zone-pair bet as C with gradient boosting.</dd><dt>What it reads at 05:00</dt><dd>The same inputs as C.</dd><dt>How it was trained</dt><dd>A PyTorch neural network, the average of three random starts, refit monthly.</dd></dl></article>
@@ -624,7 +628,9 @@ table.gen td small{max-width:220px}
   <h2 id="h-weather">Loading</h2>
   <p class="why">The best row in version 2 is an idea that stopped at 2019 for lack of data. I filled the gap after seeing its 2013 to 2019 results, so it counts as the same idea with more data, not a new one.</p>
   <p class="prose">My version 2 weather idea<span class="zc">V4</span> compares weather forecasts with NYISO's own load forecast. It reads the GEFS reforecast, an archive of the US weather service's forecast model rerun over past years, and that archive ends in 2019. So it traded nothing from 2020 to 2023, and with only seven years traded it could not pass the bar.</p>
-  <p class="prose">I joined the same model's live forecast archive, which starts on 23 September 2020. The joined row covers 2013 to 2023 except January to September 2020, which it does not trade. It reads forecasts issued before the 05:00 bidding deadline only, never the weather that was later observed.</p>
+  <p class="prose">I joined the same model's live forecast archive, which starts on 23 September 2020, the first run of its current version (GEFS v12). The joined row covers 2013 to 2023 except January to September 2020, which it does not trade. It reads forecasts issued before the 05:00 bidding deadline only, never the weather that was later observed.</p>
+  <p class="prose">Two forecast models feed the weather strategies, from three archives. B and the version 1 models that read weather use GFS temperature forecasts from Open-Meteo's archive of past runs, which starts in 2021; some version 2 rows, such as V15c, use the same GFS archive. The version 2 weather rows add the GEFS reforecast for the years to 2019, and V16 also reads the live GEFS archive from September 2020. The GFS values come from 12 points, one per load zone and two in the North zone. A bid uses the forecast made two days before each hour, because a fresher run may not be public by 05:00, and the three-day forecast for 22:00 and 23:00, whose two-day value comes out after the deadline. This page does not separate what the weather inputs added from the other inputs.</p>
+  <p class="prose">On the unseen months the joined weather row (V16) returned <span data-h="v16Ho">46.0</span> percent a year at its fixed size, and <span data-h="v16Ex">12.7</span> without the 18 storm and heat-wave days; like the other sell-side models, it did not beat always supply at the same size (<a href="#evidence">what did not work out</a>).</p>
   <div class="card" id="weather-card">
     <h3 class="ctitle" id="t-weather">Loading</h3>
     <p class="csub">Profit per calendar year at 1&nbsp;MW after fees, the joined weather row</p>
@@ -1587,10 +1593,10 @@ Wording note, 11 October 2026: two lines above still named me in the third perso
     A_spike_deep_rolling_cut: ['Side rule', 'Side rule, deep rolling cut'],
     A_spike_gbm: ['A spike, boosting', 'A, spike flag, gradient boosting'],
     'A_spike_tail_S100_gbm [second build]': ['Idea 9, second build', 'Idea 9, second build'],
-    B_deep: ['B deep', 'B, deep model'],
-    B_gbm: ['B boosting', 'B, gradient boosting'],
-    C_deep: ['C deep', 'C, deep model'],
-    C_gbm: ['C boosting', 'C, gradient boosting'],
+    B_deep: ['B, deep', 'B, deep model'],
+    B_gbm: ['B, boosting', 'B, gradient boosting'],
+    C_deep: ['C, deep', 'C, deep model'],
+    C_gbm: ['C, boosting', 'C, gradient boosting'],
     D_deep: ['D deep', 'D, deep model'],
     D_gbm: ['D boosting', 'D, gradient boosting'],
     risk_sized_supply_gbm: ['Side rule', 'Side rule, risk-sized supply'],
@@ -1700,12 +1706,12 @@ Wording note, 11 October 2026: two lines above still named me in the third perso
         TOP3[r.name] = { c: EARN[EARNINFO.picked.length], s: sharpe(r), earn: true }; EARNINFO.picked.push(r.name);
       });
   }
-  var SHORT = { V8_error_mining: 'Error model', V15c_wx_border_gbm: 'Weather, borders', V15a_V8_limit: 'Error model, limits', V15a_V5_limit: 'Borders, limits',
+  var SHORT = { V8_error_mining: 'Error model', V15c_wx_border_gbm: 'Weather and border', V15a_V8_limit: 'Error model, limits', V15a_V5_limit: 'Border prices, limits',
     V16_B_gefs_joined: 'Weather forecasts', V2_limit_gbm: 'Price limits', V5_border_inputs: 'Border prices', V7_recency: 'Recent days', V7_flags: 'Change flags',
-    V9_decompose: 'Price parts', V3_tail_gbm: 'Tail risk, about 2 MW', V12_alloc: 'Learned mix', V1_C_deep: 'Pairs, deep', V14f_global_zone: 'Pairs, one model',
-    V14e_mlp_multi: 'Pairs, one network', V11_C_deep_ens4: 'Pairs, deep, 4 windows', V15b_V13_both: 'All inputs deep', V14d_seed_ens: 'Pairs, ten starts',
-    V14a_window_ens: 'Pairs, window mix', V14b_quantile_size: 'Pairs, range sized', V13_C_deep_all: 'Pairs, all inputs', V15b_V13_limit: 'All inputs, limits',
-    V14c_conformal_skip: 'Pairs, skip unsure', V11_C_gbm_ens4: 'Pairs, trees, 4 windows', V1_C_gbm: 'Pairs, trees', V6_LI: 'Long Island',
+    V9_decompose: 'Price parts', V3_tail_gbm: 'Tail risk, about 2 MW', V12_alloc: 'Learned mix', V1_C_deep: 'Zone pairs, deep', V14f_global_zone: 'Zone pairs, one model',
+    V14e_mlp_multi: 'Zone pairs, one network', V11_C_deep_ens4: 'Zone pairs, deep, 4 windows', V15b_V13_both: 'All inputs, deep', V14d_seed_ens: 'Zone pairs, ten starts',
+    V14a_window_ens: 'Zone pairs, window mix', V14b_quantile_size: 'Zone pairs, range sized', V13_C_deep_all: 'Zone pairs, all inputs', V15b_V13_limit: 'All inputs, limits',
+    V14c_conformal_skip: 'Zone pairs, skip unsure', V11_C_gbm_ens4: 'Zone pairs, trees, 4 windows', V1_C_gbm: 'Zone pairs, trees', V6_LI: 'Long Island',
     V1_always_supply: 'Always supply', V1_baseline: 'Habit rule' };
   function shortName(n) { return SHORT[n] || sn(n); }
   function isMinor(r) { return !r.reference && !TOP3[r.name]; }
@@ -2145,7 +2151,7 @@ Wording note, 11 October 2026: two lines above still named me in the third perso
   // ---------- 8: the 05:00 clock ----------
   var INPUTS = [
     { n: 'Real-time prices for past hours', a: -24, b: 48, kind: 'stream', use: 'used up to the deadline; each hour is posted about 15 minutes after it ends' },
-    { n: 'GFS weather forecasts, issued two days before each delivery hour', s: 'GFS forecasts, two days ahead', a: -16, b: 5, use: 'used (ideas B and 10)' },
+    { n: 'GFS air temperature forecasts, made two days before each delivery hour (three for 22:00 and 23:00)', s: 'GFS forecasts, two days ahead', a: -16, b: 5, use: 'used (ideas B and 10)' },
     { n: "NYISO's load forecast issued the morning before", s: 'NYISO load forecast, morning before', a: -17, b: -15, use: 'used' },
     { n: 'Scheduled transmission outages, daily snapshot', s: 'Planned outages snapshot', a: -14.33, b: -14.33, use: 'used (idea D)' },
     { n: "NYISO's load forecast for the delivery day", s: 'NYISO load forecast, delivery day', a: 7, b: 9, use: 'not used: published after 05:00' },
@@ -2613,7 +2619,7 @@ Wording note, 11 October 2026: two lines above still named me in the third perso
   // ---------- version 2 results: ranking, weather row, deep models ----------
   var BASE_IN = 'Day-ahead prices, the real-time hours already finished, recent gaps, the energy, congestion and loss parts of each price, NYISO’s load forecast and the calendar.';
   var ROLL = 'Retrained every quarter on the previous three years and scored on the next quarter, 2013 to 2023; settings chosen on the four scored quarters before.';
-  var WX = ' Plus weather forecasts (temperature, wind and cloud from the US weather service’s GEFS model, control run, issued two days ahead) at points across New York.';
+  var WX = ' Plus forecasts of air temperature at points across New York, from US weather service forecasts issued before the 05:00 deadline.';
   var SIDE = 'Short or long in each zone and hour when the forecast gap beats the fee, otherwise out.';
   var PAIRS = 'Buys one zone and sells another in five zone pairs when the forecast price difference beats twice the fee.';
   // plain name, code (small, for auditors), model tag, what it bets, what it reads, how it was trained
@@ -2842,7 +2848,7 @@ Wording note, 11 October 2026: two lines above still named me in the third perso
     var more = { spRet: BL2.sp500.return_a_year_pct_price_only.toFixed(1), book7Sh: b7.ho.sharpe.toFixed(1), spSh: BL2.sp500.sharpe_over_bills_price_only.toFixed(1) };
     var ratio = Math.abs(BL2.sp500.worst_drawdown_pct) / (100 * Math.abs(b7.ho.worst_dd) / BANK);
     var vals = { nPass: h.counts.pass_sizing_view, nTested: h.counts.tested_candidates, pairsYears: h.pairs.years.length,
-      pairsSharpePre: h.pairs.sharpe_pre.toFixed(1), pairsSharpeHo: h.pairs.sharpe_ho.toFixed(1), book7Ho: b7.ho.ret_pct.toFixed(1), book15Ho: book('mix', 75000).ho.ret_pct.toFixed(1), book7Ex: b7.ho_ex.ret_pct.toFixed(1),
+      pairsSharpePre: h.pairs.sharpe_pre.toFixed(1), pairsSharpeHo: h.pairs.sharpe_ho.toFixed(1), book7Ho: b7.ho.ret_pct.toFixed(1), book15Ho: book('mix', 75000).ho.ret_pct.toFixed(1), book7Ex: b7.ho_ex.ret_pct.toFixed(1), v16Ho: hrow('V16_B_gefs_joined').ho.ret_pct.toFixed(1), v16Ex: hrow('V16_B_gefs_joined').ho.ret_pct_ex.toFixed(1),
       book7VsSp: NUMW[Math.round(ratio)] || String(Math.round(ratio)), pairsStress: fmt(sp.ho.stress_050) };
     for (var k in more) vals[k] = more[k];
     document.querySelectorAll('[data-h]').forEach(function (e) { var k = e.getAttribute('data-h'); if (k in vals) e.textContent = vals[k]; });
@@ -2857,7 +2863,7 @@ Wording note, 11 October 2026: two lines above still named me in the third perso
     var kind = { sell: 'mostly sells day-ahead', pairs: 'zone pairs', mix: 'mix of strategies', plain: 'no model' };
     var row = function (r) { return '<tr><td>' + hname(r) + (r.family === 'plain' ? '' : '<small>' + kind[r.family] + '</small>') + '</td><td class="n">' + pct1(r.ho.ret_pct) + '%</td><td class="n">' + pct1(r.ho.ret_pct_ex) + '%</td><td class="n">' + r.ho.sharpe.toFixed(2) + '</td><td class="n">' + (r.pre ? pct1(r.pre.ret_pct) + '%' : '') + '</td></tr>'; };
     var grp = function (t) { return '<tr><td colspan="5" style="padding-top:12px"><b>' + t + '</b></td></tr>'; };
-    var t = '<thead><tr><th>Strategy</th><th>Unseen months: return a year</th><th>Same, without the 18 storm and heat-wave days</th><th>Sharpe ratio</th><th>Build years: return a year</th></tr></thead><tbody>';
+    var t = '<thead><tr><th>Strategy</th><th>Unseen months: return a year</th><th><span class="w-wide">Same, without the 18 storm and heat-wave days</span><span class="w-narrow">Without event days</span></th><th>Sharpe ratio</th><th>Build years: return a year</th></tr></thead><tbody>';
     t += grp('Highest return') + byRet.map(row).join('') + grp('Steadiest (highest Sharpe ratio)') + bySh.map(row).join('') + grp('Rules with no model, for comparison') + [hrow('C_static_pairs'), hrow('always_supply')].map(row).join('');
     $('#tb-top').innerHTML = t + '</tbody>';
     setText('n-top', 'Each row is at its own fixed size, so compare a model with always supply in the chart below, which holds always supply at the same size. The highest returns come from models that mostly sell, and most of their return came in two 2026 weather events (the third column takes those 18 days out). The steadiest rows all trade zone pairs, and they barely depend on the events. The plain zone pairs, with no model, sit among them with a Sharpe ratio of ' + hrow('C_static_pairs').ho.sharpe.toFixed(2) + '.');
@@ -3166,7 +3172,7 @@ Wording note, 11 October 2026: two lines above still named me in the third perso
     // table: all four cautious books, then the market baselines
     var th = '<thead><tr><th>Book, cautious size</th><th>MW a pair leg</th><th>MW weather and border</th><th>2013 to 2023: return a year</th><th>Sharpe</th><th>Worst fall</th><th>Unseen months: return a year</th><th>Sharpe</th><th>Worst fall</th><th>Worst day</th><th>Without the event days: return a year</th><th>Limit held</th></tr></thead><tbody>';
     [35000, 75000].forEach(function (L) {
-      th += '<tr class="grp"><td colspan="12">' + (L === 35000 ? '7 percent limit (35,000 USD)' : '15 percent limit (75,000 USD), about twice the positions') + '</td></tr>';
+      th += '<tr class="grp"><td colspan="12">' + (L === 35000 ? '7 percent limit (35,000 USD)' : '15 percent limit (75,000 USD)') + '</td></tr>';
       [['Mixed book<small>80% of risk in pairs, 20% in V15c</small>', book('mix', L)], ['Zone pairs alone', book('pairs', L)]].forEach(function (x) {
         var b = x[1];
         th += '<tr' + (L === bookLim ? ' style="background:#f6f8fb"' : '') + '><td>' + x[0] + '</td>' + cell(b.pairs_mw.toFixed(3)) + cell(b.wx_mw ? b.wx_mw.toFixed(3) : 'none') + cell(pct1(b.build.ret_pct) + '%') + cell(b.build.sharpe.toFixed(2)) + cell(fmt(b.build.worst_dd), 'neg') +

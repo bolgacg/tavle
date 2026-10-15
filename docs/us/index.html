@@ -274,18 +274,17 @@ details.sub>summary span{font-weight:400;color:var(--soft);font-size:13.5px}
 .hyp b{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a5d09;margin-bottom:4px;font-weight:500}
 #ch-rank g.rk,#ch-excess g{cursor:pointer}
 table.gen td small{max-width:220px}
-#tb-verdicts{min-width:600px}#tb-books{min-width:820px}
+#tb-verdicts{min-width:600px}#tb-top{min-width:560px}#tb-books{min-width:820px}
 </style>
 </head>
 <body>
 <nav id="sidenav" aria-label="Sections"><p class="navh">On this page</p><ol>
-  <li><a href="#result" style="--band:var(--b1)">The answer</a></li>
+  <li><a href="#good" style="--band:var(--b1)">What worked</a></li>
   <li><a href="#primer" style="--band:var(--b2)">The bet</a></li>
-  <li><a href="#evidence" style="--band:var(--b10)">The evidence</a></li>
-  <li><a href="#pairs" style="--band:var(--b5)">What held up</a></li>
-  <li><a href="#book" style="--band:var(--b4)">The book</a></li>
+  <li><a href="#pairs" style="--band:var(--b5)">The pair position</a></li>
+  <li><a href="#book" style="--band:var(--b4)">The combined book</a></li>
+  <li><a href="#evidence" style="--band:var(--b10)">What did not work out</a></li>
   <li><a href="#integrity" style="--band:var(--b6)">How it was kept clean</a></li>
-  <li><a href="#next" style="--band:var(--b7)">Next</a></li>
   <li><a href="#strategies" style="--band:var(--b3)">The strategies</a></li>
   <li><a href="#bankroll" style="--band:var(--b1)">Build years</a></li>
   <li><a href="#v2rank" style="--band:var(--b10)">Version 2, build years</a></li>
@@ -303,9 +302,9 @@ table.gen td small{max-width:220px}
   <h1>Can a model trade New York's <span style="white-space:nowrap">day-ahead</span> to <span style="white-space:nowrap">real-time</span> gap after costs?</h1>
   <p class="dek">New York's grid sells each hour of power twice: a day-ahead price is set the day before, and a real-time price as the hour happens. I built <span data-k="nRowsAll">71</span> strategies that bet on the gap between the two with virtual positions, paper trades settled on that gap with no power delivered, using only what was public at the 05:00 bidding deadline and paying every fee. I fixed the rules and the bar in public, built on 2013 to 2023, froze the code, and then ran every strategy once on January 2024 to September 2026, months no model had seen.</p>
   <div class="answers">
-    <div class="ans"><b>Did any model beat simple rules on the unseen months?</b><p>No. All four verdicts I registered before the run read "inconclusive", so skill is not proven. Of the <span data-h="nTested">32</span> strategies I sent to the test, <span data-h="nPass">28</span> cleared the profit bar I had set in advance, but most of that profit came in two weather events that paid anyone who sold, and without them none of my models beats a rule that uses no model.</p></div>
-    <div class="ans"><b>What held up in both periods?</b><p>A simple position with no model: bet that power in New York City costs more in real time, relative to the upstate zones that feed it, than the day-ahead market expects. It made money in every year from 2013 to 2025 and in 2026 so far, with a Sharpe ratio (average daily profit over its day-to-day swings, scaled to a year) of <span data-h="pairsSharpePre">1.9</span> before the test and <span data-h="pairsSharpeHo">2.3</span> in it.</p></div>
-    <div class="ans"><b>What would I run?</b><p>Most of the risk in that position and the rest in one model that reads weather forecasts and neighbouring grids' prices, because their daily profits are uncorrelated. I chose this mix after the run, so it still needs a forward test; sized to keep its worst loss under 7 percent of 500,000 USD, it returned <span data-h="book7Ho">14.9</span> percent a year on the unseen months, against <span data-h="spRet">18.8</span> for the S&amp;P 500, with a Sharpe ratio of <span data-h="book7Sh">2.2</span> against <span data-h="spSh">0.9</span>.</p></div>
+    <div class="ans"><b>What worked on the unseen months?</b><p><span data-h="nPass">28</span> of the <span data-h="nTested">32</span> strategies I sent to the test cleared the profit bar I set in advance. The steadiest was a rule with no model: buy power in New York City and sell it in the Capital zone upstate, hour by hour. It made money in every year from 2013, with a Sharpe ratio (profit per unit of day-to-day swing) of <span data-h="pairsSharpePre">1.9</span> before the test and <span data-h="pairsSharpeHo">2.3</span> in it.</p></div>
+    <div class="ans"><b>What did the pair position and a weather model earn together?</b><p>Their daily profits are uncorrelated, so together they can run larger for the same worst loss. Held to a worst fall of 7 percent of 500,000 USD, the combined book returned <span data-h="book7Ho">14.9</span> percent a year on the unseen months, <span data-h="book7Ex">8.8</span> without the 18 storm and heat-wave days. The S&amp;P 500 returned more, <span data-h="spRet">18.8</span> percent, but with a much bumpier ride: its Sharpe ratio was <span data-h="spSh">0.9</span> against the book's <span data-h="book7Sh">2.2</span>.</p></div>
+    <div class="ans"><b>What did not work out as I expected?</b><p>Two weather events in 2026 carried much of the models' profit, and without them no model did better than a rule that always sells. All four verdicts I registered before the run read "inconclusive".</p></div>
   </div>
   <div class="byline"><span>Bolgaç Gülen &middot; October 2026</span><span>&middot;</span>
     <a href="https://github.com/bolgacg/tavle/blob/master/research/us/OBJECTIVES.md">the objectives</a><span>&middot;</span>
@@ -317,50 +316,18 @@ table.gen td small{max-width:220px}
 
 <noscript><div class="wrap"><p class="err">The charts on this page are drawn by a script from the JSON files linked under each chart. With scripts off, the files, the results folder and the audit appendix still hold every number.</p></div></noscript>
 
-<section id="result" data-band style="--band:var(--b1);padding-top:28px"><div class="wrap">
-  <p class="why">Most of my models' profit on the unseen months came from two weather events; without them they did no better than simply selling everywhere.</p>
-  <div class="card" id="hero-card">
-    <div class="vt" role="group" aria-label="Which days to count" id="vt-hero"><button data-m="all" aria-pressed="true">All 1,004 days</button><button data-m="ex" aria-pressed="false">Without the 18 storm and heat-wave days</button></div>
-    <p class="hint"><b>Click the second view</b> to take the two weather events out. <b>Hover or tap</b> a line to name it.</p>
-    <h2 class="ctitle" id="t-hero">The unseen months: what my models earned against rules with no model</h2>
-    <p class="csub">Cumulative profit after every fee, US dollars, 1&nbsp;MW per zone and hour (always supply holds 11&nbsp;MW at once, one in each zone), 1 January 2024 to 30 September 2026. Thin lines are the strategies I built; thick lines are rules that use no model: <b>always supply</b> sells power day-ahead in every zone and hour; <b>zone pairs</b> buy in one area and sell in another.</p>
-    <div class="lg" id="lg-hero" aria-hidden="true"></div>
-    <div class="chart" id="ch-hero"></div>
-    <div class="readout" id="ro-hero" aria-live="polite"></div>
-    <div class="three">
-      <p><b>what you see</b>One line per strategy over the 33 unseen months. Orange lines are models that mostly sell day-ahead; blue lines are models that buy one zone and sell another. The shaded bands are the two weather events.</p>
-      <p><b>how to read</b>Watch the step at the January storm: the orange models and the plain sell-everything rule (red) jump on the same days. Then switch the view and watch the orange lines fall back to the red one.</p>
-      <p><b>take-away</b><span id="k-hero">The sell-side models made their money on the same storm and heat-wave days as a rule that always sells; the pair position with no model climbed in both views.</span></p>
-    </div>
-    <p class="note" id="n-hero"></p>
-    <div class="cfoot">Data: <a href="data/heldout.json">heldout.json</a> (daily profit of every line, the event windows, and the source files with their fingerprints), written by <a href="https://github.com/bolgacg/tavle/blob/master/research/us/chartdata/build_chartdata.py">build_chartdata.py</a> from the run's daily tables. Drawn in the page from that file.</div>
-  </div>
-</div></section>
 
-<section id="primer" data-band style="--band:var(--b2)"><div class="wrap">
-  <div class="sec-label">The bet</div>
-  <h2>A virtual position bets on the gap between two prices for the same hour</h2>
-  <p class="why">Every strategy on this page is a rule for when to take this one kind of position, on which side and in which zone.</p>
-  <ol class="primer">
-    <li>NYISO, the company that runs New York's grid, sells power for each hour twice: a <b>day-ahead</b> price is set the day before, and a <b>real-time</b> price is set as the hour happens. Prices are in US dollars per megawatt-hour (MWh), about what 800 average American homes use in an hour.</li>
-    <li><b>Virtual supply</b> means selling power day-ahead and buying it back in real time: a short position that wins when real time comes in lower. <b>Virtual load</b> is the reverse, a long position. No power moves. <b>Always supply</b>, the plain rule on this page, sells 1&nbsp;MW in every zone and every hour.</li>
-    <li>A worked example: if New York City's 17:00 hour clears day-ahead at 50 USD and real-time at 40, virtual supply earns 10 USD per MWh, less fees of about 0.15 to 0.21 USD per MWh; had real time spiked to 300, it would lose 250.</li>
-    <li>A <b>zone pair</b> buys in one of NYISO's 11 price zones and sells in another for the same hour, so a move in the overall price cancels and only the difference between the zones, mostly the cost of crowded power lines (congestion), is left.</li>
-    <li>Bids close at <b>05:00 New York time the day before delivery</b>, so every input a model reads must be public by then. NYISO's virtual trading fee alone (0.1333 USD per MWh in 2024, about 0.15 with the smaller charges I add) was more than the 0.06 that all virtual traders in New York earned per MWh that year before fees, so losing is the expected result.</li>
-    <li>The <b>bar</b>, fixed before any model ran: each strategy is sized so its worst loss from a high on the build years is 100,000 USD; at that size it must earn at least 10 percent a year on a 500,000 USD bankroll; it makes money in most years; its Sharpe ratio beats the S&amp;P 500's long-run 0.42; and it still makes money at a cost of 0.50 USD per MWh. A strategy that passed this on the build years and was not flagged <b>fragile</b> (leaning on a few days or a lucky setting) went to the held-out test as a <b>candidate</b>.</li>
-  </ol>
-  <p class="note">The <a href="#glossary">terms</a> section defines every other word; the <a href="#strategies">strategy cards</a> say what each named strategy bets and reads.</p>
-</div></section>
-
-<section id="evidence" data-band style="--band:var(--b10)"><div class="wrap">
-  <div class="sec-label">The evidence</div>
-  <h2>Clearing the bar on the unseen months was common; beating a rule with no model was not</h2>
-  <p class="why">The models made money on the unseen months, but not more than a rule with no model. The bar asked only for profit, and the market paid sellers well during two weather events, so each chart below asks the harder question: what did a model add over a rule with no model on the same days?</p>
-
-  <div class="answers" style="margin-top:4px">
-    <div class="ans"><b>Did the models make money on the unseen months?</b><p>Yes: <span data-h="nPass">28</span> of <span data-h="nTested">32</span> cleared the profit bar, the first chart below.</p></div>
-    <div class="ans"><b>Did they earn it with skill?</b><p>No: the sell-side ones earned it on the same storm days as a rule that simply sells, and without those days none beats that rule, the second chart.</p></div>
-    <div class="ans"><b>What did the pre-registered test say?</b><p>"Inconclusive" for all four ideas, counting every day, the table at the end.</p></div>
+<section id="good" data-band style="--band:var(--b1);padding-top:28px"><div class="wrap">
+  <div class="sec-label">What worked</div>
+  <h2><span data-h="nPass">28</span> of the <span data-h="nTested">32</span> strategies I sent to the test cleared the profit bar on the unseen months, the pair models with little help from the weather</h2>
+  <p class="why">The bar was fixed before any model ran: at least 10 percent a year on a 500,000 USD bankroll, money in most years, and a Sharpe ratio above the S&amp;P 500's long-run 0.42. Clearing the bar is not the same as beating a rule with no model; the section on <a href="#evidence">what did not work out</a> tests that.</p>
+  <div class="card" id="top-card">
+    <h3 class="ctitle">The best performers on the unseen months, January 2024 to September 2026</h3>
+    <p class="csub">Return a year on the 500,000 USD bankroll at each strategy's fixed size, after every fee. The Sharpe ratio is the average daily profit over its day-to-day swings, scaled to a year; higher means steadier.</p>
+    <p class="hint" style="margin:8px 0 2px">On a phone, <b>scroll the table sideways</b>.</p>
+    <div class="tscroll"><table class="gen" id="tb-top"></table></div>
+    <p class="note" id="n-top"></p>
+    <div class="cfoot">Data: <a href="data/heldout.json">heldout.json</a>, fields rows[].ho, from the audit (<a href="results/AUDIT.md">AUDIT.md</a>) and <a href="results/pre_vs_heldout.md">pre_vs_heldout.md</a>.</div>
   </div>
   <div class="card" id="rank-card">
     <h3 class="ctitle" id="t-rank">Return a year before and during the test</h3>
@@ -378,34 +345,28 @@ table.gen td small{max-width:220px}
     <div class="cfoot">Data: <a href="data/heldout.json">heldout.json</a>, fields rows[].pre (from <a href="https://github.com/bolgacg/tavle/blob/master/research/us/HELDOUT-LIST.md">version 1</a> and <a href="https://github.com/bolgacg/tavle/blob/master/research/us_v2/HELDOUT-LIST.md">version 2</a> held-out lists, written before the run) and rows[].ho (from the audit, <a href="results/AUDIT.md">AUDIT.md</a>, table 1).</div>
   </div>
 
-  <div class="card" id="excess-card">
-    <div class="vt" role="group" aria-label="Which days to count" id="vt-excess"><button data-m="ex" aria-pressed="true">Without the 18 event days</button><button data-m="all" aria-pressed="false">All 1,004 days</button></div>
-    <h3 class="ctitle" id="t-excess">What each model earned over the matching rule with no model</h3>
-    <p class="csub">Each line is one model's extra profit a year over the rule with no model that makes the same kind of bet, US dollars at 1&nbsp;MW per position. If the line crosses zero, the model added nothing the data can show. Sell-side models are compared with always supply; pair models with the zone pairs with no model. The two panels have their own scales.</p>
-    <div class="lg"><span><svg width="34" height="12"><line x1="2" y1="6" x2="32" y2="6" stroke="#9aa5b1" stroke-width="2"/><circle cx="17" cy="6" r="4" fill="#5b6470"/></svg>interval includes zero: no difference shown</span><span><svg width="34" height="12"><line x1="2" y1="6" x2="32" y2="6" stroke="#2f7d54" stroke-width="2.5"/><circle cx="17" cy="6" r="4" fill="#2f7d54"/></svg>interval above zero</span><span><svg width="34" height="12"><line x1="2" y1="6" x2="32" y2="6" stroke="#b03a3a" stroke-width="2.5"/><circle cx="17" cy="6" r="4" fill="#b03a3a"/></svg>interval below zero: worse than no model</span></div>
-    <p class="hint"><b>Click a view</b> to put the two weather events back in.</p>
-    <div class="chart" id="ch-excess"></div>
-    <div class="readout" id="ro-excess" aria-live="polite"></div>
-    <div class="three">
-      <p><b>what you see</b>Each row is one model's extra profit a year over its no-model rule; the dot is the estimate and the line the range that 95 percent of resampled histories fall in.</p>
-      <p><b>how to read</b>A line that crosses the zero line means the data cannot tell the model from the rule. Only a line wholly right of zero would show skill.</p>
-      <p><b>take-away</b><span id="k-excess"></span></p>
-    </div>
-    <p class="note" id="n-excess"></p>
-    <div class="cfoot">Data: <a href="data/heldout.json">heldout.json</a>, fields rows[].excess_vs_supply and rows[].excess_vs_static_pairs, from the audit (<a href="results/AUDIT.md">AUDIT.md</a>, table 2), which recomputed every daily profit from the positions and prices and matched the scorers to 0.00 USD.</div>
-  </div>
-
-  <h3 style="margin-top:30px">The four verdicts I registered before any model ran</h3>
-  <p class="why" style="margin-top:8px">Objective 6 gives each idea one word against the habit rule (every zone and hour takes the side that won over the past year). "Pays" needed the whole interval above zero. Idea A was the main test, at 95 percent; B, C and D were secondary, with intervals widened for testing three at once (the Holm correction). These verdicts count every day, so they do not depend on leaving any event out.</p>
-  <div class="tscroll"><table class="gen" id="tb-verdicts"></table></div>
-  <p class="note" id="n-verdicts"></p>
-  <p class="prose" style="margin-top:14px">One kind of bet did hold up without the events, and the next section shows it.</p>
 </div></section>
+
+<section id="primer" data-band style="--band:var(--b2)"><div class="wrap">
+  <div class="sec-label">The bet</div>
+  <h2>A virtual position bets on the gap between two prices for the same hour</h2>
+  <p class="why">Every strategy on this page is a rule for when to take this one kind of position, on which side and in which zone.</p>
+  <ol class="primer">
+    <li>NYISO, the company that runs New York's grid, sells power for each hour twice: a <b>day-ahead</b> price is set the day before, and a <b>real-time</b> price is set as the hour happens. Prices are in US dollars per megawatt-hour (MWh), about what 800 average American homes use in an hour.</li>
+    <li><b>Virtual supply</b> means selling power day-ahead and buying it back in real time: a bet that wins when real time comes in lower (a short position). <b>Virtual load</b> is the reverse, a bet that real time comes in higher (a long position). No power moves. <b>Always supply</b>, the plain rule on this page, sells 1&nbsp;MW in every zone and every hour.</li>
+    <li>A worked example: if New York City's 17:00 hour clears day-ahead at 50 USD and real-time at 40, virtual supply earns 10 USD per MWh, less fees of about 0.15 to 0.21 USD per MWh; had real time spiked to 300, it would lose 250.</li>
+    <li>A <b>zone pair</b> buys in one of NYISO's 11 price zones and sells in another for the same hour, so a move in the overall price cancels and only the difference between the zones, mostly the cost of crowded power lines (congestion), is left.</li>
+    <li>Bids, the orders for these positions, close at <b>05:00 New York time the day before delivery</b>, so every input a model reads must be public by then. Fees came to about 0.15 USD per MWh in 2024, more than the 0.06 that all virtual traders in New York earned per MWh that year before fees, so losing is the expected result.</li>
+    <li>The <b>bar</b> was fixed before any model ran. Each strategy is sized so its worst fall from a high on the build years is 100,000 USD. At that size it must earn at least 10 percent a year on a 500,000 USD bankroll, make money in most years, have a Sharpe ratio above the S&amp;P 500's long-run 0.42, and still make money at a cost of 0.50 USD per MWh. A strategy that passed this on the build years and was not flagged <b>fragile</b> (leaning on a few days or a lucky setting) went to the held-out test as a <b>candidate</b>.</li>
+  </ol>
+  <p class="note">The <a href="#glossary">terms</a> section defines every other word; the <a href="#strategies">strategy cards</a> say what each named strategy bets and reads.</p>
+</div></section>
+
 
 <section id="pairs" data-band style="--band:var(--b5)"><div class="wrap">
   <div class="sec-label">What held up</div>
   <h2 id="h-pairs">A zone-pair position with no model made money in every year from 2013</h2>
-  <p class="why">This is the one result that held in both periods with little help from the two weather events, so it is the part of the study I would build on. I registered it on 7 October as a yardstick for the pair models (<a href="https://github.com/bolgacg/tavle/commit/10c01b4">10c01b4</a>), not as a candidate; I single it out after the run, and the forward test is what would confirm it.</p>
+  <p class="why">This result held in both periods with little help from the two weather events, though January to September 2026 was slightly negative once they are taken out. I registered it on 7 October as a yardstick for the pair models (<a href="https://github.com/bolgacg/tavle/commit/10c01b4">10c01b4</a>), not as a candidate, and single it out here after the run.</p>
   <div class="card" id="pairs-card">
     <h3 class="ctitle" id="t-pairstory">Profit of the pair position each year, and the price gap behind it</h3>
     <p class="csub">Top: net profit of the zone pairs with no model, US dollars a year at 1&nbsp;MW per position; 2026 covers January to September. Bottom: how far New York City's real-time price ran above its day-ahead price, minus the same for the Capital zone (around Albany, upstate), average over every hour of the year, USD per MWh.</p>
@@ -424,13 +385,14 @@ table.gen td small{max-width:220px}
     <li id="pw-when"></li>
     <li id="pw-models"></li>
   </ul>
-  <div class="hyp"><p><b>Hypothesis, not tested</b><span id="pw-hyp">The main power lines into New York City (NYISO's Central-East and Upstate New York to Con Edison interfaces) ran closer to their limits in real time than the day-ahead market expected, plausibly because older peaking plants in the city retired in May 2025 under the state's emissions rule for peakers, before the Champlain Hudson line into the city began delivering. Why the premium is still there to collect is untested too; fees, collateral and the few traders active in these pairs are candidates. This page does not test either; the test would compare the interfaces' real-time and day-ahead congestion prices before and after May 2025.</span></p></div>
+  <div class="hyp"><p><b>Hypothesis, not tested</b><span id="pw-hyp">The main power lines into New York City ran fuller in real time than the day-ahead market expected. A likely reason is that older plants in the city that run only at peak hours closed in May 2025 under a state emissions rule, before a new cable into the city (Champlain Hudson) began delivering. Why the premium is still there to collect is untested too; fees, collateral and the few traders active in these pairs are candidates. This page does not test either.</span></p></div>
 </div></section>
 
 <section id="book" data-band style="--band:var(--b4)"><div class="wrap">
-  <div class="sec-label">The book I would run</div>
+  <div class="sec-label">The combined book</div>
   <h2 id="h-book">Adding one weather and border model to the pair position lifts the return for the same drawdown limit, because the two are uncorrelated</h2>
-  <p class="why">The book puts most of the risk in the pair position and a fifth in one weather and border model; because the two lose money on different days, together they can run larger for the same worst loss. My limits are a worst fall of 7 percent of the 500,000 USD bankroll without leverage and 15 percent with it. I sized each book on 2013 to 2023 so its worst fall there hit the limit, then cut it to 70 percent as a margin. The sizes come from the build years, but I set the limits, the 70 percent margin and the mix itself, the pairs plus the weather and border model (V15c) at 80 and 20 percent of the risk, after seeing the unseen months, on 11 October. So the book's numbers there are not a clean test; the forward test is.</p>
+  <p class="why">The book puts 80 percent of the risk in the pair position and 20 percent in the weather and border model (V15c). The two lose money on different days, so together they can run larger for the same worst loss. Every book stayed inside its limit on the unseen months: a worst fall of 35,000 USD (7 percent of the 500,000 USD bankroll, no borrowing) or 75,000 USD (15 percent, with borrowing, where the book returned <span data-h="book15Ho">31.8</span> percent a year).</p>
+  <p class="prose">How the sizes were set: I sized each book on 2013 to 2023 so its worst fall there hit the limit, then cut it to 70 percent as a margin. I chose the limits, the margin and the mix on 11 October, after the run, so the book's numbers on the unseen months describe it rather than test it.</p>
 
   <div class="card" id="corr-card">
     <h3 class="ctitle" id="t-corr">How closely the daily profits of two strategies move together</h3>
@@ -455,7 +417,7 @@ table.gen td small{max-width:220px}
     <div class="tscroll"><table class="gen" id="tb-books"></table></div>
     <div class="three">
       <p><b>what you see</b>For each book, three bars: its return a year on 2013 to 2023, on the unseen months, and on the unseen months without the two weather events.</p>
-      <p><b>how to read</b>Compare the mixed book with the pairs alone under the same limit: the mixed book can hold larger positions because its two parts are uncorrelated. The pairs alone hold 0.43&nbsp;MW a leg here, sized to the 7 percent limit; the evidence chart shows the same rule at its larger registered size, hence its higher return there. Both books lose the same amount in their worst build-year fall by construction, since that is how they were sized.</p>
+      <p><b>how to read</b>Compare the mixed book with the pairs alone under the same limit: the mixed book can hold larger positions because its two parts are uncorrelated. The pairs alone hold 0.43&nbsp;MW a leg here, sized to the 7 percent limit; the ranking chart under What worked shows the same rule at its larger registered size, hence its higher return there. Both books lose the same amount in their worst build-year fall by construction, since that is how they were sized.</p>
       <p><b>take-away</b><span id="k-books"></span></p>
     </div>
     <div class="cfoot">Data: <a href="data/heldout.json">heldout.json</a>, fields books and baselines, from <a href="results/b_books.csv">b_books.csv</a> (the books, scored with the frozen code's profit function), FRED's <a href="https://fred.stlouisfed.org/series/SP500">SP500</a> and <a href="https://fred.stlouisfed.org/series/DTB3">DTB3</a> series and Statistics Denmark's <a href="https://www.statbank.dk/DNRUIPI">DNRUIPI</a> table (downloads in <a href="https://github.com/bolgacg/tavle/tree/master/research/us/chartdata/sources">chartdata/sources</a>).</div>
@@ -467,11 +429,60 @@ table.gen td small{max-width:220px}
   </ul>
 </div></section>
 
+<section id="evidence" data-band style="--band:var(--b10)"><div class="wrap">
+  <div class="sec-label">What did not work out as I expected</div>
+  <h2>Two weather events carried much of the models' profit, and no model beat its rule with no model</h2>
+  <p class="why">I expected the models to earn their profit by timing, on ordinary days. Three outcomes say they did not:</p>
+  <ul class="plist neg">
+    <li>Two 2026 weather events, a winter storm from 24 January to 2 February and a heat wave from 28 June to 5 July, paid anyone who sold power day-ahead. Without those 18 days, the models that mostly sell did no better than always supply, the rule that sells everywhere with no model. I drew both windows after the run. The June 2025 heat wave, which cost sellers money, stays in both views. Five days of the 2026 heat wave use prices I rebuilt from NYISO's 5-minute data; their energy part matches NYISO's official generator prices within a cent.</li>
+    <li>All four verdicts I registered before the run read "inconclusive", so model skill is not proven.</li>
+    <li>On the unseen months none of the pair models beat the zone pairs with no model, and two did measurably worse.</li>
+  </ul>
+  <div class="card" id="hero-card">
+    <div class="vt" role="group" aria-label="Which days to count" id="vt-hero"><button data-m="all" aria-pressed="true">All 1,004 days</button><button data-m="ex" aria-pressed="false">Without the 18 storm and heat-wave days</button></div>
+    <p class="hint"><b>Click the second view</b> to take the two weather events out. <b>Hover or tap</b> a line to name it.</p>
+    <h2 class="ctitle" id="t-hero">The unseen months: what my models earned against rules with no model</h2>
+    <p class="csub">Cumulative profit after every fee, US dollars, 1&nbsp;MW per zone and hour (always supply holds 11&nbsp;MW at once, one in each zone), 1 January 2024 to 30 September 2026. Thin lines are the strategies I built; thick lines are rules that use no model: <b>always supply</b> sells power day-ahead in every zone and hour; <b>zone pairs</b> buy in one area and sell in another.</p>
+    <div class="lg" id="lg-hero" aria-hidden="true"></div>
+    <div class="chart" id="ch-hero"></div>
+    <div class="readout" id="ro-hero" aria-live="polite"></div>
+    <div class="three">
+      <p><b>what you see</b>One line per strategy over the 33 unseen months. Orange lines are models that mostly sell day-ahead; blue lines are models that buy one zone and sell another. The shaded bands are the two weather events.</p>
+      <p><b>how to read</b>Watch the step at the January storm: the orange models and the plain sell-everything rule (red) jump on the same days. Then switch the view and watch the orange lines fall back to the red one.</p>
+      <p><b>take-away</b><span id="k-hero">The sell-side models made their money on the same storm and heat-wave days as a rule that always sells; the pair position with no model climbed in both views.</span></p>
+    </div>
+    <p class="note" id="n-hero"></p>
+    <div class="cfoot">Data: <a href="data/heldout.json">heldout.json</a> (daily profit of every line, the event windows, and the source files with their fingerprints), written by <a href="https://github.com/bolgacg/tavle/blob/master/research/us/chartdata/build_chartdata.py">build_chartdata.py</a> from the run's daily tables. Drawn in the page from that file.</div>
+  </div>
+  <div class="card" id="excess-card">
+    <div class="vt" role="group" aria-label="Which days to count" id="vt-excess"><button data-m="ex" aria-pressed="true">Without the 18 event days</button><button data-m="all" aria-pressed="false">All 1,004 days</button></div>
+    <h3 class="ctitle" id="t-excess">What each model earned over the matching rule with no model</h3>
+    <p class="csub">Each line is one model's extra profit a year over the rule with no model that makes the same kind of bet, US dollars at 1&nbsp;MW per position. If the line crosses zero, the model added nothing the data can show. Sell-side models are compared with always supply; pair models with the zone pairs with no model. The two panels have their own scales.</p>
+    <div class="lg"><span><svg width="34" height="12"><line x1="2" y1="6" x2="32" y2="6" stroke="#9aa5b1" stroke-width="2"/><circle cx="17" cy="6" r="4" fill="#5b6470"/></svg>interval includes zero: no difference shown</span><span><svg width="34" height="12"><line x1="2" y1="6" x2="32" y2="6" stroke="#2f7d54" stroke-width="2.5"/><circle cx="17" cy="6" r="4" fill="#2f7d54"/></svg>interval above zero</span><span><svg width="34" height="12"><line x1="2" y1="6" x2="32" y2="6" stroke="#b03a3a" stroke-width="2.5"/><circle cx="17" cy="6" r="4" fill="#b03a3a"/></svg>interval below zero: worse than no model</span></div>
+    <p class="hint"><b>Click a view</b> to put the two weather events back in.</p>
+    <div class="chart" id="ch-excess"></div>
+    <div class="readout" id="ro-excess" aria-live="polite"></div>
+    <div class="three">
+      <p><b>what you see</b>Each row is one model's extra profit a year over its no-model rule; the dot is the estimate and the line the range that holds 95 percent of 10,000 resampled versions of the unseen months.</p>
+      <p><b>how to read</b>A line that crosses the zero line means the data cannot tell the model from the rule. Only a line wholly right of zero would show skill.</p>
+      <p><b>take-away</b><span id="k-excess"></span></p>
+    </div>
+    <p class="note" id="n-excess"></p>
+    <div class="cfoot">Data: <a href="data/heldout.json">heldout.json</a>, fields rows[].excess_vs_supply and rows[].excess_vs_static_pairs, from the audit (<a href="results/AUDIT.md">AUDIT.md</a>, table 2), which recomputed every daily profit from the positions and prices and matched the scorers to 0.00 USD.</div>
+  </div>
+
+  <h3 style="margin-top:30px">The four verdicts I registered before any model ran</h3>
+  <p class="why" style="margin-top:8px">Objective 6 gives each idea one word against the habit rule (every zone and hour takes the side that won over the past year). "Pays" needed the whole interval above zero. Idea A was the main test, at 95 percent; B, C and D were secondary, with intervals widened for testing three at once (the Holm correction). These verdicts count every day, so they do not depend on leaving any event out.</p>
+  <p class="hint" style="margin:8px 0 2px">On a phone, <b>scroll the table sideways</b>.</p>
+  <div class="tscroll"><table class="gen" id="tb-verdicts"></table></div>
+  <p class="note" id="n-verdicts"></p>
+</div></section>
+
 <section id="integrity" data-band style="--band:var(--b6)"><div class="wrap">
   <div class="sec-label">How the test was kept clean</div>
   <h2>I fixed the rules and froze the code before the test, and every stop in the run is dated in public</h2>
   <p class="why">A held-out result only means something if nothing was chosen after seeing it, so this section shows what was fixed when, what the run tripped over, and how each fix was kept from touching the result.</p>
-  <p class="prose">In short: rules fixed on 6 and 7 October, code frozen on 8 October and moved on 10 October to the commit that fixed the July data check (f0636cc), with every row before 2024 unchanged; four stops during the run, each fixed in public without changing a rule, a model or a pre-2024 number. On the event days the models picked the winning side no more often than always supply did, where a leak would show up as a far higher hit rate. Three things came after the run and are labelled as such wherever they appear: the two event windows I leave out, singling out the pair rule, and the book (its limits, margin and mix).</p>
+  <p class="prose">In short: I fixed the rules on 6 and 7 October and froze the code on 8 October. The freeze moved once, on 10 October, to fix a data check, and no result before 2024 changed. The run stopped four times, and each fix was made in public without changing a rule, a model or an earlier number. On the event days the models picked the winning side no more often than always supply did, where a leak would show up as a far higher hit rate. Three things came after the run and are labelled as such wherever they appear: the two event windows I leave out, singling out the pair rule, and the book (its limits, margin and mix).</p>
   <p class="prose">I used Claude, an AI assistant, to help set up the experiments, write code and run the audits; every rule, decision and approval here is mine.</p>
   <ul class="plist">
     <li>The objectives were committed on 6 October (<a href="https://github.com/bolgacg/tavle/commit/7f98a86">7f98a86</a>) and 7 October for version 2 (<a href="https://github.com/bolgacg/tavle/commit/9e0416b">9e0416b</a>), before any model ran; every later change is a dated addendum, never an edit.</li>
@@ -488,8 +499,10 @@ table.gen td small{max-width:220px}
     <div class="cfoot">Data: <a href="data/events.json">events.json</a>, from the git history of <a href="https://github.com/bolgacg/tavle/commits/master/research/us/OBJECTIVES.md">research/us/OBJECTIVES.md</a> and <a href="https://github.com/bolgacg/tavle/commits/master/research/us_v2/OBJECTIVES.md">research/us_v2/OBJECTIVES.md</a>. The full text of every addendum is in the <a href="#a-objectives">appendix</a>.</div>
   </div>
 
+  <p class="note">15 October 2026: I reordered the results to lead with what held; no number changed.</p>
+
   <h3 style="margin-top:30px">The run log: every stop and every fix</h3>
-  <p class="why" style="margin-top:8px">The run script stops at the first failed check and writes down why. It stopped four times; each fix below was decided and published before the run went on, and none changed a rule or a model.</p>
+  <p class="why" style="margin-top:8px">The run script stops at the first failed check and writes down why. It stopped four times, and two steps crashed after scoring finished; each fix below was decided and published before the run went on, and none changed a rule or a model.</p>
   <ol class="stl">
     <li class="done"><span class="d">8 Oct 2026</span><span>Stopped at the version 2 dry run. Three deep rows differed from their build run in a handful of zone-hours, because the graphics card does not repeat its arithmetic bit for bit, and the learned mix of version 2 strategies (V12) could not reproduce its build run at all. On 9 October I set a tolerance for the first and dropped V12 (<a href="https://github.com/bolgacg/tavle/commit/6199e84">6199e84</a>).</span></li>
     <li class="done"><span class="d">9 Oct 2026</span><span>Stopped at the data rebuild. 300 weather forecast values for 30 and 31 December 2023 were blank in the build and filled in the rebuild, because the build had not read forecast hours that fall in 2024. They were issued before the deadline, so this is missing data, not a leak; I accepted the rebuilt table (<a href="https://github.com/bolgacg/tavle/commit/c174584">c174584</a>).</span></li>
@@ -517,29 +530,17 @@ table.gen td small{max-width:220px}
   </ul>
 </div></section>
 
-<section id="next" data-band style="--band:var(--b7)"><div class="wrap">
-  <div class="sec-label">What I would do next</div>
-  <h2>Before any real money, the book has to survive a forward test, a real cost check and a route to market</h2>
-  <p class="why">The unseen months are one sample of 33 months with two unusual events in it, so the next steps are about a longer sample and about costs a backtest does not see.</p>
-  <ol class="primer">
-    <li><b>Forward paper trading.</b> Publish the book's positions before 05:00 each day and score them after real time settles, for long enough to see more than one winter, with the size and the rules fixed now.</li>
-    <li><b>A real cost check.</b> The pair rule trades two legs every hour, so its profit is thin: 0.72 USD per MWh after fees on the unseen months. At a stressed cost of 0.50 USD per MWh it still made <span data-h="pairsStress">83,781</span> USD at 1&nbsp;MW (<a href="results/audit_analysis.json">audit_analysis.json</a>), but all-in costs near 1.00 would erase it. Uplift charges, collateral and the price impact of the bids need real quotes.</li>
-    <li><b>Access to the market.</b> Virtual bids need a NYISO customer account with a capital deposit and two days of collateral, or trading through a registered participant; a trader outside the United States also needs a US entity or a bank letter of credit.</li>
-    <li><b>Test the 2025 hypothesis.</b> Compare day-ahead and real-time congestion on the interfaces into the city before and after May 2025; if the city premium came from retired plants, it should fade as new lines deliver.</li>
-    <li><b>Keep the sell-side model small until it earns its place.</b> Its edge over always selling is not proven; in the book it earns its 20 percent of the risk by losing on different days from the pairs, which a forward test can confirm or refute.</li>
-  </ol>
-</div></section>
 
 
 <section id="strategies" data-band style="--band:var(--b3)"><div class="wrap">
   <div class="sec-label">The strategies</div>
   <h2>Each named line is one rule for when to sell, when to buy and when to stay out</h2>
-  <p class="why">The charts name strategies by short labels; each card below says what the rule bets, what it reads at 05:00, and how its model was trained, starting from the two rules that use no model at all.</p>
+  <p class="why">The charts name strategies by short labels; each card below says what the rule bets, what it reads at 05:00, and how its model was trained, starting from the rules that use no model at all. Gradient boosting means many small decision trees added together, each correcting the ones before; a neural network is the deep learning alternative.</p>
   <div class="cards">
     <article class="scard" id="s-always"><div class="tagl">no model</div><h3>Always supply</h3><dl><dt>What it bets</dt><dd>Sells 1&nbsp;MW day-ahead in every zone and every hour and buys it back in real time: a permanent short position.</dd><dt>What it reads at 05:00</dt><dd>Nothing.</dd><dt>How it was trained</dt><dd>Not trained; it is the simplest possible bet, and every strategy should beat it.</dd></dl></article>
     <article class="scard" id="s-habit"><div class="tagl">no model</div><h3>Habit rule</h3><dl><dt>What it bets</dt><dd>In each zone and hour of the day, takes the side that won on average over the past year (short if real time usually came in below day-ahead, long if above).</dd><dt>What it reads at 05:00</dt><dd>The average gap for that zone and hour over the previous 365 days.</dd><dt>How it was trained</dt><dd>Not trained; a rolling average, the second plain rule every model must beat.</dd></dl></article>
     <article class="scard" id="s-static"><div class="tagl">no model</div><h3>Zone pairs, no model</h3><dl><dt>What it bets</dt><dd>In each of five zone pairs and each hour, buys one zone and sells the other on the side that won on average over the previous three years, 1&nbsp;MW a leg.</dd><dt>What it reads at 05:00</dt><dd>Past prices only.</dd><dt>How it was trained</dt><dd>Not trained; registered on 7 October as the benchmark for the pair models. It is the stance that held up on the unseen months.</dd></dl></article>
-    <article class="scard" id="s-V15c"><div class="tagl">gradient boosting</div><h3>Weather and border model (V15c)</h3><dl><dt>What it bets</dt><dd>Short or long in each zone and hour when its forecast gap beats the fee, otherwise out; in practice it mostly sells.</dd><dt>What it reads at 05:00</dt><dd>Prices and their parts, NYISO's load forecast, archived weather forecasts and prices at the borders with neighbouring grids.</dd><dt>How it was trained</dt><dd>Gradient boosting retrained each quarter on the previous three years. It is the 20 percent part of the book I would run.</dd></dl></article>
+    <article class="scard" id="s-V15c"><div class="tagl">gradient boosting</div><h3>Weather and border model (V15c)</h3><dl><dt>What it bets</dt><dd>Short or long in each zone and hour when its forecast gap beats the fee, otherwise out; in practice it mostly sells.</dd><dt>What it reads at 05:00</dt><dd>Prices and their parts, NYISO's load forecast, archived weather forecasts and prices at the borders with neighbouring grids.</dd><dt>How it was trained</dt><dd>Gradient boosting retrained each quarter on the previous three years. It is the 20 percent part of the combined book.</dd></dl></article>
     <article class="scard" id="s-A_regression_v1"><div class="tagl">gradient boosting</div><h3>A, first rule</h3><dl><dt>What it bets</dt><dd>Sells (short) only in the zone-hours where the forecast says real time will come in below day-ahead by more than the fee; otherwise stays out.</dd><dt>What it reads at 05:00</dt><dd>Today's day-ahead prices, real-time prices for hours already finished, recent gaps and spikes, NYISO's load forecast, and the calendar.</dd><dt>How it was trained</dt><dd>Gradient boosting (many small decision trees), refit on the 1st of every month on all data up to two days before (walk-forward), settings chosen on the year before.</dd></dl></article>
     <article class="scard" id="s-B_gbm"><div class="tagl">gradient boosting</div><h3>B, gradient boosting</h3><dl><dt>What it bets</dt><dd>Short where the forecast gap is below minus the fee, long where it is above plus the fee, otherwise out.</dd><dt>What it reads at 05:00</dt><dd>The same as A, plus GFS weather forecasts issued two days before each delivery hour, at points across New York.</dd><dt>How it was trained</dt><dd>Gradient boosting, walk-forward with monthly refits, from May 2021 when the weather archive starts.</dd></dl></article>
     <article class="scard" id="s-B_deep"><div class="tagl">neural network</div><h3>B, deep model</h3><dl><dt>What it bets</dt><dd>The same bet as B with gradient boosting.</dd><dt>What it reads at 05:00</dt><dd>The same inputs as B.</dd><dt>How it was trained</dt><dd>A PyTorch neural network, the average of three random starts, refit monthly; its settings were chosen on 2022.</dd></dl></article>
@@ -584,7 +585,7 @@ table.gen td small{max-width:220px}
 <section id="v2rank" data-band style="--band:var(--b10)"><div class="wrap">
   <div class="sec-label">Version 2 results, 2013 to 2023</div>
   <h2 id="h-v2rank">Loading the version 2 ranking</h2>
-  <p class="why">Version 2 asks the same question as version 1 on eleven years instead of three, so a strategy that wins here has lived through many more storms and calm years. Every model is retrained each quarter on the three years before it and scored on the next quarter, which no model saw while training.</p>
+  <p class="why">Version 2 asks the same question as version 1 on eleven years instead of three. Every model is retrained each quarter on the three years before it and scored on the next quarter, which no model saw while training.</p>
   <div class="card" id="v2rank-card">
     <h3 class="ctitle" id="t-v2rank">Loading</h3>
     <p class="csub">Profit after every fee, 1&nbsp;MW per position, summed over 2013 to 2023, one bar per strategy, highest first. All strategies run on the same 500,000 USD bankroll, so the dashed lines show what that money would have earned in the S&amp;P 500 or a bank account over the same eleven years.</p>
@@ -641,7 +642,7 @@ table.gen td small{max-width:220px}
 <section id="deep" data-band style="--band:var(--b10)"><div class="wrap">
   <div class="sec-label">Deep models</div>
   <h2>Why the deep models did not win</h2>
-  <p class="why">I expected the neural networks to win and they did not, so this section says where they fell short and what I think the reasons are.</p>
+  <p class="why">I expected the neural networks to beat the tree models, and on these years they did not. This section shows where they fell short, with the likely reasons labelled as my reading.</p>
   <div class="card" id="deep-card">
     <h3 class="ctitle" id="t-deep">Loading</h3>
     <p class="csub">Profit 2013 to 2023 at 1&nbsp;MW after fees, with the Sharpe ratio at the end of each bar, grouped by the kind of bet; in the zone pair group the dashed line marks what the rule with no model made. Trees means gradient boosting, many small decision trees added together; deep means a neural network.</p>
@@ -664,8 +665,8 @@ table.gen td small{max-width:220px}
 
 <section id="made" data-band style="--band:var(--b9)"><div class="wrap">
   <div class="sec-label">What the strategies are made of</div>
-  <h2>The best strategies predict the size of the gap and may buy or sell; the worst only ever sell</h2>
-  <p class="why">Each strategy is a bundle of choices: a model, a way of training it, the inputs it reads, what it predicts and a rule for taking positions. Here I line up every scored strategy by those choices, to see which ones the best share and which combinations I have not tried. This is association among my own strategies, not cause: many of them share a model, a zone or a storm.</p>
+  <h2>The best strategies forecast how big the price gap will be and can bet either way; the worst only ever bet on prices falling</h2>
+  <p class="why">Each strategy is a bundle of choices: a model, a way of training it, the inputs it reads, what it predicts and a rule for taking positions. Here I line up every scored strategy by those choices, to see which choices the best strategies share. This is association among my own strategies, not cause: many of them share a model, a zone or a storm.</p>
   <div class="vt" role="group" aria-label="Study version"><button data-v="v2" aria-pressed="true">Version 2 &middot; 2013 to 2023</button><button data-v="v1" aria-pressed="false">Version 1 &middot; 2021 to 2023</button></div>
   <p class="hint">The two versions score different years, so I never mix their Sharpe ratios on one axis. <b>Click a version</b> to switch.</p>
 
@@ -2591,7 +2592,7 @@ Wording note, 11 October 2026: two lines above still named me in the third perso
     var vn = V === 'v1' ? 'version 1' : 'version 2';
     var bestCell = null; M.forEach(function (m) { P.forEach(function (p) { var k = cell[m[0] + p[0]]; if (k.n && (!bestCell || k.b > bestCell.b)) bestCell = { b: k.b, n: k.n, t: m[1] + ' with ' + p[1] }; }); });
     var nnUn = unList.filter(function (u) { return u.indexOf('neural net') === 0 || u.indexOf('boosted trees') === 0; });
-    setText('t-pairs', cap(vn) + ': ' + nUn + ' of the ' + (M.length * P.length) + ' pairings of a model type and a position rule have never been tried');
+    setText('t-pairs', cap(vn) + ': ' + nUn + ' of the ' + (M.length * P.length) + ' pairings of a model type and a position rule were not built');
     setText('k-pairs', 'The best pairing so far is ' + bestCell.t + ' (Sharpe ' + f2(bestCell.b) + ', from ' + words(bestCell.n) + (bestCell.n === 1 ? ' strategy' : ' strategies') + ', so a small sample). Untried with a trained model: ' + (nnUn.length ? list(nnUn) : 'none') + '. Four combinations this matrix once showed as untried were registered as V15 and are scored in version 2.');
   }
 
@@ -2620,7 +2621,7 @@ Wording note, 11 October 2026: two lines above still named me in the third perso
     V4_B_reforecast: ['Weather forecasts, archive to 2019', 'V4', 'tree model', SIDE, BASE_IN + WX + ' Only the GEFS reforecast, which ends in 2019.', ROLL + ' Trades nothing from 2020 to 2023, so it cannot pass the bar for positive years.'],
     V15a_V4_limit: ['Weather to 2019, with price limits', 'V15a', 'tree model', SIDE + ' Each bid carries a price limit and counts only when day-ahead clears at or past it.', BASE_IN + WX + ' Reforecast archive only, to 2019.', ROLL],
     V15d_V4_pairs: ['Weather to 2019, zone pairs', 'V15d', 'tree model', PAIRS, BASE_IN + WX + ' Reforecast archive only, to 2019.', ROLL],
-    V15c_wx_border_gbm: ['Weather plus neighbour grid prices', 'V15c', 'tree model', SIDE, BASE_IN + WX + ' Weather from the reforecast to 2019 and the GFS archive from 25 March 2021, none in between; plus prices at the borders with neighbouring grids.', ROLL],
+    V15c_wx_border_gbm: ['Weather and border model', 'V15c', 'tree model', SIDE, BASE_IN + WX + ' Weather from the reforecast to 2019 and the GFS archive from 25 March 2021, none in between; plus prices at the borders with neighbouring grids.', ROLL],
     V8_error_mining: ['Second model on the first one’s errors', 'V8', 'tree model', SIDE, BASE_IN + ' A second model also reads where the first model’s past errors cluster (zone, hour, weather).', ROLL],
     V15a_V8_limit: ['Error model, with price limits', 'V15a', 'tree model', SIDE + ' Each bid carries a price limit.', BASE_IN + ' Plus the error model’s inputs.', ROLL],
     V15a_V5_limit: ['Neighbour grid prices, with price limits', 'V15a', 'tree model', SIDE + ' Each bid carries a price limit.', BASE_IN + ' Plus prices at the borders with neighbouring grids.', ROLL],
@@ -2744,7 +2745,7 @@ Wording note, 11 October 2026: two lines above still named me in the third perso
     v2card(v2sel);
     var cand = rows.filter(function (r) { return r.candidate_by_rule; }), top = rows.filter(function (r) { return r.total_1mw <= CAP; })[0];
     var beat = rows.filter(function (r) { return r.total_1mw > sp && r.total_1mw <= CAP; }), beatT = beat.filter(function (r) { return V2N[r.name][2] === 'tree model'; }).length;
-    setText('h-v2rank', 'On 2013 to 2023, ' + cand.length + ' of ' + rows.length + ' version 2 strategies pass the bar, and the weather forecast model earns most');
+    setText('h-v2rank', 'On the build years 2013 to 2023, ' + cand.length + ' of the ' + rows.length + ' strategies in version 2, the longer history, pass the bar, and the weather forecast model earns the most');
     setText('t-v2rank', narrow ? 'At 1 MW, ' + words(beat.length) + ' strategies beat the S&P 500; the weather row leads' : 'At 1 MW, ' + words(beat.length) + ' strategies beat the S&P 500 on the same 500,000, and the weather forecast row is the best of them');
     setText('k-v2rank', 'At 1 MW the weather forecast row earned ' + fmt(top.total_1mw) + ' USD over the eleven years, against ' + fmt(sp) + ' for the S&P 500 on the same 500,000 at its average yearly return. Leaving out the two rows that trade more than 1 MW, ' + words(beat.length) + ' rows clear that line, and ' + words(beatT) + ' of them are tree models that pick a side each hour.');
     setText('n-v2rank', 'Baselines: the S&P 500 line is its average yearly total return over 2013 to 2023 (' + BL.sp500.average_pct.toFixed(2) + ' percent, dividends included) times 500,000 times 11 years, not reinvested, because the strategies keep a fixed size and do not reinvest either; reinvested, the same 500,000 would have gained ' + fmt(BL.sp500.profit_compounded_usd) + '. The deposit line uses Danish household deposit rates over the same years (average ' + BL.deposit.average_pct.toFixed(2) + ' percent). Two bars run past the axis, marked with a break: the learned mix and the tail risk row trade more than 1 MW, so their totals are not comparable with the rest. Pass the bar means at least 10 percent a year on the bankroll at the size whose worst fall is 100,000 USD, profit in at least 8 of 11 years, Sharpe above 0.42 and profit at a cost of 0.50 USD per MWh. Candidate means it passes and is not flagged fragile; comparison rows run beside the candidates in the held-out test.');
@@ -2776,7 +2777,7 @@ Wording note, 11 October 2026: two lines above still named me in the third perso
     box.innerHTML = ''; box.appendChild(s);
     var r = v2row('V16_B_gefs_joined'), o = v2row('V4_B_reforecast'), i22 = y.years.indexOf(2022);
     var added = 0; y.years.forEach(function (yy, i) { if (yy >= 2020) added += y.v[i]; });
-    setText('h-weather', 'Closing a three year gap in the forecast archive made the weather model the best 1 MW row on the build years');
+    setText('h-weather', 'With the forecast archive joined end to end, the weather model had the highest 1 MW total on the build years');
     setText('t-weather', 'The joined weather row earned ' + fmt(r.total_1mw) + ' USD, ' + fmt(added) + ' of it in the years the live archive added');
     setText('k-weather', 'With the gap closed the row made money in ' + r.years_positive + ' of 11 years with a Sharpe ratio of ' + r.sharpe_results.toFixed(2) + ', and it passes the bar; the first weather row, with ' + o.years_positive + ' years traded, could not.');
     setText('n-weather', 'Two cautions. I registered the joined row after seeing the first weather row’s 2013 to 2019 results, so it is the same idea with more data, not a fresh idea, and its 2013 to 2019 days are unchanged. And 2022 alone gave ' + fmt(y.v[i22]) + ' of its ' + fmt(r.total_1mw) + ' USD. The live archive for 2024 onward stayed sealed until the held-out run, where this row returned ' + hrow('V16_B_gefs_joined').ho.ret_pct.toFixed(1) + ' percent a year at its size, ' + hrow('V16_B_gefs_joined').ho.ret_pct_ex.toFixed(1) + ' without the two weather events of 2026.');
@@ -2813,7 +2814,7 @@ Wording note, 11 October 2026: two lines above still named me in the third perso
     var dS = fr.filter(function (r) { return r.m_deep && !r.m_gbm; }).map(function (r) { return r.sharpe; }), tS = fr.filter(function (r) { return r.m_gbm && !r.m_deep; }).map(function (r) { return r.sharpe; });
     $('#dw-sharpe').innerHTML = 'On the Sharpe ratio alone the deep rows are close to the tree rows: the median of the ' + dS.length + ' deep rows is ' + fmed(dS).toFixed(2) + ', against ' + fmed(tS).toFixed(2) + ' for the ' + tS.length + ' tree rows. My reading is that they earn less mainly because most of them trade zone pairs, which pay less than picking a side.';
     $('#dw-learn').innerHTML = 'What the deep zone pair model learned is mostly a fixed price gap between two zones. The rule with no model that trades only that pattern made ' + fmt(cs.total_1mw) + ' USD over the same eleven years, so the model added ' + fmt(d) + ', about ' + fmt(d / 11) + ' a year.';
-    $('#dw-pool').innerHTML = 'One result I would follow up is pooling. One deep model that treats every zone and hour as its own training example, with a learned code for each zone and hour, sees about 290,000 examples in a three year window instead of about 1,100 days, and it reached a Sharpe ratio of ' + gz.sharpe_results.toFixed(2) + ', the best of the deep zone pair models, though only a little above the simpler deep model\u2019s ' + cd.sharpe_results.toFixed(2) + '. Pooling further, across neighbouring regions or with longer histories, is the next step I would test.';
+    $('#dw-pool').innerHTML = 'One deep model that treats every zone and hour as its own training example, with a learned code for each zone and hour, sees about 290,000 examples in a three year window instead of about 1,100 days, and it reached a Sharpe ratio of ' + gz.sharpe_results.toFixed(2) + ', the best of the deep zone pair models, though only a little above the simpler deep model\u2019s ' + cd.sharpe_results.toFixed(2) + '.';
   }
 
 
@@ -2840,10 +2841,25 @@ Wording note, 11 October 2026: two lines above still named me in the third perso
     var more = { spRet: BL2.sp500.return_a_year_pct_price_only.toFixed(1), book7Sh: b7.ho.sharpe.toFixed(1), spSh: BL2.sp500.sharpe_over_bills_price_only.toFixed(1) };
     var ratio = Math.abs(BL2.sp500.worst_drawdown_pct) / (100 * Math.abs(b7.ho.worst_dd) / BANK);
     var vals = { nPass: h.counts.pass_sizing_view, nTested: h.counts.tested_candidates, pairsYears: h.pairs.years.length,
-      pairsSharpePre: h.pairs.sharpe_pre.toFixed(1), pairsSharpeHo: h.pairs.sharpe_ho.toFixed(1), book7Ho: b7.ho.ret_pct.toFixed(1),
+      pairsSharpePre: h.pairs.sharpe_pre.toFixed(1), pairsSharpeHo: h.pairs.sharpe_ho.toFixed(1), book7Ho: b7.ho.ret_pct.toFixed(1), book15Ho: book('mix', 75000).ho.ret_pct.toFixed(1), book7Ex: b7.ho_ex.ret_pct.toFixed(1),
       book7VsSp: NUMW[Math.round(ratio)] || String(Math.round(ratio)), pairsStress: fmt(sp.ho.stress_050) };
     for (var k in more) vals[k] = more[k];
     document.querySelectorAll('[data-h]').forEach(function (e) { var k = e.getAttribute('data-h'); if (k in vals) e.textContent = vals[k]; });
+    fillTop();
+  }
+
+  // ---------- the best performers: top three by return, top three by Sharpe, and the two plain rules ----------
+  function fillTop() {
+    var ok = hrows().filter(function (r) { return r.role === 'candidate' && r.ho.pass_sizing_view; });
+    var byRet = ok.slice().sort(function (a, b) { return b.ho.ret_pct - a.ho.ret_pct; }).slice(0, 3);
+    var bySh = ok.filter(function (r) { return byRet.indexOf(r) < 0; }).sort(function (a, b) { return b.ho.sharpe - a.ho.sharpe; }).slice(0, 3);
+    var kind = { sell: 'mostly sells day-ahead', pairs: 'zone pairs', mix: 'mix of strategies', plain: 'no model' };
+    var row = function (r) { return '<tr><td>' + hname(r) + (r.family === 'plain' ? '' : '<small>' + kind[r.family] + '</small>') + '</td><td class="n">' + pct1(r.ho.ret_pct) + '%</td><td class="n">' + pct1(r.ho.ret_pct_ex) + '%</td><td class="n">' + r.ho.sharpe.toFixed(2) + '</td><td class="n">' + (r.pre ? pct1(r.pre.ret_pct) + '%' : '') + '</td></tr>'; };
+    var grp = function (t) { return '<tr><td colspan="5" style="padding-top:12px"><b>' + t + '</b></td></tr>'; };
+    var t = '<thead><tr><th>Strategy</th><th>Unseen months: return a year</th><th>Same, without the 18 storm and heat-wave days</th><th>Sharpe ratio</th><th>Build years: return a year</th></tr></thead><tbody>';
+    t += grp('Highest return') + byRet.map(row).join('') + grp('Steadiest (highest Sharpe ratio)') + bySh.map(row).join('') + grp('Rules with no model, for comparison') + [hrow('C_static_pairs'), hrow('always_supply')].map(row).join('');
+    $('#tb-top').innerHTML = t + '</tbody>';
+    setText('n-top', 'Each row is at its own fixed size, so compare a model with always supply in the chart below, which holds always supply at the same size. The highest returns come from models that mostly sell, and most of their return came in two 2026 weather events (the third column takes those 18 days out). The steadiest rows all trade zone pairs, and they barely depend on the events. The plain zone pairs, with no model, sit among them with a Sharpe ratio of ' + hrow('C_static_pairs').ho.sharpe.toFixed(2) + '.');
   }
 
   // ---------- held-out hero: cumulative profit, with and without the two events ----------
@@ -2975,9 +2991,9 @@ Wording note, 11 October 2026: two lines above still named me in the third perso
     box.innerHTML = ''; box.appendChild(s);
     var cands = hrows().filter(function (r) { return r.role === 'candidate'; }), sell = famRows('sell'), mid = function (a) { a = a.slice().sort(function (x, y) { return x - y; }); return a.length % 2 ? a[a.length >> 1] : (a[a.length / 2 - 1] + a[a.length / 2]) / 2; };
     var sellEx = mid(sell.map(function (r) { return r.ho.ret_pct_ex; })), sellRef = mid(sell.map(function (r) { return asEx * r.scale_mw; }));
-    setText('t-rank', h.counts.pass_sizing_view + ' of the ' + h.counts.tested_candidates + ' strategies I tested cleared my bar on the unseen months; without the two weather events the sell-side models fall back towards always selling');
+    setText('t-rank', 'Every strategy I sent to the test: the sell-side models rose with the two weather events, and the pair models stayed nearer their build-year returns');
     var diffs = sell.map(function (r) { return r.ho.ret_pct_ex - asEx * r.scale_mw; }), md = mid(diffs);
-    setText('k-rank', 'Without the 18 event days the typical sell-side model returns ' + Math.abs(md).toFixed(1) + ' percentage points a year ' + (md >= 0 ? 'more' : 'less') + ' than simply selling everything at the same size (median of the ' + sell.length + ' paired differences); the pair models barely move, because the events were not their days.');
+    setText('k-rank', 'Without the 18 event days the typical sell-side model returns ' + Math.abs(md).toFixed(1) + ' percentage points a year ' + (md >= 0 ? 'more' : 'less') + ' than simply selling everything at the same size (median of the ' + sell.length + ' paired differences), a gap the intervals further down cannot tell apart from zero; the pair models barely move, because the events were not their days.');
     setText('n-rank', 'Coloured ticks mark the matching rule with no model, held at the row\'s own size and without the event days: always supply (red) for the sell-side models and mixes, the zone pairs with no model (dark blue) for the pair models. "Bar met" uses the registered bar at each row\'s fixed size: at least 10 percent a year, two of three years positive, Sharpe above 0.42, positive at 0.50 USD per MWh. V12 is left out: it was dropped before the run. Ranked within each group by the return on the unseen months.');
     setText('ro-rank', 'Hover or tap a row to read its numbers.');
   }
@@ -3089,13 +3105,13 @@ Wording note, 11 October 2026: two lines above still named me in the third perso
     $('#pw-2025').innerHTML = 'The 2025 profit is congestion, the price of crowded lines: ' + fmt(y5.congestion) + ' USD at 1&nbsp;MW came from the congestion part of the price, while the energy part cancels across the two legs. The day-ahead market under-priced congestion into the city, ' + y5.da_cong_nyc.toFixed(2) + ' USD per MWh day-ahead against ' + y5.rt_cong_nyc.toFixed(2) + ' in real time, and over-priced Capital’s, ' + y5.da_cong_capitl.toFixed(2) + ' against ' + y5.rt_cong_capitl.toFixed(2) + '.';
     $('#pw-when').innerHTML = 'It came in bursts: January and February made ' + fmt(y5.jan_feb) + ' USD and July ' + fmt(y5.july) + '. The late-afternoon hours, 16:00 to 22:00, made ' + fmt(y5.hours_16_21) + ', against ' + fmt(y5.hours_16_21_avg) + ' a year on average in 2013 to 2023.';
     var cd = hrow('V1_C_deep');
-    $('#pw-models').innerHTML = 'Every pair model I trained held the same stance and none beat the rule (<a href="#excess-card">the chart above</a>). The deep pair model (V1) made ' + fmt(cd.ho.years['2025']) + ' USD in 2025 against the rule’s ' + fmt(P.net_1mw[i25]) + ', mostly because it held smaller positions on the same side.';
+    $('#pw-models').innerHTML = 'Every pair model I trained held the same stance and none beat the rule at 1&nbsp;MW (<a href="#excess-card">the pair-model chart further down</a>). The deep pair model (V1) made ' + fmt(cd.ho.years['2025']) + ' USD in 2025 against the rule’s ' + fmt(P.net_1mw[i25]) + ', mostly because it held smaller positions on the same side.';
   }
 
   // ---------- correlations ----------
   function drawCorr() {
     var Cc = H().corr, box = $('#ch-corr'), w = W(box), narrow = w < 600;
-    var PR = [['pairs', 'V15c', 'Zone pairs, no model', 'Weather and border model (V15c)'], ['pairs', 'always_supply', 'Zone pairs, no model', 'Always supply'], ['pairs', 'V1_C_deep', 'Zone pairs, no model', 'Zone pairs, deep model (V1)'],
+    var PR = [['pairs', 'V15c', 'Pair rule (no model)', 'Weather and border model (V15c)'], ['pairs', 'always_supply', 'Pair rule (no model)', 'Always supply'], ['pairs', 'V1_C_deep', 'Pair rule (no model)', 'Zone pairs, deep model (V1)'],
       ['V15c', 'V16', 'Weather and border model (V15c)', 'Weather model (V16)'], ['V15c', 'always_supply', 'Weather and border model (V15c)', 'Always supply'], ['V15c', 'idea13', 'Weather and border model (V15c)', 'Idea 13 mix (version 1)']];
     var labW = narrow ? 0 : 330, rowH = narrow ? 50 : 34, mT = 24, Hh = mT + PR.length * rowH + 26;
     var x0 = labW + 10, x1 = w - 12, X = function (v) { return x0 + (v + 1) / 2 * (x1 - x0); };
@@ -3162,16 +3178,16 @@ Wording note, 11 October 2026: two lines above still named me in the third perso
     th += '<tr><td>Danish household bank deposit<small>' + dp.n_months + ' months to August 2026</small></td>' + cell('n/a') + cell('n/a') + cell('n/a') + cell('n/a') + cell('n/a') + cell(dp.average_pct.toFixed(2) + '%') + cell('n/a') + cell('none') + cell('n/a') + cell('n/a') + cell('n/a') + '</tr>';
     $('#tb-books').innerHTML = th + '</tbody>';
     var m7 = book('mix', 35000), p7 = book('pairs', 35000);
-    setText('h-book', 'Adding one weather and border model to the pair position lifts the return for the same drawdown limit, because the two are uncorrelated');
+    setText('h-book', 'Adding the weather and border model to the pair position lets the book run larger for the same worst loss, because their daily profits are uncorrelated');
     var spd = Math.round(BANK * Math.abs(sp.worst_drawdown_pct) / 100);
-    setText('t-books', 'At the cautious size for my ' + (bookLim === 35000 ? '7' : '15') + ' percent limit, the mixed book returned ' + pct1(mix.ho.ret_pct) + ' percent a year on the unseen months, less than the S&P 500\'s ' + pct1(sp.return_a_year_pct_price_only) + ', with a worst fall of ' + fmt(Math.abs(mix.ho.worst_dd)) + ' USD against the index\'s ' + fmt(spd));
-    setText('k-books', 'Its Sharpe ratio was ' + mix.ho.sharpe.toFixed(2) + ', from daily profit that is already earned on top of interest-bearing collateral, against ' + sp.sharpe_over_bills_price_only.toFixed(2) + ' for the index, from its daily return above Treasury bills. Without the two weather events the mixed book still returned ' + pct1(mix.ho_ex.ret_pct) + ' percent a year against ' + pct1(pr.ho_ex.ret_pct) + ' for the pairs alone. The S&P 500 returned ' + pct1(sp.return_a_year_pct_price_only) + ' percent a year on the same 500,000, about ' + fmt(sp.usd_a_year_on_basis) + ' USD, with a worst fall of ' + pct1(Math.abs(sp.worst_drawdown_pct)) + ' percent; a bank deposit returned ' + dp.average_pct.toFixed(2) + ' percent. The mix was chosen after the run, so read these as a description, not a test.');
+    setText('t-books', 'At the cautious size for my ' + (bookLim === 35000 ? '7' : '15') + ' percent limit, the mixed book returned ' + pct1(mix.ho.ret_pct) + ' percent a year on the unseen months with a worst fall of ' + fmt(Math.abs(mix.ho.worst_dd)) + ' USD, against ' + pct1(sp.return_a_year_pct_price_only) + ' percent and a worst fall of ' + fmt(spd) + ' USD for the S&P 500 on the same 500,000');
+    setText('k-books', 'Its Sharpe ratio was ' + mix.ho.sharpe.toFixed(2) + ', against ' + sp.sharpe_over_bills_price_only.toFixed(2) + ' for the index (the index\'s is measured on its return above Treasury bills). Without the two weather events the mixed book returned ' + pct1(mix.ho_ex.ret_pct) + ' percent a year against ' + pct1(pr.ho_ex.ret_pct) + ' for the pairs alone. The S&P 500 returned ' + pct1(sp.return_a_year_pct_price_only) + ' percent a year on the same 500,000, about ' + fmt(sp.usd_a_year_on_basis) + ' USD, with a worst fall of ' + pct1(Math.abs(sp.worst_drawdown_pct)) + ' percent; a bank deposit returned ' + dp.average_pct.toFixed(2) + ' percent. The mix was chosen after the run, so read these as a description, not a test.');
     var full = H().books.filter(function (b) { return b.book === 'mix' && b.limit_usd === bookLim && b.size === 'full'; })[0];
     var ratio = Math.abs(mix.ho.worst_day / mix.build.worst_day);
-    $('#bl-storm').innerHTML = 'The book’s worst unseen day, ' + dlab(mix.ho.worst_day_date) + ', the first day of the storm, lost ' + ratio.toFixed(1) + ' times its worst day of 2013 to 2023 (' + dlab(mix.build.worst_day_date) + '). At the 15 percent size one such day costs about ' + fmt(Math.abs(Math.round(book('mix', 75000).ho.worst_day / 1000) * 1000)) + ' USD, so the 70 percent sizing is a margin I would keep.';
+    $('#bl-storm').innerHTML = 'The book’s worst unseen day, ' + dlab(mix.ho.worst_day_date) + ', the first day of the storm, lost ' + ratio.toFixed(1) + ' times its worst day of 2013 to 2023 (' + dlab(mix.build.worst_day_date) + '). At the 15 percent size one such day costs about ' + fmt(Math.abs(Math.round(book('mix', 75000).ho.worst_day / 1000) * 1000)) + ' USD, and the 70 percent sizing kept even that day inside the limit.';
     var v15 = hrow('V15c_wx_border_gbm'), ex = v15.excess_vs_supply;
     $('#bl-edge').innerHTML = 'The weather and border model’s edge over always selling is not proven: without the event days it earned ' + fmt(ex.per_year_ex_events) + ' USD a year more at 1&nbsp;MW, interval ' + fmt(ex.ci_iid_ex_events[0]) + ' to ' + fmt(ex.ci_iid_ex_events[1]) + '. What it brings to the book is sell-side exposure that loses on different days from the pairs.';
-    $('#bl-money').innerHTML = 'This is a test on past prices, not a trading record. Before real money it would need the forward paper test, a cost check with real quotes and access to the market through a registered participant (<a href="#next">next steps</a>).';
+    $('#bl-money').innerHTML = 'This is a test on past prices, not a trading record. Bids are assumed to clear at the market price without moving it, and the pair position earned 0.72 USD per MWh after fees, so all-in costs near 1.00 USD per MWh would erase it; at a stressed 0.50 it still made ' + fmt(hrow('C_static_pairs').ho.stress_050) + ' USD at 1&nbsp;MW.';
   }
 
   // ---------- wiring ----------

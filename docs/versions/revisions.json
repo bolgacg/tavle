@@ -6326,5 +6326,107 @@
     "change_mwh": 3.1
    }
   ]
+ },
+ {
+  "night": "2026-11-27",
+  "at_utc": "2026-11-27T15:50:56Z",
+  "settled_hi": "2026-11-18T23:00:00",
+  "realtime_hi": "2026-11-27T15:00:00",
+  "day_ahead_hi": "2026-11-27T22:00:00",
+  "settlement_lag_days": 8,
+  "rows": 127508,
+  "baseline": false,
+  "window_rows": 34104,
+  "appeared": {
+   "day-ahead": 48,
+   "intraday": 48,
+   "five-hour": 46,
+   "one-hour": 46,
+   "real-time": 46,
+   "settled": 48
+  },
+  "vanished": {
+   "day-ahead": 48,
+   "intraday": 48,
+   "five-hour": 48,
+   "one-hour": 48,
+   "real-time": 48,
+   "settled": 48
+  },
+  "revised": {
+   "day-ahead": {
+    "n": 0,
+    "max_abs_mwh": 0.0,
+    "mean_abs_mwh": null
+   },
+   "intraday": {
+    "n": 0,
+    "max_abs_mwh": 0.0,
+    "mean_abs_mwh": null
+   },
+   "five-hour": {
+    "n": 2,
+    "max_abs_mwh": 3.58,
+    "mean_abs_mwh": 3.29
+   },
+   "one-hour": {
+    "n": 2,
+    "max_abs_mwh": 8.58,
+    "mean_abs_mwh": 7.12
+   },
+   "real-time": {
+    "n": 2,
+    "max_abs_mwh": 10.26,
+    "mean_abs_mwh": 9.06
+   },
+   "settled": {
+    "n": 14,
+    "max_abs_mwh": 14634.94,
+    "mean_abs_mwh": 1046.9
+   }
+  },
+  "unchanged": 33802,
+  "largest": [
+   {
+    "area": "DK1",
+    "hour_utc": "2026-11-17T23:00:00",
+    "version": "settled",
+    "before_mwh": 4705.9,
+    "after_mwh": 19340.9,
+    "change_mwh": 14634.9
+   },
+   {
+    "area": "DK1",
+    "hour_utc": "2026-11-26T15:00:00",
+    "version": "real-time",
+    "before_mwh": 553.9,
+    "after_mwh": 564.2,
+    "change_mwh": 10.3
+   },
+   {
+    "area": "DK2",
+    "hour_utc": "2026-11-26T17:00:00",
+    "version": "one-hour",
+    "before_mwh": 580.3,
+    "after_mwh": 588.9,
+    "change_mwh": 8.6
+   },
+   {
+    "area": "DK2",
+    "hour_utc": "2026-11-26T15:00:00",
+    "version": "real-time",
+    "before_mwh": 488.6,
+    "after_mwh": 496.4,
+    "change_mwh": 7.9
+   },
+   {
+    "area": "DK1",
+    "hour_utc": "2026-11-26T17:00:00",
+    "version": "one-hour",
+    "before_mwh": 417.8,
+    "after_mwh": 412.1,
+    "change_mwh": -5.7
+   }
+  ]
  }
 ]
